@@ -172,3 +172,24 @@ def test_flat_bottom_at_trims_a_splayed_strut_at_the_ground(make_asset):
         asset(make_asset, """
   leg: {shape: {type: strut, from: [0, 0, 0], to: [0.2, 0.6, 0], size: [0.05, 0.05]}, ops: [{type: flat_bottom, at: 2}], material: m}
 """, name="t2")
+
+
+def test_nested_origin_keep_aligns_boolean_inputs_drawn_in_one_frame(make_asset):
+    # FA-10 T3: every nested boolean input was recentred, so a cavity needed hand-computed offsets
+    a = asset(make_asset, """
+  tray:
+    shape:
+      type: boolean
+      base: {type: extrude, origin: keep, depth: 0.2, polygon: [[0, 0], [1, 0], [1, 0.3], [0, 0.3]]}
+      tools: [{type: extrude, origin: keep, depth: 0.1, polygon: [[0.1, 0.1], [0.9, 0.1], [0.9, 0.5], [0.1, 0.5]]}]
+    material: m
+""")
+    m = a.part("tray").mesh
+    lo, hi = m.bounds()
+    # the cavity (z 0..0.1, y from 0.1) is cut into the base's own frame: the floor is 0.1 thick in y
+    assert np.isclose(hi[1] - lo[1], 0.3) and m.n_tris > 12
+    ys = m.V[:, 1] - lo[1]
+    assert np.any(np.isclose(ys, 0.1, atol=1e-6))
+    with pytest.raises(SourceError):
+        asset(make_asset, "  x: {shape: {type: combine, items: [{type: box, size: [0.1, 0.1, 0.1], origin: somewhere}]}, material: m}\n",
+              name="t2")

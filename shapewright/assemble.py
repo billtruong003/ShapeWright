@@ -177,12 +177,19 @@ class BuildCtx:
         # Nested expressions are centred, then their own `translate` is applied as an
         # offset from that centre. (Recentring after the translate used to discard it,
         # so `combine` items and `boolean` tools could not be positioned.)
+        # `origin: keep` skips the recentring: the expression stays in its authoring coordinates, so a
+        # boolean's base and tools (or combine items) drawn in one frame line up without hand-computed
+        # translates (FA-10 T3: a boat cavity had to be offset by hand against its hull).
         translate = raw.get("translate") if isinstance(raw, dict) else None
-        inner = {k: v for k, v in raw.items() if k != "translate"} if translate is not None else raw
-        mesh = build_geometry(inner, self.env, self.ctx, f"{self.where}.{where}", self.asset_dir, self.materials)
+        keep = isinstance(raw, dict) and raw.get("origin") == "keep"
+        if isinstance(raw, dict) and raw.get("origin") not in (None, "keep", "center"):
+            raise ValueError(f"origin at {where} must be keep or center")
+        inner = {k: v for k, v in raw.items() if k not in ("translate", "origin")} if isinstance(raw, dict) else raw
+        mesh = build_geometry(inner, self.env, self.ctx, f"{self.where}.{where}", self.asset_dir, self.materials, keep_origin=keep)
         if mesh is None:
             raise ValueError(f"invalid geometry at {where} (see earlier errors)")
-        mesh = mesh.recentered()
+        if not keep:
+            mesh = mesh.recentered()
         if translate is not None:
             tr = S.vec(translate, 3, self.env, f"{self.where}.{where}.translate", self.ctx)
             if tr is None:

@@ -19,7 +19,9 @@ from ..registry import Param, shape
 
 
 @shape("boolean", "Boolean of geometry expressions: base (op) each tool, in order. Inputs may carry their own ops, "
-       "transforms and materials; faces keep their provenance.",
+       "transforms and materials; faces keep their provenance. Each input is centred at the origin before its own "
+       "`translate`; give inputs `origin: keep` to keep the coordinates they were drawn in (a hull and its cavity "
+       "outlined in one frame line up without offsets).",
        [Param("operation", "str", "difference", "union | difference | intersection", choices=("union", "difference", "intersection")),
         Param("base", "geometry", doc="the geometry expression to start from"),
         Param("tools", "geometry_list", doc="geometry expressions applied in order")],
@@ -35,7 +37,8 @@ def boolean(a, b):
 
 
 @shape("combine", "Several geometry expressions kept as separate shells in one part (no boolean). "
-       "Use when pieces interpenetrate by design and one semantic part is wanted.",
+       "Use when pieces interpenetrate by design and one semantic part is wanted. Items are centred before their "
+       "`translate` unless they say `origin: keep` (then polygon/path coordinates are kept as drawn).",
        [Param("items", "geometry_list", doc="geometry expressions (each may use translate/rotate/ops)")],
        category="compose", topology="rebuild",
        example="{type: combine, items: [{type: box, size: [0.2, 0.2, 0.2]}, {type: sphere, radius: 0.1, translate: [0, 0.15, 0]}]}")
