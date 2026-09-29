@@ -1,0 +1,58 @@
+# Plank door leaf with ledges, a Z brace and iron strap hinges (cozy_house kit). Built closed,
+# front = +z, hinge side = -x. Bottom centre at the origin.
+shapewright: 0.1
+component: house_door
+doc: Ledged-and-braced plank door with iron straps and a ring pull. Materials `planks`, `timber`, `iron`.
+
+params:
+  w:       {value: 0.78, doc: leaf width}
+  h:       {value: 1.76, doc: leaf height}
+  t:       {value: 0.05, doc: plank thickness}
+  planks:  {value: 4}
+  gap:     {value: 0.01}
+  wear:    {value: 0.004}
+
+private:
+  pw: (w - (planks - 1) * gap) / planks
+
+parts:
+  plank:
+    shape: {type: chamfer_box, size: [pw, h, t], chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: 51}]
+    anchor: bottom_left
+    position: [-w / 2, 0, 0]
+    array: {count: planks, offset: [pw + gap, 0, 0]}
+    uv: {share_instances: false}
+    material: planks
+
+  ledge:
+    doc: horizontal ledges on the back tying the planks
+    shape: {type: chamfer_box, size: [w - 0.06, 0.12, 0.04], chamfer: 0.01}
+    anchor: center
+    position: [0, h * 0.18, -t / 2 - 0.02 + 0.004]
+    array: {count: 2, offset: [0, h * 0.64, 0]}
+    material: timber
+
+  brace:
+    doc: Z brace between the ledges (back)
+    shape: {type: strut, from: [-w / 2 + 0.08, h * 0.18 + 0.05, -t / 2 - 0.016], to: [w / 2 - 0.08, h * 0.82 - 0.05, -t / 2 - 0.016], size: [0.1, 0.036],
+            depth_axis: z, chamfer: 0.008}
+    material: timber
+
+  strap:
+    doc: iron strap hinges on the front, from the hinge side
+    shape: {type: box, size: [w * 0.72, 0.05, 0.012]}
+    anchor: left
+    position: [-w / 2 - 0.02, h * 0.18, t / 2 + 0.006 - 0.002]
+    array: {count: 2, offset: [0, h * 0.64, 0]}
+    tags: [thin_ok]
+    material: iron
+
+  pull:
+    doc: ring pull
+    shape: {type: torus, radius: 0.05, tube: 0.012, segments: 10, sides: 5}
+    rotate: [90, 0, 0]
+    anchor: center
+    position: [w / 2 - 0.13, h * 0.5, t / 2 + 0.008]
+    tags: [thin_ok]
+    material: iron

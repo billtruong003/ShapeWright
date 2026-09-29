@@ -1,0 +1,18 @@
+doc: Chunky stylized half-timbered architecture (cozy medieval fantasy) for modular environment kits.
+description: >
+  Stylized medieval / cozy fantasy buildings seen from third-person distance. Chunky timbers
+  with soft chamfers and a few millimetres of hand-made jitter, cream plaster panels set back
+  behind the frame, heavy stone footings, deep roof overhangs with thick shingle courses.
+  Slightly exaggerated proportions (fat posts, big eaves, small deep-set windows). Restrained
+  small detail: nothing thinner than 3 cm, no ornament that does not change the silhouette.
+shading: {default: auto, smooth_angle: 35}
+heuristics:
+  min_feature_m: 0.03
+  max_parts: 600            # an assembled house is hundreds of module parts
+  max_materials: 7          # timber, planks, plaster, stone, roof, iron, glass
+palette: ["#5a3a24", "#9a6a40", "#e6d6b4", "#8c857a", "#8e4a33", "#4f545a"]
+review:
+  - Do timbers read as one chunky frame language (posts heavier than rails, braces as thick as rails)?
+  - Is the plaster clearly set back behind the timbers everywhere (no plaster flush with or proud of a beam)?
+  - Does the roof overhang throw a readable silhouette and shadow line from third-person distance?
+  - Are module joints invisible (no gaps, no doubled or flickering surfaces)?

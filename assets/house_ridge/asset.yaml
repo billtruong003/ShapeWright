@@ -1,0 +1,20 @@
+# cozy_house kit module 18: ridge section (one bay)
+# Laid on the apex line where two slopes meet.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_ridge
+  kind: environment/modular/roof
+  description: Ridge roll for one bay (cozy_house kit).
+  tags: [cozy_house, module, roof]
+  placement: free
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  ridge:
+    component: house_ridge
+    with: {length: bay}
+    materials: {roof: roof}
+    origin: keep
+    position: [0, 0, 0]

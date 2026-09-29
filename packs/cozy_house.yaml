@@ -1,0 +1,77 @@
+# Cozy half-timbered house kit (MODULAR_HOUSE_PACK_01): the single source of truth for scale,
+# construction and materials. Every module and demo house says `pack: cozy_house`; these params
+# and materials are read-only there, so modules cannot drift apart.
+#
+# Construction grid (see docs/experiments/MODULAR_HOUSE_PACK_01.md):
+#   - plan grid: bay = 2.0 m; a half bay = 1.0 m. Walls run ALONG grid lines, centred on them.
+#   - a timber post stands on every grid node; a wall module fills the span BETWEEN two posts,
+#     so neighbouring walls never overlap and corners need no special wall piece.
+#   - storey k: deck top at level(k) = base_h + k * storey. Walls and posts start at level(k) - sink
+#     (embedded in the deck); wall modules are panel_h tall and end at level(k+1) - floor_t, under
+#     the next deck; posts are one storey tall. Upper decks occupy [level(k) - floor_t, level(k)]
+#     inside the walls; outside, a band beam fills that zone between posts. The ground deck sits in
+#     the stone footing, whose top stops `sink` below the deck top.
+#   - every module's origin: bottom centre on its grid line (walls), grid node (posts),
+#     cell centre (floors). Placement in assemblies is grid arithmetic on these params.
+shapewright: 0.1
+pack: cozy_house
+doc: Stylized medieval / cozy fantasy modular house kit (timber frame, plaster, stone, shingles).
+profile: desktop_indie
+style: cozy_timber
+budget: {triangles: 3000, materials: 4, texture_size: 1024, texel_density: 100}
+
+params:
+  # --- grid and levels --------------------------------------------------------------------
+  bay:       {value: 2.0, min: 1.5, max: 3.0, doc: plan grid step (wall module span post-centre to post-centre)}
+  storey:    {value: 3.0, min: 2.5, max: 3.6, doc: floor-to-floor height}
+  floor_t:   {value: 0.24, min: 0.15, max: 0.35, doc: floor deck / floor band depth}
+  base_h:    {value: 0.5, min: 0.2, max: 0.9, doc: ground-floor deck top above the ground (the stone footing carries it)}
+  sink:      {value: 0.02, doc: "walls and posts start this far below a deck top (embedded, never a gap); footings stop this far below it (never coplanar)"}
+  wall_h:    {value: storey - floor_t, doc: "visible wall height, deck top to the next deck's underside (derived)"}
+  panel_h:   {value: wall_h + sink, doc: "wall module height (derived)"}
+  lv1:       {value: base_h + storey, doc: "first-floor deck top (derived; level k = base_h + k * storey)"}
+  lv2:       {value: base_h + 2 * storey, doc: "second-floor deck top (derived)"}
+  band_h:    {value: floor_t - sink, doc: "exterior floor band beam height (derived)"}
+  footing_d: {value: wall_t + 0.14, doc: stone footing depth (a 7 cm ledge each side of the wall)}
+  # --- construction language ----------------------------------------------------------------
+  post:      {value: 0.26, min: 0.16, max: 0.4, doc: grid-node post section (the heaviest timber)}
+  timber:    {value: 0.18, min: 0.1, max: 0.3, doc: rail / plate / brace face width}
+  wall_t:    {value: 0.26, min: 0.18, max: 0.4, doc: wall depth = timber depth (frame flush both faces)}
+  plaster_t: {value: 0.16, doc: "plaster infill depth (set back (wall_t - plaster_t)/2 on each face)"}
+  chamfer:   {value: 0.022, doc: soft edge on every timber}
+  wear:      {value: 0.006, doc: hand-made jitter amplitude}
+  # --- openings (standardised) --------------------------------------------------------------
+  win_w:     {value: 0.8, doc: window opening width}
+  win_h:     {value: 1.0, doc: window opening height}
+  win_sill:  {value: 0.95, doc: window sill height above the floor}
+  door_w:    {value: 1.0, doc: door opening width}
+  door_h:    {value: 2.05, doc: door opening height}
+  shop_w:    {value: 1.36, doc: shopfront opening width}
+  shop_h:    {value: 1.45, doc: shopfront opening height}
+  shop_sill: {value: 0.6, doc: shopfront counter height}
+  frame:     {value: 0.09, doc: window frame face width}
+  door_frame: {value: 0.11, doc: door frame face width (heavier than windows)}
+  # --- roof -----------------------------------------------------------------------------------
+  pitch:     {value: 45, min: 30, max: 60, doc: roof pitch in degrees (every roof piece)}
+  roof_t:    {value: 0.1, doc: roof deck thickness under the shingles}
+  shingle_t: {value: 0.045, doc: shingle course thickness}
+  course:    {value: 0.3, doc: shingle course exposure along the slope}
+  tile_w:    {value: bay / 6, doc: shingle width along the ridge (bays hold whole tiles; the bond runs across modules)}
+  eave:      {value: 0.45, doc: eave overhang beyond the wall face, measured horizontally}
+  verge:     {value: 0.3, doc: gable overhang beyond the gable wall along the ridge}
+
+materials:
+  timber:  {archetype: wood, color: "#5a3a24", grain_strength: 0.5, grain_scale: 0.05, streaks: 0.5, knots: 0.15,
+            edge_wear: 0.35, edge_width: 0.02, grime: 0.25, grime_height: 0.6, roughness: 0.9, seed: 11,
+            doc: "every structural timber: posts, plates, rails, braces, frames, rafters"}
+  planks:  {archetype: wood, color: "#9a6a40", grain_strength: 0.4, grain_scale: 0.04, streaks: 0.4,
+            edge_wear: 0.3, roughness: 0.85, seed: 12, doc: "boards: doors, shutters, floor decks, railings"}
+  plaster: {archetype: painted, color: "#e6d6b4", under_color: "#a8916e", chips: 0.25, variation: 0.1,
+            grime: 0.3, grime_height: 0.8, roughness: 0.95, seed: 13, doc: "wall infill panels and gable infill"}
+  stone:   {archetype: stone, color: "#8c857a", secondary_color: "#6f6a62", variation: 0.5, scale: 0.18,
+            edge_wear: 0.35, grime: 0.35, grime_height: 0.4, roughness: 0.9, seed: 14, doc: "footings, chimney, steps"}
+  roof:    {archetype: stone, color: "#8e4a33", secondary_color: "#6e3626", variation: 0.45, scale: 0.12,
+            edge_wear: 0.3, roughness: 0.85, seed: 15, doc: "fired-clay shingles"}
+  glass:   {archetype: flat, color: "#2f3d45", roughness: 0.25, doc: "dark leaded window glass"}
+  iron:    {archetype: metal, color: "#5a5f66", edge_wear: 0.4, rust: 0.15, roughness: 0.55, seed: 16,
+            doc: "hinges, brackets, lantern mounts"}

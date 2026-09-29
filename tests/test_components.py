@@ -107,3 +107,38 @@ def test_component_instances_can_be_mirrored_and_arrayed(make_asset):
     arr = build(make_asset(INSTANCE.format(with_="length: 0.4, width: 0.3, planks: 2, batten_from_end: 0.1")
                            .replace("    position: [0, 0.75, 0]\n", "    position: [0, 0.75, 0]\n    array: {count: 3, offset: [0.5, 0, 0]}\n", 1), "arr"))
     assert {p.component for p in arr.parts if p.component} == {"top_0", "top_1", "top_2"}
+
+
+def test_component_origin_keep_places_the_components_own_origin(tmp_path):
+    # MODULAR_HOUSE_PACK_01: a roof piece placed by its bounding box moved 2-10 cm whenever an optional
+    # fascia / rafter tail / barge board changed its extents. A kit piece needs a fixed pivot.
+    import numpy as np
+
+    d = tmp_path / "a"
+    (d / "components").mkdir(parents=True)
+    (d / "components" / "slab.yaml").write_text("""
+component: slab
+params: {trim: 0}
+parts:
+  top: {shape: {type: box, size: [1, 0.1, 1]}, anchor: bottom_back, position: [0, 0, 0]}
+  hanger: {shape: {type: box, size: [0.1, 0.3, 0.1]}, anchor: top_front, position: [0, 0.001, 1], enabled: trim > 0}
+""")
+    src = """
+parts:
+  a: {component: slab, with: {trim: TRIM}, origin: keep, position: [2, 1, 0]ROT}
+"""
+    for trim in (0, 1):
+        a = build_src(d, src.replace("TRIM", str(trim)).replace("ROT", ""))
+        top = next(p for p in a.parts if p.name == "a_top").mesh.bounds()
+        assert np.allclose(top[0], [1.5, 1, 0]), trim   # the slab's origin (bottom back centre) sits at [2, 1, 0] either way
+    a = build_src(d, src.replace("TRIM", "1").replace("ROT", ", rotate: [0, 180, 0]"))
+    top = next(p for p in a.parts if p.name == "a_top").mesh.bounds()
+    assert np.allclose(top[1], [2.5, 1.1, 0], atol=1e-9)    # rotated about the origin: the slab now extends toward -z
+    with pytest.raises(SourceError) as e:
+        build_src(d, src.replace("TRIM", "0").replace("ROT", ", anchor: bottom"))
+    assert any("origin: keep" in i.message for i in e.value.issues)
+
+
+def build_src(d, text):
+    (d / "asset.yaml").write_text(text)
+    return build(d)

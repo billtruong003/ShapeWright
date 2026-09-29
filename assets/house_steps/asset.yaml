@@ -1,0 +1,20 @@
+# cozy_house kit module 26: entrance steps (decor)
+# Climbs from the ground to the ground deck (base_h) in front of a door.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_steps
+  kind: environment/modular/decor
+  description: Stone entrance steps (cozy_house kit).
+  tags: [cozy_house, module, decor]
+  placement: floor
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  steps:
+    component: house_steps
+    with: {width: door_w + 0.5, rise: base_h - 0.004, steps: 2, tread: 0.34}
+    materials: {stone: stone}
+    origin: keep
+    position: [0, 0, 0]

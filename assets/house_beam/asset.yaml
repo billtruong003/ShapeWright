@@ -1,0 +1,21 @@
+# cozy_house kit module 11: horizontal beam (floor band / wall plate)
+# Spans between two posts at floor-band height; origin at its bottom centre.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_beam
+  kind: environment/modular/framing
+  description: Horizontal timber band beam between posts (cozy_house kit).
+  tags: [cozy_house, module, framing]
+  placement: free
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  beam:
+    component: house_timber
+    with: {length: bay - post, w: band_h, d: wall_t, chamfer: chamfer, wear: wear, seed: 3}
+    materials: {timber: timber}
+    origin: keep
+    rotate: [0, 0, 90]
+    position: [(bay - post) / 2, 0, 0]

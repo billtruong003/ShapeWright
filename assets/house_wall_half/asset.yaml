@@ -1,0 +1,21 @@
+# cozy_house kit module 6: half-width wall bay
+# Spans a half bay between posts (for 1 m steps in the plan); plain with an X brace.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_wall_half
+  kind: environment/modular/wall
+  description: Half-width half-timbered wall bay (cozy_house kit).
+  tags: [cozy_house, module, wall]
+  placement: floor
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  wall:
+    component: house_wall
+    with: {span: bay / 2 - post, height: panel_h, depth: wall_t, plaster: plaster_t, timber: timber, chamfer: chamfer, wear: wear,
+           opening: 0, seed: 5}
+    materials: {timber: timber, plaster: plaster}
+    origin: keep
+    position: [0, 0, 0]

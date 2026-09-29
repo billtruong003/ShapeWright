@@ -1,0 +1,20 @@
+# cozy_house kit module 14: half floor deck tile
+# Half a cell (bay x bay / 2) for 1 m steps in the plan.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_floor_half
+  kind: environment/modular/floor
+  description: Half-cell plank floor deck tile (cozy_house kit).
+  tags: [cozy_house, module, floor]
+  placement: floor
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  deck:
+    component: house_floor
+    with: {w: bay, d: bay / 2, t: floor_t, planks: 4}
+    materials: {planks: planks, timber: timber}
+    origin: keep
+    position: [0, floor_t, 0]

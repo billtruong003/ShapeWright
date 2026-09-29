@@ -1,0 +1,20 @@
+# cozy_house kit module 13: floor deck tile (one grid cell)
+# Top at y = 0 (deck top); a cell centre is its origin. Tiles butt on grid lines.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_floor
+  kind: environment/modular/floor
+  description: Plank floor deck tile for one grid cell (cozy_house kit).
+  tags: [cozy_house, module, floor]
+  placement: floor
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  deck:
+    component: house_floor
+    with: {w: bay, d: bay, t: floor_t}
+    materials: {planks: planks, timber: timber}
+    origin: keep
+    position: [0, floor_t, 0]

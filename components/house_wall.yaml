@@ -1,0 +1,130 @@
+# Half-timbered wall panel: the span BETWEEN two grid-node posts (cozy_house pack).
+# One construction for every wall module: plain (X brace), window (centred or offset), door,
+# shopfront, half width, upper floor. Opening kind is data, not a separate recipe.
+#
+# Local frame: x along the wall, y up, z through the wall; bottom centre = (0, 0, 0).
+# The group is symmetric in x and z (openings only cut into it), so an instance placed with
+# `anchor: bottom` lands with its bottom centre exactly on the given grid-line point.
+#
+# Depth ranking avoids coplanar overlaps where timbers cross (flickering in engines):
+# plates are full depth, studs 6 mm shallower, rails 12 mm, braces 18 mm.
+shapewright: 0.1
+component: house_wall
+doc: Timber-framed plaster wall between two posts. Materials `timber`, `plaster`.
+
+params:
+  span:      {value: 1.74, min: 0.5, max: 3.0, doc: clear span between post faces (bay - post)}
+  height:    {value: 2.76, min: 1.5, max: 4.0, doc: wall height (sill plate bottom to head plate top)}
+  depth:     {value: 0.26, doc: wall depth (timber depth)}
+  plaster:   {value: 0.16, doc: plaster infill depth}
+  timber:    {value: 0.18, doc: plate / rail / stud / brace face width}
+  chamfer:   {value: 0.022, doc: timber edge chamfer}
+  wear:      {value: 0.006, doc: jitter}
+  opening:   {value: 0, doc: "0 none, 1 window/shopfront (sill + head rails), 2 door (head rail only)"}
+  op_w:      {value: 0.8, doc: opening width}
+  op_h:      {value: 1.0, doc: opening height}
+  op_sill:   {value: 0.95, doc: opening bottom above the wall bottom (ignored for doors)}
+  op_x:      {value: 0, doc: opening centre offset along x}
+  braces:    {value: 1, doc: "0 none; 1 X brace (plain wall) or side-bay braces beside an opening"}
+  seed:      {value: 0, doc: jitter seed offset (neighbouring modules look hand-made, not cloned)}
+
+private:
+  y_in:     timber                                   # top of the sill plate
+  y_top:    height - timber                          # bottom of the head plate
+  o_lo:     "y_in if opening == 2 else op_sill"       # opening bottom
+  o_hi:     "op_h if opening == 2 else op_sill + op_h"
+  side_l:   op_x - op_w / 2 - timber + span / 2      # clear width of the left side bay
+  side_r:   span / 2 - (op_x + op_w / 2 + timber)    # clear width of the right side bay
+
+parts:
+  sill_plate:
+    doc: "bottom plate, full depth (the door steps over it: a real timber-frame threshold)"
+    shape: {type: chamfer_box, size: [span, timber, depth], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: seed + 1}]
+    anchor: bottom
+    position: [0, 0, 0]
+    material: timber
+
+  head_plate:
+    shape: {type: chamfer_box, size: [span, timber, depth], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: seed + 2}]
+    anchor: top
+    position: [0, height, 0]
+    material: timber
+
+  infill:
+    doc: plaster set back behind the frame on both faces; the opening is cut through it
+    shape:
+      type: boolean
+      operation: difference
+      base: {type: box, size: [span, y_top - y_in, plaster]}
+      tools:
+        - {type: box, size: [op_w, o_hi - o_lo, depth * 2], translate: [op_x, (o_lo + o_hi) / 2 - (y_in + y_top) / 2, 0]}
+    enabled: opening > 0
+    anchor: bottom
+    position: [0, y_in, 0]
+    material: plaster
+
+  infill_solid:
+    doc: plain panel (no opening)
+    shape: {type: box, size: [span, y_top - y_in, plaster]}
+    enabled: opening == 0
+    anchor: bottom
+    position: [0, y_in, 0]
+    material: plaster
+
+  stud:
+    doc: studs flanking the opening, plate to plate
+    shape: {type: chamfer_box, size: [timber, y_top - y_in, depth - 0.006], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: seed + 3}]
+    enabled: opening > 0
+    anchor: bottom
+    position: [op_x - op_w / 2 - timber / 2, y_in, 0]
+    array: {count: 2, offset: [op_w + timber, 0, 0]}
+    material: timber
+
+  head_rail:
+    doc: rail across the full span on top of the opening (lintel)
+    shape: {type: chamfer_box, size: [span, timber, depth - 0.012], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: seed + 4}]
+    enabled: opening > 0 and o_hi + timber < y_top - 0.05
+    anchor: bottom
+    position: [0, o_hi, 0]
+    material: timber
+
+  sill_rail:
+    doc: rail across the full span under a window / shopfront
+    shape: {type: chamfer_box, size: [span, timber, depth - 0.012], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: seed + 5}]
+    enabled: opening == 1 and op_sill - timber > y_in + 0.05
+    anchor: top
+    position: [0, op_sill, 0]
+    material: timber
+
+  brace_a:
+    doc: X brace of a plain panel (first diagonal)
+    shape: {type: strut, from: [-span / 2 + timber * 0.4, y_in, 0], to: [span / 2 - timber * 0.4, y_top, 0], size: [timber, depth - 0.018],
+            depth_axis: z, chamfer: chamfer}
+    enabled: opening == 0 and braces > 0
+    material: timber
+
+  brace_b:
+    doc: X brace of a plain panel (second diagonal)
+    shape: {type: strut, from: [span / 2 - timber * 0.4, y_in, 0], to: [-span / 2 + timber * 0.4, y_top, 0], size: [timber, depth - 0.018],
+            depth_axis: z, chamfer: chamfer}
+    enabled: opening == 0 and braces > 0
+    material: timber
+
+  brace_l:
+    doc: side-bay brace left of the opening, from the post foot up to the stud
+    shape: {type: strut, from: [-span / 2 + timber * 0.4, y_in, 0], to: [op_x - op_w / 2 - timber, "op_sill - timber if opening == 1 else y_top * 0.55", 0],
+            size: [timber * 0.9, depth - 0.018], depth_axis: z, chamfer: chamfer}
+    enabled: opening > 0 and braces > 0 and side_l > 0.3
+    material: timber
+
+  brace_r:
+    doc: side-bay brace right of the opening (mirror image of brace_l about the opening)
+    shape: {type: strut, from: [span / 2 - timber * 0.4, y_in, 0], to: [op_x + op_w / 2 + timber, "op_sill - timber if opening == 1 else y_top * 0.55", 0],
+            size: [timber * 0.9, depth - 0.018], depth_axis: z, chamfer: chamfer}
+    enabled: opening > 0 and braces > 0 and side_r > 0.3
+    material: timber

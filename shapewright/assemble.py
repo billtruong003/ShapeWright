@@ -1063,7 +1063,17 @@ def build_group(u: Unit, world: World, materials: dict, style: dict, asset_dir: 
     if not built:
         return []
     group_bounds = np.stack([np.min([p.bounds[0] for p in built], 0), np.max([p.bounds[1] for p in built], 0)])
-    center = (group_bounds[0] + group_bounds[1]) / 2
+    # origin: keep (MODULAR_HOUSE_PACK_01): the component's own origin is its pivot. With the default, the
+    # group is placed by its bounding box, which moves whenever optional sub-parts change its extents.
+    keep = u.raw.get("origin", "center") == "keep"
+    if u.raw.get("origin", "center") not in ("center", "keep"):
+        ctx.error("SRC_SCHEMA", f"{u.where}.origin", "origin must be center | keep")
+        return []
+    if keep and ("anchor" in u.raw or "attach" in u.raw):
+        ctx.error("SRC_SCHEMA", u.where, "a component instance with origin: keep is placed by its own origin; remove anchor/attach",
+                  "position puts the component's origin; rotate turns the group about it")
+        return []
+    center = np.zeros(3) if keep else (group_bounds[0] + group_bounds[1]) / 2
     if "rotate" in u.raw:
         rot = S.vec(u.raw["rotate"], 3, u.env, f"{u.where}.rotate", ctx)
         if rot:
@@ -1073,7 +1083,10 @@ def build_group(u: Unit, world: World, materials: dict, style: dict, asset_dir: 
                 if p.pivot is not None:
                     p.pivot = (R[:3, :3] @ (p.pivot - center)) + center
             group_bounds = np.stack([np.min([p.bounds[0] for p in built], 0), np.max([p.bounds[1] for p in built], 0)])
-    shift = _placement(u.raw, group_bounds, u.env, world, ctx, u.where)
+    if keep:
+        shift = np.asarray(S.vec(u.raw.get("position", [0, 0, 0]), 3, u.env, f"{u.where}.position", ctx) or [0, 0, 0], dtype=float)
+    else:
+        shift = _placement(u.raw, group_bounds, u.env, world, ctx, u.where)
     if shift is None:
         return []
     for p in built:

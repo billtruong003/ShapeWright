@@ -1,0 +1,137 @@
+# One roof slope (cozy_house kit): deck, stepped shingle courses, optional fascia at the eave,
+# rafter tails under the overhang and barge boards at gable ends.
+#
+# Built in exact roof coordinates (every part keeps its drawn coordinates):
+#   z = horizontal distance from the ridge plumb line (0) toward the eave (run);
+#   y = height above the eave end of the deck underside; x = along the ridge, centred.
+# So the group's bottom_front corner IS the underside corner at the eave, and placing it with
+# `anchor: bottom_front` at (x, bearing_y - eave * tan(pitch), wall_face_z + eave) seats the
+# deck underside exactly on the wall's outer top edge. Mirror/rotate 180 for the other slope.
+shapewright: 0.1
+component: house_roof
+doc: Shingled roof slope with eave fascia, rafter tails and barge boards. Materials `roof`, `timber`.
+
+params:
+  length:  {value: 2.0, min: 0.3, max: 12, doc: length along the ridge}
+  run:     {value: 1.84, min: 0.3, max: 8, doc: horizontal distance ridge -> eave end}
+  pitch:   {value: 45, min: 15, max: 65}
+  t:       {value: 0.1, doc: deck thickness (perpendicular)}
+  st:      {value: 0.045, doc: shingle course thickness at its lower edge}
+  course:  {value: 0.3, doc: course exposure along the slope}
+  tile:    {value: 0.3333, doc: shingle width along the ridge (share it across modules so the bond continues)}
+  align:   {value: 1, doc: "+1: the bond starts at the +x edge; -1: at the -x edge (use the edge shared with the neighbouring module)"}
+  eave:    {value: 0.45, doc: horizontal overhang beyond the bearing point (for rafter tails)}
+  slope:   {value: 1, doc: "deck + shingles (0: eave trim only: fascia and rafter tails, the eave module)"}
+  fascia:  {value: 1, doc: plumb board at the eave end}
+  rafters: {value: 1, doc: rafter tails under the overhang}
+  rafter_step: {value: 0.5, doc: rafter spacing along x}
+  barge_l: {value: 0, doc: barge board at the -x end (gable end)}
+  barge_r: {value: 0, doc: barge board at the +x end}
+  wear:    {value: 0.005}
+
+private:
+  tn: tan(pitch)
+  cs: cos(pitch)
+  h_top: run * tn                           # underside height at the ridge plumb line
+  dt: t / cs                                # deck thickness measured plumb
+  du: course * cs                           # course step, horizontal
+  n_courses: ceil(run / du) + 1
+  rafter_n: max(1, floor((length - 0.2) / rafter_step) + 1)
+  tiles: ceil(length / tile) + 1                     # enough tiles to cover; the trim box cuts the partial ones
+  x_start: "length / 2 if align > 0 else -length / 2 + (tiles - 1) * tile"
+
+parts:
+  deck:
+    enabled: slope > 0
+    doc: roof deck, plumb-cut at ridge and eave
+    shape:
+      type: extrude
+      polygon: [[0, h_top], [run, 0], [run, dt], [0, h_top + dt]]
+      depth: length
+      rotate: [0, -90, 0]
+    origin: keep
+    material: timber
+
+  shingles_even:
+    enabled: slope > 0
+    doc: "courses 0, 2, 4... of chunky shingle tiles (each a wedge: thick lower edge); trimmed to the slope in roof coordinates"
+    shape:
+      type: boolean
+      operation: intersection
+      base:
+        type: extrude
+        origin: keep
+        polygon: [[0, h_top + dt + st * 0.35], [du - 0.006, h_top - (du - 0.006) * tn + dt + st], [du - 0.006, h_top - (du - 0.006) * tn + dt],
+                  [0, h_top + dt]]    # bottom on the deck; 35 % thick up-slope, full thickness at the eave edge
+        depth: tile - 0.014
+        ops:
+          - {type: jitter, amount: wear * 0.5, seed: 81}
+          - {type: repeat, count: tiles + 1, offset: [0, 0, tile]}             # ops run in the profile frame (u, v, along-ridge)
+          - {type: repeat, count: ceil(n_courses / 2), offset: [2 * du, -2 * du * tn, 0]}
+        rotate: [0, -90, 0]
+        translate: [x_start - tile / 2, 0, 0]        # a tile edge on the shared module edge: the bond continues across modules
+      tools: [{type: box, origin: keep, size: [length, h_top * 2 + 2, run + 0.02], translate: [0, h_top / 2, (run + 0.02) / 2]}]
+    origin: keep
+    material: roof
+
+  shingles_odd:
+    enabled: slope > 0
+    doc: courses 1, 3, 5... offset half a tile along the ridge (running bond)
+    shape:
+      type: boolean
+      operation: intersection
+      base:
+        type: extrude
+        origin: keep
+        polygon: [[0, h_top + dt + st * 0.35], [du - 0.006, h_top - (du - 0.006) * tn + dt + st], [du - 0.006, h_top - (du - 0.006) * tn + dt],
+                  [0, h_top + dt]]    # bottom on the deck; 35 % thick up-slope, full thickness at the eave edge
+        depth: tile - 0.014
+        ops:
+          - {type: jitter, amount: wear * 0.5, seed: 82}
+          - {type: repeat, count: tiles + 1, offset: [0, 0, tile]}
+          - {type: repeat, count: ceil(n_courses / 2), offset: [2 * du, -2 * du * tn, 0]}
+        rotate: [0, -90, 0]
+        translate: [x_start, -du * tn, du]
+      tools: [{type: box, origin: keep, size: [length, h_top * 2 + 2, run + 0.02], translate: [0, h_top / 2, (run + 0.02) / 2]}]
+    origin: keep
+    material: roof
+
+  fascia_board:
+    enabled: fascia > 0
+    doc: plumb board covering the eave end of deck and shingles
+    shape: {type: chamfer_box, size: [length + 0.02, dt + st + 0.08, 0.045], chamfer: 0.01}
+    anchor: bottom_back
+    position: [0, -0.08, run]
+    material: timber
+
+  rafter_tail:
+    enabled: rafters > 0
+    doc: rafter ends showing under the overhang (chunky, spaced along the ridge)
+    shape: {type: strut, from: [0, (eave + 0.3) * tn - 0.07, run - eave - 0.3], to: [0, 0.02 - 0.07, run - 0.02], size: [0.09, 0.14], chamfer: 0.012}
+    origin: keep
+    position: [-(rafter_n - 1) * rafter_step / 2, 0, 0]
+    array: {count: rafter_n, offset: [rafter_step, 0, 0]}
+    material: timber
+
+  barge_left:
+    enabled: barge_l > 0
+    doc: barge board along the verge at the -x end
+    shape:
+      type: extrude
+      polygon: [[0, h_top + dt + st + 0.02], [run, dt + st + 0.02], [run, -0.1], [0, h_top - 0.1]]
+      depth: 0.05
+      rotate: [0, -90, 0]
+      translate: [-length / 2 - 0.02, 0, 0]
+    origin: keep
+    material: timber
+
+  barge_right:
+    enabled: barge_r > 0
+    shape:
+      type: extrude
+      polygon: [[0, h_top + dt + st + 0.02], [run, dt + st + 0.02], [run, -0.1], [0, h_top - 0.1]]
+      depth: 0.05
+      rotate: [0, -90, 0]
+      translate: [length / 2 + 0.02, 0, 0]
+    origin: keep
+    material: timber

@@ -114,3 +114,17 @@ def test_set_writes_param_values_and_keeps_everything_else(make_asset, capsys):
     assert main(["set", str(path), "nope=1"]) == 2
     assert main(["set", str(path), "w=wdth * 2"]) != 0  # an unknown name does not build: restored
     assert "  w: 0.5   # width" in f.read_text()
+
+
+def test_a_broken_component_file_does_not_break_caps_or_doc(monkeypatch, tmp_path, capsys):
+    # MODULAR_HOUSE_PACK_01: an unquoted "doc: a: b" in one component crashed `sw doc torus` with a traceback
+    from shapewright import caps
+
+    (tmp_path / "components").mkdir()
+    (tmp_path / "components" / "broken.yaml").write_text("component: broken\ndoc: steps over it: a threshold\n")
+    monkeypatch.setattr(caps, "ROOT", tmp_path)
+    assert main(["doc", "torus"]) == 0
+    capsys.readouterr()
+    assert main(["caps", "--json"]) == 0
+    m = json.loads(capsys.readouterr().out)
+    assert "unreadable" in m["components"]["broken"]

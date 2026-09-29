@@ -79,6 +79,8 @@ INSTANCE_KEYS = {
     "enabled": "true | false | expression",
     "anchor": "anchor of the whole component group", "position": "world position of the group anchor",
     "attach": "place the group relative to another part", "rotate": "rotate the group (degrees)",
+    "origin": "center (default: the group is placed by its bounding-box anchor) | keep: the component's own origin is its pivot; "
+              "`position` puts that origin, `rotate` turns about it (modular kit pieces whose extents vary with options)",
     "parent": "semantic parent for the component's root parts", "tags": "tags added to every component part",
     "doc": "purpose", "array": "repeat the whole group (names: <instance>_0.., parts <instance>_0_<part>)",
     "mirror": "mirror the whole group (names: <instance>_left/_right, parts <instance>_left_<part>)",

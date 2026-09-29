@@ -1,0 +1,21 @@
+# cozy_house kit module 12: diagonal brace
+# Runs corner to corner of one wall bay (plate top to plate bottom); origin at its lower end.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_brace
+  kind: environment/modular/framing
+  description: Diagonal timber brace sized to one wall bay (cozy_house kit).
+  tags: [cozy_house, module, framing]
+  placement: free
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  brace:
+    component: house_timber
+    with: {length: sqrt((bay - post) ** 2 + (panel_h - 2 * timber) ** 2), w: timber, d: wall_t - 0.018, chamfer: chamfer, wear: wear, seed: 4}
+    materials: {timber: timber}
+    origin: keep
+    rotate: [0, 0, -atan2(bay - post, panel_h - 2 * timber)]
+    position: [0, 0, 0]

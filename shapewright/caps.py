@@ -46,8 +46,13 @@ COMMANDS = {
 def _named(kind: str) -> dict:
     out = {}
     for p in sorted((ROOT / kind).glob("*.yaml")):
-        data = yaml.safe_load(p.read_text()) or {}
-        out[p.stem] = data.get("doc", "")
+        try:  # one broken file must not take down `sw caps` / `sw doc` for everything (MODULAR_HOUSE_PACK_01)
+            data = yaml.safe_load(p.read_text()) or {}
+        except yaml.YAMLError as e:
+            mark = getattr(e, "problem_mark", None)
+            out[p.stem] = f"(unreadable: YAML error{f' at line {mark.line + 1}' if mark else ''}; quote text containing ': ')"
+            continue
+        out[p.stem] = data.get("doc", "") if isinstance(data, dict) else ""
     return out
 
 

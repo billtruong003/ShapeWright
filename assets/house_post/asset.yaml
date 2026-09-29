@@ -1,0 +1,20 @@
+# cozy_house kit module 9: timber corner / node post
+# One storey tall, post x post section; origin at its foot, centred on the grid node.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_post
+  kind: environment/modular/framing
+  description: Chunky timber post for every grid node (cozy_house kit).
+  tags: [cozy_house, module, framing]
+  placement: floor
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  post:
+    component: house_timber
+    with: {length: storey, w: post, d: post, chamfer: chamfer, wear: wear}
+    materials: {timber: timber}
+    origin: keep
+    position: [0, 0, 0]

@@ -1,0 +1,22 @@
+# One chunky timber (post, beam, brace) of the cozy_house kit: the kit's single timber recipe for
+# stand-alone framing modules and house assemblies. Built vertical, bottom at y = 0; instances
+# rotate it (beams: [0, 0, 90]; braces: [0, 0, angle]).
+shapewright: 0.1
+component: house_timber
+doc: A chamfered, slightly hand-made timber. Material `timber`.
+
+params:
+  length:  {value: 2.76, min: 0.1, max: 12, doc: length along the timber}
+  w:       {value: 0.26, doc: section along x}
+  d:       {value: 0.26, doc: section along z}
+  chamfer: {value: 0.022}
+  wear:    {value: 0.006}
+  seed:    {value: 0}
+
+parts:
+  beam:
+    shape: {type: chamfer_box, size: [w, length, d], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: seed + 7}]
+    anchor: bottom
+    position: [0, 0, 0]
+    material: timber

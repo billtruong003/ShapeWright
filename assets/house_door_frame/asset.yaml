@@ -1,0 +1,20 @@
+# cozy_house kit module 22: door frame
+# Jambs and head for a standard door opening; stands on the wall's sill plate.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_door_frame
+  kind: environment/modular/opening
+  description: Door frame (cozy_house kit).
+  tags: [cozy_house, module, opening]
+  placement: floor
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  frame:
+    component: house_door_frame
+    with: {w: door_w, h: door_h + sink - timber, depth: wall_t, frame: door_frame}
+    materials: {timber: timber}
+    origin: keep
+    position: [0, 0, 0]

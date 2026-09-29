@@ -1,0 +1,38 @@
+# Stone footing course between two corner/node stones (cozy_house kit): two courses of chunky
+# jittered blocks, the upper course offset by half a block and trimmed flush at the ends, so
+# neighbouring footings continue the bond. Bottom centre at the origin.
+shapewright: 0.1
+component: house_footing
+doc: Two courses of staggered dressed stones. Material `stone`.
+
+params:
+  length:  {value: 1.6, min: 0.2, max: 6, doc: span between node stones}
+  height:  {value: 0.48, doc: footing height}
+  depth:   {value: 0.4, doc: footing depth}
+  blocks:  {value: 3, min: 1, max: 12, doc: blocks per course}
+  gap:     {value: 0.018, doc: mortar joint}
+  wear:    {value: 0.012, doc: stones are rougher than timber}
+
+private:
+  bl: length / blocks
+  ch: height / 2
+
+parts:
+  course_low:
+    shape: {type: chamfer_box, size: [bl - gap, ch - gap / 2, depth], chamfer: 0.03}
+    ops: [{type: jitter, amount: wear, seed: 61}]
+    anchor: bottom_left
+    position: [-length / 2 + gap / 2, 0, 0]
+    array: {count: blocks, offset: [bl, 0, 0], each: {translate: [0, 0, "(rand(i, 3) - 0.5) * 0.02"]}}
+    material: stone
+
+  course_high:
+    doc: offset by half a block; the end half-stones are cut flush with the module end
+    shape: {type: chamfer_box, size: [bl - gap, ch - gap / 2, depth - 0.02], chamfer: 0.03}
+    ops:
+      - {type: jitter, amount: wear, seed: 62}
+      - {type: repeat, count: blocks + 1, offset: [bl, 0, 0]}
+      - {type: intersect, shape: {type: box, size: [length - gap, height, depth * 2]}, position: [blocks * bl / 2 - bl / 2, 0, 0]}
+    anchor: bottom
+    position: [0, ch + gap / 2, 0]
+    material: stone

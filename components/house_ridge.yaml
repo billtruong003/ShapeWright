@@ -1,0 +1,30 @@
+# Ridge cap (cozy_house kit): a chunky half-round ridge roll with collars every metre, laid along
+# x over the apex where two house_roof slopes meet. Bottom centre at the origin (the apex line).
+shapewright: 0.1
+component: house_ridge
+doc: Ridge roll with collars. Material `roof`.
+
+params:
+  length: {value: 2.0}
+  r:      {value: 0.1, doc: roll radius}
+  wear:   {value: 0.004}
+
+private:
+  collars: max(1, round(length))
+
+parts:
+  roll:
+    shape: {type: cylinder, radius: r, height: length, segments: 8, chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: 95}]
+    rotate: [0, 0, 90]
+    anchor: bottom
+    position: [0, 0, 0]
+    material: roof
+  collar:
+    doc: tile joints read as slightly fatter collars
+    shape: {type: cylinder, radius: r + 0.018, height: 0.07, segments: 8}
+    rotate: [0, 0, 90]
+    anchor: center
+    position: [-length / 2 + length / collars / 2, r, 0]
+    array: {count: collars, offset: [length / collars, 0, 0]}
+    material: roof
