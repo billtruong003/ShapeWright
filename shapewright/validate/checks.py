@@ -377,7 +377,7 @@ def uv_layout(asset: Asset, surface: Surface, metrics: dict):
             hi = max(px_per_m, key=px_per_m.get)
             out.append(_issue("UV_TEXEL_DENSITY", "warning", "surface", f"texel density varies {spread:.2f}x ({lo}: {px_per_m[lo]:.0f} px/m, {hi}: {px_per_m[hi]:.0f} px/m)", lo,
                               "each part gets a UV rectangle sized by its area; thin or oddly shaped parts pack their charts loosely into it. Try uv: {seams: regions} on that part, change its proportions/segments, or accept it (warning only). With a lock, re-lock after big size changes"))
-        target = asset.budget.get("texel_density")
+        target = (asset.uv or {}).get("texel_density") or asset.budget.get("texel_density")  # same precedence as the bake
         if target:
             metrics["texel_density_target"] = target
     return out

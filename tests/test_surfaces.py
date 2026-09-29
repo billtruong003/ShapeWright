@@ -180,3 +180,9 @@ def test_uv_projection_without_authored_uvs_is_reported(make_asset):
     t = textures_for(a, s)
     assert "INVALID" in t.lifecycle.values()
     assert "TEX_UV_SOURCE_MISSING" in {i["code"] for i in run_validation(a, s)["issues"]}
+
+
+def test_texel_density_target_metric_uses_the_asset_setting(make_asset):
+    # FRESH_AGENT_05 finding: the report showed the profile's target, not uv.texel_density
+    a = build(make(make_asset, extra="uv: {texel_density: 200}\n"))
+    assert run_validation(a, build_surface(a))["metrics"]["texel_density_target"] == 200
