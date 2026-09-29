@@ -1,0 +1,41 @@
+{
+ "iteration": 1,
+ "note": "first blockout: seat, 4 legs, rail, 3 slats",
+ "critique": "Technically clean but reads as a modern kitchen chair, not a chunky tavern chair. leg 0.045 -> ~0.07 (spindly); seat_thickness 0.05 -> 0.07; no stretchers (add side + front stretchers low between legs); 3 thin slats -> 2 wide slats (style: fewer, larger forms); top_rail too small -> taller and overhanging the posts; perfectly machined -> jitter, rear posts lean back (shear), front legs splay slightly.",
+ "source_hash": "afb57e3c756a",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 0
+ },
+ "metrics": {
+  "triangles": 396,
+  "parts": 9,
+  "size_m": [
+   0.46,
+   0.95,
+   0.44
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "seat.max.y": 0.46,
+   "asset.height": 0.95,
+   "top_rail.size.x / seat.size.x": 0.7174
+  }
+ },
+ "errors": [],
+ "params": {
+  "seat_width": 0.46,
+  "seat_depth": 0.44,
+  "seat_height": 0.46,
+  "seat_thickness": 0.05,
+  "leg": 0.045,
+  "leg_inset": 0.02,
+  "back_height": 0.95,
+  "rail_height": 0.08,
+  "slat_width": 0.05,
+  "wear": 0.003
+ }
+}

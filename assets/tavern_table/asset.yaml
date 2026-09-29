@@ -1,0 +1,79 @@
+# Pack consistency: same style, materials and construction language as tavern_chair,
+# with dimensions that relate to it (table top ~ 0.3 m above the chair seat).
+shapewright: 0.1
+asset:
+  name: tavern_table
+  kind: prop/furniture/table
+  description: Chunky plank-top tavern table matching tavern_chair.
+profile: mobile_mid
+style: stylized_lowpoly
+budget: {triangles: 700}
+
+params:
+  length:      {value: 1.4, min: 0.9, max: 2.2, vary: [1.1, 1.8]}
+  width:       {value: 0.8, min: 0.6, max: 1.0}
+  top_height:  {value: 0.76, doc: standard table height (chair seat 0.46 + ~0.3)}
+  top_t:       0.07
+  planks:      3
+  plank_gap:   0.008
+  leg:         0.1
+  wear:        0.005
+  plank_w:     (width - (planks - 1) * plank_gap) / planks
+
+materials:
+  wood:      {base_color: "#9a6a40", roughness: 0.85}
+  wood_dark: {base_color: "#5e3b22", roughness: 0.9}
+
+parts:
+  plank:
+    doc: top boards with visible seams
+    shape: {type: chamfer_box, size: [length, top_t, plank_w], chamfer: 0.014}
+    ops: [{type: jitter, amount: wear, seed: 21}]
+    anchor: top_back
+    position: [0, top_height, -width / 2]
+    array: {count: planks, offset: [0, 0, plank_w + plank_gap]}
+    material: wood
+
+  leg:
+    shape: {type: chamfer_box, size: [leg, top_height - top_t + 0.02, leg], chamfer: 0.014}
+    ops:
+      - {type: taper, axis: y, scale: 1.1}
+      - {type: jitter, amount: wear, seed: 22}
+    anchor: bottom
+    position: [length / 2 - 0.12, 0, width / 2 - 0.11]
+    mirror: [x, z]
+    material: wood_dark
+
+  apron:
+    doc: long rails under the top
+    shape: {type: chamfer_box, size: [length - 0.3, 0.1, 0.04], chamfer: 0.01}
+    anchor: top
+    position: [0, top_height - top_t + 0.005, width / 2 - 0.11]
+    mirror: z
+    material: wood_dark
+
+  batten:
+    doc: cross battens under the top; they tie every plank together
+    shape: {type: chamfer_box, size: [0.08, 0.04, width - 0.04], chamfer: 0.008}
+    anchor: top
+    position: [length / 2 - 0.26, top_height - top_t + 0.005, 0]
+    mirror: x
+    material: wood_dark
+
+  stretcher:
+    doc: low H-stretcher
+    shape: {type: chamfer_box, size: [0.05, 0.05, width - 0.22], chamfer: 0.008}
+    position: [length / 2 - 0.12, 0.14, 0]
+    mirror: x
+    material: wood_dark
+
+  cross_stretcher:
+    shape: {type: chamfer_box, size: [length - 0.24, 0.05, 0.05], chamfer: 0.008}
+    position: [0, 0.14, 0]
+    material: wood_dark
+
+collision: {mode: single_box}
+
+checks:
+  - {expr: plank.max.y, min: 0.72, max: 0.8, doc: table height}
+  - {expr: plank.max.y - 0.46, min: 0.26, max: 0.34, doc: matches tavern_chair seat height (0.46)}

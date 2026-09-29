@@ -1,0 +1,11 @@
+# Runtime (all permissive licences; see docs/RESEARCH.md#licences)
+numpy>=1.24          # BSD-3
+scipy>=1.10          # BSD-3   (convex hulls via qhull)
+trimesh>=4.0         # MIT     (hulls, subdivision, smoothing, re-import)
+manifold3d>=3.0      # Apache-2.0 (booleans, contact distance, extrusion)
+xatlas>=0.0.9        # MIT     (UV unwrapping + packing)
+pillow>=10.1         # MIT-CMU (images)
+pyyaml>=6.0          # MIT     (asset sources)
+fast-simplification>=0.1  # MIT (decimate op)
+# Development
+pytest>=7

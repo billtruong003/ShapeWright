@@ -1,0 +1,3 @@
+doc: Low-end mobile / older devices. Aggressive budgets; one material per prop.
+budget: {triangles: 600, materials: 1, texture_size: 256, texel_density: 128}
+uv: {padding_px: 2}

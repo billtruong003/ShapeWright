@@ -1,0 +1,3 @@
+doc: Standalone VR (Quest-class). Tight triangles and draw calls, props seen up close.
+budget: {triangles: 1200, materials: 1, texture_size: 512, texel_density: 384}
+uv: {padding_px: 4}

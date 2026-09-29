@@ -1,0 +1,12 @@
+doc: Clean, realistic proportions; precise and symmetric (reference for contrast).
+description: >
+  Real-world proportions and dimensions, symmetric, crisp small chamfers,
+  no jitter. Detail comes from accurate construction rather than exaggeration.
+shading: {default: auto, smooth_angle: 30}
+heuristics:
+  min_feature_m: 0.01
+  max_parts: 64
+  max_materials: 4
+review:
+  - Do dimensions match real-world references (seat heights, table heights, door sizes)?
+  - Are construction details (joints, fixings) plausible?

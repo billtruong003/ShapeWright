@@ -1,0 +1,110 @@
+# Benchmark: stylized low-poly medieval tavern chair (the README's example task).
+shapewright: 0.1
+asset:
+  name: tavern_chair
+  kind: prop/furniture/chair
+  description: Chunky stylized medieval tavern chair for a mobile game.
+  tags: [medieval, tavern, furniture, wood]
+profile: mobile_mid
+style: stylized_lowpoly
+budget: {triangles: 700}
+
+params:
+  seat_width:     {value: 0.48, min: 0.38, max: 0.60, doc: seat size along x}
+  seat_depth:     {value: 0.44, min: 0.36, max: 0.56, doc: seat size along z}
+  seat_height:    {value: 0.46, min: 0.40, max: 0.50, doc: top of the seat above the ground}
+  seat_thickness: {value: 0.07, doc: chunky board}
+  leg:            {value: 0.07, min: 0.05, max: 0.1, doc: leg cross-section}
+  leg_inset:      0.025
+  back_height:    {value: 0.98, doc: top of the backrest posts above the ground}
+  lean:           {value: 0.06, doc: how far the post tops lean back (m)}
+  rail_height:    0.12
+  slat_width:     0.09
+  slat_gap:       0.15
+  stretcher:      0.04
+  stretcher_y:    0.14
+  wear:           {value: 0.004, doc: hand-made jitter amplitude}
+  # derived
+  post_z:  -seat_depth / 2 + leg_inset + leg / 2
+  front_z: seat_depth / 2 - leg_inset - leg / 2
+  leg_x:   seat_width / 2 - leg_inset - leg / 2
+  rail_y:  back_height - rail_height / 2
+  lean_deg: atan2(lean, back_height)
+  slat_h:  back_height - rail_height - seat_height + 0.01
+
+materials:
+  wood:      {base_color: "#9a6a40", roughness: 0.85, doc: seat and backrest}
+  wood_dark: {base_color: "#5e3b22", roughness: 0.9, doc: legs and rails}
+
+parts:
+  seat:
+    doc: thick sitting board
+    shape: {type: chamfer_box, size: [seat_width, seat_thickness, seat_depth], chamfer: 0.016}
+    ops: [{type: jitter, amount: wear, seed: 1}]
+    anchor: top
+    position: [0, seat_height, 0]
+    material: wood
+
+  front_leg:
+    shape: {type: chamfer_box, size: [leg, seat_height - seat_thickness + 0.02, leg], chamfer: 0.01}
+    ops:
+      - {type: taper, axis: y, scale: 1.12}
+      - {type: jitter, amount: wear, seed: 2}
+    rotate: [-3, 0, 3]              # slight splay: feet out, hand-made look
+    anchor: bottom
+    position: [leg_x, 0, front_z]   # rest on the ground, top embeds 2 cm into the seat
+    mirror: x
+    material: wood_dark
+
+  rear_leg:
+    doc: rear legs continue upward as backrest posts and lean back
+    shape: {type: chamfer_box, size: [leg, back_height, leg], chamfer: 0.01}
+    ops:
+      - {type: shear, axis: y, toward: z, amount: -lean}
+      - {type: jitter, amount: wear, seed: 3}
+    anchor: bottom_front
+    position: [leg_x, 0, post_z + leg / 2]
+    mirror: x
+    material: wood_dark
+
+  top_rail:
+    doc: chunky crest rail that overhangs the posts
+    shape: {type: chamfer_box, size: [seat_width + 0.04, rail_height, leg * 0.8], chamfer: 0.014}
+    ops: [{type: jitter, amount: wear, seed: 4}]
+    rotate: [-lean_deg, 0, 0]
+    position: [0, rail_y, post_z - lean * rail_y / back_height]
+    material: wood
+
+  back_slat:
+    shape: {type: chamfer_box, size: [slat_width, slat_h, 0.035], chamfer: 0.008}
+    ops:
+      - {type: shear, axis: y, toward: z, amount: -lean * slat_h / back_height}
+      - {type: jitter, amount: wear, seed: 5}
+    anchor: bottom
+    position: [-slat_gap / 2, seat_height - 0.005, post_z - lean * (seat_height + slat_h / 2) / back_height]
+    array: {count: 2, offset: [slat_gap, 0, 0]}
+    material: wood
+
+  side_stretcher:
+    shape: {type: chamfer_box, size: [stretcher, stretcher, front_z - post_z + leg * 0.6], chamfer: 0.006}
+    position: [leg_x, stretcher_y, (front_z + post_z) / 2]
+    mirror: x
+    material: wood_dark
+
+  front_stretcher:
+    shape: {type: chamfer_box, size: [2 * leg_x + leg * 0.6, stretcher, stretcher], chamfer: 0.006}
+    position: [0, stretcher_y + 0.08, front_z]
+    material: wood_dark
+
+sockets:
+  sit_point:
+    doc: where a character's pelvis goes when seated
+    attach: {to: seat, at: top, offset: [0, 0, 0.03]}
+
+collision: {mode: box}
+
+checks:
+  - {expr: seat.max.y, min: 0.42, max: 0.50, doc: comfortable seat height}
+  - {expr: asset.height, min: 0.85, max: 1.10, doc: tavern chairs have tall backs}
+  - {expr: top_rail.size.x / seat.size.x, min: 0.8, max: 1.15, doc: crest rail spans the seat and may overhang the posts}
+  - {expr: rear_leg_right.size.x, min: 0.06, doc: chunky legs (style); instance names give per-leg sizes}

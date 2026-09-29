@@ -1,0 +1,32 @@
+# Asset family demo: a stool derived from the tavern chair by inheritance.
+# Only differences are written here; everything else (style, materials, leg
+# construction, jitter, stretchers) is inherited, which keeps the pack consistent.
+shapewright: 0.1
+extends: ../tavern_chair
+asset:
+  name: tavern_stool
+  kind: prop/furniture/stool
+  description: Backless tavern stool from the same set as tavern_chair.
+budget: {triangles: 450}
+
+params:
+  seat_width: 0.38
+  seat_depth: 0.36
+  back_height: seat_height - seat_thickness + 0.02   # rear legs become ordinary legs
+  lean: 0.0
+
+parts:
+  top_rail: null      # `null` deletes an inherited part
+  back_slat: null
+  rear_leg:
+    doc: plain rear legs (no backrest)
+    anchor: bottom
+    position: [leg_x, 0, post_z]
+    rotate: [3, 0, 3]               # splay backwards and outwards like the front legs
+    ops:
+      - {type: taper, axis: y, scale: 1.12}
+      - {type: jitter, amount: wear, seed: 3}
+
+checks:
+  - {expr: seat.max.y, min: 0.42, max: 0.50}
+  - {expr: asset.height, max: 0.5, doc: no backrest}

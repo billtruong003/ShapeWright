@@ -1,0 +1,11 @@
+# Mid-range Android / iOS prop budget.
+doc: Mid-range mobile (e.g. 2022 Android). Props are cheap, draw calls matter.
+budget:
+  triangles: 1500          # per prop; override per asset with `budget:`
+  materials: 2             # material slots (draw calls)
+  texture_size: 512        # max texture edge in pixels
+  texel_density: 256       # target pixels per metre
+uv:
+  padding_px: 4
+constraints:
+  max_bones: 0

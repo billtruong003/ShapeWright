@@ -1,0 +1,3 @@
+doc: Desktop indie game props. Comfortable budgets, still one or two materials.
+budget: {triangles: 5000, materials: 3, texture_size: 1024, texel_density: 512}
+uv: {padding_px: 8}

@@ -1,0 +1,50 @@
+# Benchmark: organic / procedural form. No boxes: seeded hulls, noise, flattened base.
+# Tests: random_hull, noise, flat_bottom (boolean trim), clusters, seeded variants.
+shapewright: 0.1
+asset:
+  name: rock
+  kind: prop/nature/rock
+  description: Chunky low-poly boulder with two smaller companion stones.
+profile: mobile_mid
+style: stylized_lowpoly
+budget: {triangles: 400}
+
+params:
+  size:  {value: 0.9, min: 0.3, max: 2.0, vary: [0.7, 1.2]}
+  seed:  {value: 7, vary: [1, 999]}
+  lumps: {value: 0.02, doc: noise displacement}
+
+materials:
+  stone: {base_color: "#8b8f94", roughness: 0.95}
+
+parts:
+  boulder:
+    shape: {type: random_hull, size: [size, size * 0.7, size * 0.85], points: 22, seed: seed}
+    ops:
+      - {type: noise, amount: lumps, frequency: 2.5, seed: seed}
+      - {type: flat_bottom, fraction: 0.18}
+    shading: flat
+    anchor: bottom
+    position: [0, 0, 0]
+    material: stone
+
+  pebble:
+    shape: {type: random_hull, size: [size * 0.35, size * 0.25, size * 0.3], points: 12, seed: seed + 1}
+    ops: [{type: flat_bottom, fraction: 0.2}]
+    shading: flat
+    anchor: bottom_left
+    attach: {to: boulder, at: bottom_right, offset: [-size * 0.06, 0, size * 0.1]}
+    material: stone
+
+  chip:
+    shape: {type: random_hull, size: [size * 0.2, size * 0.14, size * 0.18], points: 10, seed: seed + 2}
+    ops: [{type: flat_bottom, fraction: 0.2}]
+    shading: flat
+    anchor: bottom_right
+    attach: {to: boulder, at: bottom_front_left, offset: [size * 0.08, 0, -size * 0.02]}
+    material: stone
+
+collision: {mode: hull}
+
+checks:
+  - {expr: boulder.height / boulder.width, min: 0.4, max: 0.8, doc: rocks read better squat}

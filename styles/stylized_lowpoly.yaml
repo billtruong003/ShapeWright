@@ -1,0 +1,18 @@
+doc: Chunky hand-crafted low-poly (cozy fantasy / mobile).
+description: >
+  Stylized fantasy low-poly. Large, readable primary forms; minimal tertiary
+  detail. Chunky proportions (thick legs, thick boards, oversized joints).
+  Soft chamfers on every box-like form. Slight hand-crafted asymmetry (a few
+  millimetres of jitter, gentle leans), never perfectly machined. Limited
+  material count; colour comes from flat materials or a small palette.
+shading: {default: auto, smooth_angle: 40}
+heuristics:
+  min_feature_m: 0.03        # nothing thinner than 3 cm unless tagged thin_ok
+  max_parts: 24
+  max_materials: 3
+palette: ["#8a5a36", "#5e3b22", "#b07a4a", "#6b6f73", "#c9a15a", "#3f5f3a"]
+review:
+  - Are primary forms chunky and readable, or do any parts look spindly or machined?
+  - Is there a visible hand-crafted touch (slight asymmetry, lean, jitter) without looking broken?
+  - Do chamfers catch light on every box-like form (check the 3/4 clay view)?
+  - Would the silhouette read at thumbnail size on a phone?

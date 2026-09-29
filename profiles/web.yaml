@@ -1,0 +1,3 @@
+doc: WebGL / WebGPU scenes. Small downloads matter as much as triangles.
+budget: {triangles: 2000, materials: 2, texture_size: 512, texel_density: 256}
+uv: {padding_px: 4}

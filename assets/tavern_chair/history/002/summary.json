@@ -1,0 +1,52 @@
+{
+ "iteration": 2,
+ "note": "chunky revision: thick seat/legs, leaning posts, crest rail, 2 wide slats, stretchers, splay, jitter",
+ "critique": "Reads as a tavern chair now. Validators caught two regressions during the revision: splayed front legs sank 1 cm below ground (ASM_BELOW_GROUND; fixed by anchoring legs at the bottom on y=0) and a stale design check that rejected the intentional rail overhang (updated). Accepting: 484/700 tris leaves room, but more detail would fight the style.",
+ "source_hash": "90b4778db717",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 0
+ },
+ "metrics": {
+  "triangles": 484,
+  "parts": 11,
+  "size_m": [
+   0.5267,
+   0.9826,
+   0.4743
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "seat.max.y": 0.46,
+   "asset.height": 0.9826,
+   "top_rail.size.x / seat.size.x": 1.0804,
+   "rear_leg_right.size.x": 0.0761
+  }
+ },
+ "errors": [],
+ "params": {
+  "seat_width": 0.48,
+  "seat_depth": 0.44,
+  "seat_height": 0.46,
+  "seat_thickness": 0.07,
+  "leg": 0.07,
+  "leg_inset": 0.025,
+  "back_height": 0.98,
+  "lean": 0.06,
+  "rail_height": 0.12,
+  "slat_width": 0.09,
+  "slat_gap": 0.15,
+  "stretcher": 0.04,
+  "stretcher_y": 0.14,
+  "wear": 0.004,
+  "post_z": -0.16,
+  "front_z": 0.16,
+  "leg_x": 0.18,
+  "rail_y": 0.92,
+  "lean_deg": 3.50353,
+  "slat_h": 0.41
+ }
+}

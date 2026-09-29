@@ -1,0 +1,3 @@
+doc: Unity-oriented export conventions on top of desktop budgets.
+budget: {triangles: 5000, materials: 3, texture_size: 1024, texel_density: 512}
+export: {collision_naming: ucx}

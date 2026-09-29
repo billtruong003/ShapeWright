@@ -1,0 +1,77 @@
+# Benchmark: modular framing via multi-axis mirrors, rotated braces, seeded variation.
+# Tests: mirror combinations, derived parameters, `vary` for asset families (sw variants crate).
+shapewright: 0.1
+asset:
+  name: crate
+  kind: prop/container/crate
+  description: Stylized wooden crate with a chunky frame and diagonal braces.
+profile: mobile_mid
+style: stylized_lowpoly
+budget: {triangles: 900}
+
+params:
+  size:  {value: 0.6, min: 0.4, max: 0.9, vary: [0.5, 0.75], doc: cube edge length}
+  frame: {value: 0.07, vary: [0.06, 0.085], doc: frame beam thickness}
+  inset: 0.012
+  seed:  {value: 1, vary: [1, 999], doc: hand-made jitter seed}
+  wear:  0.004
+  half:  size / 2 - frame / 2
+  brace_len: sqrt(2) * (size - 2 * frame)
+  brace_angle: 45
+
+materials:
+  wood:       {base_color: "#b07a4a", roughness: 0.85}
+  wood_frame: {base_color: "#6e4428", roughness: 0.9}
+
+parts:
+  panel:
+    doc: recessed boards (the box body)
+    shape: {type: chamfer_box, size: [size - 2 * inset, size - 2 * inset, size - 2 * inset], chamfer: 0.01}
+    anchor: bottom
+    position: [0, inset, 0]
+    material: wood
+
+  post:
+    doc: vertical corner beams
+    shape: {type: chamfer_box, size: [frame, size, frame], chamfer: 0.012}
+    ops: [{type: jitter, amount: wear, seed: seed}]
+    anchor: bottom
+    position: [half, 0, half]
+    mirror: [x, z]
+    material: wood_frame
+
+  rail_x:
+    doc: horizontal beams along x, top and bottom, front and back
+    shape: {type: chamfer_box, size: [size - 2 * frame, frame, frame * 0.9], chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: seed + 1}]
+    anchor: bottom
+    position: [0, 0, half]
+    mirror: [z, {axis: y, at: size / 2}]
+    material: wood_frame
+
+  rail_z:
+    doc: horizontal beams along z on the sides
+    shape: {type: chamfer_box, size: [frame * 0.9, frame, size - 2 * frame], chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: seed + 2}]
+    anchor: bottom
+    position: [half, 0, 0]
+    mirror: [x, {axis: y, at: size / 2}]
+    material: wood_frame
+
+  brace:
+    doc: diagonal brace on the front and back faces
+    shape: {type: chamfer_box, size: [brace_len, frame * 0.8, frame * 0.6], chamfer: 0.008}
+    rotate: [0, 0, brace_angle]
+    ops: [{type: jitter, amount: wear, seed: seed + 3}]
+    position: [0, size / 2, half + frame * 0.1]
+    mirror: z
+    material: wood_frame
+
+sockets:
+  top: {attach: {to: panel, at: top}, doc: stacking point}
+
+collision: {mode: single_box}
+
+checks:
+  - {expr: asset.width, min: size - 0.001, max: size + 0.02}
+  - {expr: brace.size.x, max: size, doc: braces stay inside the frame}

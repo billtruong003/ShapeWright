@@ -1,0 +1,9 @@
+{
+  "name": "shapewright-gltf-validator",
+  "private": true,
+  "description": "Optional: runs the Khronos glTF-Validator on exported files (Apache-2.0).",
+  "type": "module",
+  "dependencies": {
+    "gltf-validator": "2.0.0-dev.3.10"
+  }
+}

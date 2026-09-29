@@ -1,0 +1,30 @@
+[project]
+name = "shapewright"
+version = "0.1.0"
+description = "An agent-native 3D modelling environment: declarative assets, deterministic validation, inspection renders, GLB export."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24", "scipy>=1.10", "trimesh>=4.0", "manifold3d>=3.0", "xatlas>=0.0.9",
+  "pillow>=10.1", "pyyaml>=6.0", "fast-simplification>=0.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+sw = "shapewright.cli:main"
+
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["shapewright*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 140

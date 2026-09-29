@@ -1,0 +1,161 @@
+shapewright: 0.1
+asset:
+  name: tavern_chair
+  kind: prop/furniture/chair
+  description: Chunky stylized medieval tavern chair for a mobile game.
+  tags:
+  - medieval
+  - tavern
+  - furniture
+  - wood
+profile: mobile_mid
+style: stylized_lowpoly
+budget:
+  triangles: 700
+params:
+  seat_width:
+    value: 0.46
+    min: 0.38
+    max: 0.6
+    doc: seat size along x
+  seat_depth:
+    value: 0.44
+    min: 0.36
+    max: 0.56
+    doc: seat size along z
+  seat_height:
+    value: 0.46
+    min: 0.4
+    max: 0.5
+    doc: top of the seat above the ground
+  seat_thickness: 0.05
+  leg:
+    value: 0.045
+    doc: leg cross-section
+  leg_inset: 0.02
+  back_height:
+    value: 0.95
+    doc: top of the backrest above the ground
+  rail_height: 0.08
+  slat_width: 0.05
+  wear:
+    value: 0.003
+    doc: hand-made jitter amplitude
+materials:
+  wood:
+    base_color: '#9a6a40'
+    roughness: 0.85
+    doc: seat and backrest
+  wood_dark:
+    base_color: '#5e3b22'
+    roughness: 0.9
+    doc: legs and rails
+parts:
+  seat:
+    doc: sitting board
+    shape:
+      type: chamfer_box
+      size:
+      - seat_width
+      - seat_thickness
+      - seat_depth
+      chamfer: 0.01
+    anchor: top
+    position:
+    - 0
+    - seat_height
+    - 0
+    material: wood
+  front_leg:
+    shape:
+      type: chamfer_box
+      size:
+      - leg
+      - seat_height - seat_thickness
+      - leg
+      chamfer: 0.006
+    anchor: top_front_right
+    attach:
+      to: seat
+      at: bottom_front_right
+      offset:
+      - 0 - leg_inset
+      - 0
+      - 0 - leg_inset
+    mirror: x
+    material: wood_dark
+  rear_leg:
+    doc: rear legs continue upward as backrest posts
+    shape:
+      type: chamfer_box
+      size:
+      - leg
+      - back_height
+      - leg
+      chamfer: 0.006
+    anchor: bottom_back_right
+    position:
+    - seat_width / 2 - leg_inset
+    - 0
+    - 0 - seat_depth / 2 + leg_inset
+    mirror: x
+    material: wood_dark
+  top_rail:
+    shape:
+      type: chamfer_box
+      size:
+      - seat_width - 2 * leg_inset - 2 * leg
+      - rail_height
+      - leg * 0.8
+      chamfer: 0.008
+    anchor: top
+    position:
+    - 0
+    - back_height - 0.02
+    - 0 - seat_depth / 2 + leg_inset + leg / 2
+    material: wood
+  back_slat:
+    shape:
+      type: chamfer_box
+      size:
+      - slat_width
+      - back_height - seat_height - rail_height - 0.02
+      - leg * 0.5
+      chamfer: 0.005
+    anchor: bottom
+    position:
+    - 0 - 0.1
+    - seat_height
+    - 0 - seat_depth / 2 + leg_inset + leg / 2
+    array:
+      count: 3
+      offset:
+      - 0.1
+      - 0
+      - 0
+    material: wood
+sockets:
+  sit_point:
+    doc: where a character's pelvis goes when seated
+    attach:
+      to: seat
+      at: top
+      offset:
+      - 0
+      - 0
+      - 0.03
+collision:
+  mode: box
+checks:
+- expr: seat.max.y
+  min: 0.42
+  max: 0.5
+  doc: comfortable seat height
+- expr: asset.height
+  min: 0.85
+  max: 1.1
+  doc: tavern chairs have tall backs
+- expr: top_rail.size.x / seat.size.x
+  min: 0.7
+  max: 1.0
+  doc: backrest spans most of the seat

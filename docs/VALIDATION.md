@@ -1,0 +1,125 @@
+# Validation
+
+`sw validate ASSET` (or `sw review`, or `sw export`) runs every layer and prints
+one summary line, per-layer status, design-check values and one line per issue:
+
+```
+FAIL tavern_table  tris 528/700  parts 12  size 1.406x0.760x0.798 m  materials 2  uv_overlap 0.0  texel 176.6 px/m
+layers: source=PASS geometry=PASS assembly=FAIL budget=PASS intent=PASS surface=PASS style=PASS
+checks: plank.max.y=0.76, plank.max.y - 0.46=0.3
+  ERROR   ASM_FLOATING_PARTS [plank_1]: 1 part(s) do not touch the rest of the asset: plank_1  -> attach them to ...
+```
+
+`--json` prints the full structure, and it is always written to
+`.build/report.json`:
+`{asset, status, source_hash, counts, layers, metrics, issues:[{code, severity, layer, where, msg, hint, data}]}`.
+Exit code: 0 for PASS/WARN, 1 for FAIL, 2 if the source cannot be built.
+
+## Deterministic vs perceptual
+
+| Deterministic (validated here) | Perceptual (judged by the agent from renders) |
+|---|---|
+| closed, manifold, consistently wound meshes | recognizability, silhouette readability |
+| parts physically connected; grounded; origin placement | proportions and visual balance |
+| triangle and material budgets | style adherence, shape language |
+| design-intent checks declared in the source | excessive or insufficient detail |
+| UV bounds, overlap, texel-density spread | "does this belong in the same pack?" |
+| glTF validity and round-trip | appeal |
+
+The style layer is the bridge. It turns a few *measurable* aspects of a style
+(minimum feature size for chunky styles, part and material counts) into
+warnings. It never produces errors, because style is a judgement call.
+
+## Layers and codes
+
+### source (raised while building; the asset cannot be built)
+| Code | Meaning | Typical fix |
+|---|---|---|
+| `SRC_PARSE` | YAML syntax error | fix indentation and quotes |
+| `SRC_SCHEMA` | unknown key, wrong type, missing required field | follow the hint (did-you-mean) |
+| `SRC_EXPR` | expression error or unknown name | check param spelling |
+| `SRC_RANGE` | value outside an op's allowed range | respect `sw doc NAME` limits |
+| `SRC_REF` | unknown part, material, profile, style or extends target | check names |
+| `SRC_CYCLE` | circular params or attachments | break the cycle |
+| `SRC_LIMIT` | resource limit exceeded (`limits.py`) | reduce segments, counts or subdivisions |
+| `OP_FAILED` | a shape or op raised (for example a boolean on bad input) | check parameters and tool placement |
+| `GEO_EMPTY` / `GEO_NONFINITE` | an op produced no or invalid geometry | revise the op |
+| `ASM_MIRROR_ON_PLANE` | a mirrored part sits on the mirror plane | offset it or remove the mirror |
+| `PARAM_OUT_OF_RANGE` (warning) | param outside its declared min/max | intended? widen the range |
+
+### geometry (per part)
+| Code | Sev | Meaning |
+|---|---|---|
+| `GEO_OPEN_EDGES` | error | boundary edges; the surface has holes |
+| `GEO_NONMANIFOLD_EDGES` | error | an edge is shared by more than two faces |
+| `GEO_WINDING_INCONSISTENT` | error | neighbouring faces disagree on orientation |
+| `GEO_INVERTED` | error | closed surface with inward normals |
+| `GEO_DEGENERATE_FACES` | error | zero-area triangles |
+| `GEO_DUPLICATE_FACES` | error | the same triangle twice |
+| `GEO_PART_FRAGMENTED` | warning | a part consists of several disconnected shells (often after a boolean) |
+| `GEO_SLIVER_TRIS` | info | more than 25% very thin triangles (shading artefacts) |
+
+### assembly (semantic structure)
+| Code | Sev | Meaning |
+|---|---|---|
+| `ASM_FLOATING_PARTS` | error | parts not connected to the grounded parts (contact tolerance 1 mm, exact Manifold distance) |
+| `ASM_BELOW_GROUND` | warning | geometry below y = 0 |
+| `ASM_NOT_GROUNDED` | warning | the lowest point is above y = 0 (for floor props) |
+| `ASM_ORIGIN_OFFSET` | warning | origin outside the footprint of the grounded parts |
+| `ASM_HIDDEN_PART` | warning | a part is (almost) entirely inside other parts: wasted triangles |
+| `ASM_SCALE_SUSPICIOUS` | warning | size suggests a units mistake (< 1 cm or > 200 m) |
+
+### budget (production profile)
+| Code | Sev | Meaning |
+|---|---|---|
+| `BUDGET_TRIANGLES` | error | over the triangle budget; the hint lists the heaviest parts |
+| `BUDGET_MATERIALS` | error | more material slots than the budget |
+| `BUDGET_NEAR_LIMIT` | info | within 5% of the triangle budget |
+| `MAT_UNASSIGNED` | warning | a part has no material |
+| `MAT_UNUSED` | info | a declared material is not used |
+
+### intent
+| Code | Sev | Meaning |
+|---|---|---|
+| `CHECK_FAILED` | error (or the check's `severity`) | a `checks:` assertion is outside its range |
+| `CHECK_ERROR` | error | the check expression cannot be evaluated |
+
+### surface
+| Code | Sev | Meaning |
+|---|---|---|
+| `UV_MISSING` | warning | no UVs (`uv.method: none` or xatlas unavailable) |
+| `UV_OUT_OF_BOUNDS` | error | UVs outside 0..1 |
+| `UV_OVERLAP` | error | more than 0.2% of used UV area covered twice (rasterized at up to 1024²) |
+| `UV_TEXEL_DENSITY` | warning | texel density differs by more than 1.5x between parts |
+| `NRM_FLIPPED` | error | vertex normals oppose their face |
+
+Metrics: `uv_overlap`, `uv_utilization`, `texel_density_px_m` (median across
+parts at the profile's texture size).
+
+### style (heuristic, warnings only)
+| Code | Meaning |
+|---|---|
+| `STYLE_THIN_FEATURE` | a part's thinnest dimension is below the style's `min_feature_m` (tag `thin_ok` if intended) |
+| `STYLE_TOO_MANY_PARTS` | more distinct parts than the style suggests |
+| `STYLE_MATERIALS` | more materials than the style suggests |
+
+### export (run by `sw export`)
+| Code | Sev | Meaning |
+|---|---|---|
+| `EXP_GLTF_*` | error/warning | a Khronos glTF-Validator message (code from the validator) |
+| `EXP_ROUNDTRIP_PARTS` | error | part nodes missing after re-import |
+| `EXP_ROUNDTRIP_TRIS` | error | the triangle count changed on re-import |
+| `EXP_ROUNDTRIP_BOUNDS` | error | bounds changed on re-import |
+| `EXP_VALIDATOR_UNAVAILABLE` | info | the Node validator is not installed |
+| `VALIDATOR_CRASHED` | error | a validator raised; the others still ran (report it as a bug) |
+
+## Adding a validator
+
+```python
+@validator("my_rule", "assembly", "One-line description.", ("ASM_MY_CODE",))
+def my_rule(asset, surface, metrics):
+    return [Issue("ASM_MY_CODE", "warning", "what is wrong", where=part.name, layer="assembly", hint="what to change")]
+```
+
+Add a defect-injection test in `tests/test_validation.py` and document the code
+here.
