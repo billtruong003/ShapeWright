@@ -12,7 +12,7 @@ asset:
   tags: [cozy_house, demo_house]
   placement: floor
 budget: {triangles: 30000, materials: 7, texture_size: 2048, draw_calls: 7}
-uv: {texel_density: 64}
+uv: {texel_density: 48}
 export: {merge: by_material}
 collision: {mode: single_box}
 
@@ -149,6 +149,15 @@ parts:
     origin: keep
     position: [x0 + bay / 2, base_h + win_sill, D / 2]
     array: {count: 2, offset: [2 * bay, 0, 0]}
+  shutters_front:
+    doc: open shutters beside both front windows (the blacksmith kit's plank_top, stood upright as in the shutter module)
+    component: plank_top
+    with: {length: win_h, width: win_w / 2, thickness: 0.045, planks: 3, gap: 0.008, wear: wear, batten_from_end: 0.15}
+    materials: {top: planks, under: timber}
+    rotate: [90, 0, 90]
+    anchor: center
+    position: [x0 + bay / 2 + win_w / 2 + frame + win_w / 4 + 0.02, base_h + win_sill + win_h / 2, D / 2 + wall_t / 2 + 0.024]
+    array: [{count: 2, offset: [2 * bay, 0, 0]}, {count: 2, offset: [-(win_w + 2 * frame + win_w / 2 + 0.04), 0, 0]}]
   window_back:
     component: house_window_frame
     with: {w: win_w, h: win_h, depth: wall_t, frame: frame}

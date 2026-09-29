@@ -61,8 +61,8 @@ parts:
       base:
         type: extrude
         origin: keep
-        polygon: [[0, h_top + dt + st * 0.35], [du - 0.006, h_top - (du - 0.006) * tn + dt + st], [du - 0.006, h_top - (du - 0.006) * tn + dt],
-                  [0, h_top + dt]]    # bottom on the deck; 35 % thick up-slope, full thickness at the eave edge
+        polygon: [[0.004, h_top - 0.004 * tn + dt + st * 0.35], [du - 0.006, h_top - (du - 0.006) * tn + dt + st], [du - 0.006, h_top - (du - 0.006) * tn + dt],
+                  [0.004, h_top - 0.004 * tn + dt]]    # bottom on the deck; 35 % thick up-slope, full thickness at the eave edge
         depth: tile - 0.014
         ops:
           - {type: jitter, amount: wear * 0.5, seed: 81}
@@ -70,7 +70,7 @@ parts:
           - {type: repeat, count: ceil(n_courses / 2), offset: [2 * du, -2 * du * tn, 0]}
         rotate: [0, -90, 0]
         translate: [x_start - tile / 2, 0, 0]        # a tile edge on the shared module edge: the bond continues across modules
-      tools: [{type: box, origin: keep, size: [length, h_top * 2 + 2, run + 0.02], translate: [0, h_top / 2, (run + 0.02) / 2]}]
+      tools: [{type: box, origin: keep, size: [length - 0.006, h_top * 2 + 2, run + 0.02], translate: [0, h_top / 2, (run + 0.02) / 2]}]
     origin: keep
     material: roof
 
@@ -83,8 +83,8 @@ parts:
       base:
         type: extrude
         origin: keep
-        polygon: [[0, h_top + dt + st * 0.35], [du - 0.006, h_top - (du - 0.006) * tn + dt + st], [du - 0.006, h_top - (du - 0.006) * tn + dt],
-                  [0, h_top + dt]]    # bottom on the deck; 35 % thick up-slope, full thickness at the eave edge
+        polygon: [[0.004, h_top - 0.004 * tn + dt + st * 0.35], [du - 0.006, h_top - (du - 0.006) * tn + dt + st], [du - 0.006, h_top - (du - 0.006) * tn + dt],
+                  [0.004, h_top - 0.004 * tn + dt]]    # bottom on the deck; 35 % thick up-slope, full thickness at the eave edge
         depth: tile - 0.014
         ops:
           - {type: jitter, amount: wear * 0.5, seed: 82}
@@ -92,7 +92,7 @@ parts:
           - {type: repeat, count: ceil(n_courses / 2), offset: [2 * du, -2 * du * tn, 0]}
         rotate: [0, -90, 0]
         translate: [x_start, -du * tn, du]
-      tools: [{type: box, origin: keep, size: [length, h_top * 2 + 2, run + 0.02], translate: [0, h_top / 2, (run + 0.02) / 2]}]
+      tools: [{type: box, origin: keep, size: [length - 0.006, h_top * 2 + 2, run + 0.02], translate: [0, h_top / 2, (run + 0.02) / 2]}]
     origin: keep
     material: roof
 
@@ -118,10 +118,10 @@ parts:
     doc: barge board along the verge at the -x end
     shape:
       type: extrude
-      polygon: [[0, h_top + dt + st + 0.02], [run, dt + st + 0.02], [run, -0.1], [0, h_top - 0.1]]
+      polygon: [[0, h_top + dt + st + 0.02], [run + 0.03, dt + st + 0.02 - 0.03 * tn], [run + 0.03, -0.1 - 0.03 * tn], [0, h_top - 0.1]]
       depth: 0.05
       rotate: [0, -90, 0]
-      translate: [-length / 2 - 0.02, 0, 0]
+      translate: [-length / 2 - 0.025, 0, 0]     # touches the deck's side (not embedded): its ridge end never overlaps the deck's ridge face
     origin: keep
     material: timber
 
@@ -129,9 +129,9 @@ parts:
     enabled: barge_r > 0
     shape:
       type: extrude
-      polygon: [[0, h_top + dt + st + 0.02], [run, dt + st + 0.02], [run, -0.1], [0, h_top - 0.1]]
+      polygon: [[0, h_top + dt + st + 0.02], [run + 0.03, dt + st + 0.02 - 0.03 * tn], [run + 0.03, -0.1 - 0.03 * tn], [0, h_top - 0.1]]
       depth: 0.05
       rotate: [0, -90, 0]
-      translate: [length / 2 + 0.02, 0, 0]
+      translate: [length / 2 + 0.025, 0, 0]
     origin: keep
     material: timber

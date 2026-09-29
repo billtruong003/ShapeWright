@@ -172,6 +172,15 @@ def read_lock(asset_dir: Path) -> dict | None:
     return yaml.safe_load(p.read_text()) if p.exists() else None
 
 
+def _part_resolution(resolution: int, area: float, total: float) -> int:
+    """Resolution to chart one part at: about the pixel size of the atlas region it will get, as a power of two
+    (64..resolution). Charting every part at the full atlas resolution cost 0.11 s per part at 2048 px and made a
+    571-part house take 95 s to lay out, although each part lands in a region a few dozen pixels wide
+    (MODULAR_HOUSE_PACK_01). Regions are still sized by area afterwards; only the charting grid changes."""
+    est = resolution * np.sqrt(area / max(total, 1e-12)) * 2.0
+    return int(min(resolution, max(64, 2 ** int(np.ceil(np.log2(max(est, 1.0)))))))
+
+
 def compute_layout(asset: Asset, resolution: int, padding: int):
     asset = atlas_view(asset)
     owners = uv_owners(asset)
@@ -180,8 +189,10 @@ def compute_layout(asset: Asset, resolution: int, padding: int):
         first.setdefault(owners[p.name], p)
     charts, areas = {}, {}
     for o, p in first.items():
-        charts[o] = _charts(p, resolution, padding)
         areas[o] = max(p.mesh.area(), 1e-12)
+    total = sum(areas.values())
+    for o, p in first.items():
+        charts[o] = _charts(p, _part_resolution(resolution, areas[o], total), padding)
     gutter = padding / resolution
     items = []
     for o, c in charts.items():

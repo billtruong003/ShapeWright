@@ -33,4 +33,4 @@ parts:
     rotate: [90, 0, 90]
     anchor: center
     mirror: x
-    position: [win_w / 2 + frame + win_w / 4 + 0.02, win_sill + sink + win_h / 2, wall_t / 2 + 0.036]   # battens 5 mm into the stud (hand-derived: instances cannot measure each other)
+    position: [win_w / 2 + frame + win_w / 4 + 0.02, win_sill + sink + win_h / 2, wall_t / 2 + 0.024]   # battens 5 mm into the stud (hand-derived: instances cannot measure each other)

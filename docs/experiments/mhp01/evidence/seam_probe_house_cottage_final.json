@@ -1,0 +1,488 @@
+[
+ {
+  "parts": [
+   "roof_front_1_deck",
+   "roof_front_1_shingles_odd"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.539151
+ },
+ {
+  "parts": [
+   "roof_front_0_deck",
+   "roof_front_1_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.364867
+ },
+ {
+  "parts": [
+   "roof_back_0_deck",
+   "roof_back_1_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.364867
+ },
+ {
+  "parts": [
+   "roof_front_0_deck",
+   "verge_l_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.364867
+ },
+ {
+  "parts": [
+   "roof_back_0_deck",
+   "verge_l_back_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.364867
+ },
+ {
+  "parts": [
+   "roof_front_1_deck",
+   "roof_front_2_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.364867
+ },
+ {
+  "parts": [
+   "roof_back_1_deck",
+   "roof_back_2_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.364867
+ },
+ {
+  "parts": [
+   "roof_front_2_deck",
+   "verge_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.364867
+ },
+ {
+  "parts": [
+   "roof_back_2_deck",
+   "verge_back_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.364867
+ },
+ {
+  "parts": [
+   "verge_barge_right",
+   "verge_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.364867
+ },
+ {
+  "parts": [
+   "verge_back_barge_left",
+   "verge_back_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.364867
+ },
+ {
+  "parts": [
+   "verge_l_barge_left",
+   "verge_l_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.364867
+ },
+ {
+  "parts": [
+   "verge_l_back_barge_right",
+   "verge_l_back_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.364867
+ },
+ {
+  "parts": [
+   "roof_back_0_deck",
+   "roof_front_0_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.282843
+ },
+ {
+  "parts": [
+   "roof_back_1_deck",
+   "roof_front_1_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.282843
+ },
+ {
+  "parts": [
+   "roof_back_2_deck",
+   "roof_front_2_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.282843
+ },
+ {
+  "parts": [
+   "roof_front_0_deck",
+   "roof_front_0_fascia_board"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.282843
+ },
+ {
+  "parts": [
+   "roof_front_1_deck",
+   "roof_front_1_fascia_board"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.282843
+ },
+ {
+  "parts": [
+   "roof_front_2_deck",
+   "roof_front_2_fascia_board"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.282843
+ },
+ {
+  "parts": [
+   "roof_back_0_deck",
+   "roof_back_0_fascia_board"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.282843
+ },
+ {
+  "parts": [
+   "roof_back_1_deck",
+   "roof_back_1_fascia_board"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.282843
+ },
+ {
+  "parts": [
+   "roof_back_2_deck",
+   "roof_back_2_fascia_board"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.282843
+ },
+ {
+  "parts": [
+   "gable_1_rake_l",
+   "verge_back_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.279386
+ },
+ {
+  "parts": [
+   "gable_0_rake_r",
+   "roof_front_0_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.26991
+ },
+ {
+  "parts": [
+   "gable_1_rake_r",
+   "verge_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.237955
+ },
+ {
+  "parts": [
+   "gable_1_rake_l",
+   "roof_back_2_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.209331
+ },
+ {
+  "parts": [
+   "gable_1_rake_r",
+   "roof_front_2_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.203563
+ },
+ {
+  "parts": [
+   "gable_0_rake_r",
+   "verge_l_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.203563
+ },
+ {
+  "parts": [
+   "gable_0_rake_l",
+   "verge_l_back_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.195207
+ },
+ {
+  "parts": [
+   "roof_front_2_deck",
+   "roof_front_2_shingles_odd"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.179281
+ },
+ {
+  "parts": [
+   "verge_back_deck",
+   "verge_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.060811
+ },
+ {
+  "parts": [
+   "verge_l_back_deck",
+   "verge_l_deck"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.060811
+ },
+ {
+  "parts": [
+   "verge_deck",
+   "verge_fascia_board"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.060811
+ },
+ {
+  "parts": [
+   "verge_l_deck",
+   "verge_l_fascia_board"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.060811
+ },
+ {
+  "parts": [
+   "verge_back_deck",
+   "verge_back_fascia_board"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.060811
+ },
+ {
+  "parts": [
+   "verge_l_back_deck",
+   "verge_l_back_fascia_board"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.060811
+ },
+ {
+  "parts": [
+   "deck_0_0_plank_6",
+   "deck_0_1_plank_0"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.023026
+ },
+ {
+  "parts": [
+   "deck_1_0_plank_6",
+   "deck_1_1_plank_0"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.023026
+ },
+ {
+  "parts": [
+   "deck_0_0_joist_0",
+   "deck_0_1_joist_0"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.01872
+ },
+ {
+  "parts": [
+   "deck_0_0_joist_1",
+   "deck_0_1_joist_1"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.01872
+ },
+ {
+  "parts": [
+   "deck_1_0_joist_0",
+   "deck_1_1_joist_0"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.01872
+ },
+ {
+  "parts": [
+   "deck_1_0_joist_1",
+   "deck_1_1_joist_1"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.01872
+ },
+ {
+  "parts": [
+   "deck_2_0_joist_0",
+   "deck_2_1_joist_0"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.01872
+ },
+ {
+  "parts": [
+   "deck_2_0_joist_1",
+   "deck_2_1_joist_1"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.01872
+ },
+ {
+  "parts": [
+   "verge_back_barge_left",
+   "verge_barge_right"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.015321
+ },
+ {
+  "parts": [
+   "verge_l_back_barge_right",
+   "verge_l_barge_left"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.015321
+ },
+ {
+  "parts": [
+   "door_plank_0",
+   "door_strap_0"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.006773
+ },
+ {
+  "parts": [
+   "door_plank_1",
+   "door_strap_0"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.006773
+ },
+ {
+  "parts": [
+   "door_plank_2",
+   "door_strap_0"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.006576
+ },
+ {
+  "parts": [
+   "window_front_0_mullion_v",
+   "window_front_0_sill"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.002613
+ },
+ {
+  "parts": [
+   "window_back_0_mullion_v",
+   "window_back_0_sill"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.002613
+ },
+ {
+  "parts": [
+   "door_plank_0",
+   "door_strap_1"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.001458
+ },
+ {
+  "parts": [
+   "door_plank_1",
+   "door_strap_1"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.001458
+ },
+ {
+  "parts": [
+   "door_plank_2",
+   "door_strap_1"
+  ],
+  "same_facing_m2": 0.0,
+  "same_facing_hidden_m2": 0.0,
+  "back_to_back_m2": 0.001458
+ }
+]

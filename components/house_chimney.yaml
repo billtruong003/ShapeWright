@@ -31,7 +31,7 @@ parts:
     position: [0, shoulder - 0.005, 0]
     material: stone
   stack:
-    shape: {type: chamfer_box, size: [sw, height - shoulder - 0.2, sd], chamfer: 0.03}
+    shape: {type: chamfer_box, size: [sw, height - shoulder - 0.24, sd], chamfer: 0.03}   # ends inside the cap (never flush with its top)
     ops: [{type: jitter, amount: wear, seed: 102}]
     anchor: bottom_back
     position: [0, shoulder + 0.12, -d / 2 + 0.02]

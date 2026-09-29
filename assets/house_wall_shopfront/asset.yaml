@@ -31,4 +31,4 @@ parts:
     with: {length: shop_w + 2 * frame + 0.2, run: 0.62, pitch: 25, t: roof_t * 0.7, st: shingle_t, course: course * 0.8, tile: tile_w, eave: 0.3, rafters: 0, barge_l: 1, barge_r: 1}
     materials: {roof: roof, timber: timber}
     origin: keep
-    position: [0, shop_sill + sink + shop_h + 0.08, wall_t / 2]
+    position: [0, shop_sill + sink + shop_h + 0.08, wall_t / 2 - 0.027]   # 1.5 cm into the stud face (studs sit 12 mm behind the plates; hand-derived)

@@ -1,0 +1,29 @@
+house_cottage: 26 part pairs with SAME-FACING coplanar overlap (z-fighting), 77 pairs only back-to-back (hidden contact)
+  Z-FIGHT    664.11 cm2  wall_back_0_head_rail  <->  wall_back_0_infill
+  Z-FIGHT    615.89 cm2  wall_back_2_head_rail  <->  wall_back_2_infill
+  Z-FIGHT    402.44 cm2  wall_side_0_0_brace_a  <->  wall_side_0_0_brace_b
+  Z-FIGHT    402.44 cm2  wall_side_1_0_brace_a  <->  wall_side_1_0_brace_b
+  Z-FIGHT    402.44 cm2  wall_side_0_1_brace_a  <->  wall_side_0_1_brace_b
+  Z-FIGHT    402.44 cm2  wall_side_1_1_brace_a  <->  wall_side_1_1_brace_b
+  Z-FIGHT     42.15 cm2  gable_0_rake_l  <->  gable_0_rake_r
+  Z-FIGHT     42.15 cm2  gable_1_rake_l  <->  gable_1_rake_r
+  Z-FIGHT     14.06 cm2  verge_barge_right  <->  verge_deck
+  Z-FIGHT     14.06 cm2  verge_back_barge_left  <->  verge_back_deck
+  Z-FIGHT     14.06 cm2  verge_l_barge_left  <->  verge_l_deck
+  Z-FIGHT     14.06 cm2  verge_l_back_barge_right  <->  verge_l_back_deck
+  Z-FIGHT     11.28 cm2  roof_front_0_deck  <->  roof_front_0_shingles_even
+  Z-FIGHT     11.28 cm2  roof_front_1_deck  <->  roof_front_1_shingles_even
+  Z-FIGHT     11.28 cm2  roof_front_2_deck  <->  roof_front_2_shingles_even
+  Z-FIGHT     11.28 cm2  roof_back_0_deck  <->  roof_back_0_shingles_even
+  Z-FIGHT     11.28 cm2  roof_back_1_deck  <->  roof_back_1_shingles_even
+  Z-FIGHT     11.28 cm2  roof_back_2_deck  <->  roof_back_2_shingles_even
+  Z-FIGHT      5.53 cm2  verge_back_deck  <->  verge_back_shingles_even
+  Z-FIGHT      5.53 cm2  verge_l_deck  <->  verge_l_shingles_even
+  Z-FIGHT      1.88 cm2  verge_deck  <->  verge_shingles_even
+  Z-FIGHT      1.88 cm2  verge_l_back_deck  <->  verge_l_back_shingles_even
+  Z-FIGHT      0.75 cm2  verge_back_barge_left  <->  verge_back_shingles_even
+  Z-FIGHT      0.75 cm2  verge_l_barge_left  <->  verge_l_shingles_even
+  Z-FIGHT      0.67 cm2  verge_barge_right  <->  verge_shingles_even
+  Z-FIGHT      0.67 cm2  verge_l_back_barge_right  <->  verge_l_back_shingles_even
+WARN house_cottage  tris 24008/30000  parts 350  size 7.355x6.622x5.546 m  materials 7  uv_overlap 0.0  texel 56.4 px/m (median part)
+layers: source=PASS geometry=PASS assembly=PASS budget=PASS intent=PASS surface=WARN style=PASS

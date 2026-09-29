@@ -36,7 +36,8 @@ parts:
     shape: {type: strut, from: [0, timber * 0.5, -z0], to: [0, h - cz - 0.004, 0], size: [timber, depth - 0.006], depth_axis: x, chamfer: chamfer}
     material: timber
   rake_r:
-    shape: {type: strut, from: [0, timber * 0.5, z0], to: [0, h - cz - 0.004, 0], size: [timber, depth - 0.006], depth_axis: x, chamfer: chamfer}
+    doc: 6 mm shallower than rake_l, so the two never share a face where they meet at the apex
+    shape: {type: strut, from: [0, timber * 0.5, z0], to: [0, h - cz - 0.004, 0], size: [timber, depth - 0.012], depth_axis: x, chamfer: chamfer}
     material: timber
 
   tie:
