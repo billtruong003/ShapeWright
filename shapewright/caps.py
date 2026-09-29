@@ -17,6 +17,7 @@ from .validate import VALIDATORS
 from .validate import load_builtin as load_validators
 
 COMMANDS = {
+    "brief REQUEST": "start here: closest example asset (with source), profile, rules and vocabulary for a request",
     "caps": "list capabilities (this manifest); --json for everything",
     "doc NAME": "details and example for one shape, op, view, mode or issue code",
     "new NAME [--from ASSET]": "scaffold assets/NAME/asset.yaml (optionally as a variant of ASSET)",

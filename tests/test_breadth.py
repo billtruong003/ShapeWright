@@ -159,3 +159,16 @@ def test_an_error_inside_array_each_is_reported_once(make_asset):
         asset(make_asset, "  s: {shape: {type: box, size: [0.1, 0.1, 0.1]}, material: m, array: {count: 12, offset: [0.2, 0, 0], "
                           "each: {translate: [0, nope, 0]}}}\n")
     assert len([i for i in e.value.issues if i.code == "SRC_EXPR"]) == 1
+
+
+def test_flat_bottom_at_trims_a_splayed_strut_at_the_ground(make_asset):
+    # FA-10 A: a splayed leg could only be grounded by hand-tuning `fraction`
+    a = asset(make_asset, """
+  leg: {shape: {type: strut, from: [0, -0.05, 0], to: [0.2, 0.6, 0], size: [0.05, 0.05]}, ops: [{type: flat_bottom, at: 0}], material: m}
+""")
+    lo, _ = a.part("leg").bounds
+    assert abs(lo[1]) < 1e-6
+    with pytest.raises(SourceError):
+        asset(make_asset, """
+  leg: {shape: {type: strut, from: [0, 0, 0], to: [0.2, 0.6, 0], size: [0.05, 0.05]}, ops: [{type: flat_bottom, at: 2}], material: m}
+""", name="t2")

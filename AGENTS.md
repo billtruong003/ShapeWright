@@ -10,9 +10,14 @@ Everything runs headless with Python 3.10+. From a fresh clone:
 
 ```bash
 pip install -r requirements.txt        # numpy scipy trimesh manifold3d xatlas pillow pyyaml fast-simplification
-./sw doctor                            # environment check
+./sw brief "the user's request"        # START HERE: closest example asset (full source), profile and budget,
+                                       # rules for this kind of prop, vocabulary with docs, in one call
+./sw doctor                            # environment check (only if something fails)
 ./sw caps                              # the full modelling vocabulary (generated from code, always current)
 ```
+
+`sw brief` is usually all the reading you need before writing a first version. Consult
+`docs/ASSET_FORMAT.md` and `sw doc NAME` when you need a specific key or shape.
 
 Optional: `cd tools/gltf-validator && npm install` enables the Khronos glTF
 validator during `sw export`.

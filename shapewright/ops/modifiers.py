@@ -272,12 +272,18 @@ def intersect(m, a, b):
     return b.cut_check(m, backend.boolean(m, _tool(a, b), "intersection").merged(), "intersect")
 
 
-@op("flat_bottom", "Cut everything below a height (fraction of local height from the bottom) to create a flat base.",
-    [Param("fraction", "num", 0.15, "0..0.9 of the height removed from the bottom", min=0, max=0.9)], "rebuild", category="boolean",
-    example="{type: flat_bottom, fraction: 0.2}")
+@op("flat_bottom", "Cut everything below a height to create a flat base: a fraction of the local height from the bottom, "
+    "or `at`, a y in the part's authoring coordinates. For parts placed by their own coordinates (strut, "
+    "origin: keep) those are asset coordinates, so `at: 0` trims a splayed leg exactly at the ground; for "
+    "centred parts y = 0 is the part's centre.",
+    [Param("fraction", "num", 0.15, "0..0.9 of the height removed from the bottom", min=0, max=0.9),
+     Param("at", "num", None, "y to cut at, in authoring coordinates (overrides fraction)")], "rebuild", category="boolean",
+    example="{type: flat_bottom, at: 0}")
 def flat_bottom(m, a, b):
     lo, hi = m.V[:, 1].min(), m.V[:, 1].max()
-    cut = lo + (hi - lo) * a["fraction"]
+    cut = a["at"] - b.frame[1] if a.get("at") is not None else lo + (hi - lo) * a["fraction"]
+    if a.get("at") is not None and not lo < cut < hi:
+        raise ValueError(f"flat_bottom at y={a['at']:.4g} is outside the part (y {lo + b.frame[1]:.4g}..{hi + b.frame[1]:.4g})")
     out = b.cut_check(m, backend.trim(m, [0, 1, 0], cut).merged(), "flat_bottom")
     new = out.fattr["origin"] < 0 if "origin" in out.fattr else np.zeros(out.n_tris, bool)
     if new.any():

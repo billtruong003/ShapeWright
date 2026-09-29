@@ -72,3 +72,16 @@ checks:
     r = run_validation(a, build_surface(a))
     assert r["metrics"]["checks"] == {"step.count": 4, "step.last.max.y - step.first.min.y": 0.4}
     assert list(a.sockets[0].position) == [0, 0, 0]
+
+
+def test_brief_ranks_examples_and_names_rules():
+    # Phase 14: one-call onboarding (FA-10 baselines spent 16-17 calls before their first build)
+    from shapewright.brief import brief, rank
+
+    assert rank("a treasure chest with an opening lid")[0][1]["name"] == "treasure_chest"
+    assert rank("a street lamp with a hanging lantern")[0][1]["name"] == "street_lamp"
+    assert rank("a wall-mounted torch bracket")[0][1]["name"] == "torch_bracket"
+    text = brief("a cellar door that can swing on a wall, mobile, exported for Godot, under 1,200 triangles")
+    assert "profile: godot" in text and "budget: {triangles: 1200}" in text
+    assert "pivot:" in text and "placement: wall" in text
+    assert "SOURCE OF THE CLOSEST EXAMPLE: assets/" in text

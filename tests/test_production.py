@@ -170,3 +170,12 @@ def test_strut_depth_axis_is_consistent(make_asset):
     sz = [p.mesh.size() for p in a.parts]
     assert sz[1][2] == pytest.approx(0.06, abs=1e-6)  # depth along z for the leg leaning in x
     assert sz[0][2] > 0.05  # and (mostly) along z for the one leaning in z
+
+
+def test_pivot_at_a_point_in_asset_coordinates(make_asset):
+    # FA-10 A: a hinge on a computed axis needed hand-derived -1..1 coefficients
+    base = CHEST.format(profile="godot", collision="hull")
+    a = build(make_asset(base.replace("pivot: bottom_back}", "pivot: {at: [0, 0.4 + 0.01, -0.5 / 2]}}"), "hinge"))
+    assert np.allclose(a.part("lid").pivot, [0, 0.41, -0.25])
+    b = build(make_asset(base.replace("pivot: bottom_back", "pivot: [0, -1, -0.5 * 2]"), "hinge2"))
+    assert np.allclose(b.part("lid").pivot, chest(make_asset, name="c3").part("lid").pivot)

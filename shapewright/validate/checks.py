@@ -515,7 +515,10 @@ def surface_textures(asset: Asset, surface: Surface, metrics: dict):
     metrics["texture"] = {"resolution": tex.resolution, "target_px_m": tex.target_px_m, "achieved_px_m": round(tex.achieved_px_m, 1),
                           "memory_kb": int(tex.resolution ** 2 * 4 * 2 / 1024)}
     if tex.needed_resolution > tex.resolution:
-        out.append(_issue("TEX_DENSITY_BELOW_TARGET", "warning", "surface",
+        # a target the asset asked for is a warning; the profile's default target is only information:
+        # FA-10: a 1 m prop at the mobile_mid default (256 px/m, 512 px cap) warned every time
+        own = (asset.source.get("uv") or {}).get("texel_density") or (asset.source.get("budget") or {}).get("texel_density")
+        out.append(_issue("TEX_DENSITY_BELOW_TARGET", "warning" if own else "info", "surface",
                           f"{tex.target_px_m:g} px/m needs a {tex.needed_resolution}px atlas; budget allows {tex.resolution}px "
                           f"({tex.achieved_px_m:.0f} px/m achieved)", "uv", f"set uv: {{texel_density: {int(tex.achieved_px_m // 10 * 10) or int(tex.achieved_px_m)}}} (what this atlas achieves), raise budget.texture_size, or reduce surface area"))
     for code, sev, msg, where, hint in tex.issues:

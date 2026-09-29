@@ -165,6 +165,7 @@ class BuildCtx:
         self.env, self.ctx, self.where = env, ctx, where
         self.asset_dir = asset_dir
         self.materials = materials or {}
+        self.frame = np.zeros(3)  # authoring-frame position of the centred mesh ops see (origin: keep parts)
 
     def vec(self, value, n, where):
         out = S.vec(value, n, self.env, f"{self.where}.{where}", self.ctx)
@@ -264,7 +265,7 @@ def build_geometry(raw: Any, env: dict, ctx: S.Ctx, where: str, asset_dir: Path 
             unset = mesh.fattr["material"] < 0 if "material" in mesh.fattr else None
             mesh.set_label("material", mat, unset)  # inner expressions keep their own material
     home = mesh.center() if keep_origin else None
-    mesh = apply_ops(mesh.recentered(), raw.get("ops"), env, ctx, f"{where}.ops", asset_dir, materials)
+    mesh = apply_ops(mesh.recentered(), raw.get("ops"), env, ctx, f"{where}.ops", asset_dir, materials, frame=home)
     if mesh is None:
         return None
     if home is not None:
@@ -285,7 +286,8 @@ def build_geometry(raw: Any, env: dict, ctx: S.Ctx, where: str, asset_dir: Path 
 build_shape = build_geometry  # v0.1 name
 
 
-def apply_ops(mesh: Mesh, ops: Any, env: dict, ctx: S.Ctx, where: str, asset_dir: Path | None = None, materials: dict | None = None) -> Mesh | None:
+def apply_ops(mesh: Mesh, ops: Any, env: dict, ctx: S.Ctx, where: str, asset_dir: Path | None = None, materials: dict | None = None,
+              frame: np.ndarray | None = None) -> Mesh | None:
     if ops is None:
         return mesh
     if not isinstance(ops, list):
@@ -302,8 +304,11 @@ def apply_ops(mesh: Mesh, ops: Any, env: dict, ctx: S.Ctx, where: str, asset_dir
         args = S.resolve_args(spec, raw, env, path, ctx)
         if args is None:
             return None
+        b = BuildCtx(env, ctx, path, asset_dir, materials)
+        if frame is not None:
+            b.frame = np.asarray(frame, float)
         try:
-            mesh = spec.fn(mesh, args, BuildCtx(env, ctx, path, asset_dir, materials))
+            mesh = spec.fn(mesh, args, b)
         except LimitError as e:
             ctx.error("SRC_LIMIT", path, f"{spec.name}: {e}", "reduce counts/iterations or split the geometry into several parts")
             return None
@@ -953,7 +958,7 @@ def build_part(u: Unit, world: World, materials: dict, style: dict, asset_dir: P
     if mesh is None:
         return []
     home = mesh.center() if keep else np.zeros(3)
-    mesh = apply_ops(mesh.recentered(), raw.get("ops"), env, ctx, f"{where}.ops", asset_dir, materials)
+    mesh = apply_ops(mesh.recentered(), raw.get("ops"), env, ctx, f"{where}.ops", asset_dir, materials, frame=home)
     if mesh is None:
         return []
     mesh = mesh.translated(home)
@@ -997,11 +1002,26 @@ def build_part(u: Unit, world: World, materials: dict, style: dict, asset_dir: P
         uv = {}
     source_kind = "file" if isinstance(raw["shape"], dict) and raw["shape"].get("type") == "mesh_file" else "native"
     out = []
+    pivot_c = None
+    if isinstance(raw.get("pivot"), dict):
+        # pivot: {at: [x, y, z]}: a point in asset coordinates, expressions allowed (FA-10: a hinge on a
+        # computed axis needed hand-derived -1..1 coefficients). Stored relative to the part's box so
+        # mirrored/arrayed instances get theirs the same way as named anchors.
+        if set(raw["pivot"]) != {"at"}:
+            ctx.error("SRC_SCHEMA", f"{where}.pivot", "pivot mapping takes only `at`: {at: [x, y, z]} in asset coordinates")
+        else:
+            at = S.vec(raw["pivot"]["at"], 3, env, f"{where}.pivot.at", ctx)
+            if at is not None:
+                bb = mesh.bounds()
+                half = np.maximum((bb[1] - bb[0]) / 2, 1e-9)
+                pivot_c = (np.asarray(at) - (bb[0] + bb[1]) / 2) / half
+    elif isinstance(raw.get("pivot"), (list, tuple)):
+        v = S.vec(raw["pivot"], 3, env, f"{where}.pivot", ctx)
+        pivot_c = None if v is None else np.asarray(v)
+    elif raw.get("pivot") is not None:
+        pivot_c = anchor_coeffs(raw["pivot"], f"{where}.pivot", ctx)
     for iname, imesh, info in _replicate(u.name, mesh, raw, env, ctx, where, pivot_point):
-        piv = None
-        if raw.get("pivot") is not None:
-            c = anchor_coeffs(raw["pivot"], f"{where}.pivot", ctx)
-            piv = anchor_point(imesh.bounds(), c) if c is not None else None
+        piv = anchor_point(imesh.bounds(), pivot_c) if pivot_c is not None else None
         out.append(Part(iname, u.name, imesh, material, shading, smooth_angle, raw.get("parent"), piv,
                         list(raw.get("tags") or []), str(raw.get("doc", "")), info, u.component, source_kind, uv))
     return out

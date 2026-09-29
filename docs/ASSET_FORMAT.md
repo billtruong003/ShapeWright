@@ -137,7 +137,8 @@ parts:
     shading: auto                 # flat | smooth | auto (auto-smooth by angle)
     smooth_angle: 40
     parent: seat                  # semantic hierarchy in the exported node tree
-    pivot: bottom                 # exported node origin (default: asset origin)
+    pivot: bottom                 # exported node origin (default: asset origin); also [cx, cy, cz] in -1..1,
+                                  # or {at: [x, y, z]}: a point in asset coordinates (expressions allowed), e.g. a hinge axis
     tags: [structural]            # free tags; `floating_ok`, `thin_ok` silence validators
 ```
 

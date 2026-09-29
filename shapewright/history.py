@@ -92,6 +92,14 @@ def load_ref(asset_path: Path, ref: str) -> tuple[str, Asset]:
     return f"#{n}", a
 
 
+def _recorded(asset_path: Path, label: str) -> str | None:
+    """Status stored in the snapshot's summary (FA-10: compare re-validated #1 as WARN against a later uv.lock)."""
+    if not label.startswith("#"):
+        return None
+    f = history_dir(asset_path) / f"{int(label[1:]):03d}" / "summary.json"
+    return json.loads(f.read_text()).get("status") if f.exists() else None
+
+
 def _mask(asset, surface, view, frame, size):
     im = render(asset, surface, view, "silhouette", size, frame=frame, annotate=False)
     return np.asarray(im.convert("L")) < 128
@@ -139,7 +147,8 @@ def compare(asset_path: Path, ref_a: str, ref_b: str, views=("front", "right", "
     ra, rb = run_validation(a, sa), run_validation(b, sb)
     metrics = {
         "a": la, "b": lb,
-        "status": [ra["status"], rb["status"]],
+        "status": [ra["status"], rb["status"]],  # re-validated now (an old iteration meets today's uv.lock)
+        "status_recorded": [_recorded(asset_path, la) or ra["status"], _recorded(asset_path, lb) or rb["status"]],
         "triangles": [a.n_tris, b.n_tris],
         "size_m": [[round(float(v), 4) for v in ba[1] - ba[0]], [round(float(v), 4) for v in bb[1] - bb[0]]],
         "silhouette_iou": ious,

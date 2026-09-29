@@ -91,6 +91,13 @@ def cmd_caps(a):
     return 0
 
 
+def cmd_brief(a):
+    from .brief import brief
+
+    print(brief(" ".join(a.request)))
+    return 0
+
+
 def cmd_doc(a):
     from .caps import manifest
 
@@ -520,7 +527,7 @@ def cmd_doctor(a):
 
 
 def build_parser() -> argparse.ArgumentParser:
-    ap = argparse.ArgumentParser(prog="sw", description="Shapewright: agent-native 3D modelling. Start with `sw caps` and AGENTS.md.")
+    ap = argparse.ArgumentParser(prog="sw", description="Shapewright: agent-native 3D modelling. Start with `sw brief REQUEST` and AGENTS.md.")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     def add(name, fn, help_, asset=True):
@@ -533,6 +540,8 @@ def build_parser() -> argparse.ArgumentParser:
         p.set_defaults(fn=fn)
         return p
 
+    p = add("brief", cmd_brief, "start here: closest example asset, profile, rules and vocabulary for a request", asset=False)
+    p.add_argument("request", nargs="+", help="the request in words, e.g. \"a hanging tavern sign, mobile, under 1200 triangles\"")
     p = add("caps", cmd_caps, "capability manifest", asset=False)
     p.add_argument("--json", action="store_true")
     p = add("doc", cmd_doc, "details for a shape/op/view/mode/issue code", asset=False)
