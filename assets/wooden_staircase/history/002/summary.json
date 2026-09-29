@@ -1,0 +1,65 @@
+{
+ "iteration": 2,
+ "note": "fix floating top baluster (array steps-1) + ray-measured baluster_top on the flat stringer top; newel jitter x/z only; riser_t 0.035; chunkier rail (0.085x0.075) and balusters (0.05); pitch check corrected for chamfer inset",
+ "critique": "PASS, no warnings. Isolated right view: every baluster stands on the stringer and meets the rail underside; spacing now uniform up to the top newel. Rail pitch residual 0.000. Remaining perceptual: top newels are tall (2.6 m) because the rail continues at pitch to the landing post, acceptable for a flight that meets a landing; hand-made touch is subtle (tread/newel jitter 3 mm).",
+ "source_hash": "0bbb53b49faf",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 3
+ },
+ "metrics": {
+  "triangles": 1632,
+  "parts": 44,
+  "size_m": [
+   1.215,
+   2.6384,
+   2.34
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "tread.max.y - steps * rise": 0.0,
+   "(handrail_right.size.y - rail_h) / (handrail_right.size.z - 2 * rail_chamfer) - rise / run": -0.0,
+   "handrail_right.max.y - tread.max.y": 1.0787,
+   "tread.min.x < stringer_left.max.x - 0.01 and tread.max.x > stringer_right.min.x + 0.01": true,
+   "newel_top_right.max.y > handrail_right.max.y and newel_bottom_right.max.y > handrail_right.min.y + rail_h * 0.5": true,
+   "2 * rise + run": 0.64
+  }
+ },
+ "errors": [],
+ "params": {
+  "steps": 8.0,
+  "rise": 0.18,
+  "run": 0.28,
+  "width": 1.0,
+  "rail_height": 0.9,
+  "wear": 0.003,
+  "tread_t": 0.05,
+  "nosing": 0.03,
+  "riser_t": 0.035,
+  "embed": 0.02,
+  "stringer_t": 0.07,
+  "stringer_e": 0.05,
+  "stringer_margin": 0.06,
+  "post": 0.11,
+  "post_extra": 0.07,
+  "rail_w": 0.085,
+  "rail_h": 0.075,
+  "rail_chamfer": 0.012,
+  "baluster": 0.05,
+  "slope": 0.64286,
+  "u_end": 2.275,
+  "depth": 2.305,
+  "z_front": 1.1525,
+  "z_riser0": 1.1225,
+  "stringer_x": 0.535,
+  "band": 0.38179,
+  "u_foot": 0.20611,
+  "band_end_y": 1.33,
+  "z_top_bal": -0.9775,
+  "newel_bottom_h": 1.18536,
+  "newel_top_h": 2.59643
+ }
+}

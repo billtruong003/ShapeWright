@@ -1,0 +1,370 @@
+shapewright: 0.1
+asset:
+  name: wooden_staircase
+  kind: prop/architecture/stairs
+  description: Stylized wooden straight-flight staircase with handrails on both sides, parametric in steps, rise, run and
+    width.
+  tags:
+  - stairs
+  - wood
+  - architecture
+  - modular
+profile: desktop_indie
+style: stylized_lowpoly
+budget:
+  triangles: 3000
+interface:
+  doc: Staircase family. Variants set these params only; construction stays private.
+  params:
+  - steps
+  - rise
+  - run
+  - width
+  - rail_height
+  - wear
+params:
+  steps:
+    value: 8
+    min: 3
+    max: 14
+    doc: number of treads
+  rise:
+    value: 0.18
+    min: 0.14
+    max: 0.22
+    doc: height of each step (m)
+  run:
+    value: 0.28
+    min: 0.22
+    max: 0.34
+    doc: horizontal depth of each step
+    nosing to nosing (m): null
+  width:
+    value: 1.0
+    min: 0.6
+    max: 1.6
+    doc: clear walking width between the stringers (m)
+  rail_height:
+    value: 0.9
+    min: 0.8
+    max: 1.0
+    doc: top of the handrail above the nosing line (m)
+  wear:
+    value: 0.003
+    doc: hand-made jitter amplitude
+  tread_t: 0.05
+  nosing: 0.03
+  riser_t: 0.025
+  embed: 0.02
+  stringer_t: 0.07
+  stringer_e: 0.05
+  stringer_margin: 0.06
+  post: 0.11
+  post_extra: 0.07
+  rail_w: 0.075
+  rail_h: 0.065
+  baluster: 0.045
+  slope: rise / run
+  u_end: steps * run + riser_t
+  depth: u_end + nosing
+  z_front: depth / 2
+  z_riser0: z_front - nosing
+  stringer_x: width / 2 + stringer_t / 2
+  band: rise + tread_t + stringer_e + (riser_t + nosing) * slope + stringer_margin
+  u_foot: (band - rise - stringer_e) / slope - nosing
+  band_end_y: rise + stringer_e + (u_end + nosing) * slope - band
+  newel_bottom_h: rise + post / 2 * slope + rail_height + post_extra
+  newel_top_h: rise + (u_end - post / 2 + nosing) * slope + rail_height + post_extra
+materials:
+  wood:
+    base_color: '#b07a4a'
+    roughness: 0.85
+    doc: treads and handrail (worn, lighter)
+  wood_dark:
+    base_color: '#5e3b22'
+    roughness: 0.9
+    doc: stringers, posts, risers, balusters
+parts:
+  stringer:
+    doc: 'closed (housed) stringer: a sloped board parallel to the nosing line, eased to horizontal at the top, cut flat on
+      the ground at the foot and square at the back
+
+      '
+    shape:
+      type: extrude
+      depth: stringer_t
+      polygon:
+      - - -nosing
+        - 0
+      - - u_foot
+        - 0
+      - - u_end
+        - band_end_y
+      - - u_end
+        - steps * rise + stringer_e
+      - - (steps - 1) * run - nosing
+        - steps * rise + stringer_e
+      - - -nosing
+        - rise + stringer_e
+    rotate:
+    - 0
+    - 90
+    - 0
+    anchor: bottom_front
+    position:
+    - stringer_x
+    - 0
+    - z_front
+    mirror: x
+    material: wood_dark
+  tread:
+    doc: one board per step, housed into both stringers; overhangs its riser by the nosing
+    measure:
+      span:
+        gap:
+        - stringer_left
+        - stringer_right
+        axis: x
+        section:
+          axis: y
+          at: rise
+    shape:
+      type: chamfer_box
+      size:
+      - span.length + 2 * embed
+      - tread_t
+      - run + nosing + riser_t
+      chamfer: 0.01
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 11
+    anchor: top_front
+    position:
+    - span.center
+    - rise
+    - z_front
+    array:
+      count: steps
+      offset:
+      - 0
+      - rise
+      - -run
+    material: wood
+  riser:
+    doc: closes each step; stands on the tread below (or the ground) and tucks under its own tread
+    measure:
+      span:
+        gap:
+        - stringer_left
+        - stringer_right
+        axis: x
+        section:
+          axis: y
+          at: rise
+    shape:
+      type: box
+      size:
+      - span.length + 2 * embed
+      - rise - tread_t + 0.005
+      - riser_t
+    anchor: top_front
+    position:
+    - span.center
+    - rise - tread_t + 0.005
+    - z_riser0
+    array:
+      count: steps
+      offset:
+      - 0
+      - rise
+      - -run
+    material: wood_dark
+  newel_bottom:
+    doc: starting newel post, grounded, straddling the stringer foot
+    measure:
+      s:
+        bounds: stringer_right
+    shape:
+      type: chamfer_box
+      size:
+      - post
+      - newel_bottom_h
+      - post
+      chamfer: 0.012
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 21
+    anchor: bottom_front
+    position:
+    - s.center.x
+    - 0
+    - s.max.z
+    mirror: x
+    material: wood_dark
+  newel_top:
+    doc: landing newel post, grounded, carrying the top end of the stringer
+    measure:
+      s:
+        bounds: stringer_right
+    shape:
+      type: chamfer_box
+      size:
+      - post
+      - newel_top_h
+      - post
+      chamfer: 0.012
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 22
+    anchor: bottom_back
+    position:
+    - s.center.x
+    - 0
+    - s.min.z
+    mirror: x
+    material: wood_dark
+  newel_bottom_cap:
+    shape:
+      type: chamfer_box
+      size:
+      - post + 0.035
+      - 0.05
+      - post + 0.035
+      chamfer: 0.012
+    anchor: bottom
+    attach:
+      to: newel_bottom
+      at: top
+      offset:
+      - 0
+      - -0.008
+      - 0
+    mirror: x
+    material: wood
+  newel_top_cap:
+    shape:
+      type: chamfer_box
+      size:
+      - post + 0.035
+      - 0.05
+      - post + 0.035
+      chamfer: 0.012
+    anchor: bottom
+    attach:
+      to: newel_top
+      at: top
+      offset:
+      - 0
+      - -0.008
+      - 0
+    mirror: x
+    material: wood
+  handrail:
+    doc: sloped rail running between the two newel posts' centres, vertical ends buried in the posts
+    measure:
+      bp:
+        bounds: newel_bottom_right
+      tp:
+        bounds: newel_top_right
+    shape:
+      type: chamfer_box
+      size:
+      - rail_w
+      - rail_h
+      - bp.center.z - tp.center.z
+      chamfer: 0.012
+    ops:
+    - type: shear
+      axis: z
+      toward: y
+      amount: bp.max.y - tp.max.y
+    anchor: center
+    position:
+    - bp.center.x
+    - (bp.max.y + tp.max.y) / 2 - post_extra - rail_h / 2
+    - (bp.center.z + tp.center.z) / 2
+    mirror: x
+    material: wood
+  baluster:
+    doc: one per step, from the stringer's top edge up into the rail's underside (both found by ray casts)
+    measure:
+      low:
+        ray: stringer_right
+        from:
+        - stringer_x
+        - 10
+        - z_riser0 - run / 2
+        dir:
+        - 0
+        - -1
+        - 0
+      high:
+        ray: handrail_right
+        from:
+        - stringer_x
+        - 0
+        - z_riser0 - run / 2
+        dir:
+        - 0
+        - 1
+        - 0
+    shape:
+      type: chamfer_box
+      size:
+      - baluster
+      - high.y - low.y + 0.03
+      - baluster
+      chamfer: 0.008
+    anchor: bottom
+    position:
+    - stringer_x
+    - low.y - 0.015
+    - z_riser0 - run / 2
+    array:
+      count: steps
+      offset:
+      - 0
+      - rise
+      - -run
+    mirror: x
+    material: wood_dark
+sockets:
+  bottom_step:
+    doc: where a character starts climbing
+    position:
+    - 0
+    - 0
+    - z_front + 0.3
+  top_landing:
+    doc: top of the flight (landing level, just past the last tread)
+    position:
+    - 0
+    - steps * rise
+    - -z_front
+collision:
+  mode: hull
+checks:
+- expr: tread.max.y - steps * rise
+  min: -0.006
+  max: 0.006
+  doc: top tread surface is at steps x rise
+- expr: (handrail_right.size.y - rail_h) / handrail_right.size.z - rise / run
+  min: -0.01
+  max: 0.01
+  doc: handrail follows the stair pitch
+- expr: handrail_right.max.y - tread.max.y
+  min: 0.75
+  max: 1.1
+  doc: rail stays at hand height above the top step
+- expr: tread.min.x < stringer_left.max.x - 0.01 and tread.max.x > stringer_right.min.x + 0.01
+  doc: treads are housed into both stringers
+- expr: newel_top_right.max.y > handrail_right.max.y and newel_bottom_right.max.y > handrail_right.min.y + rail_h * 0.5
+  doc: rail ends are below the post tops
+- expr: 2 * rise + run
+  min: 0.58
+  max: 0.68
+  severity: warning
+  doc: comfortable stair (Blondel rule 2R + G ~ 0.63 m)

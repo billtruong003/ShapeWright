@@ -82,6 +82,10 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
   put it in the asset directory and use `{type: mesh_file, path: ...}`, or
   `sw import FILE NAME`. It is validated, rendered and exported like the rest.
 - Before any texturing work: `sw uv ASSET lock` and commit `uv.lock.yaml`.
+- To prove an asset stays correct when its params change, try values without
+  editing the file: `sw validate ASSET --set steps=14,rise=0.2` (also works on
+  `review`, `render`, `stats`). Keep permanent variants as `extends` files and
+  check them with `sw family`.
 - `mirror: x` creates `<name>_left` / `<name>_right`. `array` creates `<name>_0..n`.
   Refer to instances by those names in `checks` and `--part`.
 - Numbers can be expressions: `seat_height - seat_thickness / 2`. Only

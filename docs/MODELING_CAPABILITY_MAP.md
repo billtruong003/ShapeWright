@@ -34,6 +34,9 @@ See docs/HARDENING.md. Rows below keep their original text; these entries overri
 | Stable UVs, shared instance UVs, seams (§10) | NEAR | NOW (region-level) | part-owned regions, `uv.lock.yaml`, `share_instances`, `seams: regions` |
 | Chart identity across geometry edits (§10) | — | RESEARCH | would need chart transfer by projection |
 | Cross-part booleans (§1) | NEAR | NEAR | blocked by placement↔geometry ordering; see HARDENING.md |
+| Parametric-robustness testing (`--set`), `first/last/count` in checks | — | NOW | Phase 5 (FRESH_AGENT_02) |
+| Support/load-path validation ("supported", not just "touching") | — | NEAR | Phase 5 finding |
+| Generated lists (per-index profiles, saw-tooth stringers) | — | NEAR | Phase 5 finding; evaluate in Phase 9 |
 
 ---
 

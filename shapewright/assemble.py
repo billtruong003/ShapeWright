@@ -872,7 +872,7 @@ def build(path: str | Path) -> Asset:
         pos, owner = np.zeros(3), None
         if "attach" in raw:
             at = raw["attach"]
-            tb = world.bounds(str(at.get("to")))
+            tb = np.zeros((2, 3)) if str(at.get("to")) == "origin" else world.bounds(str(at.get("to")))
             if tb is None:
                 ctx.error("SRC_REF", f"{where}.attach.to", f"unknown part '{at.get('to')}'", suggest(str(at.get("to")), names).strip())
                 continue

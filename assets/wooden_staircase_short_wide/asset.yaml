@@ -1,0 +1,5 @@
+# Parameter variant of wooden_staircase: a short, wide, shallow flight (porch / dais steps).
+shapewright: 0.1
+extends: ../wooden_staircase
+asset: {name: wooden_staircase_short_wide}
+params: {steps: 4, rise: 0.16, run: 0.32, width: 1.5}

@@ -1,0 +1,5 @@
+# Parameter variant of wooden_staircase: maximum step count, steep and narrow (cellar / loft stair).
+shapewright: 0.1
+extends: ../wooden_staircase
+asset: {name: wooden_staircase_steep_narrow}
+params: {steps: 14, rise: 0.22, run: 0.22, width: 0.7, rail_height: 0.85}

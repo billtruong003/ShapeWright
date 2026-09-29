@@ -244,6 +244,9 @@ def metric_namespace(asset: Asset) -> dict:
         if base not in env or len(ps) > 1:
             bb = np.stack([np.min([q.bounds[0] for q in ps], 0), np.max([q.bounds[1] for q in ps], 0)])
             env[base] = box_ns(bb, sum(q.mesh.n_tris for q in ps), base)
+            if len(ps) > 1:  # repeated parts: first/last instance in build order, and how many
+                env[base] = expr.Namespace({**{k: env[base].get(k) for k in env[base].keys()},
+                                            "count": len(ps), "first": env[ps[0].name], "last": env[ps[-1].name]}, base)
     return env
 
 

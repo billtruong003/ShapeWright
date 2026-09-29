@@ -38,6 +38,11 @@ stable UV regions with a lock, components/`enabled`/family interfaces.
 benchmarks pass; golden changes are explained (chair/stool/table: see
 HARDENING.md). *(Met: 163 tests.)* Fresh-agent results are in HARDENING.md.
 
+## Phase 5: Agent-native spatial modelling language ✅ (gate passed)
+Research ([research/SPATIAL_RELATIONSHIPS.md](research/SPATIAL_RELATIONSHIPS.md)), a relationship-heavy
+fresh-agent benchmark with predictions written first, independent perturbation testing, and fixes at the
+layer that failed. Result: [experiments/FRESH_AGENT_02.md](experiments/FRESH_AGENT_02.md).
+
 ## Stage 3: Prototype: a fresh agent succeeds unassisted
 - Run the README task ("tavern chair, < 700 tris, mobile") with a *fresh* agent
   that has only the repository. Record the transcript and friction points, and

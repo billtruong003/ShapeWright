@@ -240,7 +240,8 @@ sockets:
   sit_point: {attach: {to: seat, at: top, offset: [0, 0, 0.03]}, rotate: [0, 0, 0], doc: ...}
 ```
 
-Exported as empty nodes `SOCKET_<name>` with `extras.socket`.
+Exported as empty nodes `SOCKET_<name>` with `extras.socket`. `attach.to: origin`
+places a socket relative to the asset origin.
 
 ## Checks: design intent as tests
 
@@ -256,7 +257,9 @@ checks:
 
 The namespace contains all params plus metrics:
 `asset`, every part instance (`front_leg_left`), every source part (`front_leg`,
-the union of its instances) and every component instance (`top`). Each exposes `min`, `max`, `center`, `size`
+the union of its instances) and every component instance (`top`). Repeated parts
+also expose `count`, `first` and `last` (instances in build order), for example
+`{expr: tread.last.max.y, min: steps * rise - 0.01}` when the count is a param. Each exposes `min`, `max`, `center`, `size`
 (each with `.x .y .z`), `width`, `height`, `depth` and `triangles`. Bounds may be
 expressions. A failing check is a `CHECK_FAILED` error unless `severity: warning`.
 

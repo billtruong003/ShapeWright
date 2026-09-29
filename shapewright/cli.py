@@ -26,13 +26,48 @@ def _rel(p: Path) -> str:
         return str(p)
 
 
-def _load(ref: str):
+def _parse_sets(sets) -> dict:
+    import yaml
+
+    out = {}
+    for item in sets or []:
+        for kv in item.split(","):
+            if "=" not in kv:
+                raise ValueError(f"--set expects name=value, got '{kv}'")
+            k, v = kv.split("=", 1)
+            out[k.strip()] = yaml.safe_load(v)
+    return out
+
+
+def _load(ref: str, sets=None):
     from .assemble import build, resolve_asset_path
     from .surface import build_surface
 
     path = resolve_asset_path(ref)
-    asset = build(path)
-    return asset, build_surface(asset)
+    overrides = _parse_sets(sets)
+    if not overrides:
+        asset = build(path)
+        return asset, build_surface(asset)
+    import yaml
+
+    data = yaml.safe_load(path.read_text())
+    params = dict(data.get("params") or {})
+    for k, v in overrides.items():
+        if k not in params:
+            from .registry import suggest
+
+            raise ValueError(f"--set: '{k}' is not a param of this asset.{suggest(k, params)}")
+        params[k] = {**params[k], "value": v} if isinstance(params[k], dict) else v
+    tmp = path.parent / ".set_override.yaml"  # same directory: relative files, components, profiles still resolve
+    tmp.write_text(yaml.safe_dump({**data, "params": params}, sort_keys=False))
+    try:
+        asset = build(tmp)
+        surface = build_surface(asset)
+    finally:
+        tmp.unlink(missing_ok=True)
+    asset.path = path
+    print(f"(with --set {', '.join(f'{k}={v}' for k, v in overrides.items())}; the source file is unchanged)")
+    return asset, surface
 
 
 def _print_source_error(e: SourceError, as_json: bool):
@@ -79,7 +114,7 @@ def cmd_doc(a):
 
 
 def cmd_stats(a):
-    asset, surface = _load(a.asset)
+    asset, surface = _load(a.asset, a.set)
     b = asset.bounds()
     budget = asset.budget.get("triangles")
     if a.json:
@@ -105,7 +140,7 @@ def cmd_stats(a):
 def cmd_validate(a):
     from .validate.run import dump, format_text, run_validation
 
-    asset, surface = _load(a.asset)
+    asset, surface = _load(a.asset, a.set)
     report = run_validation(asset, surface)
     (asset.build_dir / "report.json").write_text(dump(report))
     print(dump(report) if a.json else format_text(report, a.verbose))
@@ -115,11 +150,11 @@ def cmd_validate(a):
 def cmd_render(a):
     from .render.views import VIEWS, contact_sheet, render, render_uv
 
-    asset, surface = _load(a.asset)
+    asset, surface = _load(a.asset, a.set)
     out_dir = asset.build_dir / "renders"
     out_dir.mkdir(exist_ok=True)
     size = min(a.size, LIMITS.max_render_size)
-    focus = a.part or None
+    focus = [x.strip() for p in (a.part or []) for x in p.split(",") if x.strip()] or None
     for f in focus or []:
         if not asset.parts_named(f):
             from .registry import suggest
@@ -158,7 +193,7 @@ def cmd_review(a):
     from .render.views import contact_sheet
     from .validate.run import dump, format_text, run_validation
 
-    asset, surface = _load(a.asset)
+    asset, surface = _load(a.asset, a.set)
     report = run_validation(asset, surface)
     (asset.build_dir / "report.json").write_text(dump(report))
     sheet = asset.build_dir / "sheet.png"
@@ -440,6 +475,9 @@ def build_parser() -> argparse.ArgumentParser:
         p = sub.add_parser(name, help=help_)
         if asset:
             p.add_argument("asset", help="asset directory, asset.yaml path, or name under assets/")
+            if name in ("stats", "validate", "render", "review"):
+                p.add_argument("--set", action="append", metavar="PARAM=VALUE[,..]",
+                               help="try param values without editing the source (e.g. --set steps=14,rise=0.2)")
         p.set_defaults(fn=fn)
         return p
 
@@ -455,7 +493,7 @@ def build_parser() -> argparse.ArgumentParser:
     p = add("render", cmd_render, "inspection images")
     p.add_argument("--view", action="append", help="front back left right top bottom front_right front_left back_right back_left low_front uv")
     p.add_argument("--mode", action="append", help="clay parts material wire normals silhouette")
-    p.add_argument("--part", action="append", help="highlight part(s) (source name or instance name)")
+    p.add_argument("--part", action="append", help="highlight part(s): source or instance names; repeat or comma-separate")
     p.add_argument("--isolate", action="store_true", help="render only the --part parts")
     p.add_argument("--sheet", action="store_true", help="contact sheet of standard views")
     p.add_argument("--size", type=int, default=512)

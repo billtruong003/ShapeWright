@@ -1,0 +1,63 @@
+{
+ "iteration": 1,
+ "note": "blockout: extruded housed stringers, arrayed treads+risers, grounded newels with caps, sheared handrail between newel centres, ray-measured balusters",
+ "critique": "Reads as a straight wooden flight; PASS apart from STYLE_THIN_FEATURE on risers. baluster: last one (index steps-1) stands over the eased horizontal top of the stringer, so its foot floats ~11 cm above the stringer (not caught by ASM_FLOATING since it touches the rail) -> array count steps-1. newel jitter moves post tops in Y so rail pitch check is off by -0.006 -> jitter newels in x/z only. riser_t 0.025 -> 0.03 (style min feature). Rail looks thin vs chunky newels: rail_w 0.075 -> 0.085, rail_h 0.065 -> 0.075. Balusters 4.5 cm read spindly at thumbnail -> 0.05.",
+ "source_hash": "8cf9d2152961",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 11
+ },
+ "metrics": {
+  "triangles": 1632,
+  "parts": 44,
+  "size_m": [
+   1.215,
+   2.6372,
+   2.33
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "tread.max.y - steps * rise": 0.0,
+   "(handrail_right.size.y - rail_h) / handrail_right.size.z - rise / run": -0.0062,
+   "handrail_right.max.y - tread.max.y": 1.0775,
+   "tread.min.x < stringer_left.max.x - 0.01 and tread.max.x > stringer_right.min.x + 0.01": true,
+   "newel_top_right.max.y > handrail_right.max.y and newel_bottom_right.max.y > handrail_right.min.y + rail_h * 0.5": true,
+   "2 * rise + run": 0.64
+  }
+ },
+ "errors": [],
+ "params": {
+  "steps": 8.0,
+  "rise": 0.18,
+  "run": 0.28,
+  "width": 1.0,
+  "rail_height": 0.9,
+  "wear": 0.003,
+  "tread_t": 0.05,
+  "nosing": 0.03,
+  "riser_t": 0.025,
+  "embed": 0.02,
+  "stringer_t": 0.07,
+  "stringer_e": 0.05,
+  "stringer_margin": 0.06,
+  "post": 0.11,
+  "post_extra": 0.07,
+  "rail_w": 0.075,
+  "rail_h": 0.065,
+  "baluster": 0.045,
+  "slope": 0.64286,
+  "u_end": 2.265,
+  "depth": 2.295,
+  "z_front": 1.1475,
+  "z_riser0": 1.1175,
+  "stringer_x": 0.535,
+  "band": 0.37536,
+  "u_foot": 0.19611,
+  "band_end_y": 1.33,
+  "newel_bottom_h": 1.18536,
+  "newel_top_h": 2.59
+ }
+}

@@ -1,0 +1,5 @@
+# Parameter variant of wooden_staircase: long, gentle, wide public stair.
+shapewright: 0.1
+extends: ../wooden_staircase
+asset: {name: wooden_staircase_long_shallow}
+params: {steps: 11, rise: 0.14, run: 0.34, width: 1.3, rail_height: 1.0}
