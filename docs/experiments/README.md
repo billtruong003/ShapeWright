@@ -1,0 +1,34 @@
+# Fresh-agent experiment suite
+
+Each experiment gives a new coding agent only the repository, with this folder and `docs/research`
+removed from its clone, and a task. The agent is observed, not coached. Plans and predictions are
+written **before** the run. Results are verified from the artifacts, not taken from the agent's report.
+Every record lists:
+- the exact prompt and the environment;
+- outputs and iterations;
+- failures and friction;
+- framework modifications;
+- time, tool calls and tokens;
+- the conclusions.
+
+The program suggested an order (single prop, relationships, pack, textured, diverse, imported,
+other vendor, mid-poly). The phases ran it in a different order, so the numbers map as follows:
+
+| # | Question | Phase | Result | Framework changes by the agent |
+|---|---|---|---|---|
+| [01](FRESH_AGENT_01.md) | single unseen prop (anvil on a stump) | hardening | exported, 0 interventions | 0 |
+| [02](FRESH_AGENT_02.md) | relationship-heavy asset (staircase) + perturbations | 5 spatial language | gate passed | 0 |
+| [03](FRESH_AGENT_03.md) | six-asset component pack (blacksmith) | 6 reuse | gate passed with caveats | 3 (one real bug) |
+| [04](FRESH_AGENT_04.md) | textured asset, request → GLB (treasure chest) | 8 surfaces | gate passed | 1 (bug fix) |
+| [05](FRESH_AGENT_05.md) | 17-class breadth matrix (4 agents) + held-out 5-class gate | 9 breadth | gate passed | 1 + 1 (bug / false positive) |
+| [06](FRESH_AGENT_06.md) | mid-poly stress, 44k-tri fountain | 10 performance | gate passed | 0 |
+| [07](FRESH_AGENT_07.md) | import and modify real CC0 assets | 11 import | gate passed | 0 |
+| [08](FRESH_AGENT_08_PLAN.md) | engine-ready delivery for Godot and Unreal | 12 production | running | — |
+| 09 (planned) | a substantially different agent / vendor | 13 cross-agent | — | — |
+
+All runs so far used the same model family as the authors. Phase 13 exists to test whether that matters.
+
+**Framework-modification rate** (the success condition warns against it): after the FA-03 spike, every
+change an agent made was a genuine bug or false-positive fix with a regression test, and 0
+capability additions came from agents since Phase 6. Each finding was fixed at its own layer (discovery,
+ergonomics, abstraction, capability or architecture) and recorded in the experiment's table.
