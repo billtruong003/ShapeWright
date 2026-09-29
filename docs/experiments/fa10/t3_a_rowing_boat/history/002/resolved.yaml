@@ -1,0 +1,576 @@
+shapewright: 0.1
+asset:
+  name: rowing_boat
+  kind: prop/vehicle/rowing_boat
+  description: Stylized low-poly wooden rowing boat (painted hull, bare-wood interior) with two oars resting on the thwarts.
+  tags:
+  - wood
+  - boat
+  - lake
+  - vehicle
+  - mobile
+profile: mobile_mid
+style: stylized_lowpoly
+budget:
+  triangles: 1000
+  materials: 2
+params:
+  hull_l:
+    value: 2.6
+    min: 2.2
+    max: 3.2
+    doc: overall length (planform
+    transom to stem): null
+  half_beam:
+    value: 0.56
+    min: 0.45
+    max: 0.7
+    doc: half of the widest beam at the sheer
+  transom_hw:
+    value: 0.38
+    doc: half width of the transom at the sheer
+  hull_h:
+    value: 0.68
+    doc: highest point of the hull (stem head) above the keel
+  sheer_mid:
+    value: 0.44
+    doc: sheer height amidships (lowest point of the sheer)
+  fwd_rise:
+    value: 0.08
+    doc: sheer rise at 80% toward the bow
+  aft_rise:
+    value: 0.02
+    doc: sheer rise at 60% toward the stern
+  gun_h:
+    value: 0.05
+    doc: gunwale cap depth down the planking
+  gun_up:
+    value: 0.02
+    doc: gunwale cap height above the sheer
+  gun_g:
+    value: 0.015
+    doc: gunwale overhang inside and outside the planking
+  transom_top:
+    value: 0.52
+  transom_bot:
+    value: 0.16
+    doc: keel rocker at the transom
+  flare:
+    value: 0.7
+    doc: bottom width / sheer width of the planform
+  wall:
+    value: 0.035
+    doc: side plank thickness
+  end_wall:
+    value: 0.05
+    doc: transom / stem thickness
+  floor_t:
+    value: 0.04
+    doc: bottom thickness
+  ext:
+    value: 0.05
+    doc: overshoot of the construction prisms
+  seat_top:
+    value: 0.31
+    doc: top of the thwarts
+  seat_t:
+    value: 0.045
+  seat_d:
+    value: 0.22
+    doc: thwart depth along the boat
+  mid_seat_z:
+    value: 0.15
+  aft_seat_z:
+    value: -0.78
+  oar_r:
+    value: 0.024
+  oar_x:
+    value: 0.17
+    doc: oar centre distance from the keel line
+  oar_yaw:
+    value: -3
+    doc: blades lean toward the centre line
+  oar_z:
+    value: -0.07
+    doc: oar centre along the boat
+  lock_z:
+    value: -0.15
+    doc: oarlock position (aft of the rowing thwart)
+  hl: hull_l / 2
+  prism_d: hull_h + 2 * ext
+  cav_top: hull_h + 0.3
+materials:
+  paint:
+    archetype: painted
+    color: '#3f7f9a'
+    under_color: '#8a6040'
+    chips: 0.45
+    edge_wear: 0.45
+    variation: 0.12
+    grime: 0.35
+    grime_color: '#4a4a32'
+    grime_height: 0.12
+    seed: 3
+  wood:
+    archetype: wood
+    color: '#a0703f'
+    grain_strength: 0.4
+    grain_scale: 0.035
+    streaks: 0.5
+    edge_wear: 0.35
+    seed: 5
+parts:
+  hull:
+    doc: painted hull shell, bare wood inside (cavity faces carry `wood`)
+    shape:
+      type: boolean
+      operation: difference
+      base:
+        type: boolean
+        operation: intersection
+        material: paint
+        base:
+          type: extrude
+          polygon:
+          - - transom_hw
+            - -hl
+          - - half_beam * 0.93
+            - -hl * 0.5
+          - - half_beam
+            - 0
+          - - half_beam * 0.88
+            - hl * 0.5
+          - - half_beam * 0.5
+            - hl * 0.82
+          - - 0.04
+            - hl
+          - - -0.04
+            - hl
+          - - -half_beam * 0.5
+            - hl * 0.82
+          - - -half_beam * 0.88
+            - hl * 0.5
+          - - -half_beam
+            - 0
+          - - -half_beam * 0.93
+            - -hl * 0.5
+          - - -transom_hw
+            - -hl
+          depth: prism_d
+          scale_top:
+          - flare
+          - 1
+          rotate:
+          - 90
+          - 0
+          - 0
+        tools:
+        - type: extrude
+          polygon:
+          - - -hl - ext
+            - transom_bot
+          - - -hl * 0.55
+            - 0.035
+          - - 0
+            - 0
+          - - hl * 0.5
+            - 0.025
+          - - hl * 0.8
+            - 0.1
+          - - hl * 0.94
+            - 0.26
+          - - hl + ext
+            - hull_h
+          - - hl * 0.8
+            - sheer_mid + fwd_rise
+          - - hl * 0.45
+            - sheer_mid + fwd_rise * 0.35
+          - - 0
+            - sheer_mid
+          - - -hl * 0.6
+            - sheer_mid + aft_rise
+          - - -hl - ext
+            - transom_top
+          depth: 2 * half_beam + 0.3
+          rotate:
+          - 0
+          - -90
+          - 0
+      tools:
+      - type: boolean
+        operation: intersection
+        material: wood
+        translate:
+        - 0
+        - (floor_t + ext) / 2
+        - 0
+        base:
+          type: extrude
+          polygon:
+          - - transom_hw - wall
+            - -hl + end_wall
+          - - half_beam * 0.93 - wall
+            - -hl * 0.5
+          - - half_beam - wall
+            - 0
+          - - half_beam * 0.88 - wall
+            - hl * 0.5
+          - - half_beam * 0.5 - wall
+            - hl * 0.82
+          - - 0
+            - hl - end_wall
+          - - -half_beam * 0.5 + wall
+            - hl * 0.82
+          - - -half_beam * 0.88 + wall
+            - hl * 0.5
+          - - -half_beam + wall
+            - 0
+          - - -half_beam * 0.93 + wall
+            - -hl * 0.5
+          - - -transom_hw + wall
+            - -hl + end_wall
+          depth: prism_d
+          scale_top:
+          - flare
+          - 1
+          rotate:
+          - 90
+          - 0
+          - 0
+        tools:
+        - type: extrude
+          polygon:
+          - - -hl - ext
+            - transom_bot + floor_t
+          - - -hl * 0.55
+            - 0.035 + floor_t
+          - - 0
+            - floor_t
+          - - hl * 0.5
+            - 0.025 + floor_t
+          - - hl * 0.8
+            - 0.1 + floor_t
+          - - hl * 0.94
+            - 0.26 + floor_t
+          - - hl + ext
+            - hull_h + floor_t
+          - - hl + ext
+            - cav_top
+          - - -hl - ext
+            - cav_top
+          depth: 2 * half_beam + 0.3
+          rotate:
+          - 0
+          - -90
+          - 0
+          translate:
+          - 0
+          - (floor_t + cav_top) / 2 - hull_h / 2
+          - 0
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    shading: auto
+    smooth_angle: 30
+    material: paint
+  gunwale:
+    doc: natural-wood cap over the top of the planking, following the sheer
+    shape:
+      type: boolean
+      operation: intersection
+      base:
+        type: boolean
+        operation: difference
+        base:
+          type: extrude
+          polygon:
+          - - transom_hw + gun_g
+            - -hl - gun_g
+          - - half_beam * 0.93 + gun_g
+            - -hl * 0.5
+          - - half_beam + gun_g
+            - 0
+          - - half_beam * 0.88 + gun_g
+            - hl * 0.5
+          - - half_beam * 0.5 + gun_g
+            - hl * 0.82
+          - - 0.04 + gun_g
+            - hl + gun_g
+          - - -0.04 - gun_g
+            - hl + gun_g
+          - - -half_beam * 0.5 - gun_g
+            - hl * 0.82
+          - - -half_beam * 0.88 - gun_g
+            - hl * 0.5
+          - - -half_beam - gun_g
+            - 0
+          - - -half_beam * 0.93 - gun_g
+            - -hl * 0.5
+          - - -transom_hw - gun_g
+            - -hl - gun_g
+          depth: prism_d
+          scale_top:
+          - flare
+          - 1
+          rotate:
+          - 90
+          - 0
+          - 0
+        tools:
+        - type: extrude
+          polygon:
+          - - transom_hw - wall - gun_g
+            - -hl + end_wall + gun_g
+          - - half_beam * 0.93 - wall - gun_g
+            - -hl * 0.5
+          - - half_beam - wall - gun_g
+            - 0
+          - - half_beam * 0.88 - wall - gun_g
+            - hl * 0.5
+          - - half_beam * 0.5 - wall - gun_g
+            - hl * 0.82
+          - - 0
+            - hl - end_wall - gun_g
+          - - -half_beam * 0.5 + wall + gun_g
+            - hl * 0.82
+          - - -half_beam * 0.88 + wall + gun_g
+            - hl * 0.5
+          - - -half_beam + wall + gun_g
+            - 0
+          - - -half_beam * 0.93 + wall + gun_g
+            - -hl * 0.5
+          - - -transom_hw + wall + gun_g
+            - -hl + end_wall + gun_g
+          depth: prism_d + 0.1
+          scale_top:
+          - flare
+          - 1
+          rotate:
+          - 90
+          - 0
+          - 0
+      tools:
+      - type: extrude
+        polygon:
+        - - -hl - ext
+          - transom_top - gun_h
+        - - -hl * 0.6
+          - sheer_mid + aft_rise - gun_h
+        - - 0
+          - sheer_mid - gun_h
+        - - hl * 0.45
+          - sheer_mid + fwd_rise * 0.35 - gun_h
+        - - hl * 0.8
+          - sheer_mid + fwd_rise - gun_h
+        - - hl + ext
+          - hull_h - gun_h
+        - - hl + ext
+          - hull_h + gun_up
+        - - hl * 0.8
+          - sheer_mid + fwd_rise + gun_up
+        - - hl * 0.45
+          - sheer_mid + fwd_rise * 0.35 + gun_up
+        - - 0
+          - sheer_mid + gun_up
+        - - -hl * 0.6
+          - sheer_mid + aft_rise + gun_up
+        - - -hl - ext
+          - transom_top + gun_up
+        depth: 2 * half_beam + 0.3
+        rotate:
+        - 0
+        - -90
+        - 0
+        translate:
+        - 0
+        - (sheer_mid - gun_h + hull_h + gun_up) / 2 - hull_h / 2
+        - 0
+    anchor: bottom
+    position:
+    - 0
+    - sheer_mid - gun_h
+    - 0
+    shading: flat
+    material: wood
+  mid_thwart:
+    doc: rowing thwart amidships, ends buried in the side planks
+    measure:
+      fwd:
+        ray: hull
+        from:
+        - 0
+        - seat_top - seat_t
+        - mid_seat_z + seat_d / 2
+        dir:
+        - 1
+        - 0
+        - 0
+      aft:
+        ray: hull
+        from:
+        - 0
+        - seat_top - seat_t
+        - mid_seat_z - seat_d / 2
+        dir:
+        - 1
+        - 0
+        - 0
+    shape:
+      type: chamfer_box
+      size:
+      - 2 * min(fwd.x, aft.x) + 0.012
+      - seat_t
+      - seat_d
+      chamfer: 0.01
+    ops:
+    - type: jitter
+      amount: 0.003
+      seed: 21
+    anchor: top
+    position:
+    - 0
+    - seat_top
+    - mid_seat_z
+    material: wood
+  aft_thwart:
+    doc: stern seat
+    measure:
+      fwd:
+        ray: hull
+        from:
+        - 0
+        - seat_top - seat_t
+        - aft_seat_z + seat_d / 2 + 0.02
+        dir:
+        - 1
+        - 0
+        - 0
+      aft:
+        ray: hull
+        from:
+        - 0
+        - seat_top - seat_t
+        - aft_seat_z - seat_d / 2 - 0.02
+        dir:
+        - 1
+        - 0
+        - 0
+    shape:
+      type: chamfer_box
+      size:
+      - 2 * min(fwd.x, aft.x) + 0.012
+      - seat_t
+      - seat_d + 0.04
+      chamfer: 0.01
+    ops:
+    - type: jitter
+      amount: 0.003
+      seed: 22
+    anchor: top
+    position:
+    - 0
+    - seat_top
+    - aft_seat_z
+    material: wood
+  oarlock:
+    doc: chunky wooden thole block on the gunwale
+    measure:
+      sec:
+        section: hull
+        axis: z
+        at: lock_z
+      hit:
+        ray: hull
+        from:
+        - sec.max.x - wall / 2
+        - 2
+        - lock_z
+        dir:
+        - 0
+        - -1
+        - 0
+    shape:
+      type: chamfer_box
+      size:
+      - 0.06
+      - 0.09
+      - 0.12
+      chamfer: 0.012
+    anchor: bottom
+    position:
+    - sec.max.x - wall / 2
+    - hit.y - 0.01
+    - lock_z
+    mirror: x
+    material: wood
+  oar:
+    doc: oar resting on both thwarts, blade toward the bow
+    shape:
+      type: combine
+      items:
+      - type: cylinder
+        radius: oar_r
+        height: 1.62
+        segments: 6
+        rotate:
+        - 90
+        - 0
+        - 0
+        translate:
+        - 0
+        - 0
+        - -0.26
+      - type: chamfer_box
+        size:
+        - 0.11
+        - 0.03
+        - 0.58
+        chamfer: 0.008
+        ops:
+        - type: taper
+          axis: z
+          scale:
+          - 1.55
+          - 1
+          - 1
+        translate:
+        - 0
+        - 0
+        - 0.8
+    rotate:
+    - 0
+    - oar_yaw
+    - 0
+    anchor: bottom
+    position:
+    - oar_x
+    - seat_top
+    - oar_z
+    mirror: x
+    material: wood
+uv:
+  texel_density: 80
+collision:
+  mode: single_hull
+checks:
+- expr: hull.size.z
+  min: 2.2
+  max: 3.2
+  doc: small rowing boat length
+- expr: hull.size.x
+  min: 0.95
+  max: 1.4
+  doc: beam
+- expr: hull.max.y
+  min: 0.5
+  max: 0.75
+  doc: stem head height
+- expr: oar_left.size.z
+  min: 1.8
+  doc: oars long enough to row
+- expr: oar_right.max.z < hull.max.z
+  doc: oars stay inside the boat
+- expr: oar_right.min.z > hull.min.z
+  doc: oars stay inside the boat

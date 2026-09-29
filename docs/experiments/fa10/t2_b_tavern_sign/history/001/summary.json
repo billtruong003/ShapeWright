@@ -1,0 +1,55 @@
+{
+ "iteration": 1,
+ "note": "v1 blockout: plate, arm with curl, tension brace, scroll, board on 2 rings + eyes, emblem; pivot on arm axis",
+ "critique": "emblem: tankard reads as a crenellated box, handle arc falls inside body and is only 0.15 m on a 0.58 m board -> enlarge ~1.5x, handle as D-shaped extrude with hole outside body. scroll: r 0.055 at z 0.2 looks like a hook stuck to the wall end -> r 0.07, move to z 0.3 to fill arm/brace triangle. bar 0.022 / brace 0.016 read spindly for stylized_lowpoly -> bar 0.026, brace 0.02. sign_board: machined-perfect -> slight jitter. ",
+ "source_hash": "7151d445a818",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 5
+ },
+ "metrics": {
+  "triangles": 716,
+  "parts": 13,
+  "size_m": [
+   0.079,
+   0.777,
+   0.8167
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "wall_plate.min.z": 0.0,
+   "sign_board.min.z": 0.18,
+   "sign_board.max.z": 0.76,
+   "sign_board.max.y": 0.443,
+   "asset.height": 0.777
+  }
+ },
+ "errors": [],
+ "params": {
+  "plate_w": 0.07,
+  "plate_t": 0.015,
+  "plate_y0": 0.4,
+  "plate_y1": 0.86,
+  "bar": 0.022,
+  "arm_y": 0.5,
+  "reach": 0.8,
+  "brace_z": 0.52,
+  "ring_r": 0.034,
+  "ring_t": 0.0055,
+  "eye_r": 0.018,
+  "eye_t": 0.005,
+  "ring_z0": 0.24,
+  "ring_z1": 0.7,
+  "board_w": 0.58,
+  "board_h": 0.36,
+  "board_t": 0.035,
+  "board_zc": 0.47,
+  "ring_yc": 0.4825,
+  "ring_bot": 0.4485,
+  "eye_yc": 0.43942,
+  "board_top": 0.44302
+ }
+}

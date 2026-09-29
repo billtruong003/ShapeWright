@@ -1,0 +1,52 @@
+{
+ "iteration": 1,
+ "note": "v1 blockout: trestle, stone wheel, bearings, crank, trough",
+ "critique": "reads as grindstone; collar 2.5cm thin -> 3.5cm; stone looks flat grey -> warmer sandstone, more variation; texel 195 < 256 target on 512 atlas; check leg tops poking through rails",
+ "source_hash": "1a4172c6a813",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 2,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 868,
+  "parts": 17,
+  "size_m": [
+   0.6831,
+   0.9577,
+   0.8256
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "wheel.center.y": 0.655,
+   "wheel.min.y": 0.3523,
+   "grip.center.y": 0.455,
+   "asset.height": 0.9577
+  }
+ },
+ "errors": [],
+ "params": {
+  "rail_x": 0.17,
+  "rail_y": 0.62,
+  "rail_h": 0.08,
+  "rail_w": 0.07,
+  "rail_l": 0.78,
+  "leg": 0.065,
+  "leg_z": 0.3,
+  "foot_x": 0.24,
+  "foot_z": 0.38,
+  "str_y": 0.24,
+  "wheel_r": 0.3,
+  "wheel_w": 0.11,
+  "wheel_seg": 16.0,
+  "bearing_h": 0.07,
+  "axle_r": 0.022,
+  "crank_arm": 0.2,
+  "grip_l": 0.13,
+  "trough_h": 0.13,
+  "trough_l": 0.46,
+  "wear": 0.004
+ }
+}

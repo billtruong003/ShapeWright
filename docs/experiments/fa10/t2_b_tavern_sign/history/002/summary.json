@@ -1,0 +1,55 @@
+{
+ "iteration": 2,
+ "note": "v2: chunkier bar 0.026/brace 0.02, larger scroll, jittered board, readable tankard emblem (combine items translated), mobile texture budget 512px @256 px/m",
+ "critique": "emblem now reads as a tankard at 3/4 and side views. ring r 0.034 / wire 0.0055 are near sub-pixel at phone distance -> ring_r 0.04, ring_t 0.007 so the hanging point reads. scroll still a small curl at the wall end rather than filling the arm/brace triangle -> keep (acceptable), minor. remaining findings minor.",
+ "source_hash": "ba815b3933b4",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 5
+ },
+ "metrics": {
+  "triangles": 716,
+  "parts": 13,
+  "size_m": [
+   0.079,
+   0.7778,
+   0.8197
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "wall_plate.min.z": 0.0,
+   "sign_board.min.z": 0.1772,
+   "sign_board.max.z": 0.7628,
+   "sign_board.max.y": 0.445,
+   "asset.height": 0.7778
+  }
+ },
+ "errors": [],
+ "params": {
+  "plate_w": 0.07,
+  "plate_t": 0.015,
+  "plate_y0": 0.4,
+  "plate_y1": 0.86,
+  "bar": 0.026,
+  "arm_y": 0.5,
+  "reach": 0.8,
+  "brace_z": 0.52,
+  "ring_r": 0.034,
+  "ring_t": 0.0055,
+  "eye_r": 0.018,
+  "eye_t": 0.005,
+  "ring_z0": 0.24,
+  "ring_z1": 0.7,
+  "board_w": 0.58,
+  "board_h": 0.36,
+  "board_t": 0.035,
+  "board_zc": 0.47,
+  "ring_yc": 0.4845,
+  "ring_bot": 0.4505,
+  "eye_yc": 0.44142,
+  "board_top": 0.44502
+ }
+}

@@ -1,0 +1,176 @@
+# Stylized blacksmith's grindstone: a sandstone wheel on an iron axle turning in
+# iron bearing blocks on top of a splayed four-legged wooden trestle, with a bent
+# iron hand crank on the right (+X) and a wooden water trough under the wheel.
+# Wheel axis runs along X; the front faces +Z. The wheel, axle, collars and crank
+# are one rotating node (pivot on the axle) so the crank can be animated.
+shapewright: 0.1
+asset:
+  name: grindstone
+  kind: prop/crafting/grindstone
+  description: Chunky stylized grindstone wheel on a wooden trestle frame with a hand crank and a water trough, for a blacksmith's forge.
+  tags: [blacksmith, grindstone, crafting, medieval, wood, stone]
+profile: mobile_mid
+style: stylized_lowpoly
+budget: {triangles: 900, materials: 3}   # wood / stone / iron: the wheel must read as stone, not as wood or iron
+
+params:
+  # frame
+  rail_x:     {value: 0.17, min: 0.12, max: 0.25, doc: side rail centre distance from the middle (wheel runs between the rails)}
+  rail_y:     {value: 0.68, min: 0.5, max: 0.75, doc: top of the side rails}
+  rail_h:     0.08
+  rail_w:     0.07
+  rail_l:     {value: 0.78, doc: side rail length along Z}
+  leg:        {value: 0.075, doc: leg cross-section}
+  leg_z:      {value: 0.3, doc: leg top distance from the middle along Z}
+  foot_x:     {value: 0.24, doc: leg foot distance from the middle along X (splay)}
+  foot_z:     {value: 0.38, doc: leg foot distance from the middle along Z (splay)}
+  str_y:      {value: 0.3, doc: height of the side stretchers carrying the trough}
+  # wheel
+  wheel_r:    {value: 0.3, min: 0.22, max: 0.38, doc: grinding wheel radius}
+  wheel_w:    {value: 0.11, doc: wheel thickness along X}
+  wheel_seg:  20
+  bearing_h:  0.07
+  axle_r:     0.022
+  # crank
+  crank_arm:  {value: 0.18, doc: crank throw}
+  grip_l:     0.13
+  # trough
+  trough_h:   0.13
+  trough_l:   0.46
+  wear:       0.004
+
+materials:
+  wood:  {archetype: wood, color: "#8a5a36", grain_strength: 0.4, grain_scale: 0.035, edge_wear: 0.35, grime: 0.3, grime_height: 0.2, seed: 3}
+  stone: {archetype: stone, color: "#b8a282", secondary_color: "#8a7658", variation: 0.65, scale: 0.05, edge_wear: 0.6, edge_width: 0.02, grime: 0.2, seed: 7}
+  iron:  {archetype: metal, color: "#5a5f66", roughness: 0.5, edge_wear: 0.5, rust: 0.2, seed: 2}
+
+parts:
+  rail:
+    doc: side rails along Z carrying the bearing blocks
+    shape: {type: chamfer_box, size: [rail_w, rail_h, rail_l], chamfer: 0.012}
+    ops: [{type: jitter, amount: wear, seed: 11}]
+    anchor: top
+    position: [rail_x, rail_y, 0]
+    mirror: x
+    material: wood
+
+  leg:
+    doc: splayed legs from the ground up into the rail underside
+    shape:
+      type: strut
+      from: [foot_x, 0, foot_z]
+      to: [rail_x, rail_y - rail_h / 2, leg_z]
+      size: [leg, leg]
+      chamfer: 0.01
+      extend: 0.02
+      depth_axis: x
+    ops: [{type: flat_bottom, at: 0}]
+    mirror: [x, z]
+    uv: {share_instances: true}
+    material: wood
+
+  stretcher:
+    doc: side stretchers along Z between front and back legs; they carry the trough
+    measure:
+      front: {section: leg_front_right, axis: y, at: str_y}
+      back:  {section: leg_back_right, axis: y, at: str_y}
+    shape: {type: chamfer_box, size: [0.05, 0.06, front.max.z - back.min.z + 0.02], chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: 12}]
+    position: [front.center.x, str_y, (front.center.z + back.center.z) / 2]
+    mirror: x
+    material: wood
+
+  trough:
+    doc: wooden water trough under the wheel (the stone runs wet)
+    measure:
+      s: {bounds: stretcher_right}
+    shape: {type: chamfer_box, size: [2 * s.max.x + 0.02, trough_h, trough_l], chamfer: 0.012}
+    ops:
+      - {type: subtract, shape: {type: box, size: [2 * s.max.x - 0.06, trough_h, trough_l - 0.07]}, position: [0, 0.03, 0]}
+    anchor: bottom
+    position: [0, s.max.y - 0.005, 0]
+    material: wood
+
+  bearing:
+    doc: iron bearing blocks bolted on the rails
+    measure:
+      r: {bounds: rail_right}
+    shape: {type: chamfer_box, size: [rail_w + 0.01, bearing_h, 0.1], chamfer: 0.01}
+    anchor: bottom
+    position: [r.center.x, r.max.y - 0.005, 0]
+    mirror: x
+    uv: {share_instances: true}
+    material: iron
+
+  wheel:
+    doc: sandstone grinding wheel; root of the rotating group, pivot on the axle
+    shape: {type: cylinder, radius: wheel_r, height: wheel_w, segments: wheel_seg, chamfer: 0.018}
+    ops: [{type: jitter, amount: 0.003, seed: 21}]
+    rotate: [0, 0, 90]
+    position: [0, rail_y + bearing_h / 2, 0]
+    pivot: {at: [0, rail_y + bearing_h / 2, 0]}
+    material: stone
+
+  collar:
+    doc: iron hub collars clamping the wheel on the axle
+    measure:
+      w: {bounds: wheel}
+    shape: {type: cylinder, radius: 0.065, height: 0.035, segments: 8}
+    rotate: [0, 0, 90]
+    anchor: left
+    position: [w.max.x - 0.005, rail_y + bearing_h / 2, 0]
+    mirror: x
+    parent: wheel
+    material: iron
+
+  axle:
+    doc: iron axle through both bearings
+    measure:
+      b: {bounds: bearing_right}
+    shape: {type: cylinder, radius: axle_r, height: 2 * b.max.x + 0.06, segments: 8}
+    rotate: [0, 0, 90]
+    position: [0, rail_y + bearing_h / 2, 0]
+    parent: wheel
+    material: iron
+
+  crank:
+    doc: bent iron crank - out along the axle, down the throw, then the grip spindle
+    measure:
+      a: {bounds: axle}
+    shape:
+      type: tube
+      radius: 0.018
+      sides: 6
+      path:
+        - [0, 0, 0]
+        - [0.03, 0, 0]
+        - [0.05, -0.03, 0]
+        - [0.05, -crank_arm + 0.03, 0]
+        - [0.08, -crank_arm, 0]
+        - [0.06 + grip_l, -crank_arm, 0]
+    anchor: top_left
+    position: [a.max.x - 0.03, rail_y + bearing_h / 2 + 0.018, 0]
+    shading: flat
+    parent: wheel
+    material: iron
+
+  grip:
+    doc: wooden handle sleeve on the crank grip
+    measure:
+      c: {bounds: crank}
+    shape: {type: cylinder, radius: 0.032, height: grip_l - 0.02, segments: 8, chamfer: 0.008}
+    rotate: [0, 0, 90]
+    anchor: right
+    position: [c.max.x + 0.01, c.min.y + 0.018, 0]
+    parent: wheel
+    material: wood
+
+collision: {mode: single_hull}   # one convex proxy per node (static frame, rotating wheel group)
+export: {merge: by_material}   # mobile draw calls: static frame merged; the wheel group keeps its own node on the axle pivot
+uv: {texel_density: 220}   # what a 512px mobile atlas achieves for this surface area
+
+checks:
+  - {expr: wheel.center.y, min: 0.6, max: 0.8, doc: axle at a comfortable working height}
+  - {expr: wheel.min.y, min: trough.max.y - 0.06, max: trough.max.y + 0.03, doc: wheel dips into (or just above) the water trough}
+  - {expr: grip.center.y, min: 0.4, max: 0.65, doc: crank grip reachable when standing}
+  - {expr: asset.height, min: 0.85, max: 1.1}

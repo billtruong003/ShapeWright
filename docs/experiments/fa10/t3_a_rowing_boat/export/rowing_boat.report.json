@@ -1,0 +1,126 @@
+{
+ "asset": "rowing_boat",
+ "status": "PASS",
+ "source_hash": "07b862aa07d6",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 4
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 804,
+  "parts": 8,
+  "sliver_triangles": 90,
+  "size_m": [
+   1.0306,
+   0.6819,
+   2.63
+  ],
+  "contacts": 10,
+  "triangles_by_part": {
+   "hull": 272,
+   "gunwale": 228,
+   "oar": 128,
+   "mid_thwart": 44,
+   "aft_thwart": 44,
+   "oarlock": 88
+  },
+  "budget_triangles": 1000,
+  "materials": 2,
+  "draw_calls": 11,
+  "checks": {
+   "hull.size.z": 2.6,
+   "hull.size.x": 0.9951,
+   "hull.max.y": 0.6542,
+   "oar_left.size.z": 2.1621,
+   "oar_right.max.z < hull.max.z": true,
+   "oar_right.min.z > hull.min.z": true
+  },
+  "uv_utilization": 0.299,
+  "uv_overlap": 0.0,
+  "uv_owners": 8,
+  "texel_density_px_m": 81.0,
+  "texel_density_target": 80,
+  "texture": {
+   "resolution": 512,
+   "target_px_m": 80.0,
+   "achieved_px_m": 81.0,
+   "memory_kb": 2048,
+   "lifecycle": {
+    "DERIVED": 8
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "oar_left",
+   "msg": "part consists of 2 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 2
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "oar_right",
+   "msg": "part consists of 2 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 2
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "oar_left",
+   "msg": "24/64 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 24
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "oar_right",
+   "msg": "24/64 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 24
+   }
+  }
+ ],
+ "export": {
+  "path": "assets/rowing_boat/export/rowing_boat.glb",
+  "bytes": 242700,
+  "nodes": 10,
+  "meshes": 9,
+  "materials": 2,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
+ }
+}

@@ -1,0 +1,59 @@
+{
+ "iteration": 1,
+ "note": "blockout: planform x profile hull, 2 thwarts, oarlocks, 2 oars",
+ "critique": "reads as a rowing boat; oar.oar_z 0.05 -> -0.07: blade tips pierce the bow planking (dot visible in right view); hull sheer nearly straight reads like a tray -> sheer_mid 0.46->0.44, forward sheer rise +0.04->+0.07, hull_h 0.64->0.68; no gunwale: painted rim lacks the classic natural-wood cap -> add gunwale part following the sheer; oar blade a plain slab -> taper blade wider at tip; uv texel_density 192 exceeds 512 atlas -> 100",
+ "source_hash": "e6737657aca0",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 5
+ },
+ "metrics": {
+  "triangles": 574,
+  "parts": 7,
+  "size_m": [
+   1.0292,
+   0.6277,
+   2.6
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "hull.size.z": 2.6,
+   "hull.size.x": 1.0156,
+   "hull.max.y": 0.6277,
+   "oar_left.size.z": 2.1618,
+   "oar_right.max.z < hull.max.z": true,
+   "oar_right.min.z > hull.min.z": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "hull_l": 2.6,
+  "half_beam": 0.56,
+  "transom_hw": 0.38,
+  "hull_h": 0.64,
+  "sheer_mid": 0.46,
+  "transom_top": 0.52,
+  "transom_bot": 0.16,
+  "flare": 0.7,
+  "wall": 0.035,
+  "end_wall": 0.05,
+  "floor_t": 0.04,
+  "ext": 0.05,
+  "seat_top": 0.31,
+  "seat_t": 0.045,
+  "seat_d": 0.22,
+  "mid_seat_z": 0.15,
+  "aft_seat_z": -0.78,
+  "oar_r": 0.024,
+  "oar_x": 0.17,
+  "oar_yaw": -3.0,
+  "oar_z": 0.05,
+  "lock_z": -0.15,
+  "hl": 1.3,
+  "prism_d": 0.74,
+  "cav_top": 0.94
+ }
+}

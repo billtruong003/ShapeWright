@@ -1,0 +1,64 @@
+{
+ "iteration": 3,
+ "note": "painted oar blades, grimy bilge (wood grime 0.6, height 0.18), knots 0.25",
+ "critique": "PASS 804/1000, 2 materials, 512 atlas. Oars now read against the darker floor and blue blades echo the hull; thwarts pop. Minor, accepted: inner transom face shows end-grain rings because grain follows each part's longest axis (hull = z) and a third material for the transom would break the 2-material budget; oarlocks are plain blocks. No significant findings left -> stop and export.",
+ "source_hash": "07b862aa07d6",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 5
+ },
+ "metrics": {
+  "triangles": 804,
+  "parts": 8,
+  "size_m": [
+   1.0306,
+   0.6819,
+   2.63
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "hull.size.z": 2.6,
+   "hull.size.x": 0.9951,
+   "hull.max.y": 0.6542,
+   "oar_left.size.z": 2.1621,
+   "oar_right.max.z < hull.max.z": true,
+   "oar_right.min.z > hull.min.z": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "hull_l": 2.6,
+  "half_beam": 0.56,
+  "transom_hw": 0.38,
+  "hull_h": 0.68,
+  "sheer_mid": 0.44,
+  "fwd_rise": 0.08,
+  "aft_rise": 0.02,
+  "gun_h": 0.05,
+  "gun_up": 0.02,
+  "gun_g": 0.015,
+  "transom_top": 0.52,
+  "transom_bot": 0.16,
+  "flare": 0.7,
+  "wall": 0.035,
+  "end_wall": 0.05,
+  "floor_t": 0.04,
+  "ext": 0.05,
+  "seat_top": 0.31,
+  "seat_t": 0.045,
+  "seat_d": 0.22,
+  "mid_seat_z": 0.15,
+  "aft_seat_z": -0.78,
+  "oar_r": 0.024,
+  "oar_x": 0.17,
+  "oar_yaw": -3.0,
+  "oar_z": -0.07,
+  "lock_z": -0.15,
+  "hl": 1.3,
+  "prism_d": 0.78,
+  "cav_top": 0.98
+ }
+}
