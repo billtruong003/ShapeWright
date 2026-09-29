@@ -48,6 +48,11 @@ A fresh agent built a coherent six-asset pack with four reused components. It ex
 (`extends` used as set membership), fixed by first-class **packs**, plus a real bug and missing
 pack-review tooling (both adopted from the agent). Record: [experiments/FRESH_AGENT_03.md](experiments/FRESH_AGENT_03.md).
 
+## Phase 7: Surface architecture ✅ (design gate)
+[SURFACES.md](SURFACES.md): semantic material archetypes evaluated in object space and baked into the
+atlas; lifecycle states (DERIVED/VALID/REGION_KEPT/RELAYOUT/INVALID); texel density per pack; renderer
+backend seam; baking split into core and optional; validation; glTF mapping; security; layout; migration.
+
 ## Stage 3: Prototype: a fresh agent succeeds unassisted
 - Run the README task ("tavern chair, < 700 tris, mobile") with a *fresh* agent
   that has only the repository. Record the transcript and friction points, and
