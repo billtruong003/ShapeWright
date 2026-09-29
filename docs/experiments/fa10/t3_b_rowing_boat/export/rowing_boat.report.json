@@ -1,0 +1,105 @@
+{
+ "asset": "rowing_boat",
+ "status": "PASS",
+ "source_hash": "e571b2fb6886",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 2
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 836,
+  "parts": 9,
+  "sliver_triangles": 58,
+  "size_m": [
+   1.1004,
+   0.6523,
+   2.8204
+  ],
+  "contacts": 14,
+  "triangles_by_part": {
+   "hull": 346,
+   "rub_rail": 166,
+   "oar": 104,
+   "thole": 88,
+   "thwart_mid": 44,
+   "thwart_bow": 44,
+   "thwart_stern": 44
+  },
+  "budget_triangles": 1000,
+  "materials": 2,
+  "draw_calls": 2,
+  "checks": {
+   "hull.size.z": 2.792,
+   "hull.size.x": 1.0592,
+   "asset.height": 0.6523,
+   "thwart_mid.max.y": 0.35,
+   "oar_right.max.z": 0.8937,
+   "oar_right.min.z": -1.0937
+  },
+  "uv_utilization": 0.285,
+  "uv_overlap": 0.0,
+  "uv_owners": 7,
+  "texel_density_px_m": 83.1,
+  "texel_density_target": 80,
+  "texture": {
+   "resolution": 512,
+   "target_px_m": 80.0,
+   "achieved_px_m": 83.1,
+   "memory_kb": 2048,
+   "lifecycle": {
+    "DERIVED": 7
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "oar_left",
+   "msg": "part consists of 3 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 3
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "oar_right",
+   "msg": "part consists of 3 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 3
+   }
+  }
+ ],
+ "export": {
+  "path": "assets/rowing_boat/export/rowing_boat.glb",
+  "bytes": 227896,
+  "nodes": 3,
+  "meshes": 2,
+  "materials": 2,
+  "target": "generic",
+  "merge": "by_material",
+  "lods": []
+ }
+}

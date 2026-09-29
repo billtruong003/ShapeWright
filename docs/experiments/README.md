@@ -25,7 +25,7 @@ other vendor, mid-poly). The phases ran it in a different order, so the numbers 
 | [07](FRESH_AGENT_07.md) | import and modify real CC0 assets | 11 import | gate passed | 0 |
 | [08](FRESH_AGENT_08.md) | engine-ready delivery for Godot and Unreal | 12 production | gate passed (Godot in-engine) | 0 |
 | [09](FRESH_AGENT_09.md) | a much smaller model (Haiku 4.5), 2 runs; cross-vendor blocked | 13 cross-agent | partial: mechanical pass, quality model-dependent | 0 |
-| 10 ([plan](FRESH_AGENT_10_PLAN.md)) | repeat-class cost, before/after | 14 agent cost | — | — |
+| [10](FRESH_AGENT_10.md) | repeat-class cost, before/after on 3 tasks (1 held out) | 14 agent cost | **not met**: onboarding −⅓, total −10–20% / +81% (held out) | 0 |
 
 All runs used the same model family as the authors. FA-09 swapped in a much smaller model from that family. No other vendor's agent was available.
 

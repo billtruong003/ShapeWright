@@ -1,0 +1,64 @@
+{
+ "iteration": 3,
+ "note": "v3: brighter paint with more chips, lighter wood with coarser grain + knots, painted oar blades and painted transom inner face, UVs locked",
+ "critique": "v2 textures: transom inner face showed end-grain bullseye rings (grain axis = hull long axis) -> transom faces painted; oars/thwarts blended into the wood floor from the top -> oar blades painted; paint too dark to read chips at phone size -> #3a8fb0, chips 0.55. Geometry unchanged, no validation issues. Remaining minor: no strake/plank lines inside (archetype has no plank-seam param), texel density 83 px/m vs profile 256 target at 512 px atlas (info).",
+ "source_hash": "8e27badf5dd2",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 3
+ },
+ "metrics": {
+  "triangles": 884,
+  "parts": 9,
+  "size_m": [
+   1.1004,
+   0.6523,
+   2.8204
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "hull.size.z": 2.792,
+   "hull.size.x": 1.0592,
+   "asset.height": 0.6523,
+   "thwart_mid.max.y": 0.35,
+   "oar_right.max.z": 0.8937,
+   "oar_right.min.z": -1.0937
+  }
+ },
+ "errors": [],
+ "params": {
+  "half_beam": 0.62,
+  "half_len": 1.5,
+  "depth": 0.48,
+  "wall": 0.04,
+  "stern_cut": 0.32,
+  "bow_narrow": 0.5,
+  "hull_seg": 16.0,
+  "thwart_t": 0.045,
+  "thwart_d": 0.22,
+  "seat_y": 0.35,
+  "oar_len": 2.0,
+  "oar_r": 0.028,
+  "blade_l": 0.5,
+  "blade_w": 0.16,
+  "blade_t": 0.03,
+  "oar_x": 0.17,
+  "oar_yaw": -4.0,
+  "wear": 0.004,
+  "rail": 0.02,
+  "rail_h": 0.06,
+  "thole_z": 0.28,
+  "sheer_r": 9.0,
+  "sheer_z0": -0.05,
+  "sheer_seg": 45.0,
+  "z_cut": -1.18,
+  "slope": 0.28571,
+  "lathe_h": 0.78,
+  "r_top": 1.11571,
+  "r_in_top": 1.19,
+  "z_shift": -0.1975
+ }
+}

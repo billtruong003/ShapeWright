@@ -64,3 +64,43 @@ Framework-code reads answer semantics questions: how rotation and centring work,
 | C3 | 8–20 calls before the first build (doctor, caps, docs, examples) | DISCOVERY | 15–25% of a single-prop run |
 | C4 | Agents write Python scripts to probe geometry or reports | DISCOVERY / capability gaps | ~6% |
 | C5 | Semantics questions answered by reading `assemble.py` and `backend.py` | DOCUMENTATION | ~12%, concentrated in early runs |
+
+## Design (after the FA-10 A runs)
+
+The A runs (36–42 calls) were already cheaper than FA-01 (65). They spent 15–17 calls before their
+first build. Changes:
+- **`sw brief REQUEST`**: one call that returns:
+  - the closest example assets, ranked by IDF keyword overlap plus structural cues (moving part, wall mount);
+  - the best example's source;
+  - the profile and budget;
+  - rules for this kind of prop;
+  - the vocabulary, with docs for what the examples use.
+
+  AGENTS.md starts with it.
+- **Friction fixes from the A runs:**
+  - `pivot: {at}`;
+  - `flat_bottom: {at}`;
+  - the profile-default texel target as info;
+  - `sw compare` recorded status;
+  - comma rejoining.
+- **After the B runs:**
+  - readable `MEASURE_FAILED` for unknown part names;
+  - correct `sw uv` hints;
+  - `origin: keep` on nested expressions.
+
+## Result (FRESH_AGENT_10): gate NOT MET
+
+| Task | A calls / tokens | B calls / tokens |
+|---|---|---|
+| T1 grindstone | 40 / 130k | 35 / 108k (−12% / −17%) |
+| T2 tavern sign | 42 / 144k | 38 / 116k (−10% / −20%) |
+| T3 rowboat (held out) | 36 / 134k | 65 / 179k (+81% / +34%) |
+
+- **Quality** was preserved in all pairs.
+- **Onboarding** fell by a third in every B run (calls before the first build: 16→10, 17→11, 15→10).
+- **Total cost** is dominated by how many iterations the agent chooses and by capability gaps it hits. T3 B
+  met nested recentring and the lack of a hull/loft shape.
+
+The honest conclusion: a **repository-side cost reduction beyond onboarding needs fewer forced workarounds
+(capability), not fewer words**. It cannot be shown with one run per cell. Record:
+[experiments/FRESH_AGENT_10.md](experiments/FRESH_AGENT_10.md).

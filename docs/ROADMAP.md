@@ -141,6 +141,26 @@ Conclusion: mechanically model-independent; quality depends on the model, and th
 the framework's lever. Record: [experiments/FRESH_AGENT_09.md](experiments/FRESH_AGENT_09.md).
 **Open:** a run by another vendor's agent.
 
+## Phase 14: Agent UX and cost ✗ (gate not met; onboarding cost reduced)
+Research classified 946 tool calls from 13 transcripts (`tools/experiments/cost_breakdown.py`). Before/after
+runs on three repeat-class tasks (FA-10), one of them held out.
+
+Built:
+- `sw brief`: one-call onboarding;
+- friction fixes: `pivot: {at}`, `flat_bottom: {at}`, nested `origin: keep`;
+- validation-noise and hint fixes;
+- two bugs found by the runs.
+
+Result:
+- Calls before the first build fell by a third in every run.
+- Total cost fell 10–20% on the two tuned tasks and **rose** on the held-out one, where the agent's iteration
+  effort and a capability gap dominated.
+- Quality was preserved.
+
+Next lever: capability gaps that force hand work (hull/loft shapes, shared deformations), measured with
+repeated runs rather than one per cell. Records: [AGENT_COST.md](AGENT_COST.md),
+[experiments/FRESH_AGENT_10.md](experiments/FRESH_AGENT_10.md).
+
 ## Stage 3: Prototype: a fresh agent succeeds unassisted
 - Run the README task ("tavern chair, < 700 tris, mobile") with a *fresh* agent
   that has only the repository. Record the transcript and friction points, and

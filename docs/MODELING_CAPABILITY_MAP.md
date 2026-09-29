@@ -78,6 +78,10 @@ See docs/HARDENING.md. Rows below keep their original text; these entries overri
 | KHR material extensions (sheen, clearcoat, transmission, variants) | — | LONG | reported by `sw import`, not imported |
 | Validation that a smaller model cannot bypass cheaply (gap distances, escape-tag guards) | — | NOW | Phase 13 (FA-09): `ASM_FLOATING_TAGGED_NEAR`, `ASM_FLOATING_TAG_UNUSED` |
 | Cross-vendor agent evidence | — | BLOCKED | needs another vendor's agent or key in the environment |
+| One-call onboarding (`sw brief`) | — | NOW | Phase 14: −⅓ calls before the first build |
+| Nested expressions in their drawn frame (`origin: keep`) | — | NOW | Phase 14 (FA-10 T3) |
+| Hull / loft between sections; one deformation across several parts | — | NEAR | FA-10 T3: boat hull built from lathe + 4 booleans |
+| Interpenetration ("passes through") validation | — | NEAR | FA-10 T1/T3: a tool rest and a seat through other parts, caught only by eye |
 
 ---
 

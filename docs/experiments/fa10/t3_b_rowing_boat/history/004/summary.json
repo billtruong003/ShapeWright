@@ -1,0 +1,64 @@
+{
+ "iteration": 4,
+ "note": "v4: production settings: merge by_material (12 -> 2 draw calls), single_hull collision, oars as combine (no union slivers, 884 -> 836 tris), uv texel_density 80 (what a 512 px atlas achieves), UVs relocked",
+ "critique": "No validation issues. Tried uv seams: regions on the hull for better utilization: 0.284 -> 0.277, reverted. Remaining (accepted): no plank seams in the interior texture; transom inner face is painted to avoid end-grain rings. Stopping: no errors, last critique has no significant findings, constraints met.",
+ "source_hash": "e571b2fb6886",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 836,
+  "parts": 9,
+  "size_m": [
+   1.1004,
+   0.6523,
+   2.8204
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "hull.size.z": 2.792,
+   "hull.size.x": 1.0592,
+   "asset.height": 0.6523,
+   "thwart_mid.max.y": 0.35,
+   "oar_right.max.z": 0.8937,
+   "oar_right.min.z": -1.0937
+  }
+ },
+ "errors": [],
+ "params": {
+  "half_beam": 0.62,
+  "half_len": 1.5,
+  "depth": 0.48,
+  "wall": 0.04,
+  "stern_cut": 0.32,
+  "bow_narrow": 0.5,
+  "hull_seg": 16.0,
+  "thwart_t": 0.045,
+  "thwart_d": 0.22,
+  "seat_y": 0.35,
+  "oar_len": 2.0,
+  "oar_r": 0.028,
+  "blade_l": 0.5,
+  "blade_w": 0.16,
+  "blade_t": 0.03,
+  "oar_x": 0.17,
+  "oar_yaw": -4.0,
+  "wear": 0.004,
+  "rail": 0.02,
+  "rail_h": 0.06,
+  "thole_z": 0.28,
+  "sheer_r": 9.0,
+  "sheer_z0": -0.05,
+  "sheer_seg": 45.0,
+  "z_cut": -1.18,
+  "slope": 0.28571,
+  "lathe_h": 0.78,
+  "r_top": 1.11571,
+  "r_in_top": 1.19,
+  "z_shift": -0.1975
+ }
+}
