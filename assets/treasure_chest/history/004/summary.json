@@ -1,0 +1,55 @@
+{
+ "iteration": 4,
+ "note": "final: export round-trip fixed in framework (multi-primitive lock_plate); exported GLB",
+ "critique": "no significant findings: reads as a used treasure chest at 160px, wood grain + knot stains + worn plank edges, dark iron with rust and broken scuffed edges, brass lock plate with dark keyhole; 1464/1500 tris, one 1024 texture set",
+ "source_hash": "6bf89338f35f",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 13
+ },
+ "metrics": {
+  "triangles": 1464,
+  "parts": 44,
+  "size_m": [
+   0.9469,
+   0.6023,
+   0.536
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.6023,
+   "lock_plate.size.x / asset.width": 0.1795
+  }
+ },
+ "errors": [],
+ "params": {
+  "W": 0.8,
+  "D": 0.5,
+  "H": 0.4,
+  "wall_t": 0.04,
+  "body_planks": 3.0,
+  "plank_h": 0.13333,
+  "rim_h": 0.07,
+  "R": 0.32,
+  "lid_t": 0.035,
+  "a0": 51.37517,
+  "step": 20.55007,
+  "lid_w": 0.11416,
+  "rc": 0.3025,
+  "vc": -0.12975,
+  "Ri": 0.285,
+  "a1": 47.4631,
+  "strap_w": 0.055,
+  "strap_t": 0.012,
+  "strap_x": 0.24,
+  "guard_g": 0.08,
+  "guard_t": 0.012,
+  "lp_w": 0.17,
+  "lp_h": 0.19,
+  "lp_t": 0.022,
+  "wear": 0.003
+ }
+}

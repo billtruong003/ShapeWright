@@ -1,0 +1,294 @@
+# Stylized treasure chest for a mobile game. Plank body (front/back boards span
+# the full width, side boards fit between them), a barrel-top lid of five
+# planks on a low rim, dark iron straps and L-shaped corner guards, a large
+# brass lock plate with a cut keyhole and an iron hasp hanging from the lid.
+# The lid is its own node with a hinge pivot at the back so it can be opened.
+# Surface detail lives in the baked textures (wood/metal archetypes with edge
+# wear), not in flat colours.
+shapewright: 0.1
+asset:
+  name: treasure_chest
+  kind: prop/container/chest
+  description: Well-used stylized wooden treasure chest with iron straps, corner guards and a brass lock plate.
+profile: mobile_mid
+style: stylized_lowpoly
+budget: {triangles: 1500, materials: 3, texture_size: 1024}
+uv: {texel_density: 300}   # 1024px cap gives ~308 px/m for this surface area
+
+params:
+  W: {value: 0.8, min: 0.6, max: 1.0, doc: chest width (x)}
+  D: {value: 0.5, min: 0.4, max: 0.7, doc: chest depth (z)}
+  H: {value: 0.4, min: 0.3, max: 0.5, doc: body height (lid sits on top)}
+  wall_t: {value: 0.04, doc: board thickness}
+  body_planks: 3
+  plank_h: H / body_planks
+  rim_h: {value: 0.07, doc: straight lid rim below the barrel top}
+  R: {value: 0.32, doc: radius of the barrel-top arc (larger = flatter lid)}
+  lid_t: {value: 0.035, doc: lid plank thickness}
+  a0: {value: "atan2(D / 2, sqrt(R * R - D * D / 4))", doc: half angle of the lid arc (degrees)}
+  step: 2 * a0 / 5
+  lid_w: 2 * R * sin(step / 2)
+  rc: R - lid_t / 2
+  vc: {value: "rim_h - R * cos(a0)", doc: arc centre height above the body top}
+  Ri: R - lid_t
+  a1: {value: "atan2(D / 2 - wall_t, sqrt(Ri * Ri - (D / 2 - wall_t) * (D / 2 - wall_t)))", doc: end-cap arc half angle}
+  strap_w: {value: 0.055, doc: iron strap width}
+  strap_t: {value: 0.012, doc: iron strap thickness}
+  strap_x: {value: 0.24, doc: strap distance from the centre}
+  guard_g: {value: 0.08, doc: corner guard leg length}
+  guard_t: {value: 0.012, doc: corner guard thickness}
+  lp_w: {value: 0.17, doc: lock plate width}
+  lp_h: {value: 0.19, doc: lock plate height}
+  lp_t: {value: 0.022, doc: lock plate thickness}
+  wear: 0.003
+
+materials:
+  oak:
+    archetype: wood
+    color: "#80502f"
+    grain_strength: 0.6
+    grain_scale: 0.012
+    streaks: 0.75
+    knots: 1.0
+    edge_wear: 0.7
+    edge_color: "#c29466"
+    edge_width: 0.014
+    roughness: 0.85
+    seed: 3
+  iron:
+    archetype: metal
+    color: "#4c5057"
+    roughness: 0.6
+    variation: 0.35
+    scale: 0.04
+    rust: 0.25
+    rust_color: "#6e4027"
+    edge_wear: 0.6
+    edge_color: "#a3a8ad"
+    edge_width: 0.007
+    seed: 5
+  brass:
+    archetype: metal
+    color: "#b5863a"
+    roughness: 0.45
+    variation: 0.3
+    scale: 0.03
+    rust: 0.12
+    rust_color: "#4d6a50"
+    edge_wear: 0.7
+    edge_color: "#f2d690"
+    edge_width: 0.008
+    seed: 9
+
+parts:
+  # ---------------------------------------------------------------- body
+  wall_front:
+    doc: horizontal boards spanning the full width (front and back)
+    shape: {type: chamfer_box, size: [W, plank_h, wall_t], chamfer: 0.012}
+    ops: [{type: jitter, amount: wear, seed: 11}]
+    anchor: bottom_front
+    position: [0, 0, D / 2]
+    array: {count: body_planks, offset: [0, plank_h, 0]}
+    mirror: z
+    material: oak
+
+  wall_side:
+    doc: side boards fit between the front and back boards
+    shape: {type: chamfer_box, size: [wall_t, plank_h, D - 2 * wall_t], chamfer: 0.012}
+    ops: [{type: jitter, amount: wear, seed: 12}]
+    anchor: bottom_right
+    position: [W / 2, 0, 0]
+    array: {count: body_planks, offset: [0, plank_h, 0]}
+    mirror: x
+    material: oak
+
+  floor:
+    doc: bottom board (closes the box from below)
+    shape: {type: box, size: [W - 2 * wall_t, 0.03, D - 2 * wall_t]}
+    anchor: bottom
+    position: [0, 0.01, 0]
+    material: oak
+
+  body_strap:
+    doc: vertical iron straps on the front and back, in line with the lid straps
+    shape: {type: box, size: [strap_w, H, strap_t]}
+    anchor: bottom_back
+    position: [strap_x, 0, D / 2]
+    mirror: [x, z]
+    shading: flat
+    tags: [thin_ok]
+    uv: {share_instances: true}   # iron/end-cap copies reuse texels (never seen side by side)
+    material: iron
+
+  corner_guard:
+    doc: L-shaped iron guard wrapping each vertical body corner
+    shape:
+      type: extrude
+      polygon: [[0, 0], [-guard_g, 0], [-guard_g, guard_t], [-guard_t, guard_t], [-guard_t, guard_g], [0, guard_g]]
+      depth: H
+    rotate: [-90, 0, 0]
+    anchor: bottom_front_right
+    position: [W / 2 + guard_t, 0, D / 2 + guard_t]
+    mirror: [x, z]
+    shading: flat
+    tags: [thin_ok]
+    uv: {share_instances: true}   # iron/end-cap copies reuse texels (never seen side by side)
+    material: iron
+
+  lock_plate:
+    doc: large brass plate with a cut keyhole; the main read at thumbnail size
+    shape:
+      type: chamfer_box
+      size: [lp_w, lp_h, lp_t]
+      chamfer: 0.008
+      ops:
+        - {type: subtract, shape: {type: cylinder, radius: 0.022, height: lp_t, segments: 8, rotate: [90, 0, 0], material: iron}, position: [0, 0.0, lp_t / 2]}
+        - {type: subtract, shape: {type: box, size: [0.02, 0.055, lp_t], material: iron}, position: [0, -0.03, lp_t / 2]}
+    anchor: top_back
+    position: [0, H - 0.04, D / 2 - 0.003]   # bite 3 mm into the jittered boards
+    shading: flat
+    tags: [thin_ok]
+    material: brass
+
+  handle:
+    doc: square-bar iron grip on each side
+    shape: {type: tube, path: [[0, 0, -0.1], [0.05, 0.0, -0.08], [0.05, 0.0, 0.08], [0, 0, 0.1]], radius: 0.02, sides: 4}
+    anchor: left
+    position: [W / 2 - 0.004, H * 0.62, 0]
+    mirror: x
+    uv: {share_instances: true}
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+  # ---------------------------------------------------------------- lid (hinged at the back)
+  lid_rim_back:
+    doc: straight back board under the barrel top; root of the lid, pivot on the hinge line
+    shape: {type: chamfer_box, size: [W, rim_h, wall_t], chamfer: 0.012}
+    ops: [{type: jitter, amount: wear, seed: 13}]
+    anchor: bottom_back
+    position: [0, H, -D / 2]
+    pivot: bottom_back
+    material: oak
+
+  lid_rim_front:
+    doc: straight front board under the barrel top
+    shape: {type: chamfer_box, size: [W, rim_h, wall_t], chamfer: 0.012}
+    ops: [{type: jitter, amount: wear, seed: 17}]
+    anchor: bottom_front
+    position: [0, H, D / 2]
+    parent: lid_rim_back
+    material: oak
+
+  lid_cap:
+    doc: end board closing the barrel top on each side
+    shape:
+      type: extrude
+      polygon:
+        - [-(D / 2 - wall_t), 0]
+        - [D / 2 - wall_t, 0]
+        - ["Ri * sin(a1)", "vc + Ri * cos(a1)"]
+        - ["Ri * sin(a1 * 2 / 3)", "vc + Ri * cos(a1 * 2 / 3)"]
+        - ["Ri * sin(a1 / 3)", "vc + Ri * cos(a1 / 3)"]
+        - [0, vc + Ri]
+        - ["-Ri * sin(a1 / 3)", "vc + Ri * cos(a1 / 3)"]
+        - ["-Ri * sin(a1 * 2 / 3)", "vc + Ri * cos(a1 * 2 / 3)"]
+        - ["-Ri * sin(a1)", "vc + Ri * cos(a1)"]
+      depth: wall_t
+    rotate: [0, 90, 0]
+    anchor: bottom_right
+    position: [W / 2, H, 0]
+    mirror: x
+    parent: lid_rim_back
+    uv: {share_instances: true}   # iron/end-cap copies reuse texels (never seen side by side)
+    material: oak
+
+  lid_plank_top:
+    doc: centre plank of the barrel top
+    shape: {type: chamfer_box, size: [W, lid_t, lid_w], chamfer: 0.012}
+    ops: [{type: jitter, amount: wear, seed: 14}]
+    position: [0, H + vc + rc, 0]
+    parent: lid_rim_back
+    material: oak
+
+  lid_plank_mid:
+    shape: {type: chamfer_box, size: [W, lid_t, lid_w], chamfer: 0.012}
+    ops: [{type: jitter, amount: wear, seed: 15}]
+    rotate: [step, 0, 0]
+    position: [0, "H + vc + rc * cos(step)", "rc * sin(step)"]
+    mirror: z
+    parent: lid_rim_back
+    material: oak
+
+  lid_plank_low:
+    shape: {type: chamfer_box, size: [W, lid_t, lid_w], chamfer: 0.012}
+    ops: [{type: jitter, amount: wear, seed: 16}]
+    rotate: [2 * step, 0, 0]
+    position: [0, "H + vc + rc * cos(2 * step)", "rc * sin(2 * step)"]
+    mirror: z
+    parent: lid_rim_back
+    material: oak
+
+  lid_strap:
+    doc: iron strap following the barrel top, in line with the body straps
+    shape:
+      type: boolean
+      operation: intersection
+      base: {type: ring, radius: R + strap_t, thickness: strap_t + 0.003, height: strap_w, segments: 20, rotate: [0, 0, 90]}
+      tools:
+        - {type: box, size: [strap_w * 2, R, 2 * R + 0.1], translate: [0, "R * cos(a0) + R / 2", 0]}
+    anchor: bottom
+    position: [strap_x, H + rim_h, 0]
+    mirror: x
+    parent: lid_rim_back
+    shading: flat
+    tags: [thin_ok]
+    uv: {share_instances: true}   # iron/end-cap copies reuse texels (never seen side by side)
+    material: iron
+
+  rim_strap:
+    doc: straps continue down the lid rim
+    shape: {type: box, size: [strap_w, rim_h, strap_t]}
+    anchor: bottom_back
+    position: [strap_x, H, D / 2]
+    mirror: [x, z]
+    parent: lid_rim_back
+    shading: flat
+    tags: [thin_ok]
+    uv: {share_instances: true}   # iron/end-cap copies reuse texels (never seen side by side)
+    material: iron
+
+  lid_guard:
+    doc: L-shaped iron guard on each lid rim corner
+    shape:
+      type: extrude
+      polygon: [[0, 0], [-guard_g, 0], [-guard_g, guard_t], [-guard_t, guard_t], [-guard_t, guard_g], [0, guard_g]]
+      depth: rim_h
+    rotate: [-90, 0, 0]
+    anchor: bottom_front_right
+    position: [W / 2 + guard_t, H, D / 2 + guard_t]
+    mirror: [x, z]
+    parent: lid_rim_back
+    shading: flat
+    tags: [thin_ok]
+    uv: {share_instances: true}   # iron/end-cap copies reuse texels (never seen side by side)
+    material: iron
+
+  hasp:
+    doc: iron hasp hanging from the lid rim into the top of the lock plate
+    shape: {type: chamfer_box, size: [0.065, 0.1, 0.014], chamfer: 0.005}
+    anchor: bottom_back
+    position: [0, H - 0.045, D / 2 - 0.003]
+    parent: lid_rim_back
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+sockets:
+  loot: {attach: {to: floor, at: top}, doc: where loot spawns when opened}
+
+collision: {mode: single_box}
+
+checks:
+  - {expr: asset.height, min: 0.5, max: 0.7, doc: body plus barrel lid}
+  - {expr: lock_plate.size.x / asset.width, min: 0.15, max: 0.3, doc: lock plate large enough to read at thumbnail size}

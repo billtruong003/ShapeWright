@@ -94,7 +94,12 @@ materials:
 ```
 
 - Common params on every archetype: `color`, `roughness`, `edge_wear` (0..1,
-  scuffed convex edges), `edge_color`, `edge_width` (m), `seed`.
+  scuffed convex edges), `edge_color`, `edge_width` (m), `seed`, `grime` (0..1,
+  dirt near the asset's base and in creases within a part), `grime_color`, `grime_height` (m).
+- Patterns are evaluated **per part**: wood grain runs along each part's longest
+  axis and every part gets its own variation. Model planks as separate parts
+  (for example with `array`/`mirror`) if each plank should show its own grain.
+  Parts sharing UVs (`uv: {share_instances: true}`) also share their texels.
 - `use: NAME` makes an instance of another material in the same asset (or pack).
 - `layers:` stack on top of the archetype: `image: path` (inside the asset
   directory) or `vertex_color: true`, with `projection: triplanar | uv`,

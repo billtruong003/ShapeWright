@@ -1,0 +1,57 @@
+{
+ "iteration": 1,
+ "note": "blockout: plank body, 5-plank barrel lid, iron straps/guards, brass lock plate, wood/metal archetypes",
+ "critique": "reads as a chest; 1512/1500 tris (lid_strap 152); iron too dark for PBR (lum 86); texel target 512 unreachable at 1024 (308 px/m); floor wastes UV area; lock plate could be bigger for thumbnail",
+ "source_hash": "5d8515ea7282",
+ "status": "FAIL",
+ "counts": {
+  "error": 1,
+  "warning": 4,
+  "info": 13
+ },
+ "metrics": {
+  "triangles": 1512,
+  "parts": 44,
+  "size_m": [
+   0.9277,
+   0.6023,
+   0.5361
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.6023,
+   "lock_plate.size.x / asset.width": 0.1617
+  }
+ },
+ "errors": [
+  "BUDGET_TRIANGLES"
+ ],
+ "params": {
+  "W": 0.8,
+  "D": 0.5,
+  "H": 0.4,
+  "wall_t": 0.04,
+  "body_planks": 3.0,
+  "plank_h": 0.13333,
+  "rim_h": 0.07,
+  "R": 0.32,
+  "lid_t": 0.035,
+  "a0": 51.37517,
+  "step": 20.55007,
+  "lid_w": 0.11416,
+  "rc": 0.3025,
+  "vc": -0.12975,
+  "Ri": 0.285,
+  "a1": 47.4631,
+  "strap_w": 0.055,
+  "strap_t": 0.012,
+  "strap_x": 0.24,
+  "guard_g": 0.08,
+  "guard_t": 0.012,
+  "lp_w": 0.15,
+  "lp_h": 0.17,
+  "lp_t": 0.022,
+  "wear": 0.003
+ }
+}

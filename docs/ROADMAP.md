@@ -53,12 +53,14 @@ pack-review tooling (both adopted from the agent). Record: [experiments/FRESH_AG
 atlas; lifecycle states (DERIVED/VALID/REGION_KEPT/RELAYOUT/INVALID); texel density per pack; renderer
 backend seam; baking split into core and optional; validation; glTF mapping; security; layout; migration.
 
-## Phase 8: Surface implementation (implemented; gate = FRESH_AGENT_04)
+## Phase 8: Surface implementation ✅ (gate passed)
 Archetypes with semantic params and `use:` instances, image/vertex-colour layers, deterministic bake to
 a base-colour + ORM atlas sized by texel density, edge wear, texture lifecycle, textured render modes,
 `sw materials`, `TEX_*`/`PBR_*` validation, textured GLB (Khronos-clean, byte-deterministic).
 Untextured assets are unchanged (all goldens identical). The gate is a fresh agent texturing an asset
-from request to GLB with no human material editing.
+from request to GLB with no human material editing. **Result:** a fresh agent textured a treasure chest end to
+end (1,464 tris, one 1024² set, Khronos-clean, 0 interventions, 1 framework bug fix). Fixes: multi-material
+round-trip bug, new `grime` params, grain-model docs, PBR hint. Record: [experiments/FRESH_AGENT_04.md](experiments/FRESH_AGENT_04.md).
 Smoke test: the barrel with `wood`/`metal` archetypes ([sheet](images/phase8_textured_barrel_sheet.png),
 [materials](images/phase8_material_preview.png)): 512px atlas, Khronos 0 errors, identical GLB hash on re-export.
 

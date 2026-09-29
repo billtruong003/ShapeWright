@@ -32,7 +32,8 @@ def test_geometry_matches_golden(name):
     golden = json.loads(GOLDEN.read_text())
     a = build(ROOT / "assets" / name)
     h = geometry_hash(concat([p.mesh for p in a.parts]))
-    assert golden.get(name) == h, f"{name}: geometry changed ({golden.get(name)} -> {h})"
+    assert name in golden, f"{name}: new asset has no golden hash yet; record it with python tests/update_golden.py"
+    assert golden[name] == h, f"{name}: geometry changed ({golden[name]} -> {h}); if intended: python tests/update_golden.py"
 
 
 def test_export_is_byte_deterministic_and_roundtrips(tmp_path):

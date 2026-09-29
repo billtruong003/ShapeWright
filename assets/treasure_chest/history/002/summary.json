@@ -1,0 +1,55 @@
+{
+ "iteration": 2,
+ "note": "fix budget (lid_strap segments 20), bigger lock plate + keyhole, brighter iron, thicker handle, more wood wear, UV lock",
+ "critique": "PASS 1464/1500; iron #5b5f67 now reads mid-grey, not 'dark iron' -> darken toward #50545b; wood reads too clean/new: planks uniform -> knots 0.5->1.0, darker base; handle still spindly radius 0.017->0.02; lock plate reads at 128px",
+ "source_hash": "9a3f5a52d20e",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 13
+ },
+ "metrics": {
+  "triangles": 1464,
+  "parts": 44,
+  "size_m": [
+   0.9386,
+   0.6023,
+   0.536
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.6023,
+   "lock_plate.size.x / asset.width": 0.1811
+  }
+ },
+ "errors": [],
+ "params": {
+  "W": 0.8,
+  "D": 0.5,
+  "H": 0.4,
+  "wall_t": 0.04,
+  "body_planks": 3.0,
+  "plank_h": 0.13333,
+  "rim_h": 0.07,
+  "R": 0.32,
+  "lid_t": 0.035,
+  "a0": 51.37517,
+  "step": 20.55007,
+  "lid_w": 0.11416,
+  "rc": 0.3025,
+  "vc": -0.12975,
+  "Ri": 0.285,
+  "a1": 47.4631,
+  "strap_w": 0.055,
+  "strap_t": 0.012,
+  "strap_x": 0.24,
+  "guard_g": 0.08,
+  "guard_t": 0.012,
+  "lp_w": 0.17,
+  "lp_h": 0.19,
+  "lp_t": 0.022,
+  "wear": 0.003
+ }
+}

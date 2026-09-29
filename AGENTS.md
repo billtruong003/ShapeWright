@@ -89,7 +89,7 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
   `materials: {oak: {archetype: wood, color: ..., grain_strength: ..., edge_wear: ...}}`.
   `sw doc wood` (or metal, stone, painted, flat) lists the params. Look at the result
   with `sw materials ASSET` and `sw render ASSET --mode textured`; critique in terms of
-  params ("grain too busy -> grain_scale 0.03 -> 0.05").
+  params ("grain too busy -> grain_scale 0.03 -> 0.05"). "Used/dirty" is `grime`, "handled" is `edge_wear`.
 - Before any texturing work: `sw uv ASSET lock` and commit `uv.lock.yaml`.
 - To prove an asset stays correct when its params change, try values without
   editing the file: `sw validate ASSET --set steps=14,rise=0.2` (also works on
@@ -102,6 +102,8 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
   `part.size.x`-style metrics inside `checks` are allowed.
 - If a validator reports `ASM_FLOATING_PARTS`, the part really does not touch
   anything. Check offsets and anchors in `sw stats` rather than tagging it `floating_ok`.
+- Every asset in `assets/` is a regression benchmark: a new asset needs its geometry hash recorded with
+  `python3 tests/update_golden.py` before `pytest` passes.
 - `.build/` holds renders and reports. It is disposable and git-ignored, so
   don't commit it. Commit `asset.yaml`, `history/` and, for finished assets,
   `export/`.

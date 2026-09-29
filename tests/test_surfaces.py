@@ -124,6 +124,43 @@ def test_textured_glb_embeds_textures_and_recipe(make_asset, tmp_path):
     assert roundtrip(a, out) == []
 
 
+def test_multi_material_part_survives_roundtrip(make_asset, tmp_path):
+    # found by FRESH_AGENT_04: a boolean cut whose faces keep the tool's material -> one node, two primitives
+    extra = ("  plate: {shape: {type: chamfer_box, size: [0.2, 0.2, 0.03], ops: [{type: subtract, "
+             "shape: {type: cylinder, radius: 0.03, height: 0.03, rotate: [90, 0, 0], material: oak}, position: [0, 0, 0.015]}]}, "
+             "anchor: bottom, position: [0, 0.16, 0], material: iron}\n")
+    a, s, _ = baked(make(make_asset, extra=extra))
+    out = tmp_path / "m.glb"
+    write_glb(a, s, out)
+    blob = out.read_bytes()
+    g = json.loads(blob[20:20 + struct.unpack("<I", blob[12:16])[0]])
+    assert len(next(m for m in g["meshes"] if m["name"] == "plate")["primitives"]) == 2
+    assert roundtrip(a, out) == []
+
+
+def test_grime_darkens_the_lower_band_and_creases(make_asset):
+    a0, s0, clean = baked(make(make_asset, "clean"))
+    p = make(make_asset, "dirty")
+    p.write_text(p.read_text().replace("edge_wear: 0.3}", "edge_wear: 0.3, grime: 1.0, grime_height: 0.2}"))
+    a1, s1, dirty = baked(p)
+
+    def band(a, s, t, lo, hi):  # mean luminance of post texels in a height band
+        uv, P = [], []
+        for part in a.parts:
+            if part.base == "post":
+                m = part.mesh
+                uv.append(s.parts[part.name].corner_uv.mean(1))
+                P.append(m.V[m.F].mean(1))
+        uv, P = np.concatenate(uv), np.concatenate(P)
+        sel = (P[:, 1] >= lo) & (P[:, 1] < hi)
+        x = np.clip((uv[sel, 0] * t.resolution).astype(int), 0, t.resolution - 1)
+        y = np.clip(((1 - uv[sel, 1]) * t.resolution).astype(int), 0, t.resolution - 1)
+        return t.base[y, x].mean()
+
+    assert band(a1, s1, dirty, 0, 0.08) < band(a0, s0, clean, 0, 0.08) - 0.03  # dirt near the ground
+    assert abs(band(a1, s1, dirty, 0.4, 0.5) - band(a0, s0, clean, 0.4, 0.5)) < 0.02  # high up: unchanged
+
+
 def test_pbr_plausibility_warnings(make_asset):
     p = make(make_asset, color="#0a0806")
     text = p.read_text().replace('iron: {archetype: metal, color: "#8a8f96"', 'iron: {archetype: metal, color: "#202224"')

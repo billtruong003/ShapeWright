@@ -50,11 +50,12 @@ def needs_textures(asset: Asset) -> bool:
 
 
 def _sharp_edges(mesh, angle_deg: float = 25.0):
-    """Per face, per corner k: (is the edge opposite corner k sharp & convex, altitude from k)."""
+    """Per face, per corner k: (edge opposite corner k is sharp & convex, ... sharp & concave, altitude from k)."""
     F, V = mesh.F, mesh.V
     fn, _ = mesh.face_normals()
     m = len(F)
     sharp = np.zeros((m, 3), dtype=bool)
+    crease = np.zeros((m, 3), dtype=bool)
     edge_map: dict = {}
     for f in range(m):
         for k in range(3):
@@ -72,6 +73,8 @@ def _sharp_edges(mesh, angle_deg: float = 25.0):
         c2 = V[F[f2]].mean(0) - V[F[f1]].mean(0)
         if fn[f1] @ c2 < 0:  # the neighbour bends away: convex
             sharp[f1, k1] = sharp[f2, k2] = True
+        else:
+            crease[f1, k1] = crease[f2, k2] = True
     T = V[F]
     alt = np.zeros((m, 3))
     for k in range(3):
@@ -79,7 +82,7 @@ def _sharp_edges(mesh, angle_deg: float = 25.0):
         base = np.linalg.norm(b - a, axis=1)
         area2 = np.linalg.norm(np.cross(b - a, T[:, k] - a), axis=1)
         alt[:, k] = area2 / np.maximum(base, 1e-12)
-    return sharp, alt
+    return sharp, crease, alt
 
 
 def _principal_axis(V: np.ndarray) -> np.ndarray:
@@ -207,6 +210,7 @@ def bake(asset: Asset, surface: Surface) -> Textures | None:
     images: dict = {}
     stats: dict = {}
     seen_owner = set()
+    ground = min(float(p.mesh.V[:, 1].min()) for p in asset.parts if len(p.mesh.V))
     for p in asset.parts:
         sp = surface.parts[p.name]
         if sp.corner_uv is None or sp.uv_owner in seen_owner:
@@ -220,8 +224,10 @@ def bake(asset: Asset, surface: Surface) -> Textures | None:
         P = np.einsum("kc,kcd->kd", bary, T[fid])
         fn, _ = mesh.face_normals()
         N = fn[fid]
-        sharp, alt = _sharp_edges(mesh)
+        sharp, crease, alt = _sharp_edges(mesh)
         dist = np.where(sharp[fid], bary * alt[fid], np.inf).min(1)
+        cdist = np.where(crease[fid], bary * alt[fid], np.inf).min(1)
+        height = P[:, 1] - ground
         axis = _principal_axis(mesh.V)
         mats = np.array([m if m else p.material for m in mesh.label_values("material")], dtype=object)[fid]
         part_seed = zlib.crc32(p.base.encode()) % 997
@@ -238,8 +244,9 @@ def bake(asset: Asset, surface: Surface) -> Textures | None:
             a = {pp.name: (parse_color_value(pp.default) if pp.kind == "color" else pp.default) for pp in arch.params}
             a.update(mat["args"])
             a["color"] = np.asarray(mat["base_color"][:3])
-            s = M.Samples(P[sel], N[sel], np.clip(1 - dist[sel] / a["edge_width"], 0, 1), axis, mesh.center(), part_seed)
-            ch = arch.fn(a, s)
+            s = M.Samples(P[sel], N[sel], np.clip(1 - dist[sel] / a["edge_width"], 0, 1), axis, mesh.center(), part_seed,
+                          cavity=np.clip(1 - cdist[sel] / (2 * a["edge_width"]), 0, 1), height=height[sel])
+            ch = M.apply_grime(a, s, arch.fn(a, s))
             col = ch.base
             for li, lay in enumerate(mat["layers"]):
                 where = f"materials.{mname}.layers[{li}]"

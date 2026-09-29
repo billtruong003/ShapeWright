@@ -304,12 +304,20 @@ def load_scene_summary(path) -> dict:
     import trimesh
 
     scene = trimesh.load(str(path), force="scene")
+    parents = scene.graph.transforms.parents
     out = {}
     for node in scene.graph.nodes_geometry:
         T, gname = scene.graph[node]
         g = scene.geometry[gname]
         V = np.asarray(g.vertices) @ T[:3, :3].T + T[:3, 3]
-        out[str(node)] = (len(g.faces), np.stack([V.min(0), V.max(0)]))
+        # A mesh with several primitives (a multi-material part) is split by trimesh
+        # into child nodes with generated names; fold them back into the glTF node.
+        name = str(parents.get(node, node)) if g.metadata.get("from_gltf_primitive") else str(node)
+        tris, bounds = len(g.faces), np.stack([V.min(0), V.max(0)])
+        if name in out:
+            t0, b0 = out[name]
+            tris, bounds = t0 + tris, np.stack([np.minimum(b0[0], bounds[0]), np.maximum(b0[1], bounds[1])])
+        out[name] = (tris, bounds)
     return out
 
 

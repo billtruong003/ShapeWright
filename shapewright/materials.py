@@ -44,6 +44,9 @@ COMMON = [
     Param("edge_color", "color", None, "colour of worn edges (default: a lighter base colour)"),
     Param("edge_width", "num", 0.012, "worn band width in metres", min=0.001, max=0.1),
     Param("seed", "int", 0, "variation seed (same seed = same pattern)"),
+    Param("grime", "num", 0.0, "0..1: dirt collecting in creases and near the ground (reads as used, dirty)", min=0, max=1),
+    Param("grime_color", "color", None, "colour of the dirt (default: a much darker base colour)"),
+    Param("grime_height", "num", 0.15, "how far up from the asset's base ground dirt reaches, in metres", min=0.0, max=5),
 ]
 
 
@@ -110,6 +113,8 @@ class Samples:
     axis: np.ndarray  # (3,) the part's long axis (grain direction)
     center: np.ndarray  # (3,) part centre
     part_seed: int = 0
+    cavity: np.ndarray | None = None  # (k,) 0..1 proximity to concave creases within the part
+    height: np.ndarray | None = None  # (k,) metres above the asset's lowest point
 
 
 @dataclass
@@ -132,6 +137,19 @@ def _apply_wear(a, s: Samples, base: np.ndarray, rough: np.ndarray, metal_rough_
     breakup = fbm(s.P / max(a["edge_width"] * 3, 1e-3), a["seed"] + 101, 2)
     w = np.clip(s.edge * (0.6 + 0.8 * breakup) * a["edge_wear"] * 1.4, 0, 1)
     return mix(base, edge_col, w), rough - metal_rough_drop * w
+
+
+def apply_grime(a, s: Samples, ch: "Channels") -> "Channels":
+    """Common to every archetype: darken creases and the lower band, broken up by noise; dirt is rough and non-metal."""
+    if a.get("grime", 0) <= 0:
+        return ch
+    k = len(s.P)
+    cav = s.cavity if s.cavity is not None else np.zeros(k)
+    ground = np.zeros(k) if s.height is None or a["grime_height"] <= 0 else np.clip(1 - s.height / a["grime_height"], 0, 1) ** 1.5
+    breakup = fbm(s.P / 0.06, a["seed"] + 211, 3)
+    w = np.clip(np.maximum(cav, ground) * (0.35 + 0.9 * breakup) * a["grime"] * 1.3, 0, 0.9)
+    col = np.asarray(a["grime_color"]) if a["grime_color"] is not None else np.asarray(a["color"]) * 0.35
+    return Channels(mix(ch.base, col, w), np.clip(ch.roughness + 0.25 * w, 0, 1), ch.metallic * (1 - w), ch.extras)
 
 
 # ------------------------------------------------------------------ archetypes
@@ -235,7 +253,8 @@ def painted(a, s: Samples) -> Channels:
 
 
 def is_textured(mat: dict) -> bool:
-    return mat.get("archetype", "flat") != "flat" or bool(mat.get("layers")) or mat.get("args", {}).get("edge_wear", 0) > 0
+    args = mat.get("args", {})
+    return mat.get("archetype", "flat") != "flat" or bool(mat.get("layers")) or args.get("edge_wear", 0) > 0 or args.get("grime", 0) > 0
 
 
 def archetype_names():

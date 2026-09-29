@@ -48,6 +48,11 @@ See docs/HARDENING.md. Rows below keep their original text; these entries overri
 | Texture inspection (albedo/roughness/metallic/texel/seam views) | — | NOW | render modes + `sw materials` |
 | PBR plausibility validation | — | NOW | `PBR_*` / `TEX_*` codes |
 | Normal-map / high-to-low baking | LONG | LONG | not needed for the low-poly style target |
+| Grime / dirt (ground band, in-part creases) | — | NOW | `grime` common param (FRESH_AGENT_04 finding) |
+| Cross-part cavity / AO bake | LONG | LONG | creases between parts need occlusion rays; FA-04 finding |
+| Image layer blend modes (multiply/overlay) | — | NEAR | FA-04 finding |
+| Texture compression (KTX2/Basis) | LONG | Phase 12 | FA-04: 8 MB uncompressed for one 1024² set |
+| Pivots/origins not on the part's own anchors (hinges) | — | Phase 12 | FA-04 finding |
 
 ---
 

@@ -440,7 +440,7 @@ def surface_textures(asset: Asset, surface: Surface, metrics: dict):
                               f"materials.{name}", "very dark or very bright albedo reads badly under game lighting; adjust color"))
         if st["metallic_mean"] >= 0.5 and lum < 90:
             out.append(_issue("PBR_METAL_TOO_DARK", "warning", "surface", f"metal with mean base colour luminance {lum:.0f}/255",
-                              f"materials.{name}", "metals get their colour from reflections; a brighter base (≥ ~110) reads as metal"))
+                              f"materials.{name}", "metals get their colour from reflections; keep base-colour luminance ≥ 90/255 (e.g. #4c5057 for dark iron)"))
         if st["metallic_mixed_fraction"] > 0.2:
             out.append(_issue("PBR_METALLIC_MIXED", "warning", "surface", f"{st['metallic_mixed_fraction']:.0%} of texels are neither metal nor non-metal",
                               f"materials.{name}", "metallic should be ~0 or ~1; use rust/paint layers for transitions"))
