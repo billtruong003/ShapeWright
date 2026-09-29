@@ -1,0 +1,50 @@
+{
+ "iteration": 1,
+ "note": "blockout: ribbed stem (union), 3 tube arms + measured tips, 3 flowers, pot",
+ "critique": "arm_2: scale 0.6 leaves it almost inside the stem (0.05 m wide) -> arm_out 0.12->0.15, scale step 0.2->0.12; flower: specks at 4 cm, unreadable -> petal length 0.028->0.045, centre 0.012->0.016; stem: 784 tris, too heavy for 1912/2000 budget -> core as plain 8-seg cylinder (caps hidden inside ribs), ribs 8->7",
+ "source_hash": "925e003324a2",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 5
+ },
+ "metrics": {
+  "triangles": 1912,
+  "parts": 12,
+  "size_m": [
+   0.2911,
+   0.6244,
+   0.272
+  ],
+  "materials": 4,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.6244,
+   "asset.height / pot.height": 3.1221,
+   "arm_0.min.y < arm_1.min.y and arm_1.min.y < arm_2.min.y": true,
+   "flower.min.y > arm.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "pot_h": 0.2,
+  "pot_top": 0.12,
+  "pot_bot": 0.09,
+  "rim_h": 0.045,
+  "rim_out": 0.016,
+  "wall": 0.014,
+  "pot_sides": 12.0,
+  "soil_d": 0.022,
+  "stem_h": 0.46,
+  "core_r": 0.052,
+  "rib_r": 0.03,
+  "rib_off": 0.042,
+  "ribs": 8.0,
+  "arm_r": 0.038,
+  "arm_out": 0.12,
+  "arm_up": 0.15,
+  "arm_y0": 0.3,
+  "sink": 0.03
+ }
+}

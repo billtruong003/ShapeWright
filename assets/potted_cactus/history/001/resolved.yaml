@@ -1,0 +1,377 @@
+shapewright: 0.1
+asset:
+  name: potted_cactus
+  kind: prop/decor/potted_plant
+  description: Stylized low-poly ribbed cactus with three curving arms and flowers, in a terracotta pot.
+  tags:
+  - plant
+  - decor
+profile: desktop_indie
+style: stylized_lowpoly
+budget:
+  triangles: 2000
+  materials: 4
+params:
+  pot_h:
+    value: 0.2
+    doc: pot height including the rim
+  pot_top:
+    value: 0.12
+    doc: outer radius under the rim
+  pot_bot:
+    value: 0.09
+  rim_h:
+    value: 0.045
+  rim_out:
+    value: 0.016
+  wall:
+    value: 0.014
+  pot_sides:
+    value: 12
+  soil_d:
+    value: 0.022
+    doc: soil surface below the rim top
+  stem_h:
+    value: 0.46
+    min: 0.3
+    max: 0.6
+    doc: main stem length (part of it is buried)
+  core_r:
+    value: 0.052
+  rib_r:
+    value: 0.03
+    doc: radius of each rib
+  rib_off:
+    value: 0.042
+    doc: rib axis distance from the stem axis
+  ribs:
+    value: 8
+  arm_r:
+    value: 0.038
+  arm_out:
+    value: 0.12
+    doc: horizontal reach of an arm (before scale)
+  arm_up:
+    value: 0.15
+    doc: vertical rise of an arm (before scale)
+  arm_y0:
+    value: 0.3
+    doc: height of the lowest arm
+  sink:
+    value: 0.03
+    doc: stem base sinks into the soil
+materials:
+  clay:
+    archetype: flat
+    color: '#b8643a'
+    roughness: 0.9
+    edge_wear: 0.3
+    edge_color: '#d88a5c'
+    doc: fired clay pot
+  soil:
+    archetype: flat
+    color: '#4a3222'
+    roughness: 1.0
+  cactus:
+    archetype: flat
+    color: '#4f8a3a'
+    roughness: 0.7
+    edge_wear: 0.25
+    edge_color: '#86b85a'
+  blossom:
+    archetype: flat
+    color: '#e8628a'
+    roughness: 0.6
+    edge_wear: 0.4
+    edge_color: '#ffd35a'
+    doc: pink petals, yellow worn edges
+parts:
+  pot:
+    doc: hollow tapered clay pot with a rolled rim
+    shape:
+      type: lathe
+      segments: pot_sides
+      profile:
+      - - 0
+        - 0
+      - - pot_bot - 0.008
+        - 0
+      - - pot_bot
+        - 0.008
+      - - pot_top
+        - pot_h - rim_h
+      - - pot_top + rim_out
+        - pot_h - rim_h + 0.006
+      - - pot_top + rim_out
+        - pot_h - 0.006
+      - - pot_top + rim_out - 0.006
+        - pot_h
+      - - pot_top - wall
+        - pot_h
+      - - pot_top - wall - 0.004
+        - pot_h - rim_h
+      - - pot_bot - wall
+        - 0.03
+      - - 0
+        - 0.03
+    shading: auto
+    smooth_angle: 35
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    material: clay
+  soil:
+    doc: soil filling the pot to just under the rim
+    measure:
+      s:
+        section: pot
+        axis: y
+        at: pot_h - soil_d
+    shape:
+      type: lathe
+      segments: pot_sides
+      profile:
+      - - 0
+        - 0
+      - - s.size.x / 2 - 0.004
+        - 0
+      - - s.size.x / 2 - 0.004
+        - 0.03
+      - - s.size.x / 2 * 0.6
+        - 0.035
+      - - 0
+        - 0.04
+    ops:
+    - type: noise
+      amount: 0.003
+      frequency: 30
+      seed: 5
+    anchor: bottom
+    position:
+    - 0
+    - pot_h - soil_d - 0.03
+    - 0
+    shading: flat
+    material: soil
+  stem:
+    doc: ribbed main stem (core + radial rib capsules, fused)
+    shape:
+      type: boolean
+      operation: union
+      base:
+        type: capsule
+        radius: core_r
+        height: stem_h
+        segments: 8
+        cap_rings: 2
+      tools:
+      - type: capsule
+        radius: rib_r
+        height: stem_h - 0.02
+        segments: 6
+        cap_rings: 2
+        ops:
+        - type: translate
+          offset:
+          - rib_off
+          - 0
+          - 0
+        - type: repeat
+          count: ribs
+          radial: y
+    ops:
+    - type: taper
+      axis: y
+      scale: 0.9
+    anchor: bottom
+    attach:
+      to: soil
+      at: top
+      offset:
+      - 0
+      - -sink
+      - 0
+    shading: auto
+    smooth_angle: 50
+    material: cactus
+  arm:
+    doc: three arms, each out then up; lowest arm biggest
+    shape:
+      type: tube
+      radius: arm_r
+      radius_end: arm_r * 0.85
+      sides: 8
+      corner_radius: 0.06
+      corner_segments: 4
+      path:
+      - - 0
+        - 0
+        - 0
+      - - arm_out
+        - 0
+        - 0
+      - - arm_out
+        - arm_up
+        - 0
+    origin: center
+    anchor: left
+    rotate_about: anchor
+    position:
+    - 0.01
+    - arm_y0
+    - 0
+    array:
+      count: 3
+      offset:
+      - 0
+      - 0
+      - 0
+      each:
+        rotate:
+        - 0
+        - 20 + i * 128
+        - 0
+        translate:
+        - 0
+        - i * 0.075 + 0.02 * (i == 2)
+        - 0
+        scale:
+        - 1 - 0.2 * i
+        - 1 - 0.18 * i
+        - 1 - 0.2 * i
+    shading: auto
+    smooth_angle: 50
+    material: cactus
+  arm_tip:
+    doc: rounded dome closing each arm end (placed on the measured top of each arm)
+    measure:
+      b0:
+        bounds: arm_0
+      b1:
+        bounds: arm_1
+      b2:
+        bounds: arm_2
+      t0:
+        section: arm_0
+        axis: y
+        at: b0.max.y - 0.002
+      t1:
+        section: arm_1
+        axis: y
+        at: b1.max.y - 0.002
+      t2:
+        section: arm_2
+        axis: y
+        at: b2.max.y - 0.002
+    shape:
+      type: sphere
+      radius: arm_r * 0.85
+      segments: 8
+      rings: 4
+    anchor: center
+    position:
+    - 0
+    - 0
+    - 0
+    array:
+      count: 3
+      offset:
+      - 0
+      - 0
+      - 0
+      each:
+        translate:
+        - t0.center.x if i == 0 else (t1.center.x if i == 1 else t2.center.x)
+        - b0.max.y if i == 0 else (b1.max.y if i == 1 else b2.max.y)
+        - t0.center.z if i == 0 else (t1.center.z if i == 1 else t2.center.z)
+        scale:
+        - t0.size.x / (2 * arm_r * 0.85) if i == 0 else (t1.size.x / (2 * arm_r * 0.85) if i == 1 else t2.size.x / (2 * arm_r
+          * 0.85))
+        - t0.size.x / (2 * arm_r * 0.85) if i == 0 else (t1.size.x / (2 * arm_r * 0.85) if i == 1 else t2.size.x / (2 * arm_r
+          * 0.85))
+        - t0.size.x / (2 * arm_r * 0.85) if i == 0 else (t1.size.x / (2 * arm_r * 0.85) if i == 1 else t2.size.x / (2 * arm_r
+          * 0.85))
+    shading: smooth
+    material: cactus
+  flower:
+    doc: three blossoms on the stem top, tilted outward
+    measure:
+      t:
+        bounds: stem
+    shape:
+      type: combine
+      items:
+      - type: sphere
+        radius: 0.5
+        segments: 5
+        rings: 3
+        ops:
+        - type: scale
+          factor:
+          - 0.028
+          - 0.012
+          - 0.012
+        - type: translate
+          offset:
+          - 0.014
+          - 0.004
+          - 0
+        - type: rotate
+          angles:
+          - 0
+          - 0
+          - 18
+        - type: repeat
+          count: 5
+          radial: y
+      - type: sphere
+        radius: 0.012
+        segments: 6
+        rings: 3
+        translate:
+        - 0
+        - 0.012
+        - 0
+    anchor: bottom
+    rotate_about: anchor
+    position:
+    - 0.03
+    - t.max.y - 0.022
+    - 0
+    array:
+      count: 3
+      radial: y
+      angle: 360
+      start: 30
+      center:
+      - 0
+      - 0
+      - 0
+      each:
+        rotate:
+        - 0
+        - 0
+        - -20 - 8 * rand(i)
+        scale:
+        - 0.9 + 0.3 * rand(i, 2)
+        - 1
+        - 0.9 + 0.3 * rand(i, 2)
+    shading: flat
+    material: blossom
+collision:
+  mode: hull
+checks:
+- expr: asset.height
+  min: 0.55
+  max: 0.85
+  doc: tabletop/floor cactus
+- expr: asset.height / pot.height
+  min: 2.5
+  max: 4.5
+  doc: cactus clearly taller than its pot
+- expr: arm_0.min.y < arm_1.min.y and arm_1.min.y < arm_2.min.y
+  doc: arms at different heights
+- expr: flower.min.y > arm.max.y
+  doc: flowers crown the top

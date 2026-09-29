@@ -1,0 +1,50 @@
+{
+ "iteration": 2,
+ "note": "longer arms, lighter stem, bigger tilted flowers",
+ "critique": "three arms visible at distinct heights, ribs read as grooves, flowers read as a pink crown; STYLE_MATERIALS (4) accepted for pot/soil/cactus/blossom; no significant findings",
+ "source_hash": "e15654dbd436",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 4
+ },
+ "metrics": {
+  "triangles": 1792,
+  "parts": 12,
+  "size_m": [
+   0.3191,
+   0.6176,
+   0.2752
+  ],
+  "materials": 4,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.6176,
+   "asset.height / pot.height": 3.0878,
+   "arm_0.min.y < arm_1.min.y and arm_1.min.y < arm_2.min.y": true,
+   "flower.min.y > arm.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "pot_h": 0.2,
+  "pot_top": 0.12,
+  "pot_bot": 0.09,
+  "rim_h": 0.045,
+  "rim_out": 0.016,
+  "wall": 0.014,
+  "pot_sides": 12.0,
+  "soil_d": 0.022,
+  "stem_h": 0.46,
+  "core_r": 0.052,
+  "rib_r": 0.03,
+  "rib_off": 0.042,
+  "ribs": 7.0,
+  "arm_r": 0.038,
+  "arm_out": 0.15,
+  "arm_up": 0.15,
+  "arm_y0": 0.3,
+  "sink": 0.03
+ }
+}

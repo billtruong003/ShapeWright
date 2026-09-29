@@ -81,7 +81,59 @@ was a bug fix.
 All goldens were unchanged by the additions: 37 assets, of which 26 exports changed only
 through the UV layout. Tests: `tests/test_breadth.py` (10) plus the bug regressions.
 
-## Gate status
+## Gate run: held-out classes (FRESH_AGENT_05_GATE)
 
-The probe only produces evidence. The Phase 9 gate is a **held-out** run over classes that
-were not used to design the additions: see FRESH_AGENT_05_GATE below, once it has run.
+- **Commit:** `4886e7e` (with the Phase 9 additions). One fresh agent, same isolation.
+- **Classes:** battle axe, rope-bridge section, hanging lantern, cactus in a pot, wheelbarrow. None was
+  used to design the additions.
+- **Cost:** ~20 min (1,172 s), 84 tool calls, ~198k tokens.
+
+![Gate assets at one scale](../images/phase9_gate_assets.png)
+
+| Asset | Tris / budget | Status | New vocabulary used (from the source) | Hand trig |
+|---|---|---|---|---|
+| battle_axe | 702 / 1,000 | PASS | `helix` (grip wraps) | 0 |
+| rope_bridge | 2,132 / 3,000 | PASS | `arc` ×6 (sagging ropes), `array.each` ×3 (irregular planks/ties with `rand`), `origin: keep` ×2 | 2 (plank slope `atan2`) |
+| iron_lantern | 504 / 1,500 | WARN (4 materials > style's 3) | `arc` (ring handle) | 0 |
+| potted_cactus | 1,792 / 2,000 | WARN (4 materials) | `arc` ×4 (curving arms), `array.each` ×3, `rotate_about` ×2, `corner_radius` | 0 |
+| wheelbarrow | 968 / 2,500 | PASS | `strut` ×3 (handles, legs), `rotate_about` (tray on the handle slope), `arc` ×3 | 1 (tray tilt `atan2`) |
+
+- Khronos 0 errors on all five; the re-import check passed; 0 mesh files; no new shapes or ops.
+- **Framework modifications: 1.** `ASM_HIDDEN_PART` counted glass as hiding the candle inside it.
+  This is a validation false positive, fixed by the agent with a regression test and adopted here.
+
+### Predictions vs outcome
+
+| # | Prediction | Outcome |
+|---|---|---|
+| H1 | generators/`each` used in ≥ 3 of 5 | ✔ 5 of 5 use at least one addition |
+| H2 | `strut` / `origin: keep` for the wheelbarrow or bridge | ✔ both |
+| H3 | hand trig in ≤ 1 asset | ✘ **2 of 5** (bridge, wheelbarrow), down from 6 of 17. What's left is slope-following: "orient this along that curve/slope" |
+| H4 | rope sag as an `arc` or hand points | ✔ `arc`, but the radius and angles for a given span and sag were derived by hand |
+| H5 | 0 framework changes | ✘ 1, a genuine validator false positive rather than a missing capability |
+
+### Remaining gaps (recorded, not built in Phase 9)
+
+| Gap | Evidence | Status |
+|---|---|---|
+| Sampling a point/tangent on a curve inside `each:` (planks on a sagging curve, fittings along a pipe, tip of a horn) | bridge + pipes, horn (probe) = 3 | **next candidate**: a `curve` declared once and sampled by `i` would remove the remaining trig |
+| Arc from endpoints + sag (instead of a centre) | bridge, axe crescent | NEAR, same design as the above |
+| Measures indexed by instance; measure order within a part is significant but not explained | cactus, wheelbarrow | ergonomics, recorded |
+| `flat_bottom` at a world height | wheelbarrow | small, recorded |
+| Renders ignore transparency (parts behind glass need `--isolate`) | lantern | renderer, recorded |
+| Same YAML error printed once per array instance | bridge | **fixed** (issues deduplicated) |
+
+## Phase 9 gate
+
+| Criterion | Verdict | Evidence |
+|---|---|---|
+| diverse asset classes | **PASS** | 22 new classes across hard-surface, architectural, curved, organic, mechanical: all valid and exported (39 benchmarks in total) |
+| without frequent framework changes | **PASS** | 2 framework changes across 22 assets and 5 agents, both genuine bug/false-positive fixes with tests. No capability had to be added by an agent |
+| without one-off custom generators | **PASS** | no asset-specific shape, op or mesh file |
+| highest useful abstraction | **PASS, with a caveat** | the held-out run adopted the Phase 9 vocabulary in 5 of 5 assets. Slope and curve following still needs hand trig in 2 of 5 |
+
+**Caveats:**
+1. Quality was judged by the agents and spot-checked in images, not by artists.
+2. n = 1 model family (Phase 13 tests cross-agent).
+3. Curve sampling is the clearest next vocabulary item. It is recorded rather than built, so
+   that it is added when the next benchmark needs it.

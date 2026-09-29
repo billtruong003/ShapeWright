@@ -53,6 +53,15 @@ See docs/HARDENING.md. Rows below keep their original text; these entries overri
 | Image layer blend modes (multiply/overlay) | — | NEAR | FA-04 finding |
 | Texture compression (KTX2/Basis) | LONG | Phase 12 | FA-04: 8 MB uncompressed for one 1024² set |
 | Pivots/origins not on the part's own anchors (hinges) | — | Phase 12 | FA-04 finding |
+| Curve generators in point lists (arc, spiral, helix, line) (§1, §23) | NEAR | NOW | Phase 9 (FA-05: 6 of 17 assets hand-computed curves) |
+| Rounded path corners (pipe elbows) | — | NOW | `tube.corner_radius` |
+| Per-instance array variation, skip, nested arrays (§4) | — | NOW | `array.each` with `i`, `n`, `rand()` |
+| Members between points (§17) | — | NOW | `strut`, `origin: keep` |
+| Rotation about an anchor / hinge | — | NOW | `rotate_about: anchor` |
+| Bevel on extrusions (§1) | NEAR | PARTIAL | `extrude.chamfer` for convex outlines; general bevel still LONG |
+| Sampling points/tangents on a curve (orient along a path) | — | NEAR | Phase 9 residual gap (3 assets) |
+| Loft, SDF / smooth blends, open surfaces | NEAR/LONG | unchanged | not observed in 22 benchmark classes |
+| Transparency in inspection renders | — | NEAR | Phase 9 finding (lantern) |
 
 ---
 

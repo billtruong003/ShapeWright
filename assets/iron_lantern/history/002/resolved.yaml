@@ -1,0 +1,291 @@
+shapewright: 0.1
+asset:
+  name: iron_lantern
+  kind: prop/light/lantern
+  description: Stylized low-poly hanging hexagonal iron lantern with glass panes, pyramidal roof, ring handle and a glowing
+    candle.
+  placement: free
+profile: desktop_indie
+style: stylized_lowpoly
+budget:
+  triangles: 1500
+  materials: 4
+params:
+  rf:
+    value: 0.1
+    min: 0.07
+    max: 0.14
+    doc: hex frame circumradius
+  hf:
+    value: 0.22
+    min: 0.15
+    max: 0.3
+    doc: frame (glass) height
+  wall:
+    value: 0.012
+    doc: frame wall thickness
+  post:
+    value: 0.017
+    doc: width of the corner posts left between windows
+  band:
+    value: 0.024
+    doc: solid band above and below the windows
+  base_h:
+    value: 0.045
+  roof_h:
+    value: 0.11
+  roof_over:
+    value: 1.3
+    doc: roof radius / frame radius (overhang)
+  ring_r:
+    value: 0.042
+  candle_r:
+    value: 0.028
+  candle_h:
+    value: 0.1
+materials:
+  iron:
+    archetype: metal
+    color: '#4c5057'
+    roughness: 0.55
+    edge_wear: 0.45
+    rust: 0.2
+  glass:
+    base_color: '#ffe2a0bb'
+    emissive: '#a8661a'
+    roughness: 0.15
+    alpha_mode: BLEND
+    double_sided: true
+    doc: warm lit panes
+  wax:
+    base_color: '#efe2c4'
+    roughness: 0.7
+  flame:
+    base_color: '#ffcf5a'
+    emissive: '#ffb030'
+    roughness: 0.3
+    doc: glowing flame
+parts:
+  base:
+    doc: faceted hex base plate with a small foot
+    shape:
+      type: lathe
+      segments: 6
+      profile:
+      - - 0
+        - 0
+      - - rf * 0.8
+        - 0
+      - - rf * 1.12
+        - base_h * 0.55
+      - - rf * 1.12
+        - base_h
+      - - 0
+        - base_h
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    shading: flat
+    material: iron
+  frame:
+    doc: hex shell with six window openings
+    shape:
+      type: boolean
+      operation: difference
+      base:
+        type: cylinder
+        radius: rf
+        height: hf
+        segments: 6
+      tools:
+      - type: cylinder
+        radius: rf - wall
+        height: hf + 0.02
+        segments: 6
+      - type: box
+        size:
+        - rf - 2 * post
+        - hf - 2 * band
+        - rf * 3
+      - type: box
+        size:
+        - rf - 2 * post
+        - hf - 2 * band
+        - rf * 3
+        rotate:
+        - 0
+        - 60
+        - 0
+      - type: box
+        size:
+        - rf - 2 * post
+        - hf - 2 * band
+        - rf * 3
+        rotate:
+        - 0
+        - 120
+        - 0
+    anchor: bottom
+    attach:
+      to: base
+      at: top
+      offset:
+      - 0
+      - -0.004
+      - 0
+    shading: flat
+    material: iron
+  glass:
+    doc: hex glass prism inside the frame wall (the six panes)
+    measure:
+      f:
+        bounds: frame
+    shape:
+      type: cylinder
+      radius: rf - wall / 2
+      height: hf - 0.006
+      segments: 6
+    position:
+    - 0
+    - f.center.y
+    - 0
+    shading: flat
+    tags:
+    - thin_ok
+    material: glass
+  candle:
+    doc: wax candle standing on the base plate
+    shape:
+      type: cylinder
+      radius: candle_r
+      radius_top: candle_r * 0.92
+      height: candle_h
+      segments: 8
+      chamfer: 0.004
+    ops:
+    - type: jitter
+      amount: 0.0015
+      seed: 4
+    anchor: bottom
+    attach:
+      to: base
+      at: top
+      offset:
+      - 0
+      - -0.002
+      - 0
+    material: wax
+  flame:
+    doc: teardrop flame (emissive)
+    shape:
+      type: lathe
+      segments: 6
+      profile:
+      - - 0
+        - 0
+      - - 0.011
+        - 0.01
+      - - 0.012
+        - 0.02
+      - - 0.006
+        - 0.036
+      - - 0
+        - 0.048
+    anchor: bottom
+    attach:
+      to: candle
+      at: top
+      offset:
+      - 0
+      - -0.004
+      - 0
+    shading: smooth
+    tags:
+    - thin_ok
+    material: flame
+  roof:
+    doc: pyramidal hex roof with overhang
+    shape:
+      type: cylinder
+      radius: rf * roof_over
+      radius_top: rf * 0.18
+      height: roof_h
+      segments: 6
+      chamfer: 0.004
+    anchor: bottom
+    attach:
+      to: frame
+      at: top
+      offset:
+      - 0
+      - -0.003
+      - 0
+    shading: flat
+    material: iron
+  knob:
+    doc: finial knob the ring passes through
+    shape:
+      type: cylinder
+      radius: rf * 0.2
+      radius_top: rf * 0.12
+      height: 0.03
+      segments: 6
+    anchor: bottom
+    attach:
+      to: roof
+      at: top
+      offset:
+      - 0
+      - -0.003
+      - 0
+    shading: flat
+    material: iron
+  ring:
+    doc: vertical ring handle on top
+    shape:
+      type: torus
+      radius: ring_r
+      tube: 0.0095
+      segments: 12
+      sides: 5
+    rotate:
+    - 90
+    - 0
+    - 0
+    anchor: bottom
+    attach:
+      to: knob
+      at: top
+      offset:
+      - 0
+      - -0.012
+      - 0
+    tags:
+    - thin_ok
+    material: iron
+sockets:
+  hang:
+    attach:
+      to: ring
+      at: top
+    doc: hook / chain attachment point
+  light:
+    attach:
+      to: flame
+      at: center
+    doc: point light position
+collision:
+  mode: hull
+checks:
+- expr: asset.height
+  min: 0.38
+  max: 0.6
+  doc: hand-held lantern size
+- expr: roof.size.x > frame.size.x
+  doc: roof overhangs the frame
+- expr: flame.max.y < frame.max.y - 0.03
+  doc: flame stays inside the glass
+- expr: ring.min.y > roof.max.y - 0.03
+  doc: ring sits on top of the roof

@@ -67,6 +67,25 @@ checks:""")
     assert "ASM_HIDDEN_PART" in c
 
 
+def test_part_behind_glass_is_not_hidden(make_asset):
+    """A candle inside a lantern's glass is visible: see-through (alpha BLEND) parts don't hide others."""
+    text = GOOD.replace('materials: {wood: {base_color: "#8a5a36"}}',
+                        'materials: {wood: {base_color: "#8a5a36"}, glass: {base_color: "#ffffff80", alpha_mode: BLEND}}')
+    text = text.replace("checks:", """  glass:
+    shape: {type: box, size: [0.2, 0.2, 0.2]}
+    anchor: bottom
+    position: [0, h, 0]
+    material: glass
+  candle:
+    shape: {type: box, size: [0.04, 0.1, 0.04]}
+    anchor: bottom
+    position: [0, h + 0.02, 0]
+    material: wood
+checks:""")
+    _, c = codes(make_asset(text))
+    assert "ASM_HIDDEN_PART" not in c
+
+
 def test_geometry_defects(make_asset):
     a = build(make_asset(GOOD))
     s = build_surface(a)

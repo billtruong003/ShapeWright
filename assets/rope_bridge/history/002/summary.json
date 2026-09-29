@@ -1,0 +1,54 @@
+{
+ "iteration": 2,
+ "note": "post caps, rope lashings at tie-off (measured from hand rope), calmer plank yaw, texel 210",
+ "critique": "reads as rope bridge at thumbnail; irregular gaps visible in top view; lashings sit at the rope; no significant findings",
+ "source_hash": "007ee865f01e",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 17
+ },
+ "metrics": {
+  "triangles": 2132,
+  "parts": 47,
+  "size_m": [
+   3.4436,
+   1.3783,
+   0.8236
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "plank.size.x": 2.9765,
+   "plank_0.center.y - plank_7.center.y": 0.1399,
+   "hand_rope.min.y - plank.max.y": 0.6547,
+   "plank_7.min.y": 0.0998
+  }
+ },
+ "errors": [],
+ "params": {
+  "half": 1.5,
+  "sag": 0.16,
+  "end_y": 0.28,
+  "deck_w": 0.72,
+  "planks": 15.0,
+  "plank_w": 0.165,
+  "plank_t": 0.035,
+  "gap_jit": 0.035,
+  "yaw_jit": 2.5,
+  "rope_r": 0.018,
+  "rail_h": 0.85,
+  "post_w": 0.14,
+  "post_out": 0.14,
+  "tie_r": 0.011,
+  "pitch": 0.2,
+  "R": 7.11125,
+  "deck_cy": 7.23125,
+  "rope_x": 1.64,
+  "rope_th": 13.33361,
+  "rope_z": 0.33,
+  "foot_z": 0.29,
+  "foot_drop": 0.0283
+ }
+}

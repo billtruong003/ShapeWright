@@ -64,6 +64,22 @@ round-trip bug, new `grime` params, grain-model docs, PBR hint. Record: [experim
 Smoke test: the barrel with `wood`/`metal` archetypes ([sheet](images/phase8_textured_barrel_sheet.png),
 [materials](images/phase8_material_preview.png)): 512px atlas, Khronos 0 errors, identical GLB hash on re-export.
 
+## Phase 9: Modelling breadth ✅ (gate passed)
+A 17-class matrix across four fresh agents, then vocabulary added **only** for gaps recurring in ≥ 3
+assets:
+- point generators (arc, helix, line) and rounded tube corners;
+- `array.each`/`skip`/`start` and nested arrays;
+- `strut` and `origin: keep`;
+- `rotate_about: anchor`;
+- extrude chamfer;
+- cut-split reporting;
+- chart-aware UV regions;
+- wood `grain_axis`.
+
+Two framework bugs were fixed. A held-out 5-class run adopted the additions in all five assets with one
+validator fix. Record: [experiments/FRESH_AGENT_05.md](experiments/FRESH_AGENT_05.md). Next vocabulary
+candidate: curve sampling in `each:`.
+
 ## Stage 3: Prototype: a fresh agent succeeds unassisted
 - Run the README task ("tavern chair, < 700 tris, mobile") with a *fresh* agent
   that has only the repository. Record the transcript and friction points, and

@@ -1,0 +1,56 @@
+{
+ "iteration": 2,
+ "note": "tray tilted onto the handles, bearers removed, iron lip unioned into tray",
+ "critique": "reads as a wheelbarrow in side and 3/4 views; tray lies on handles; single wheel between converging handles; legs splay; no significant findings",
+ "source_hash": "fe34ff073f9e",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 4
+ },
+ "metrics": {
+  "triangles": 968,
+  "parts": 9,
+  "size_m": [
+   0.635,
+   0.7512,
+   1.699
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0008,
+  "checks": {
+   "tray.max.y": 0.7507,
+   "wheel.size.y": 0.42,
+   "handle_right.min.z < tray.min.z - 0.3": true,
+   "leg.min.y": -0.0005,
+   "tray.size.x / tray_w": 1.3804
+  }
+ },
+ "errors": [],
+ "params": {
+  "wheel_r": 0.21,
+  "rim_t": 0.045,
+  "rim_w": 0.06,
+  "hub_r": 0.045,
+  "hub_l": 0.1,
+  "wheel_z": 0.62,
+  "axle_r": 0.018,
+  "hx_f": 0.09,
+  "hx_r": 0.27,
+  "grip_y": 0.56,
+  "grip_z": -0.82,
+  "handle_w": 0.05,
+  "handle_h": 0.06,
+  "tray_w": 0.46,
+  "tray_l": 0.62,
+  "tray_h": 0.28,
+  "flare_x": 1.35,
+  "flare_z": 1.5,
+  "tray_z": 0.1,
+  "tray_wall": 0.03,
+  "leg_z": -0.34,
+  "wear": 0.003,
+  "tilt": 13.66115
+ }
+}

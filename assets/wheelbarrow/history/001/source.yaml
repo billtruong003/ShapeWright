@@ -1,0 +1,157 @@
+# Wooden wheelbarrow, wheel at the front (+Z), handles toward the back (-Z).
+# Two long handles are struts from the axle (between them, at the wheel hub) back and up to
+# the grips; they converge toward the wheel. The tapered open tray (outer tapered box minus
+# inner tapered box) sits level on two cross bearers whose heights come from measured
+# sections of the sloping handles. Two back legs are struts from the measured handle point
+# down to the ground. Wheel = rim + iron tyre + hub + spokes fused (hand_cart pattern).
+shapewright: 0.1
+asset:
+  name: wheelbarrow
+  kind: prop/vehicle/wheelbarrow
+  description: Stylized low-poly wooden wheelbarrow with a tapered tray, single front wheel on an axle between two long handles, and two back legs.
+  tags: [wood, vehicle, farm]
+profile: desktop_indie
+style: stylized_lowpoly
+budget: {triangles: 2500, materials: 3}
+
+params:
+  wheel_r:  {value: 0.21, min: 0.15, max: 0.3}
+  rim_t:    {value: 0.045, doc: radial thickness of the wooden rim}
+  rim_w:    {value: 0.06, doc: wheel width along the axle}
+  hub_r:    {value: 0.045}
+  hub_l:    {value: 0.1}
+  wheel_z:  {value: 0.62, doc: axle position along the length}
+  axle_r:   {value: 0.018}
+  hx_f:     {value: 0.09, doc: handle centre distance from the middle at the axle}
+  hx_r:     {value: 0.27, doc: handle centre distance from the middle at the grips}
+  grip_y:   {value: 0.56, doc: grip height when parked}
+  grip_z:   {value: -0.82}
+  handle_w: {value: 0.05}
+  handle_h: {value: 0.06}
+  tray_w:   {value: 0.46, doc: tray bottom width (x)}
+  tray_l:   {value: 0.62, doc: tray bottom length (z)}
+  tray_h:   {value: 0.28}
+  flare_x:  {value: 1.35, doc: tray top/bottom width ratio}
+  flare_z:  {value: 1.5, doc: tray top/bottom length ratio}
+  tray_z:   {value: 0.1, doc: tray centre along the length}
+  tray_wall: {value: 0.03}
+  leg_z:    {value: -0.34, doc: where the legs meet the handles}
+  wear:     {value: 0.003}
+  # derived
+  bearer_fz: tray_z + tray_l / 2 - 0.07
+  bearer_bz: tray_z - tray_l / 2 + 0.07
+
+materials:
+  wood:      {archetype: wood, color: "#a0703f", grain_strength: 0.35, grain_scale: 0.035, edge_wear: 0.3, seed: 1}
+  wood_dark: {archetype: wood, color: "#63412a", grain_strength: 0.3, grain_scale: 0.03, edge_wear: 0.35, seed: 2}
+  iron:      {archetype: metal, color: "#6b6f75", roughness: 0.55, edge_wear: 0.4, rust: 0.2}
+
+parts:
+  wheel:
+    doc: wooden rim, iron tyre, hub and 6 spokes fused; axis along x
+    shape:
+      type: boolean
+      operation: union
+      base: {type: ring, radius: wheel_r - 0.012, thickness: rim_t - 0.012, height: rim_w, segments: 14}
+      tools:
+        - {type: cylinder, radius: hub_r, height: hub_l, segments: 8, chamfer: 0.01}
+        - {type: ring, radius: wheel_r, thickness: 0.016, height: rim_w + 0.006, segments: 14, material: iron}
+        - type: box
+          size: [2 * (wheel_r - rim_t) + 0.02, 0.03, 0.035]
+          ops: [{type: repeat, count: 3, radial: y, angle: 120}]
+    rotate: [0, 0, 90]
+    anchor: bottom
+    position: [0, 0, wheel_z]
+    shading: flat
+    material: wood_dark
+
+  axle:
+    doc: iron axle through the hub, ends in the handle tips
+    measure:
+      w: {bounds: wheel}
+    shape: {type: cylinder, radius: axle_r, height: 2 * hx_f + handle_w + 0.03, segments: 8}
+    rotate: [0, 0, 90]
+    position: [0, w.center.y, w.center.z]
+    material: iron
+
+  handle:
+    doc: long handles from the axle back and up to the grips
+    measure:
+      a: {bounds: axle}
+    shape: {type: strut, from: [hx_f, a.center.y, a.center.z + 0.02], to: [hx_r, grip_y, grip_z], size: [handle_w, handle_h], chamfer: 0.01, extend: 0.04}
+    ops: [{type: jitter, amount: wear, seed: 11}]
+    mirror: x
+    material: wood_dark
+
+  grip:
+    doc: rounded grips over the handle ends
+    shape: {type: strut, from: [hx_r, grip_y, grip_z], to: ["lerp(hx_r, hx_f, 0.12)", "lerp(grip_y, wheel_r, 0.12)", "lerp(grip_z, wheel_z, 0.12)"], radius: 0.032, sides: 8, chamfer: 0.008, extend: 0.05}
+    mirror: x
+    material: wood
+
+  bearer_front:
+    doc: front cross bearer under the tray (taller, the handles are lower here)
+    measure:
+      h: {section: handle_right, axis: z, at: bearer_fz}
+      hb: {section: handle_right, axis: z, at: bearer_bz}
+    shape: {type: chamfer_box, size: [2 * h.max.x + 0.04, hb.max.y + 0.035 - h.max.y + 0.01, 0.06], chamfer: 0.008}
+    anchor: bottom
+    position: [0, h.max.y - 0.01, bearer_fz]
+    material: wood
+
+  bearer_back:
+    doc: back cross bearer under the tray
+    measure:
+      h: {section: handle_right, axis: z, at: bearer_bz}
+    shape: {type: chamfer_box, size: [2 * h.max.x + 0.04, 0.045, 0.06], chamfer: 0.008}
+    anchor: bottom
+    position: [0, h.max.y - 0.01, bearer_bz]
+    material: wood
+
+  tray:
+    doc: tapered open tray (outer tapered box minus inner tapered box)
+    measure:
+      b: {bounds: bearer_back}
+    shape:
+      type: boolean
+      operation: difference
+      base: {type: chamfer_box, size: [tray_w, tray_h, tray_l], chamfer: 0.015, ops: [{type: taper, axis: y, scale: [flare_x, 1, flare_z]}]}
+      tools:
+        - {type: chamfer_box, size: [tray_w - 2 * tray_wall, tray_h, tray_l - 2 * tray_wall], chamfer: 0.01, ops: [{type: taper, axis: y, scale: [flare_x, 1, flare_z]}], translate: [0, tray_wall, 0]}
+    ops: [{type: jitter, amount: wear, seed: 12}]
+    anchor: bottom
+    position: [0, b.max.y - 0.004, tray_z]
+    shading: flat
+    material: wood
+
+  tray_rim:
+    doc: rolled iron band round the tray lip
+    measure:
+      tb: {bounds: tray}
+      t: {section: tray, axis: y, at: tb.max.y - 0.01}
+    shape: {type: chamfer_box, size: [t.size.x + 0.012, 0.036, t.size.z + 0.012], chamfer: 0.006, ops: [{type: subtract, shape: {type: box, size: [t.size.x - 0.05, 0.1, t.size.z - 0.05]}}]}
+    anchor: top
+    position: [0, tb.max.y + 0.004, t.center.z]
+    material: iron
+
+  leg:
+    doc: two back legs from the handles to the ground, slightly splayed
+    measure:
+      h: {section: handle_right, axis: z, at: leg_z}
+    shape: {type: strut, from: [h.center.x, h.center.y, leg_z], to: [h.center.x + 0.03, -0.0085, leg_z - 0.05], size: [0.05, 0.05], chamfer: 0.008}
+    ops: [{type: flat_bottom, fraction: 0.02}]
+    mirror: x
+    material: wood_dark
+
+uv: {texel_density: 256}
+collision: {mode: hull}
+
+sockets:
+  handle_grip: {attach: {to: grip_right, at: back}, doc: where a character's hand goes}
+
+checks:
+  - {expr: tray.max.y, min: 0.6, max: 0.9, doc: tray rim at a working height}
+  - {expr: wheel.size.y, min: 0.35, max: 0.6, doc: single front wheel}
+  - {expr: handle_right.min.z < tray.min.z - 0.3, doc: handles run well behind the tray}
+  - {expr: leg.min.y, max: 0.005, doc: legs reach the ground}
+  - {expr: tray.size.x / tray_w, min: 1.2, doc: tray flares outward}

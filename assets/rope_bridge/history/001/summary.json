@@ -1,0 +1,54 @@
+{
+ "iteration": 1,
+ "note": "blockout: arc deck, planks on curve, foot/hand ropes, ties, 4 posts",
+ "critique": "plank: yaw jitter reads as broken V pattern in top view -> yaw_jit 5->2.5; post: plain sticks, rope just stabs in -> add lashing wrap (torus) at hand-rope height and a pointed post top; uv: TEX_DENSITY_BELOW_TARGET -> texel_density 230",
+ "source_hash": "64a14873d68d",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 17
+ },
+ "metrics": {
+  "triangles": 1828,
+  "parts": 39,
+  "size_m": [
+   3.4243,
+   1.2943,
+   0.7983
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "plank.size.x": 2.9852,
+   "plank_0.center.y - plank_7.center.y": 0.1399,
+   "hand_rope.min.y - plank.max.y": 0.6531,
+   "plank_7.min.y": 0.0997
+  }
+ },
+ "errors": [],
+ "params": {
+  "half": 1.5,
+  "sag": 0.16,
+  "end_y": 0.28,
+  "deck_w": 0.72,
+  "planks": 15.0,
+  "plank_w": 0.165,
+  "plank_t": 0.035,
+  "gap_jit": 0.035,
+  "yaw_jit": 5.0,
+  "rope_r": 0.018,
+  "rail_h": 0.85,
+  "post_w": 0.14,
+  "post_out": 0.14,
+  "tie_r": 0.011,
+  "pitch": 0.2,
+  "R": 7.11125,
+  "deck_cy": 7.23125,
+  "rope_x": 1.64,
+  "rope_th": 13.33361,
+  "rope_z": 0.33,
+  "foot_z": 0.29,
+  "foot_drop": 0.0283
+ }
+}

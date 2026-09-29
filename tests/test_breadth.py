@@ -152,3 +152,10 @@ def test_point_generator_errors_are_explained(make_asset):
     with pytest.raises(SourceError) as e:
         asset(make_asset, "  a: {shape: {type: tube, radius: 0.01, path: [[0, 0, 0], {arcc: {radius: 1}}]}, material: m}\n")
     assert any("arc" in (i.hint or "") for i in e.value.issues)
+
+
+def test_an_error_inside_array_each_is_reported_once(make_asset):
+    with pytest.raises(SourceError) as e:
+        asset(make_asset, "  s: {shape: {type: box, size: [0.1, 0.1, 0.1]}, material: m, array: {count: 12, offset: [0.2, 0, 0], "
+                          "each: {translate: [0, nope, 0]}}}\n")
+    assert len([i for i in e.value.issues if i.code == "SRC_EXPR"]) == 1

@@ -1,0 +1,57 @@
+{
+ "iteration": 1,
+ "note": "blockout: level tray on two bearers, strut handles/legs, fused wheel",
+ "critique": "bearer_front: 17 cm block under the tray reads as a crate, not a wheelbarrow -> drop bearers, tilt the tray by the handle slope (rotate_about bottom) so it sits on the handles like a real barrow at rest; tray_rim: measured from a horizontal section, breaks once tilted -> fold the rim into the tray as a union op (iron material)",
+ "source_hash": "0181f3ed5910",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 4
+ },
+ "metrics": {
+  "triangles": 1016,
+  "parts": 12,
+  "size_m": [
+   0.6136,
+   0.7426,
+   1.699
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0007,
+  "checks": {
+   "tray.max.y": 0.7381,
+   "wheel.size.y": 0.42,
+   "handle_right.min.z < tray.min.z - 0.3": true,
+   "leg.min.y": -0.0005,
+   "tray.size.x / tray_w": 1.3323
+  }
+ },
+ "errors": [],
+ "params": {
+  "wheel_r": 0.21,
+  "rim_t": 0.045,
+  "rim_w": 0.06,
+  "hub_r": 0.045,
+  "hub_l": 0.1,
+  "wheel_z": 0.62,
+  "axle_r": 0.018,
+  "hx_f": 0.09,
+  "hx_r": 0.27,
+  "grip_y": 0.56,
+  "grip_z": -0.82,
+  "handle_w": 0.05,
+  "handle_h": 0.06,
+  "tray_w": 0.46,
+  "tray_l": 0.62,
+  "tray_h": 0.28,
+  "flare_x": 1.35,
+  "flare_z": 1.5,
+  "tray_z": 0.1,
+  "tray_wall": 0.03,
+  "leg_z": -0.34,
+  "wear": 0.003,
+  "bearer_fz": 0.34,
+  "bearer_bz": -0.14
+ }
+}

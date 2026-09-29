@@ -48,7 +48,7 @@ pip install -r requirements.txt   # pure-Python wheels; no GPU, no display, no B
 ./sw review tavern_chair          # validate + contact sheet + critique checklist
 ./sw render tavern_chair --part back_slat --view front
 ./sw export tavern_chair          # -> assets/tavern_chair/export/tavern_chair.glb
-python3 -m pytest -q              # 160+ tests: contracts, shapes, ops, validators, determinism, golden geometry
+python3 -m pytest -q              # contracts, shapes, ops, validators, determinism, golden geometry
 ```
 
 Optional: `cd tools/gltf-validator && npm install` enables the Khronos glTF-Validator in `sw export`.

@@ -1,0 +1,50 @@
+{
+ "iteration": 2,
+ "note": "chunkier haft/grips/collar, longer spike, wider bits",
+ "critique": "reads as crescent double-bit at thumbnail; horns clear, spike dominant; no significant findings left",
+ "source_hash": "2bcf1a4addc8",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 702,
+  "parts": 9,
+  "size_m": [
+   0.48,
+   1.396,
+   0.084
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 1.396,
+   "head.size.x": 0.48,
+   "head.size.y / head.size.x": 0.6887,
+   "grip_up.max.y < collar.min.y - 0.15": true,
+   "spike.max.y > head.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "haft_len": 1.2,
+  "haft_r": 0.025,
+  "edge_x": 0.24,
+  "edge_r": 0.3,
+  "neck": 0.04,
+  "cut_rx": 0.19,
+  "cut_ry": 0.13,
+  "head_t": 0.034,
+  "bevel_t": 0.075,
+  "collar_r": 0.042,
+  "collar_h": 0.13,
+  "spike_h": 0.19,
+  "head_drop": 0.08,
+  "grip_r": 0.029,
+  "grip_low_l": 0.26,
+  "grip_up_l": 0.2,
+  "grip_gap": 0.3
+ }
+}

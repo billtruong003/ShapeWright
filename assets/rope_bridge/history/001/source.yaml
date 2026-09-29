@@ -1,0 +1,132 @@
+# Rope-bridge section, 3 m of deck along X (walking direction), centred on the origin.
+# The deck follows one sagging circular arc (radius from span and sag, not hand points):
+#   deck centre line  y(x) = deck_cy - sqrt(R^2 - x^2),  R = (half^2 + sag^2) / (2 sag)
+# Planks are one array placed on that curve (each: translate/rotate from the curve), with
+# seeded irregular gaps, widths and yaw. Two foot ropes carry the planks, two hand ropes run
+# the same arc raised by rail_h, so the vertical ties all have one length. Ropes are tubes
+# swept along {arc} point generators and end buried in the four end posts.
+shapewright: 0.1
+asset:
+  name: rope_bridge
+  kind: prop/structure/bridge
+  description: Stylized low-poly 3 m rope-bridge section with sagging plank deck, hand ropes, vertical rope ties and end posts.
+  tags: [wood, rope, modular]
+profile: desktop_indie
+style: stylized_lowpoly
+budget: {triangles: 3000, materials: 3}
+
+params:
+  half:      {value: 1.5, doc: half of the 3 m deck length}
+  sag:       {value: 0.16, min: 0.05, max: 0.35, doc: how far the deck middle hangs below its ends}
+  end_y:     {value: 0.28, doc: plank centre height at the ends of the deck}
+  deck_w:    {value: 0.72, doc: plank length (bridge width)}
+  planks:    {value: 15}
+  plank_w:   {value: 0.165, doc: plank width along the bridge}
+  plank_t:   {value: 0.035}
+  gap_jit:   {value: 0.035, doc: random shift of each plank along the deck (irregular gaps)}
+  yaw_jit:   {value: 5, doc: random yaw of each plank, degrees}
+  rope_r:    {value: 0.018}
+  rail_h:    {value: 0.85, doc: hand rope height above the planks}
+  post_w:    {value: 0.14}
+  post_out:  {value: 0.14, doc: post centre distance past the deck ends}
+  tie_r:     {value: 0.011}
+  # derived
+  pitch:     2 * half / planks
+  R:         (half * half + sag * sag) / (2 * sag)
+  deck_cy:   end_y - sag + R
+  rope_x:    half + post_out
+  rope_th:   atan2(rope_x, sqrt(R * R - rope_x * rope_x))
+  rope_z:    deck_w / 2 - 0.03
+  foot_z:    deck_w / 2 - 0.07
+  foot_drop: plank_t / 2 + rope_r * 0.6
+
+materials:
+  plank: {archetype: wood, color: "#9a6b40", grain_strength: 0.35, grain_scale: 0.03, edge_wear: 0.3, seed: 3}
+  post:  {archetype: wood, color: "#5e3f28", grain_strength: 0.3, grain_scale: 0.04, edge_wear: 0.35, seed: 4}
+  rope:  {archetype: flat, color: "#c2a26a", roughness: 0.95}
+
+parts:
+  post:
+    doc: four end posts (two per end, one for each hand rope)
+    shape: {type: chamfer_box, size: [post_w, end_y + rail_h + 0.16, post_w], chamfer: 0.018}
+    ops:
+      - {type: taper, axis: y, scale: 0.85}
+      - {type: jitter, amount: 0.004, seed: 21}
+    anchor: bottom
+    position: [rope_x, 0, rope_z]
+    mirror: [x, z]
+    material: post
+
+  foot_rope:
+    doc: sagging ropes under the plank ends that carry the deck
+    shape:
+      type: tube
+      radius: rope_r
+      sides: 6
+      path: [{arc: {center: [0, deck_cy - foot_drop, foot_z], radius: R, from: 270 - rope_th, to: 270 + rope_th, segments: 16, plane: xy}}]
+    origin: keep
+    position: [0, 0, 0]
+    mirror: z
+    material: rope
+
+  hand_rope:
+    doc: sagging hand ropes, same arc as the deck raised by rail_h
+    shape:
+      type: tube
+      radius: rope_r * 1.15
+      sides: 6
+      path: [{arc: {center: [0, deck_cy + rail_h, rope_z], radius: R, from: 270 - rope_th, to: 270 + rope_th, segments: 16, plane: xy}}]
+    origin: keep
+    position: [0, 0, 0]
+    mirror: z
+    material: rope
+
+  plank:
+    doc: deck planks on the sag curve, irregular gaps / widths / yaw
+    shape: {type: chamfer_box, size: [plank_w, plank_t, deck_w], chamfer: 0.008}
+    ops: [{type: jitter, amount: 0.003, seed: 7}]
+    anchor: center
+    position: [-half + pitch / 2, 0, 0]
+    array:
+      count: planks
+      offset: [pitch, 0, 0]
+      each:
+        translate:
+          - gap_jit * (rand(i) - 0.5)
+          - deck_cy - sqrt(R * R - (-half + pitch / 2 + i * pitch + gap_jit * (rand(i) - 0.5)) ** 2)
+          - 0
+        rotate:
+          - 0
+          - yaw_jit * (rand(i, 3) - 0.5) * 2
+          - atan2(-half + pitch / 2 + i * pitch + gap_jit * (rand(i) - 0.5), sqrt(R * R - (-half + pitch / 2 + i * pitch) ** 2))
+        scale: ["0.88 + 0.2 * rand(i, 5)", 1, 1]
+    material: plank
+
+  tie:
+    doc: vertical rope ties from every other plank up to the hand rope
+    shape: {type: cylinder, radius: tie_r, height: rail_h - plank_t / 2 + 0.012, segments: 4}
+    anchor: bottom
+    position: [-half + pitch / 2, 0, rope_z]
+    array:
+      count: (planks + 1) // 2
+      offset: [2 * pitch, 0, 0]
+      each:
+        translate:
+          - gap_jit * (rand(2 * i) - 0.5)
+          - deck_cy - sqrt(R * R - (-half + pitch / 2 + 2 * i * pitch + gap_jit * (rand(2 * i) - 0.5)) ** 2) + plank_t / 2 - 0.006
+          - 0
+    mirror: z
+    tags: [thin_ok]
+    material: rope
+
+collision: {mode: box}
+
+sockets:
+  walk_start: {attach: {to: origin, at: center, offset: [-half, end_y + plank_t / 2, 0]}, doc: deck surface at the -X end}
+  walk_end:   {attach: {to: origin, at: center, offset: [half, end_y + plank_t / 2, 0]}, doc: deck surface at the +X end}
+
+checks:
+  - {expr: plank.size.x, min: 2.9, max: 3.1, doc: 3 m of deck}
+  - {expr: plank_0.center.y - plank_7.center.y, min: sag * 0.8, doc: deck sags toward the middle}
+  - {expr: hand_rope.min.y - plank.max.y, min: 0.5, doc: hand ropes at a usable height over the deck}
+  - {expr: plank_7.min.y, min: 0.02, doc: deck middle stays above the ground}

@@ -1,0 +1,261 @@
+{
+ "asset": "rope_bridge",
+ "status": "PASS",
+ "source_hash": "007ee865f01e",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 17
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 2132,
+  "parts": 47,
+  "sliver_triangles": 325,
+  "size_m": [
+   3.4436,
+   1.3783,
+   0.8236
+  ],
+  "contacts": 83,
+  "triangles_by_part": {
+   "post": 176,
+   "foot_rope": 400,
+   "hand_rope": 400,
+   "plank": 660,
+   "tie": 192,
+   "post_cap": 48,
+   "lashing": 256
+  },
+  "budget_triangles": 3000,
+  "materials": 3,
+  "checks": {
+   "plank.size.x": 2.9765,
+   "plank_0.center.y - plank_7.center.y": 0.1399,
+   "hand_rope.min.y - plank.max.y": 0.6547,
+   "plank_7.min.y": 0.0998
+  },
+  "uv_utilization": 0.436,
+  "uv_overlap": 0.0,
+  "uv_owners": 47,
+  "texel_density_px_m": 219.2,
+  "texel_density_target": 210,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 210.0,
+   "achieved_px_m": 219.2,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 47
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_0_back",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_0_front",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_1_back",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_1_front",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_2_back",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_2_front",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_3_back",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_3_front",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_4_back",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_4_front",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_5_back",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_5_front",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_6_back",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_6_front",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_7_back",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tie_7_front",
+   "msg": "8/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 8
+   }
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv lock ASSET` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/rope_bridge/export/rope_bridge.glb",
+  "bytes": 583436,
+  "nodes": 97,
+  "meshes": 94,
+  "materials": 3
+ }
+}

@@ -100,11 +100,16 @@ class Ctx:
     def __init__(self):
         self.issues: list[Issue] = []
 
+    def _add(self, issue: Issue):
+        # the same problem evaluated once per array instance is reported once (FRESH_AGENT_05 gate: 15 copies)
+        if not any(i.code == issue.code and i.where == issue.where and i.message == issue.message for i in self.issues[-64:]):
+            self.issues.append(issue)
+
     def error(self, code, where, message, hint=""):
-        self.issues.append(Issue(code, "error", message, where, "source", hint))
+        self._add(Issue(code, "error", message, where, "source", hint))
 
     def warn(self, code, where, message, hint=""):
-        self.issues.append(Issue(code, "warning", message, where, "source", hint))
+        self._add(Issue(code, "warning", message, where, "source", hint))
 
     def raise_if_errors(self):
         if any(i.severity == "error" for i in self.issues):

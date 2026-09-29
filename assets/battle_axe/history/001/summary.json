@@ -1,0 +1,50 @@
+{
+ "iteration": 1,
+ "note": "blockout: CSG crescent head, haft, two grips, spike",
+ "critique": "head: crescent horns short, reads like a plain double axe -> cut_rx 0.185->0.17, edge_r 0.3->0.26 (more curved edge, taller horns); haft: spindly for stylized -> haft_r 0.02->0.025; spike small vs head -> spike_h 0.14->0.18",
+ "source_hash": "011efbd29098",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 662,
+  "parts": 9,
+  "size_m": [
+   0.44,
+   1.346,
+   0.072
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 1.346,
+   "head.size.x": 0.44,
+   "head.size.y / head.size.x": 0.6718,
+   "grip_up.max.y < collar.min.y - 0.15": true,
+   "spike.max.y > head.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "haft_len": 1.2,
+  "haft_r": 0.02,
+  "edge_x": 0.22,
+  "edge_r": 0.3,
+  "neck": 0.04,
+  "cut_rx": 0.185,
+  "cut_ry": 0.13,
+  "head_t": 0.034,
+  "bevel_t": 0.075,
+  "collar_r": 0.036,
+  "collar_h": 0.13,
+  "spike_h": 0.14,
+  "head_drop": 0.08,
+  "grip_r": 0.024,
+  "grip_low_l": 0.26,
+  "grip_up_l": 0.2,
+  "grip_gap": 0.3
+ }
+}

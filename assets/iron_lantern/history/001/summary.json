@@ -1,0 +1,43 @@
+{
+ "iteration": 1,
+ "note": "blockout: hex frame CSG, glass, candle, roof, ring",
+ "critique": "iron: PBR_METAL_TOO_DARK -> #4c5057; ring: 1.4 cm tube reads wiry -> tube 0.0095; candle: small and hard to see through panes -> candle_h 0.085->0.1, candle_r 0.024->0.028; glass: dull -> emissive brighter",
+ "source_hash": "2303eada6e35",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 504,
+  "parts": 8,
+  "size_m": [
+   0.26,
+   0.486,
+   0.2252
+  ],
+  "materials": 4,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.486,
+   "roof.size.x > frame.size.x": true,
+   "flame.max.y < frame.max.y - 0.03": true,
+   "ring.min.y > roof.max.y - 0.03": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "rf": 0.1,
+  "hf": 0.22,
+  "wall": 0.012,
+  "post": 0.017,
+  "band": 0.024,
+  "base_h": 0.045,
+  "roof_h": 0.11,
+  "roof_over": 1.3,
+  "ring_r": 0.042,
+  "candle_r": 0.024,
+  "candle_h": 0.085
+ }
+}

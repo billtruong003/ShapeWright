@@ -1,0 +1,92 @@
+{
+ "asset": "iron_lantern",
+ "status": "WARN",
+ "source_hash": "13a8a635fddc",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 1
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "WARN",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 504,
+  "parts": 8,
+  "sliver_triangles": 0,
+  "size_m": [
+   0.26,
+   0.486,
+   0.2252
+  ],
+  "contacts": 11,
+  "triangles_by_part": {
+   "base": 36,
+   "frame": 168,
+   "candle": 60,
+   "glass": 20,
+   "flame": 36,
+   "roof": 44,
+   "knob": 20,
+   "ring": 120
+  },
+  "budget_triangles": 1500,
+  "materials": 4,
+  "checks": {
+   "asset.height": 0.486,
+   "roof.size.x > frame.size.x": true,
+   "flame.max.y < frame.max.y - 0.03": true,
+   "ring.min.y > roof.max.y - 0.03": true
+  },
+  "uv_utilization": 0.351,
+  "uv_overlap": 0.0,
+  "uv_owners": 8,
+  "texel_density_px_m": 813.9,
+  "texel_density_target": 512,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 512.0,
+   "achieved_px_m": 813.9,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 8
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "STYLE_MATERIALS",
+   "severity": "warning",
+   "layer": "style",
+   "msg": "more than 3 materials"
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv lock ASSET` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/iron_lantern/export/iron_lantern.glb",
+  "bytes": 323084,
+  "nodes": 19,
+  "meshes": 16,
+  "materials": 4
+ }
+}

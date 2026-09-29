@@ -1,0 +1,118 @@
+{
+ "asset": "wheelbarrow",
+ "status": "PASS",
+ "source_hash": "fe34ff073f9e",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 4
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 968,
+  "parts": 9,
+  "sliver_triangles": 114,
+  "size_m": [
+   0.635,
+   0.7512,
+   1.699
+  ],
+  "contacts": 9,
+  "triangles_by_part": {
+   "wheel": 436,
+   "grip": 120,
+   "axle": 28,
+   "handle": 88,
+   "tray": 196,
+   "leg": 100
+  },
+  "budget_triangles": 2500,
+  "materials": 3,
+  "checks": {
+   "tray.max.y": 0.7507,
+   "wheel.size.y": 0.42,
+   "handle_right.min.z < tray.min.z - 0.3": true,
+   "leg.min.y": -0.0005,
+   "tray.size.x / tray_w": 1.3804
+  },
+  "uv_utilization": 0.392,
+  "uv_overlap": 0.0008,
+  "uv_owners": 9,
+  "texel_density_px_m": 345.0,
+  "texel_density_target": 256,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 256.0,
+   "achieved_px_m": 345.0,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 9
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "handle_left",
+   "msg": "16/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 16
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "handle_right",
+   "msg": "16/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 16
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tray",
+   "msg": "60/196 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 60
+   }
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv lock ASSET` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/wheelbarrow/export/wheelbarrow.glb",
+  "bytes": 513716,
+  "nodes": 20,
+  "meshes": 18,
+  "materials": 3
+ }
+}

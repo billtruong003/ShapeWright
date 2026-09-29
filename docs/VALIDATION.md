@@ -72,7 +72,7 @@ warnings. It never produces errors, because style is a judgement call.
 | `ASM_BELOW_GROUND` | warning | geometry below y = 0 |
 | `ASM_NOT_GROUNDED` | warning | the lowest point is above y = 0 (for floor props) |
 | `ASM_ORIGIN_OFFSET` | warning | origin outside the footprint of the grounded parts |
-| `ASM_HIDDEN_PART` | warning | a part is (almost) entirely inside other parts: wasted triangles |
+| `ASM_HIDDEN_PART` | warning | a part is (almost) entirely inside other parts: wasted triangles (see-through `alpha_mode` BLEND/MASK parts, e.g. lantern glass, do not count as hiding) |
 | `ASM_SCALE_SUSPICIOUS` | warning | size suggests a units mistake (< 1 cm or > 200 m) |
 
 ### budget (production profile)

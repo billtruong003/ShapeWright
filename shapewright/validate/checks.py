@@ -153,8 +153,10 @@ def assembly(asset: Asset, surface: Surface, metrics: dict):
     metrics["contacts"] = int(sum(len(v) for v in adj.values()) // 2)
 
     hidden = []
+    # a part behind glass (alpha BLEND/MASK material) is visible, so see-through parts don't hide others
+    see_through = {j for j in range(n) if (asset.materials.get(parts[j].material or "") or {}).get("alpha_mode", "OPAQUE") != "OPAQUE"}
     for i in range(n):
-        near = [j for j in adj[i] if closed[j]]
+        near = [j for j in adj[i] if closed[j] and j not in see_through]
         if not near or not closed[i]:
             continue
         vol, uncovered = backend.uncovered_volume(parts[i].mesh, [parts[j].mesh for j in near])
