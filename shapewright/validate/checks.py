@@ -403,17 +403,17 @@ def uv_layout(asset: Asset, surface: Surface, metrics: dict):
                               ratio=round(ratio, 4)))
         else:
             out.append(_issue("UV_OVERLAP", "error", "surface", f"{ratio:.1%} of used UV area overlaps", ",".join(involved[:6]),
-                              "run `sw uv lock` after structural changes, or remove authored overlapping UVs", ratio=round(ratio, 4)))
+                              "run `sw uv ASSET lock` after structural changes, or remove authored overlapping UVs", ratio=round(ratio, 4)))
     if surface.uv_method == "regions":
         if surface.lock == "stale":
             out.append(_issue("UV_LOCK_STALE", "warning", "surface", f"uv.lock.yaml does not match the parts ({', '.join(surface.lock_notes[:6])}); "
-                              "regions were recomputed, so every chart may have moved", "uv", "run `sw uv lock ASSET` and commit uv.lock.yaml"))
+                              "regions were recomputed, so every chart may have moved", "uv", "run `sw uv ASSET lock` and commit uv.lock.yaml"))
         elif surface.lock == "used" and surface.lock_notes:
             out.append(_issue("UV_REGION_REGENERATED", "info", "surface", f"geometry changed since the lock; charts regenerated inside their fixed regions: "
                               f"{', '.join(surface.lock_notes[:8])}", "uv", "textures/bakes for these parts must be redone; other parts are unaffected"))
         elif surface.lock == "none":
             out.append(_issue("UV_UNLOCKED", "info", "surface", "no uv.lock.yaml: UV regions follow part areas and move when parts change", "uv",
-                              "run `sw uv lock ASSET` before texturing or baking"))
+                              "run `sw uv ASSET lock` before texturing or baking"))
     for p in asset.parts:
         if p.mesh.invalidated:
             sev = "warning" if p.source == "file" and "uv" in p.mesh.invalidated else "info"

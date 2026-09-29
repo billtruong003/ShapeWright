@@ -58,6 +58,8 @@ GENERIC_RULES = [
     "Name dimensions as params; write intent as `checks:`. Don't relax a failing check to pass: change the geometry "
     "or say why the intent changed.",
     "`sw review` writes .build/sheet.png: open it every iteration. `sw stats` gives exact part sizes.",
+    "Instances: `mirror: x` -> NAME_left/NAME_right; `mirror: [x, z]` -> NAME_front_left, NAME_back_right, ... "
+    "(front/back first); `array` -> NAME_0..n. Use these names in measure, checks and --part.",
     "Commas inside expressions are fine in [...] and {...}; quote text that has commas and colons (doc: \"a, b: c\").",
 ]
 

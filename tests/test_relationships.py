@@ -73,3 +73,25 @@ def test_stool_is_a_pure_parameter_variant():
     a = build(ROOT / "assets" / "tavern_stool")
     assert {"top_rail", "back_slat"} <= set(a.disabled)
     assert a.bounds()[1][1] < 0.5
+
+
+def test_measure_on_an_unknown_part_is_a_readable_error(make_asset):
+    # FA-10 B: measuring 'leg_right_front' (the instance is leg_front_right) crashed with an AttributeError
+    from shapewright.assemble import build
+    from shapewright.report import SourceError
+
+    text = """shapewright: 0.1
+asset: {name: t}
+materials: {m: {color: "#888888"}}
+parts:
+  leg: {shape: {type: box, size: [0.05, 0.4, 0.05]}, anchor: bottom, position: [0.2, 0, 0.2], mirror: [x, z], material: m}
+  top:
+    measure: {s: {section: leg_right_front, axis: y, at: 0.2}}
+    shape: {type: box, size: [0.5, 0.04, 0.5]}
+    position: [0, 0.42, s.center.z]
+    material: m
+"""
+    with pytest.raises(SourceError) as e:
+        build(make_asset(text))
+    issue = next(i for i in e.value.issues if i.code == "MEASURE_FAILED")
+    assert "leg_right_front" in issue.message and "leg_front_right" in issue.message

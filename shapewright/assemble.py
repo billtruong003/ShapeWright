@@ -715,27 +715,43 @@ def measure(raw: dict, env: dict, world: World, ctx: S.Ctx, where: str) -> dict 
         allowed = {kind, "axis", "at", "section", "from", "dir", "doc"}
         S.check_keys(spec, allowed, path, ctx)
         local = {**env, **out}
+
+        def mesh_of(name):
+            m = world.mesh(str(name))
+            if m is None:  # FA-10: an unknown instance name crashed with an AttributeError
+                known = sorted({p.name for p in world.parts} | set(world.base_bounds))
+                same = [k for k in known if sorted(k.split("_")) == sorted(str(name).split("_"))]  # word order swapped
+                hint = f" Did you mean '{same[0]}'?" if same else suggest(str(name), known)
+                raise spatial.QueryError(f"no part '{name}' built before this one.{hint}"
+                                         " (mirrored instances are named <name>_front_right: front/back before left/right)")
+            return m
+
+        def bounds_of(name):
+            b = world.bounds(str(name))
+            if b is None:
+                mesh_of(name)
+            return b
         try:
             if kind == "gap":
                 a, b = spec["gap"]
-                ma, mb = world.mesh(str(a)), world.mesh(str(b))
+                ma, mb = mesh_of(a), mesh_of(b)
                 sec = None
                 if spec.get("section"):
                     s = spec["section"]
                     sec = (s.get("axis", "y"), S.num(s.get("at"), local, f"{path}.section.at", ctx))
                 out[q] = spatial.gap(ma, mb, spec.get("axis", "x"), (str(a), str(b)), sec)
             elif kind == "section":
-                m = world.mesh(str(spec["section"]))
+                m = mesh_of(spec["section"])
                 out[q] = spatial.section(m, spec.get("axis", "y"), S.num(spec.get("at"), local, f"{path}.at", ctx), str(spec["section"]))
             elif kind == "bounds":
-                out[q] = spatial.box_ns(world.bounds(str(spec["bounds"])), str(spec["bounds"]))
+                out[q] = spatial.box_ns(bounds_of(spec["bounds"]), str(spec["bounds"]))
             elif kind == "anchor":
                 c = anchor_coeffs(spec.get("at"), f"{path}.at", ctx)
-                out[q] = spatial.vec_ns(anchor_point(world.bounds(str(spec["anchor"])), c), str(spec["anchor"]))
+                out[q] = spatial.vec_ns(anchor_point(bounds_of(spec["anchor"]), c), str(spec["anchor"]))
             elif kind == "ray":
                 o = S.vec(spec.get("from"), 3, local, f"{path}.from", ctx)
                 d = S.vec(spec.get("dir"), 3, local, f"{path}.dir", ctx)
-                out[q] = spatial.ray(world.mesh(str(spec["ray"])), o, d, str(spec["ray"]))
+                out[q] = spatial.ray(mesh_of(spec["ray"]), o, d, str(spec["ray"]))
         except spatial.QueryError as e:
             ctx.error("MEASURE_FAILED", path, str(e), "check the query plane/ray against `sw stats` sizes")
             return None
