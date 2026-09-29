@@ -82,6 +82,10 @@ def _containing(src: Mesh, cand: np.ndarray, P: np.ndarray) -> np.ndarray:
     return cand[np.argmax(inside, axis=1)]
 
 
+def collapse_needles(m: Mesh) -> Mesh:
+    return _collapse_needles(m)
+
+
 def _collapse_needles(m: Mesh) -> Mesh:
     """Booleans on dense meshes can leave needle triangles of ~zero area (Phase 10: 2-5 in a
     50k-triangle subtract; Manifold's own simplify leaves some and creates others). Collapse the

@@ -1,0 +1,10 @@
+# Fabric colour variant of the loveseat: same geometry, legs and collision; only the velvet
+# colour factor changes (the authored base-colour texture is greyscale, so the factor is the colour).
+shapewright: 0.1
+extends: ../loveseat
+asset:
+  name: loveseat_teal
+  description: Mid-century velvet loveseat in deep teal velvet with turned wooden legs (fabric variant of loveseat).
+materials:
+  velvet:
+    color: '#0f5a5e'

@@ -1,0 +1,44 @@
+{
+ "iteration": 3,
+ "note": "part 'lantern' renamed lantern_head (same name as the asset root node broke the export round trip); exported",
+ "critique": "export WARN only (tangent-space warnings from the authored normal map, 4 zero-width boundary edges on lantern_head); no significant visual findings",
+ "source_hash": "ce1c824f3148",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 5
+ },
+ "metrics": {
+  "triangles": 4608,
+  "parts": 9,
+  "size_m": [
+   1.2949,
+   2.5,
+   0.3871
+  ],
+  "materials": 1,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 2.5,
+   "post.size.y / (file_post_h * u)": 1.2,
+   "pedestal.min.y": 0.0,
+   "lantern_head.min.y": 1.5745
+  }
+ },
+ "errors": [],
+ "params": {
+  "target_height": 2.5,
+  "post_stretch": 1.2,
+  "file_ground": 0.1839,
+  "file_post_bottom": 4.6328,
+  "file_post_top": 25.8481,
+  "file_arm_y": 22.3295,
+  "file_post_h": 21.2153,
+  "chain_keep": 0.35,
+  "u": 0.08359,
+  "ground": -0.01537,
+  "post_lift": 0.17734,
+  "head_lift": 0.29586
+ }
+}

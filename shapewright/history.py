@@ -80,11 +80,14 @@ def load_ref(asset_path: Path, ref: str) -> tuple[str, Asset]:
     d = history_dir(asset_path) / f"{n:03d}"
     if not d.exists():
         raise FileNotFoundError(f"iteration {ref} not found (have {[int(p.name) for p in iterations(asset_path)]})")
-    # build from inside the asset dir so asset-local profiles resolve
-    tmp = asset_path.parent / ".build" / f"iter_{n:03d}.yaml"
-    tmp.parent.mkdir(exist_ok=True)
+    # build from the asset's own folder so asset-local profiles and relative files (mesh_file, textures)
+    # resolve as they did (a copy under .build/ broke imported assets: FRESH_AGENT_07)
+    tmp = asset_path.parent / f".iter_{n:03d}.yaml"
     shutil.copy(d / "resolved.yaml", tmp)
-    a = build(tmp)
+    try:
+        a = build(tmp)
+    finally:
+        tmp.unlink(missing_ok=True)
     a.path = asset_path
     return f"#{n}", a
 

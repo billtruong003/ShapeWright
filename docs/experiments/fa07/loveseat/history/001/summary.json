@@ -1,0 +1,28 @@
+{
+ "iteration": 1,
+ "note": "as imported from SheenChair.glb",
+ "critique": "39936/5000 tris (fabric 26k); 4 materials > 3; parts are whole material nodes (sheenchair_wood = legs+rails+seat board+back board); legs thin tapered wood with metal glides; 20 metal bolts at 160 tris each; label hidden under seat",
+ "source_hash": "a7a787e69c53",
+ "status": "FAIL",
+ "counts": {
+  "error": 2,
+  "warning": 4,
+  "info": 4
+ },
+ "metrics": {
+  "triangles": 39936,
+  "parts": 4,
+  "size_m": [
+   0.8266,
+   0.6862,
+   0.5703
+  ],
+  "materials": 4,
+  "uv_overlap": 0.0
+ },
+ "errors": [
+  "BUDGET_MATERIALS",
+  "BUDGET_TRIANGLES"
+ ],
+ "params": {}
+}

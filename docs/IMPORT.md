@@ -131,3 +131,9 @@ image as an engine would. All 33 committed exports were re-exported.
 
 **Lesson:** export correctness needs at least one check that reads the file with the target's
 conventions, not with the library we imported through.
+
+## Gate result (FRESH_AGENT_07)
+
+**PASS**: 7/7 requested changes on two real CC0 assets with 0 framework changes. Textures were
+verified independently after decimation and export. Five framework issues found in the run are fixed.
+Record: [experiments/FRESH_AGENT_07.md](experiments/FRESH_AGENT_07.md).

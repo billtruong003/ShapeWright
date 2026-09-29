@@ -66,6 +66,13 @@ See docs/HARDENING.md. Rows below keep their original text; these entries overri
 | Export merging of static parts per material (draw calls) | — | Phase 12 | FA-06: 403 nodes / 806 meshes |
 | Per-part texel priority / texture budgets | — | Phase 12 | FA-06 |
 | Preview-resolution bake during iteration | — | NEAR | FA-06 caveat (2048 bake ~8 s per review) |
+| Import keeping materials/texture sets (§31) | NEAR | NOW | Phase 11: `authored` pass-through materials |
+| Repair of imported meshes (weld, degenerate, winding, holes) | — | NOW | `clean` op |
+| UV-preserving decimation | — | NOW | `decimate` transfers corners (Phase 11) |
+| Variants reusing the base's files | — | NOW | extends file roots (FA-07) |
+| Tangents for normal-mapped exports | — | Phase 12 | FA-07 |
+| Collision: single hull, hand-placed primitives | — | Phase 12 | FA-07 |
+| KHR material extensions (sheen, clearcoat, transmission, variants) | — | LONG | reported by `sw import`, not imported |
 
 ---
 

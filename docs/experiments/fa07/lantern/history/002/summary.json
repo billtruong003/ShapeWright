@@ -1,0 +1,44 @@
+{
+ "iteration": 2,
+ "note": "rescaled to 2.5 m (u=0.0836), grounded, pieces named, post stretched 1.2x with head moved up, clean on head/chain/cap, chain decimated 0.35",
+ "critique": "reads as a wooden street lantern post; pedestal/arm/lantern undistorted, post texture stretched 20% along its length (acceptable, wood grain runs vertically); decimating the lantern head made it non-manifold so it is left at full density; 4 zero-width boundary edges remain on the head after clean (open_ok); lantern bottom hangs at 1.57 m (source proportion)",
+ "source_hash": "166623003ff9",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 5
+ },
+ "metrics": {
+  "triangles": 4608,
+  "parts": 9,
+  "size_m": [
+   1.2949,
+   2.5,
+   0.3871
+  ],
+  "materials": 1,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 2.5,
+   "post.size.y / (file_post_h * u)": 1.2,
+   "pedestal.min.y": 0.0,
+   "lantern.min.y": 1.5745
+  }
+ },
+ "errors": [],
+ "params": {
+  "target_height": 2.5,
+  "post_stretch": 1.2,
+  "file_ground": 0.1839,
+  "file_post_bottom": 4.6328,
+  "file_post_top": 25.8481,
+  "file_arm_y": 22.3295,
+  "file_post_h": 21.2153,
+  "chain_keep": 0.35,
+  "u": 0.08359,
+  "ground": -0.01537,
+  "post_lift": 0.17734,
+  "head_lift": 0.29586
+ }
+}

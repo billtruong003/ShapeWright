@@ -109,8 +109,9 @@ def import_file(src: Path, asset_dir: Path, name: str, split: bool = False, scal
     hints = []
     if size and max(size) < 0.05:
         hints.append(f"the asset is only {max(size) * 100:.1f} cm across: if the file uses other units, re-import with --scale (e.g. 10 or 100)")
-    elif size and max(size) > 50:
-        hints.append(f"the asset is {max(size):.0f} m across: if the file is in centimetres, re-import with --scale 0.01")
+    elif size and max(size) > 10:  # FRESH_AGENT_07: a 25.7 m street lantern got no hint at the old 50 m threshold
+        hints.append(f"the asset is {max(size):.1f} m across: if it is a prop, check its units and re-import with --scale "
+                     f"(e.g. {2.5 / max(size):.3g} for a 2.5 m object, 0.01 if the file is in centimetres)")
     unsupported = [e for e in extensions if e not in ("KHR_materials_emissive_strength", "KHR_texture_transform")]
     if unsupported:
         hints.append(f"glTF extensions not imported (appearance may differ): {', '.join(unsupported)}")

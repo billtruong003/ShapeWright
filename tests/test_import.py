@@ -60,7 +60,7 @@ def read_glb(path):
         off = b0 + bv.get("byteOffset", 0) + a.get("byteOffset", 0)
         return np.frombuffer(blob[off:off + a["count"] * comp * 4], dtype=np.float32).reshape(-1, comp)
 
-    P, U, I = [], [], []
+    P, U, idx = [], [], []
     for node in g["nodes"]:
         if "mesh" not in node:
             continue
@@ -78,14 +78,14 @@ def read_glb(path):
                 bv = g["bufferViews"][ia["bufferView"]]
                 off = b0 + bv.get("byteOffset", 0) + ia.get("byteOffset", 0)
                 dt = {5125: np.uint32, 5123: np.uint16}[ia["componentType"]]
-                I.append(np.frombuffer(blob[off:off + ia["count"] * np.dtype(dt).itemsize], dtype=dt).reshape(-1, 3) + sum(len(p) for p in P[:-1]))
+                idx.append(np.frombuffer(blob[off:off + ia["count"] * np.dtype(dt).itemsize], dtype=dt).reshape(-1, 3) + sum(len(p) for p in P[:-1]))
     images = []
     for im in g.get("images", []):
         bv = g["bufferViews"][im["bufferView"]]
         import io
 
         images.append(np.asarray(Image.open(io.BytesIO(blob[b0 + bv.get("byteOffset", 0):b0 + bv.get("byteOffset", 0) + bv["byteLength"]])).convert("RGB")))
-    return g, np.concatenate(P), np.concatenate(U), np.concatenate(I), images
+    return g, np.concatenate(P), np.concatenate(U), np.concatenate(idx), images
 
 
 def imported(tmp_path, **kw):
@@ -132,10 +132,10 @@ def test_exported_atlas_follows_the_gltf_uv_convention(make_asset, tmp_path):
     t = bake(a, s)
     out = tmp_path / "atlas.glb"
     write_glb(a, s, out)
-    g, P, U, I, images = read_glb(out)
+    g, P, U, tri, images = read_glb(out)
     img = images[g["materials"][0]["pbrMetallicRoughness"]["baseColorTexture"]["index"]].astype(float) / 255
     h, w = img.shape[:2]
-    cu = U[I].mean(1)  # face-centre UVs in file convention
+    cu = U[tri].mean(1)  # face-centre UVs in file convention
     engine = img[np.clip((cu[:, 1] * h).astype(int), 0, h - 1), np.clip((cu[:, 0] * w).astype(int), 0, w - 1)]
     r = t.resolution
     internal = t.base[np.clip(((1 - (1 - cu[:, 1])) * r).astype(int), 0, r - 1), np.clip((cu[:, 0] * r).astype(int), 0, r - 1)]
@@ -238,3 +238,62 @@ def test_authored_parts_render_their_own_textures(tmp_path, mode):
     img = np.asarray(render(a, build_surface(a), "front", mode, 128)).reshape(-1, 3)
     if mode == "albedo":  # the quadrant colours from the texture appear, not a flat grey
         assert (np.abs(img.astype(int) - [255, 0, 0]).sum(1) < 60).any() or (np.abs(img.astype(int) - [0, 0, 255]).sum(1) < 60).any()
+
+
+def test_variant_reads_the_base_assets_files(tmp_path):
+    """FRESH_AGENT_07: a variant had to copy 7 MB of its base's source files."""
+    _, d = imported(tmp_path)
+    v = tmp_path / "crate_red"
+    v.mkdir()
+    (v / "asset.yaml").write_text("extends: ../crate\nmaterials: {paint_mat: {color: '#ff8080'}}\n")
+    a = build(v)
+    s = build_surface(a)
+    assert run_validation(a, s)["status"] != "FAIL"
+    out = tmp_path / "v.glb"
+    write_glb(a, s, out)
+    assert len(read_glb(out)[4]) == 2  # the base's texture files were found and embedded
+    (v / "asset.yaml").write_text("extends: ../crate\nparts: {crate_body: {shape: {type: mesh_file, path: ../../x.glb}}}\n")
+    from shapewright.report import SourceError
+
+    with pytest.raises(SourceError):
+        build(v)  # still sandboxed
+
+
+def test_compare_works_for_imported_assets(tmp_path):
+    from shapewright.history import compare, snapshot
+
+    _, d = imported(tmp_path)
+    snapshot(d / "asset.yaml", "as imported")
+    stats, _ = compare(d / "asset.yaml", "1", "current")
+    assert stats is not None
+
+
+def test_part_named_like_the_asset_round_trips(tmp_path):
+    from shapewright.export.verify import roundtrip
+
+    _, d = imported(tmp_path)
+    y = d / "asset.yaml"
+    y.write_text(y.read_text().replace("crate_body:", "crate:", 1))
+    a = build(d)
+    out = tmp_path / "same.glb"
+    write_glb(a, build_surface(a), out)
+    assert roundtrip(a, out) == []
+
+
+def test_clean_fill_holes_collapses_slit_fans(tmp_path):
+    """A zero-width slit filled by a fan leaves needles; clean collapses them and the shell stays closed."""
+    import trimesh
+
+    from shapewright import backend
+    from shapewright.assemble import apply_ops
+    from shapewright.mesh import Mesh
+    from shapewright.source import Ctx
+
+    box = trimesh.creation.box(extents=[1, 1, 1])
+    V, F = np.asarray(box.vertices, float), np.asarray(box.faces)
+    m = Mesh(np.vstack([V, V[[0]] + [1e-9, 0, 0]]), F.copy())
+    m.F[0, 0] = len(V)  # a vertex split by 1 nm: a slit hole that needs a zero-area fan
+    out = apply_ops(m, [{"type": "clean", "fill_holes": True}], {}, Ctx(), "ops")
+    assert backend.is_closed_manifold(out)
+    _, area = out.face_normals()
+    assert (area >= (np.linalg.norm(out.size()) * 1e-5) ** 2).all()

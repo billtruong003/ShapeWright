@@ -1,0 +1,104 @@
+# Imported by `sw import SheenChair.glb`. Geometry lives in source/SheenChair.glb (not parametric).
+# Next: sw render NAME --mode parts --view front_right; rename parts; add materials/sockets/checks;
+# native parts can be added alongside imported ones.
+shapewright: 0.1
+asset:
+  name: loveseat
+  kind: imported
+  description: Imported from SheenChair.glb. Rename parts after inspecting `sw render loveseat --mode parts`.
+profile: desktop_indie
+materials:
+  fabric_mystere_mango_velvet:
+    archetype: authored
+    textures:
+      base_color: source/textures/fabric_mystere_mango_velvet_base_color.png
+      normal: source/textures/fabric_mystere_mango_velvet_normal.png
+      occlusion: source/textures/fabric_mystere_mango_velvet_occlusion.png
+    color: '#f13500'
+    roughness: 0.8
+    metallic: 0.0
+    doc: imported from the file's material 'fabric Mystere Mango Velvet' (textures pass through unchanged)
+  label:
+    archetype: authored
+    textures:
+      base_color: source/textures/label_base_color.png
+      occlusion: source/textures/label_occlusion.png
+    color: '#ffffff'
+    roughness: 1.0
+    metallic: 0.0
+    doc: imported from the file's material 'label' (textures pass through unchanged)
+  metal:
+    archetype: authored
+    textures:
+      occlusion: source/textures/metal_occlusion.png
+    color: '#908b84'
+    roughness: 0.3
+    metallic: 1.0
+    doc: imported from the file's material 'metal' (textures pass through unchanged)
+  wood_brown:
+    archetype: authored
+    textures:
+      base_color: source/textures/wood_brown_base_color.png
+      metallic_roughness: source/textures/wood_brown_metallic_roughness.png
+      occlusion: source/textures/wood_brown_occlusion.png
+    color: '#694b1c'
+    roughness: 1.0
+    metallic: 1.0
+    doc: imported from the file's material 'wood Brown' (textures pass through unchanged)
+parts:
+  sheenchair_fabric:
+    doc: imported from source/SheenChair.glb node 'SheenChair_fabric' (rename me)
+    shape:
+      type: mesh_file
+      path: source/SheenChair.glb
+      node: SheenChair_fabric
+    position:
+    - -0.00074
+    - 0.45638
+    - 0.00841
+    material: fabric_mystere_mango_velvet
+    tags:
+    - imported
+    - open_ok
+  sheenchair_label:
+    doc: imported from source/SheenChair.glb node 'SheenChair_label' (rename me)
+    shape:
+      type: mesh_file
+      path: source/SheenChair.glb
+      node: SheenChair_label
+    position:
+    - -0.00051
+    - 0.2419
+    - 0.02706
+    material: label
+    tags:
+    - imported
+    - open_ok
+  sheenchair_metal:
+    doc: imported from source/SheenChair.glb node 'SheenChair_metal' (rename me)
+    shape:
+      type: mesh_file
+      path: source/SheenChair.glb
+      node: SheenChair_metal
+    position:
+    - 0.0
+    - 0.25071
+    - -0.00926
+    material: metal
+    tags:
+    - imported
+    - open_ok
+  sheenchair_wood:
+    doc: imported from source/SheenChair.glb node 'SheenChair_wood' (rename me)
+    shape:
+      type: mesh_file
+      path: source/SheenChair.glb
+      node: SheenChair_wood
+    position:
+    - -0.00066
+    - 0.32282
+    - -0.00495
+    material: wood_brown
+    tags:
+    - imported
+    - open_ok

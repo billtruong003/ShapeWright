@@ -1,0 +1,65 @@
+# Imported by `sw import Lantern.glb`. Geometry lives in source/Lantern.glb (not parametric).
+# Next: sw render NAME --mode parts --view front_right; rename parts; add materials/sockets/checks;
+# native parts can be added alongside imported ones.
+shapewright: 0.1
+asset:
+  name: lantern
+  kind: imported
+  description: Imported from Lantern.glb. Rename parts after inspecting `sw render lantern --mode parts`.
+profile: desktop_indie
+materials:
+  lanternpost_mat:
+    archetype: authored
+    textures:
+      base_color: source/textures/lanternpost_mat_base_color.png
+      metallic_roughness: source/textures/lanternpost_mat_metallic_roughness.png
+      normal: source/textures/lanternpost_mat_normal.png
+      emissive: source/textures/lanternpost_mat_emissive.png
+    color: '#ffffff'
+    roughness: 1.0
+    metallic: 1.0
+    doc: imported from the file's material 'LanternPost_Mat' (textures pass through unchanged)
+    emissive: '#ffffff'
+parts:
+  lanternpole_body:
+    doc: imported from source/Lantern.glb node 'LanternPole_Body' (rename me)
+    shape:
+      type: mesh_file
+      path: source/Lantern.glb
+      node: LanternPole_Body
+    position:
+    - 3.82315
+    - 13.01603
+    - 0.0
+    material: lanternpost_mat
+    tags:
+    - imported
+    - open_ok
+  lanternpole_chain:
+    doc: imported from source/Lantern.glb node 'LanternPole_Chain' (rename me)
+    shape:
+      type: mesh_file
+      path: source/Lantern.glb
+      node: LanternPole_Chain
+    position:
+    - 9.582
+    - 21.03787
+    - 0.0
+    material: lanternpost_mat
+    tags:
+    - imported
+    - open_ok
+  lanternpole_lantern:
+    doc: imported from source/Lantern.glb node 'LanternPole_Lantern' (rename me)
+    shape:
+      type: mesh_file
+      path: source/Lantern.glb
+      node: LanternPole_Lantern
+    position:
+    - 9.58201
+    - 18.00915
+    - 0.0
+    material: lanternpost_mat
+    tags:
+    - imported
+    - open_ok

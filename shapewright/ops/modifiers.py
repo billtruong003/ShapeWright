@@ -182,7 +182,16 @@ def subdivide(m, a, b):
     [Param("ratio", "num", 0.5, "fraction of triangles to keep", min=0.01, max=1)], "resample",
     category="topology", example="{type: decimate, ratio: 0.5}")
 def decimate(m, a, b):
-    return backend.simplify(m, a["ratio"]).merged()
+    out = backend.simplify(m, a["ratio"]).merged()
+    target = max(4, int(m.n_tris * a["ratio"]))
+    if out.n_tris > 1.25 * target:  # FRESH_AGENT_07: some closed shells stall far above the target, silently
+        b.warn("OP_DECIMATE_LIMITED", f"decimate reached {out.n_tris} triangles, not the requested ~{target}",
+               "this surface resists further simplification (thin or tightly curved shells); accept it, reduce other parts, "
+               "or replace the part with native geometry")
+    if backend.is_closed_manifold(m.merged()) and not backend.is_closed_manifold(out):
+        b.warn("OP_DECIMATE_OPENED", "decimate turned a closed surface into an open/non-manifold one",
+               "use a milder ratio, follow with {type: clean}, or tag the part open_ok if that is acceptable")
+    return out
 
 
 @op("clean", "Repair imported/baked geometry: weld coincident vertices, drop zero-area and duplicate faces, make winding "
@@ -196,11 +205,9 @@ def decimate(m, a, b):
 def clean(m, a, b):
     if a["weld"]:
         m = m.merged()
+    if a["degenerate"]:  # collapse (not delete) zero-area faces, so closed surfaces stay closed
+        m = backend.collapse_needles(m)
     keep = np.ones(m.n_tris, dtype=bool)
-    if a["degenerate"]:
-        _, area = m.face_normals()
-        size = float(np.linalg.norm(m.size())) or 1.0
-        keep &= area >= (size * 1e-5) ** 2
     if a["duplicates"]:
         key = np.sort(m.F, axis=1)
         _, first = np.unique(key, axis=0, return_index=True)
@@ -224,6 +231,8 @@ def clean(m, a, b):
             if "uv" in m.cattr:
                 patch.set_corner("uv", np.zeros((len(new), 3, 2)))
             m = concat([m, patch]).merged()
+            if a["degenerate"]:  # fans across zero-width slits are needles themselves
+                m = backend.collapse_needles(m)
     return m
 
 

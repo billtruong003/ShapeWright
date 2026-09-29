@@ -135,24 +135,26 @@ def _dilate(img: np.ndarray, filled: np.ndarray, steps: int) -> np.ndarray:
 # ------------------------------------------------------------------ images
 
 
-def authored_image_path(asset_dir: Path, rel: str) -> Path:
-    """Sandboxed path of an image referenced by the source (same rules as image layers)."""
-    p = Path(rel)
-    if p.is_absolute() or ".." in p.parts:
+def authored_image_path(asset_dir: Path, rel: str, roots=()) -> Path:
+    """Sandboxed path of an image referenced by the source: inside the asset directory or, for a
+    variant, inside a base asset's directory (roots)."""
+    from .ops.sources import within
+
+    if within(asset_dir, rel) is None:
         raise ValueError(f"image path '{rel}' must be relative and stay inside the asset directory")
-    full = (asset_dir / p).resolve()
-    if asset_dir.resolve() not in full.parents or full.suffix.lower() not in IMAGE_TYPES or not full.exists():
+    full = next((f for f in (within(Path(r), rel) for r in (asset_dir, *roots)) if f is not None and f.exists()), None)
+    if full is None or full.suffix.lower() not in IMAGE_TYPES:
         raise ValueError(f"image '{rel}' not found or not PNG/JPEG inside the asset directory")
     if full.stat().st_size > LIMITS.max_image_bytes:
         raise ValueError(f"image '{rel}' larger than {LIMITS.max_image_bytes} bytes")
     return full
 
 
-def load_authored(asset_dir: Path, rel: str) -> np.ndarray:
+def load_authored(asset_dir: Path, rel: str, roots=()) -> np.ndarray:
     """RGB float image for previews of authored materials (cached per path)."""
     from PIL import Image
 
-    full = authored_image_path(asset_dir, rel)
+    full = authored_image_path(asset_dir, rel, roots)
     key = (str(full), full.stat().st_mtime_ns)
     if key not in _AUTHORED_CACHE:
         with Image.open(full) as im:
@@ -166,17 +168,10 @@ def load_authored(asset_dir: Path, rel: str) -> np.ndarray:
 _AUTHORED_CACHE: dict = {}
 
 
-def _load_image(asset_dir: Path, rel: str) -> np.ndarray:
+def _load_image(asset_dir: Path, rel: str, roots=()) -> np.ndarray:
     from PIL import Image
 
-    p = Path(rel)
-    if p.is_absolute() or ".." in p.parts:
-        raise ValueError(f"image path '{rel}' must be relative and stay inside the asset directory")
-    full = (asset_dir / p).resolve()
-    if asset_dir.resolve() not in full.parents or full.suffix.lower() not in IMAGE_TYPES or not full.exists():
-        raise ValueError(f"image '{rel}' not found or not PNG/JPEG inside the asset directory")
-    if full.stat().st_size > LIMITS.max_image_bytes:
-        raise ValueError(f"image '{rel}' larger than {LIMITS.max_image_bytes} bytes")
+    full = authored_image_path(asset_dir, rel, roots)
     with Image.open(full) as im:
         if max(im.size) > LIMITS.max_texture_size:
             raise ValueError(f"image '{rel}' is {im.size}, larger than {LIMITS.max_texture_size}px")
@@ -283,7 +278,7 @@ def bake(asset: Asset, surface: Surface) -> Textures | None:
                     try:
                         img = images.get(lay["image"])
                         if img is None:
-                            img = images[lay["image"]] = _load_image(asset.dir, lay["image"])
+                            img = images[lay["image"]] = _load_image(asset.dir, lay["image"], asset.file_roots)
                     except (ValueError, OSError) as e:
                         tex.issues.append(("TEX_IMAGE_INVALID", "error", str(e), where, "PNG/JPEG inside the asset directory, within size limits"))
                         continue

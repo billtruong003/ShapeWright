@@ -192,6 +192,8 @@ def load_source(path: Path, _depth: int = 0, ctx: Ctx | None = None) -> dict:
                                         "extends", "source", "declare interface: {params: [...]} in the base"))
             data = _deep_merge(base, child)
         data["_extends"] = str(base_path)
+        # a variant reads its base's files (mesh_file, textures) from the base's folder (FRESH_AGENT_07)
+        data["_file_roots"] = [str(base_path.parent)] + [r for r in (base.get("_file_roots") or []) if r != str(base_path.parent)]
     if "pack" in data and "_pack" not in data:
         data = apply_pack(data, path)
     return data

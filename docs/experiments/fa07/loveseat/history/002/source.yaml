@@ -1,0 +1,239 @@
+# Velvet loveseat (Khronos sample "SheenChair" by Wayfair, CC0), brought in as a desktop game prop.
+# Imported pieces stay in source/SheenChair.glb (authored UVs and textures pass through);
+# each piece is addressed by node + piece index and placed at its file coordinates (origin: keep).
+# Changes from the source file:
+#  - pieces named by function (the file only had one node per material);
+#  - reduced to <= 8000 triangles with UV-preserving `decimate` (ratios are params);
+#  - the thin tapered legs and their metal glides are replaced by chunkier native turned
+#    (lathe) wooden legs on the same splayed axes, so they still meet the rails and seat;
+#  - dropped: the metal bolts (20 x 160 tris, mostly hidden by the new legs) and the maker's
+#    label under the seat (its own material, never visible) -> 3 materials;
+#  - per-part box collision.
+shapewright: 0.1
+asset:
+  name: loveseat
+  kind: prop/furniture/loveseat
+  description: Mid-century velvet loveseat with a tufted seat, padded back and turned wooden legs (imported, reduced, re-legged).
+  tags: [imported, furniture, seat]
+profile: desktop_indie
+budget: {triangles: 8000}
+interface:
+  params: [leg_r, foot_r]
+params:
+  # decimation ratios (fraction of the file's triangles kept)
+  keep_seat: {value: 0.12, doc: seat cushion (12096 tris in the file)}
+  keep_back: {value: 0.14, doc: back cushion (6016)}
+  keep_cover: {value: 0.8, doc: back cover upholstery (3072), applied 4 times (~0.42)}
+  keep_under: {value: 0.5, doc: seat underside upholstery (3072), applied after a 0.6 step (0.3 overall)}
+  keep_buttons: {value: 0.2, doc: tufting buttons (12 x 160)}
+  keep_wood: {value: 0.25, doc: rails and boards}
+  # turned legs
+  leg_r: {value: 0.028, min: 0.02, max: 0.035, doc: radius of the turned block at the rails (the original leg was ~0.015)}
+  foot_r: {value: 0.018, doc: radius of the bun foot}
+  leg_segments: 10
+  # original leg axes (floor point -> top), measured from the file's leg pieces
+  fl_bx: 0.3334
+  fl_bz: 0.2142
+  fl_tx: 0.2917
+  fl_ty: 0.2685
+  fl_tz: 0.1704
+  rl_bx: 0.2459
+  rl_bz: -0.2176
+  rl_tx: 0.2042
+  rl_ty: 0.5151
+  rl_tz: -0.2147
+  fl_dx: fl_tx - fl_bx
+  fl_dz: fl_tz - fl_bz
+  fl_len: sqrt(fl_dx ** 2 + fl_ty ** 2 + fl_dz ** 2)
+  rl_dx: rl_tx - rl_bx
+  rl_dz: rl_tz - rl_bz
+  rl_len: sqrt(rl_dx ** 2 + rl_ty ** 2 + rl_dz ** 2)
+materials:
+  velvet:
+    archetype: authored
+    textures:
+      base_color: source/textures/fabric_mystere_mango_velvet_base_color.png
+      normal: source/textures/fabric_mystere_mango_velvet_normal.png
+      occlusion: source/textures/fabric_mystere_mango_velvet_occlusion.png
+    color: '#f13500'
+    roughness: 0.8
+    metallic: 0.0
+    doc: "'fabric Mystere Mango Velvet' from the file; the base-colour texture is grey, so `color` sets the fabric colour (sheen extension not carried over)"
+  wood_brown:
+    archetype: authored
+    textures:
+      base_color: source/textures/wood_brown_base_color.png
+      metallic_roughness: source/textures/wood_brown_metallic_roughness.png
+      occlusion: source/textures/wood_brown_occlusion.png
+    color: '#694b1c'
+    roughness: 1.0
+    metallic: 1.0
+    doc: "'wood Brown' from the file (rails and boards)"
+  turned_wood:
+    archetype: wood
+    color: '#5a3d1c'
+    roughness: 0.6
+    grain_strength: 0.3
+    grain_scale: 0.02
+    streaks: 0.3
+    edge_wear: 0.15
+    doc: native wood for the new turned legs, matched to wood_brown
+parts:
+  seat_cushion:
+    doc: tufted seat cushion
+    shape: {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 0}
+    ops: [{type: decimate, ratio: keep_seat}]
+    origin: keep
+    material: velvet
+    tags: [imported, open_ok]
+  seat_buttons:
+    doc: ten tufting buttons on the seat cushion
+    shape:
+      type: combine
+      items:
+        - {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 5, translate: [-0.20576, 0.35763, 0.16255]}
+        - {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 6, translate: [-0.1905, 0.3368, -0.07549]}
+        - {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 7, translate: [-0.29612, 0.35857, 0.03516]}
+        - {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 8, translate: [-0.00047, 0.34867, 0.16992]}
+        - {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 9, translate: [-0.00049, 0.32703, -0.07747]}
+        - {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 10, translate: [-0.0992, 0.33981, 0.04138]}
+        - {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 11, translate: [0.20552, 0.35772, 0.16248]}
+        - {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 12, translate: [0.19017, 0.3369, -0.07556]}
+        - {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 13, translate: [0.09899, 0.33986, 0.04134]}
+        - {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 14, translate: [0.29486, 0.35858, 0.03516]}
+    ops: [{type: decimate, ratio: keep_buttons}]
+    origin: keep
+    material: velvet
+    tags: [imported, open_ok]
+  seat_underside:
+    doc: upholstered underside of the seat, over the seat board
+    shape: {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 15}
+    ops: [{type: decimate, ratio: 0.6}, {type: decimate, ratio: keep_under}]   # two steps keep the thin shell manifold
+    origin: keep
+    material: velvet
+    tags: [imported]
+  back_cushion:
+    doc: padded backrest cushion
+    shape: {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 3}
+    ops: [{type: decimate, ratio: keep_back}]
+    origin: keep
+    material: velvet
+    tags: [imported, open_ok]
+  back_buttons:
+    doc: two tufting buttons on the backrest
+    shape:
+      type: combine
+      items:
+        - {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 1, translate: [-0.14409, 0.5747, -0.14921]}
+        - {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 2, translate: [0.14405, 0.57426, -0.15085]}
+    ops: [{type: decimate, ratio: keep_buttons}]
+    origin: keep
+    material: velvet
+    tags: [imported, open_ok]
+  back_cover:
+    doc: fabric cover on the back of the backrest
+    shape: {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_fabric, piece: 4}
+    ops: [{type: decimate, ratio: keep_cover}, {type: decimate, ratio: keep_cover}, {type: decimate, ratio: keep_cover}, {type: decimate, ratio: keep_cover}]   # thin closed shell: one big step pinches it (non-manifold), small steps stay manifold
+    origin: keep
+    material: velvet
+    tags: [imported]
+  seat_board:
+    doc: wooden seat board under the cushion
+    shape: {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_wood, piece: 8}
+    ops: [{type: decimate, ratio: keep_wood}]
+    origin: keep
+    material: wood_brown
+    tags: [imported, open_ok]
+  back_board:
+    doc: wooden backrest board
+    shape: {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_wood, piece: 9}
+    ops: [{type: decimate, ratio: keep_wood}]
+    origin: keep
+    material: wood_brown
+    tags: [imported, open_ok]
+  side_rail_left:
+    doc: seat rail joining the left legs
+    shape: {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_wood, piece: 2}
+    ops: [{type: decimate, ratio: keep_wood}]
+    origin: keep
+    material: wood_brown
+    tags: [imported, open_ok]
+  side_rail_right:
+    doc: seat rail joining the right legs
+    shape: {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_wood, piece: 7}
+    ops: [{type: decimate, ratio: keep_wood}]
+    origin: keep
+    material: wood_brown
+    tags: [imported, open_ok]
+  front_rail:
+    doc: front cross rail
+    shape: {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_wood, piece: 4}
+    ops: [{type: decimate, ratio: keep_wood}]
+    origin: keep
+    material: wood_brown
+    tags: [imported, open_ok]
+  rear_rail:
+    doc: rear cross rail
+    shape: {type: mesh_file, path: source/SheenChair.glb, node: SheenChair_wood, piece: 3}
+    ops: [{type: decimate, ratio: keep_wood}]
+    origin: keep
+    material: wood_brown
+    tags: [imported, open_ok]
+  front_leg:
+    doc: turned front leg on the original splayed axis (bun foot, bead, vase, block at the rails)
+    shape:
+      type: lathe
+      segments: leg_segments
+      profile:
+        - [foot_r * 0.95, 0]
+        - [foot_r * 1.15, 0.012]
+        - [foot_r * 0.9, 0.03]
+        - [leg_r * 0.75, fl_len * 0.4]
+        - [leg_r * 0.97, fl_len * 0.46]
+        - [leg_r * 0.75, fl_len * 0.52]
+        - [leg_r * 0.9, fl_len * 0.63]
+        - [leg_r, fl_len * 0.69]
+        - [leg_r, fl_len]
+    rotate: ["atan2(fl_dz, sqrt(fl_dx ** 2 + fl_ty ** 2))", 0, "atan2(-fl_dx, fl_ty)"]
+    rotate_about: anchor
+    anchor: bottom
+    position: [fl_bx, "foot_r * 0.95 * sqrt(fl_dx ** 2 + fl_dz ** 2) / fl_len", fl_bz]
+    mirror: x
+    material: turned_wood
+    shading: auto
+  rear_leg:
+    doc: turned rear leg continuing up as the backrest post (same turning as the front legs below the seat)
+    shape:
+      type: lathe
+      segments: leg_segments
+      profile:
+        - [foot_r * 0.95, 0]
+        - [foot_r * 1.15, 0.012]
+        - [foot_r * 0.9, 0.03]
+        - [leg_r * 0.75, 0.107]
+        - [leg_r * 0.97, 0.123]
+        - [leg_r * 0.75, 0.139]
+        - [leg_r * 0.9, 0.169]
+        - [leg_r, 0.185]
+        - [leg_r, 0.27]
+        - [leg_r * 0.72, 0.29]
+        - [leg_r * 0.68, 0.37]
+        - [leg_r * 0.85, 0.385]
+        - [leg_r * 0.68, 0.40]
+        - [leg_r * 0.68, rl_len]
+    rotate: ["atan2(rl_dz, sqrt(rl_dx ** 2 + rl_ty ** 2))", 0, "atan2(-rl_dx, rl_ty)"]
+    rotate_about: anchor
+    anchor: bottom
+    position: [rl_bx, "foot_r * 0.95 * sqrt(rl_dx ** 2 + rl_dz ** 2) / rl_len", rl_bz]
+    mirror: x
+    material: turned_wood
+    shading: auto
+sockets:
+  sit_left: {attach: {to: seat_cushion, at: top, offset: [-0.19, 0, 0.02]}, doc: left sitting position}
+  sit_right: {attach: {to: seat_cushion, at: top, offset: [0.19, 0, 0.02]}, doc: right sitting position}
+collision: {mode: box}
+checks:
+  - {expr: seat_cushion.max.y, min: 0.36, max: 0.46, doc: seat height}
+  - {expr: front_leg_right.min.y, min: -0.002, max: 0.002, doc: front legs stand on the floor}
+  - {expr: rear_leg_right.min.y, min: -0.002, max: 0.002, doc: rear legs stand on the floor}
+  - {expr: front_leg_right.size.x, min: 0.05, doc: legs are chunkier than the original ~0.03 m}

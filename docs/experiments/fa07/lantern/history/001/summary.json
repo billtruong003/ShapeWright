@@ -1,0 +1,28 @@
+{
+ "iteration": 1,
+ "note": "as imported from Lantern.glb",
+ "critique": "25.7 m tall (file units not metres); floats 0.184 above ground; 2 degenerate faces in LanternPole_Lantern; 5394/5000 tris (chain 1248 tris for 6 links); parts are whole nodes, body node mixes pedestal/post/arm",
+ "source_hash": "7eb690956f67",
+ "status": "FAIL",
+ "counts": {
+  "error": 2,
+  "warning": 4,
+  "info": 5
+ },
+ "metrics": {
+  "triangles": 5394,
+  "parts": 3,
+  "size_m": [
+   15.4912,
+   25.6642,
+   4.6314
+  ],
+  "materials": 1,
+  "uv_overlap": 0.0
+ },
+ "errors": [
+  "GEO_DEGENERATE_FACES[lanternpole_lantern]",
+  "BUDGET_TRIANGLES"
+ ],
+ "params": {}
+}

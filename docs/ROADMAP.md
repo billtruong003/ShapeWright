@@ -93,6 +93,23 @@ A fresh agent built a 44k-triangle, 403-part fountain. That exposed per-pair ass
 validation in export; both are fixed. Records: [PERFORMANCE.md](PERFORMANCE.md) and
 [experiments/FRESH_AGENT_06.md](experiments/FRESH_AGENT_06.md).
 
+## Phase 11: Import, modify and repair ✅ (gate passed)
+Research on four CC0 production assets showed that import dropped materials and textures, authored
+UV overlap blocked export, there were no repair ops, and decimate destroyed UVs. The research also
+found a **Phase 8–10 bug**: every exported texture was mirrored vertically in engines.
+
+Built:
+- authored pass-through materials;
+- `clean`;
+- UV-preserving decimate;
+- an engine-convention UV test;
+- import hints.
+
+A fresh agent then made 7/7 changes to two real assets with 0 framework changes. The follow-up fixes
+were history rebuilds, base-folder file roots for variants, a root-name clash, needle collapse in
+`clean`, and decimate warnings. Records: [IMPORT.md](IMPORT.md) and
+[experiments/FRESH_AGENT_07.md](experiments/FRESH_AGENT_07.md).
+
 ## Stage 3: Prototype: a fresh agent succeeds unassisted
 - Run the README task ("tavern chair, < 700 tris, mobile") with a *fresh* agent
   that has only the repository. Record the transcript and friction points, and

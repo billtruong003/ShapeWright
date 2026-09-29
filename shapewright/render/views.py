@@ -424,7 +424,7 @@ def _surface_samples(asset: Asset, surface: Surface, parts, pid: np.ndarray, uv:
         u, v = uv[sel, 0], uv[sel, 1]
 
         def sample(rel):
-            img = load_authored(asset.dir, rel)
+            img = load_authored(asset.dir, rel, asset.file_roots)
             h, w = img.shape[:2]
             return img[np.clip(((1 - v % 1.0) * h).astype(int), 0, h - 1), np.clip(((u % 1.0) * w).astype(int), 0, w - 1)]
         try:

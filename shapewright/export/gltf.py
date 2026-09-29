@@ -162,7 +162,7 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
     def authored_texture(rel: str) -> int:
         from ..bake import authored_image_path
 
-        full = authored_image_path(asset.dir, rel)
+        full = authored_image_path(asset.dir, rel, asset.file_roots)
         if rel not in image_of:
             if len(samplers) == (1 if tex is not None else 0):
                 samplers.append({"magFilter": 9729, "minFilter": 9987, "wrapS": 10497, "wrapT": 10497})  # repeat, as authored
@@ -218,7 +218,9 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
         mat_index[name] = len(materials)
         materials.append(mat)
 
-    nodes = [{"name": asset.name, "children": [], "extras": {}}]
+    # root node: the asset name, unless a part has that name (importers would rename the part; FRESH_AGENT_07)
+    root = asset.name if all(p.name != asset.name for p in asset.parts) else f"{asset.name}_root"
+    nodes = [{"name": root, "children": [], "extras": {}}]
     meshes = []
     node_of: dict[str, int] = {}
     pivots = {p.name: (p.pivot if p.pivot is not None else np.zeros(3)) for p in asset.parts}

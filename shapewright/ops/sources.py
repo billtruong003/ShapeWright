@@ -13,6 +13,7 @@ external URIs); size and triangle limits apply.
 
 from __future__ import annotations
 
+from contextvars import ContextVar
 from pathlib import Path
 
 import numpy as np
@@ -25,19 +26,32 @@ from ..registry import Param, shape
 ALLOWED = {".glb", ".obj", ".stl", ".ply"}
 
 
-def resolve_file(asset_dir: Path | None, rel: str) -> Path:
-    if asset_dir is None:
-        raise ValueError("mesh_file needs an asset directory")
+FILE_ROOTS: ContextVar[tuple] = ContextVar("FILE_ROOTS", default=())  # set by build(): base assets' folders
+
+
+def within(root: Path, rel: str) -> Path | None:
+    """rel resolved inside root, or None if it would escape it."""
     p = Path(rel)
     if p.is_absolute() or ".." in p.parts:
+        return None
+    full = (root / p).resolve()
+    return full if root.resolve() in full.parents else None
+
+
+def resolve_file(asset_dir: Path | None, rel: str, roots=None) -> Path:
+    """A mesh file inside the asset's directory, or (for variants) inside a base asset's directory."""
+    if asset_dir is None:
+        raise ValueError("mesh_file needs an asset directory")
+    if within(asset_dir, rel) is None:
         raise ValueError(f"path '{rel}' must be relative and stay inside the asset directory")
-    full = (asset_dir / p).resolve()
-    if asset_dir.resolve() not in full.parents:
-        raise ValueError(f"path '{rel}' escapes the asset directory")
+    for root in (asset_dir, *(FILE_ROOTS.get() if roots is None else roots)):
+        full = within(Path(root), rel)
+        if full is not None and full.exists():
+            break
+    else:
+        raise ValueError(f"file not found: {rel}")
     if full.suffix.lower() not in ALLOWED:
         raise ValueError(f"unsupported file type '{full.suffix}' (allowed: {', '.join(sorted(ALLOWED))})")
-    if not full.exists():
-        raise ValueError(f"file not found: {rel}")
     if full.stat().st_size > LIMITS.max_mesh_file_bytes:
         raise ValueError(f"{rel} is larger than {LIMITS.max_mesh_file_bytes} bytes")
     return full

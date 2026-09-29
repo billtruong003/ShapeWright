@@ -96,6 +96,7 @@ class Asset:
     source_hash: str
     build_ms: float = 0.0
     disabled: list = field(default_factory=list)
+    file_roots: list = field(default_factory=list)  # base assets' folders (extends): searched after the asset's own
 
     def part(self, name: str) -> Part | None:
         return next((p for p in self.parts if p.name == name), None)
@@ -187,6 +188,10 @@ class BuildCtx:
                 raise ValueError(f"invalid translate at {where}")
             mesh = mesh.translated(tr)
         return mesh
+
+    def warn(self, code: str, message: str, hint: str = ""):
+        """A geometry-layer warning located at this op/expression."""
+        self.ctx.issues.append(S.Issue(code, "warning", message, self.where, "geometry", hint))
 
     def cut_check(self, before: Mesh, after: Mesh, what: str) -> Mesh:
         """Warn when a cut (difference, intersection, trim) splits a piece into several (FRESH_AGENT_05:
@@ -1056,6 +1061,17 @@ def build_group(u: Unit, world: World, materials: dict, style: dict, asset_dir: 
 
 
 def build(path: str | Path) -> Asset:
+    """Build an asset from its source (see docs/ARCHITECTURE.md)."""
+    from .ops.sources import FILE_ROOTS
+
+    token = FILE_ROOTS.set(())
+    try:
+        return _build(path, FILE_ROOTS)
+    finally:
+        FILE_ROOTS.reset(token)
+
+
+def _build(path: str | Path, file_roots_var) -> Asset:
     t0 = time.perf_counter()
     load_builtin()
     path = Path(path)
@@ -1065,6 +1081,7 @@ def build(path: str | Path) -> Asset:
         raise SourceError([Issue("SRC_REF", "error", f"no asset source at {path}", str(path), "source")])
     ctx = S.Ctx()
     data = S.load_source(path, ctx=ctx)
+    file_roots_var.set(tuple(Path(r) for r in (data.get("_file_roots") or [])))
     S.check_keys(data, S.TOP_KEYS, "", ctx)
     env = S.resolve_params(data.get("params") or {}, ctx)
     meta = data.get("asset") or {}
@@ -1147,7 +1164,8 @@ def build(path: str | Path) -> Asset:
     ctx.raise_if_errors()
     return Asset(name, path, data, env, meta, parts, sockets, materials, profile, style, budget,
                  data.get("uv") or {}, data.get("collision") or {}, checks, ctx.issues, S.source_hash(data),
-                 (time.perf_counter() - t0) * 1000, disabled)
+                 (time.perf_counter() - t0) * 1000, disabled,
+                 [Path(r) for r in (data.get("_file_roots") or [])])
 
 
 def resolve_asset_path(ref: str) -> Path:

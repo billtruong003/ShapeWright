@@ -1,0 +1,57 @@
+{
+ "iteration": 1,
+ "note": "fabric variant: velvet colour factor #f13500 -> #0f5a5e (texture is greyscale)",
+ "critique": "teal velvet reads cleanly over the authored fabric texture; geometry identical to loveseat",
+ "source_hash": "564dfdba0a48",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 6,
+  "info": 9
+ },
+ "metrics": {
+  "triangles": 7904,
+  "parts": 16,
+  "size_m": [
+   0.8316,
+   0.687,
+   0.572
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "seat_cushion.max.y": 0.3874,
+   "front_leg_right.min.y": 0.0001,
+   "rear_leg_right.min.y": 0.0,
+   "front_leg_right.size.x": 0.088
+  }
+ },
+ "errors": [],
+ "params": {
+  "keep_seat": 0.16,
+  "keep_back": 0.14,
+  "keep_cover": 0.8,
+  "keep_under": 0.5,
+  "keep_buttons": 0.2,
+  "keep_wood": 0.18,
+  "leg_r": 0.028,
+  "foot_r": 0.018,
+  "leg_segments": 10.0,
+  "fl_bx": 0.3334,
+  "fl_bz": 0.2142,
+  "fl_tx": 0.2917,
+  "fl_ty": 0.2685,
+  "fl_tz": 0.1704,
+  "rl_bx": 0.2459,
+  "rl_bz": -0.2176,
+  "rl_tx": 0.2042,
+  "rl_ty": 0.5151,
+  "rl_tz": -0.2147,
+  "fl_dx": -0.0417,
+  "fl_dz": -0.0438,
+  "fl_len": 0.27523,
+  "rl_dx": -0.0417,
+  "rl_dz": 0.0029,
+  "rl_len": 0.51679
+ }
+}

@@ -429,7 +429,7 @@ def authored_materials(asset: Asset, surface: Surface, metrics: dict):
     for name in sets:
         for ch, rel in asset.materials[name]["textures"].items():
             try:
-                authored_image_path(asset.dir, rel)
+                authored_image_path(asset.dir, rel, asset.file_roots)
             except ValueError as e:
                 out.append(_issue("TEX_AUTHORED_IMAGE_INVALID", "error", "surface", str(e), f"materials.{name}.textures.{ch}",
                                   "keep imported textures under the asset directory (sw import copies them to source/textures)"))

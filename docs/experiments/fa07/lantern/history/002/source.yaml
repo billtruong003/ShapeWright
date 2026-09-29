@@ -1,0 +1,126 @@
+# Imported by `sw import Lantern.glb` (Khronos sample "Lantern", CC0). Geometry lives in
+# source/Lantern.glb (not parametric); every part is a piece or node of that file.
+#
+# Fixes applied to the source file:
+#  - units: the file is ~25.7 units tall; every piece is scaled by `u` so the finished
+#    lantern (with the taller post) stands `target_height` = 2.5 m.
+#  - grounding: the file's lowest point is 0.184 units above its origin; `ground` moves it to y = 0.
+#  - degenerate faces / open shells: `clean` on the pieces the validator flagged.
+#  - budget: the chain links are decimated (UV-preserving); decimating the lantern head made it
+#    non-manifold, and the budget is met without it.
+# Design change: the post (the shaft above the pedestal) is stretched to `post_stretch` x its
+# original height; everything hanging off it moves up with the arm junction, so the pedestal,
+# arm, chain and lantern keep their original proportions.
+shapewright: 0.1
+asset:
+  name: lantern
+  kind: prop/light/street_lantern
+  description: Old street lantern on a post with a curved arm and a lantern hanging from a chain (imported, rescaled, repaired, taller post).
+  tags: [imported, street, light]
+profile: desktop_indie
+params:
+  target_height: {value: 2.5, doc: finished height in metres (real street lantern)}
+  post_stretch: {value: 1.2, doc: post height relative to the original file}
+  # source-file measurements (file units), read from the imported pieces
+  file_ground: {value: 0.1839, doc: lowest point of the pedestal in the file}
+  file_post_bottom: {value: 4.6328, doc: bottom of the post piece in the file}
+  file_post_top: {value: 25.8481, doc: top of the post piece in the file}
+  file_arm_y: {value: 22.3295, doc: centre height of the cross arm where it meets the post}
+  file_post_h: file_post_top - file_post_bottom
+  chain_keep: {value: 0.35, doc: decimation ratio for the chain links (1248 tris in the file)}
+  # derived
+  u: target_height / (file_post_bottom + post_stretch * file_post_h - file_ground)   # file units -> metres
+  ground: -file_ground * u
+  post_lift: (post_stretch - 1) * file_post_h / 2 * u                                # the stretch is about the post centre
+  head_lift: (post_stretch - 1) * (file_arm_y - file_post_bottom) * u                # arm junction moves with the stretch
+materials:
+  lanternpost_mat:
+    archetype: authored
+    textures:
+      base_color: source/textures/lanternpost_mat_base_color.png
+      metallic_roughness: source/textures/lanternpost_mat_metallic_roughness.png
+      normal: source/textures/lanternpost_mat_normal.png
+      emissive: source/textures/lanternpost_mat_emissive.png
+    color: '#ffffff'
+    roughness: 1.0
+    metallic: 1.0
+    doc: imported from the file's material 'LanternPost_Mat' (textures pass through unchanged)
+    emissive: '#ffffff'
+parts:
+  pedestal:
+    doc: stepped square pedestal the post stands in
+    shape: {type: mesh_file, path: source/Lantern.glb, node: LanternPole_Body, piece: 0, scale: u}
+    origin: keep
+    position: [0, ground, 0]
+    material: lanternpost_mat
+    tags: [imported]
+  post:
+    doc: tapered square post, stretched post_stretch x in height (bottom stays in the pedestal)
+    shape:
+      type: mesh_file
+      path: source/Lantern.glb
+      node: LanternPole_Body
+      piece: 1
+      scale: u
+      ops: [{type: scale, factor: [1, post_stretch, 1]}]
+    origin: keep
+    position: [0, ground + post_lift, 0]
+    material: lanternpost_mat
+    tags: [imported]
+  arm_brace:
+    doc: curved brace under the arm
+    shape: {type: mesh_file, path: source/Lantern.glb, node: LanternPole_Body, piece: 2, scale: u}
+    origin: keep
+    position: [0, ground + head_lift, 0]
+    material: lanternpost_mat
+    tags: [imported]
+  arm:
+    doc: horizontal cross arm the lantern hangs from
+    shape: {type: mesh_file, path: source/Lantern.glb, node: LanternPole_Body, piece: 3, scale: u}
+    origin: keep
+    position: [0, ground + head_lift, 0]
+    material: lanternpost_mat
+    tags: [imported]
+  brace_collar:
+    doc: collar block on the post where the brace starts
+    shape: {type: mesh_file, path: source/Lantern.glb, node: LanternPole_Body, piece: 4, scale: u}
+    origin: keep
+    position: [0, ground + head_lift, 0]
+    material: lanternpost_mat
+    tags: [imported]
+  arm_collar:
+    doc: collar block on the post at the arm junction
+    shape: {type: mesh_file, path: source/Lantern.glb, node: LanternPole_Body, piece: 5, scale: u}
+    origin: keep
+    position: [0, ground + head_lift, 0]
+    material: lanternpost_mat
+    tags: [imported]
+  arm_end_cap:
+    doc: cap on the end of the arm above the chain
+    shape: {type: mesh_file, path: source/Lantern.glb, node: LanternPole_Body, piece: 6, scale: u}
+    ops: [{type: clean, fill_holes: true}]
+    origin: keep
+    position: [0, ground + head_lift, 0]
+    material: lanternpost_mat
+    tags: [imported]
+  chain:
+    doc: hook and five chain links
+    shape: {type: mesh_file, path: source/Lantern.glb, node: LanternPole_Chain, scale: u}
+    ops: [{type: clean, fill_holes: true}, {type: decimate, ratio: chain_keep}]
+    origin: keep
+    position: [0, ground + head_lift, 0]
+    material: lanternpost_mat
+    tags: [imported]
+  lantern:
+    doc: lantern head (hanging ring, roof and glazed cage)
+    shape: {type: mesh_file, path: source/Lantern.glb, node: LanternPole_Lantern, scale: u}
+    ops: [{type: clean, fill_holes: true}, {type: clean}]   # fill the open ring-bolt end, then drop the zero-area faces the fill leaves
+    origin: keep
+    position: [0, ground + head_lift, 0]
+    material: lanternpost_mat
+    tags: [imported, open_ok]
+checks:
+  - {expr: asset.height, min: 2.45, max: 2.55, doc: real street-lantern height}
+  - {expr: post.size.y / (file_post_h * u), min: 1.19, max: 1.21, doc: post is 20% taller than in the source file}
+  - {expr: pedestal.min.y, min: -0.001, max: 0.001, doc: stands on the ground}
+  - {expr: lantern.min.y, min: 1.0, doc: lantern hangs clear above head height}
