@@ -94,9 +94,10 @@ def cmd_doc(a):
     from .caps import manifest
 
     m = manifest()
-    for fam in ("shapes", "ops", "material_archetypes"):
+    for fam, label in (("shapes", "shape"), ("ops", "op"), ("material_archetypes", "archetype"), ("point_generators", "point_generator"),
+                       ("part_features", "part_feature")):
         if a.name in m[fam]:
-            print(compact_json({fam.rstrip("s").replace("material_archetype", "archetype"): a.name, **m[fam][a.name]}))
+            print(compact_json({label: a.name, **m[fam][a.name]}))
             return 0
     if a.name in m["views"] or a.name in m["modes"]:
         print(m["views"].get(a.name) or m["modes"].get(a.name))
@@ -108,7 +109,7 @@ def cmd_doc(a):
             return 0
     from .registry import suggest
 
-    names = list(m["shapes"]) + list(m["ops"]) + list(m["views"]) + list(m["modes"])
+    names = list(m["shapes"]) + list(m["ops"]) + list(m["views"]) + list(m["modes"]) + list(m["point_generators"]) + list(m["part_features"])
     print(f"unknown name '{a.name}'.{suggest(a.name, names)}")
     return 2
 

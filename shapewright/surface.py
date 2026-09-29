@@ -171,8 +171,15 @@ def compute_layout(asset: Asset, resolution: int, padding: int):
     items = []
     for o, c in charts.items():
         lo, hi = c.reshape(-1, 2).min(0), c.reshape(-1, 2).max(0)
-        aspect = max(hi[0] - lo[0], 1e-9) / max(hi[1] - lo[1], 1e-9)
-        items.append((o, np.sqrt(areas[o] * aspect), np.sqrt(areas[o] / aspect)))
+        w, h = max(hi[0] - lo[0], 1e-9), max(hi[1] - lo[1], 1e-9)
+        aspect = w / h
+        # charts rarely fill their bounding box (rings and tubes pack loosely): give the region
+        # the room its charts need so every part gets the same texel density (FRESH_AGENT_05)
+        e1, e2 = c[:, 1] - c[:, 0], c[:, 2] - c[:, 0]
+        used = 0.5 * np.abs(e1[:, 0] * e2[:, 1] - e1[:, 1] * e2[:, 0]).sum()
+        fill = float(np.clip(used / (w * h), 0.05, 1.0))
+        need = areas[o] / fill
+        items.append((o, np.sqrt(need * aspect), np.sqrt(need / aspect)))
     rects, _ = _shelf_pack(items, gutter)
     return owners, first, charts, rects
 

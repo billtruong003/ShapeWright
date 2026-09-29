@@ -11,6 +11,7 @@ import math
 
 import numpy as np
 
+from ..curves import expand_points
 from ..limits import LIMITS, check
 from .. import backend
 from ..mesh import Mesh
@@ -163,12 +164,21 @@ def lathe(a, b):
        [Param("polygon", "points2", doc="outer contour [[x, y], ...]"),
         Param("depth", "num", doc="extrusion depth along Z", min=0),
         Param("holes", "list", [], "list of inner contours"),
-        Param("scale_top", "vec2", [1.0, 1.0], "XY scale of the far face (taper), about the polygon's own origin (0, 0), not its centre")],
-       example="{type: extrude, polygon: [[-0.2,0],[0.2,0],[0.15,0.3],[-0.15,0.3]], depth: 0.04}")
+        Param("scale_top", "vec2", [1.0, 1.0], "XY scale of the far face (taper), about the polygon's own origin (0, 0), not its centre"),
+        Param("chamfer", "num", 0.0, "bevel both caps' edges by this many metres (convex outlines without holes)", min=0)],
+       example="{type: extrude, polygon: [[-0.2,0],[0.2,0],[0.15,0.3],[-0.15,0.3]], depth: 0.04, chamfer: 0.005}")
 def extrude(a, b):
-    contours = [np.array(a["polygon"], dtype=np.float64)]
+    outer = np.array(a["polygon"], dtype=np.float64)
+    if len(outer) > 3 and np.allclose(outer[0], outer[-1]):
+        outer = outer[:-1]  # generators (full arcs) may close the loop explicitly
+    if a["chamfer"] > 0:
+        return _finish(_chamfered_extrude(outer, a["depth"], a["chamfer"], a["holes"], a["scale_top"]))
+    contours = [outer]
     for i, hole in enumerate(a["holes"] or []):
-        contours.append(np.array([b.vec(p, 2, f"holes[{i}]") for p in hole], dtype=np.float64))
+        pts = expand_points(hole, 2, b.env, f"{b.where}.holes[{i}]", b.ctx)
+        if pts is None:
+            raise ValueError(f"invalid hole {i}")
+        contours.append(np.array(pts, dtype=np.float64))
     fixed = []
     for c in contours:
         area = 0.5 * np.sum(c[:, 0] * np.roll(c[:, 1], -1) - np.roll(c[:, 0], -1) * c[:, 1])
@@ -176,14 +186,136 @@ def extrude(a, b):
     return _finish(backend.extrude_polygon(fixed, a["depth"], a["scale_top"]))
 
 
+@shape("strut", "A beam, brace, rod or post running from one point to another (braces, rafters, rungs, axles, legs). "
+       "Box section with `size`, or round with `radius`. A part whose shape is a strut keeps its asset coordinates "
+       "(origin: keep), so `from`/`to` are where the ends go; they may use params and `measure` results.",
+       [Param("from", "vec3", doc="start point [x, y, z] (asset coordinates)"),
+        Param("to", "vec3", doc="end point [x, y, z]"),
+        Param("size", "vec2", None, "[width, depth] of a box section; depth lies along the horizontal normal of the strut's vertical plane"),
+        Param("radius", "num", None, "round section radius (instead of size)", min=0),
+        Param("sides", "int", 8, "sides of a round section", **SEG),
+        Param("chamfer", "num", 0.0, "edge chamfer in metres", min=0),
+        Param("extend", "num", 0.0, "extra length past each end (to bury ends in what they join)", min=0),
+        Param("roll", "num", 0.0, "rotation about the strut's own axis, degrees")],
+       example="{type: strut, from: [-0.4, 0.1, 0], to: [0.4, 0.9, 0], size: [0.08, 0.06], chamfer: 0.008}")
+def strut(a, b):
+    p0, p1 = np.asarray(a["from"], dtype=np.float64), np.asarray(a["to"], dtype=np.float64)
+    d = p1 - p0
+    length = float(np.linalg.norm(d))
+    if length < 1e-6:
+        raise ValueError("strut `from` and `to` are the same point")
+    y = d / length
+    up = np.array([0.0, 1.0, 0.0]) if abs(y[1]) < 0.99 else np.array([0.0, 0.0, 1.0])
+    z = np.cross(y, up)  # depth axis: horizontal, normal to the vertical plane holding the strut
+    if abs(y[1]) >= 0.99:
+        z = np.array([0.0, 0.0, 1.0])
+    z /= np.linalg.norm(z)
+    x = np.cross(y, z)
+    L = length + 2 * a["extend"]
+    if a["size"] is not None:
+        mesh = chamfer_box({"size": [a["size"][0], L, a["size"][1]], "chamfer": a["chamfer"]}, b)
+    elif a["radius"] is not None:
+        mesh = cylinder({"radius": a["radius"], "height": L, "radius_top": None, "segments": a["sides"], "chamfer": a["chamfer"]}, b)
+    else:
+        raise ValueError("strut needs `size: [width, depth]` or `radius`")
+    mesh = mesh.recentered()
+    R = np.eye(4)
+    roll = np.radians(a["roll"])
+    xr, zr = x * np.cos(roll) + z * np.sin(roll), -x * np.sin(roll) + z * np.cos(roll)
+    R[:3, :3] = np.stack([xr, y, zr], axis=1)
+    R[:3, 3] = (p0 + p1) / 2
+    return mesh.transformed(R)
+
+
+def _turns(P: np.ndarray) -> np.ndarray:
+    """z of the cross product of consecutive edges (> 0: left turn) for a 2D polygon."""
+    a, b = np.roll(P, -1, 0) - P, np.roll(P, -2, 0) - np.roll(P, -1, 0)
+    return a[:, 0] * b[:, 1] - a[:, 1] * b[:, 0]
+
+
+def _inset_convex(P: np.ndarray, d: float) -> np.ndarray:
+    """Offset a convex counter-clockwise polygon inward by d (mitred corners)."""
+    n = len(P)
+    E = np.roll(P, -1, 0) - P
+    N = np.stack([-E[:, 1], E[:, 0]], 1) / np.linalg.norm(E, axis=1)[:, None]  # inward for CCW
+    out = []
+    for i in range(n):
+        j = (i - 1) % n
+        p1, d1 = P[j] + N[j] * d, E[j]
+        p2, d2 = P[i] + N[i] * d, E[i]
+        den = d1[0] * d2[1] - d1[1] * d2[0]
+        if abs(den) < 1e-12:
+            out.append(p2)
+            continue
+        t = ((p2[0] - p1[0]) * d2[1] - (p2[1] - p1[1]) * d2[0]) / den
+        out.append(p1 + d1 * t)
+    Q = np.array(out)
+    area = 0.5 * np.sum(Q[:, 0] * np.roll(Q[:, 1], -1) - np.roll(Q[:, 0], -1) * Q[:, 1])
+    if area <= 0 or np.any(_turns(Q) < -1e-12):
+        raise ValueError(f"chamfer {d:g} is too large for this outline")
+    return Q
+
+
+def _chamfered_extrude(P: np.ndarray, depth: float, c: float, holes, scale_top) -> Mesh:
+    if holes:
+        raise ValueError("chamfer works on outlines without holes; subtract the hole with an op instead")
+    if list(scale_top) != [1.0, 1.0]:
+        raise ValueError("chamfer and scale_top cannot be combined; use a taper op after the chamfered extrude")
+    area = 0.5 * np.sum(P[:, 0] * np.roll(P[:, 1], -1) - np.roll(P[:, 0], -1) * P[:, 1])
+    if area < 0:
+        P = P[::-1]
+    if np.any(_turns(P) < -1e-12):
+        raise ValueError("chamfer needs a convex outline; split the shape into convex pieces or bevel with a subtract op")
+    if 2 * c >= depth:
+        raise ValueError(f"chamfer {c:g} must be less than half the depth {depth:g}")
+    Q = _inset_convex(P, c)
+    pts = [np.c_[Q, np.zeros(len(Q))], np.c_[P, np.full(len(P), c)], np.c_[P, np.full(len(P), depth - c)], np.c_[Q, np.full(len(Q), depth)]]
+    return backend.convex_hull(np.concatenate(pts))
+
+
+def _round_corners(P: np.ndarray, r: float, k: int) -> np.ndarray:
+    """Replace each interior corner of a polyline by a circular arc of radius r (shrunk to fit short segments)."""
+    out = [P[0]]
+    for i in range(1, len(P) - 1):
+        prev, cur, nxt = out[-1], P[i], P[i + 1]
+        a, c = prev - cur, nxt - cur
+        la, lc = np.linalg.norm(a), np.linalg.norm(c)
+        if la < 1e-9 or lc < 1e-9:
+            continue
+        a, c = a / la, c / lc
+        cosang = float(np.clip(a @ c, -1, 1))
+        if cosang < -0.9999:  # straight through
+            out.append(cur)
+            continue
+        half = np.arccos(cosang) / 2
+        t = min(r / np.tan(half), la * 0.5 if i > 1 else la, lc * 0.5 if i < len(P) - 2 else lc)
+        rr = t * np.tan(half)
+        bis = (a + c) / np.linalg.norm(a + c)
+        C = cur + bis * (rr / np.sin(half))
+        u, v = cur + a * t - C, cur + c * t - C
+        phi = np.arccos(np.clip(u @ v / max(np.linalg.norm(u) * np.linalg.norm(v), 1e-12), -1, 1))
+        for s_ in np.linspace(0, 1, k + 1):
+            out.append(C + (np.sin((1 - s_) * phi) * u + np.sin(s_ * phi) * v) / max(np.sin(phi), 1e-12))
+    out.append(P[-1])
+    Q = [out[0]]
+    for q in out[1:]:
+        if np.linalg.norm(q - Q[-1]) > 1e-7:
+            Q.append(q)
+    return np.array(Q)
+
+
 @shape("tube", "Sweep a regular polygon along a 3D path (pipes, cables, arms, branches, handles).",
        [Param("path", "points3", doc="[[x, y, z], ...] path points"),
         Param("radius", "num", doc="tube radius at the start", min=0),
         Param("radius_end", "num", None, "radius at the end (default = radius)", min=0),
-        Param("sides", "int", 6, "sides of the cross-section", **SEG)],
-       example="{type: tube, path: [[0,0,0],[0,0.5,0],[0.2,0.7,0]], radius: 0.02, sides: 6}")
+        Param("sides", "int", 6, "sides of the cross-section", **SEG),
+        Param("corner_radius", "num", 0.0, "round every interior corner of the path with this bend radius (pipe elbows, bent handles)", min=0),
+        Param("corner_segments", "int", 4, "points per rounded corner", min=1, max=32)],
+       example="{type: tube, path: [[0,0,0],[0,0.5,0],[0.4,0.5,0]], radius: 0.03, corner_radius: 0.12, sides: 8}")
 def tube(a, b):
     P = np.array(a["path"], dtype=np.float64)
+    if a["corner_radius"] > 0 and len(P) > 2:
+        P = _round_corners(P, a["corner_radius"], a["corner_segments"])
     n, s = len(P), a["sides"]
     r0 = a["radius"]
     r1 = r0 if a["radius_end"] is None else a["radius_end"]

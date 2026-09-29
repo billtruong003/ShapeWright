@@ -54,7 +54,9 @@ PART_KEYS = {
     "measure": "named spatial queries on already-built parts: {name: {section|gap|bounds|anchor|ray: ...}}",
     "enabled": "true | false | expression; disabled parts are not built",
     "uv": "per-part UV settings: {share_instances: true}",
-    "rotate": "[rx, ry, rz] degrees, applied about the part centre before placement",
+    "rotate": "[rx, ry, rz] degrees, applied about the part centre before placement (or about its anchor: rotate_about)",
+    "rotate_about": "center (default) | anchor: rotate about the unrotated shape's anchor point, which is then the point placed",
+    "origin": "center (default) | keep: keep the shape's own coordinates (tube paths, strut ends) instead of centring; position is then an offset",
     "position": "[x, y, z] world position of the part's anchor",
     "anchor": "which point of this part is placed (default: center)",
     "attach": "{to: part, at: anchor, offset: [x,y,z]} places this part relative to another",
@@ -324,7 +326,13 @@ def num(value: Any, env: dict, where: str, ctx: Ctx, default: float | None = Non
             out = expr.evaluate(value, env)
         except expr.ExprError as e:
             name = str(e).split("'")[1] if "unknown name" in str(e) else ""
-            ctx.error("SRC_EXPR", where, str(e), suggest(name, env).strip() if name else "")
+            hint = suggest(name, env).strip() if name else ""
+            if name and f"{name}." in value:
+                hint = (f"part metrics such as {name}.size.x exist only in checks; inside parts measure the part first: "
+                        f"measure: {{m: {{bounds: {name}}}}} then m.size.x, m.max.y ... (docs/RELATIONSHIPS.md)")
+            elif name in ("i", "n"):
+                hint = "i and n exist only inside array `each:` expressions (sw doc array)"
+            ctx.error("SRC_EXPR", where, str(e), hint)
             return default
         if isinstance(out, bool) or not isinstance(out, (int, float)):
             ctx.error("SRC_EXPR", where, f"'{value}' did not produce a number")
@@ -382,11 +390,13 @@ def resolve_args(spec: OpSpec, raw: dict, env: dict, where: str, ctx: Ctx, extra
         elif p.kind == "num|vec3":
             args[p.name] = vec(value, 3, env, path, ctx) if isinstance(value, (list, tuple)) else num(value, env, path, ctx)
         elif p.kind in ("points2", "points3"):
+            from .curves import expand_points
+
             n = 2 if p.kind == "points2" else 3
-            if not isinstance(value, list) or len(value) < 2:
-                ctx.error("SRC_SCHEMA", path, f"expected a list of at least 2 points {KIND_HINT[p.kind]}")
-                continue
-            args[p.name] = [vec(pt, n, env, f"{path}[{i}]", ctx) for i, pt in enumerate(value)]
+            pts = expand_points(value, n, env, path, ctx)
+            if pts is not None and len(pts) < 2:
+                ctx.error("SRC_SCHEMA", path, f"expected at least 2 points {KIND_HINT[p.kind]} (items may be arc/helix/line generators)")
+            args[p.name] = pts
         elif p.kind == "axis":
             if value not in ("x", "y", "z"):
                 ctx.error("SRC_SCHEMA", path, "axis must be x, y or z")

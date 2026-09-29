@@ -171,15 +171,18 @@ def flat(a, s: Samples) -> Channels:
     Param("grain_scale", "num", 0.03, "ring spacing in metres", min=0.002, max=1),
     Param("grain_color", "color", None, "colour of the dark grain (default: darker base)"),
     Param("streaks", "num", 0.4, "0..1 lengthwise streak variation", min=0, max=1),
-    Param("knots", "num", 0.0, "0..1 amount of darker knot blotches", min=0, max=1)],
+    Param("knots", "num", 0.0, "0..1 amount of darker knot blotches", min=0, max=1),
+    Param("grain_axis", "str", "auto", "direction the grain runs: auto (each part's longest axis) | x | y | z (asset axes; "
+          "e.g. y for end-grain rings on a horizontal cut face)", choices=("auto", "x", "y", "z"))],
     example="{archetype: wood, color: '#8a5a36', grain_strength: 0.35, grain_scale: 0.03, edge_wear: 0.3}")
 def wood(a, s: Samples) -> Channels:
     k = len(s.P)
     base_c = np.asarray(a["color"])
     dark = np.asarray(a["grain_color"]) if a["grain_color"] is not None else base_c * 0.62
+    axis = s.axis if a.get("grain_axis", "auto") == "auto" else np.eye(3)["xyz".index(a["grain_axis"])]
     rel = s.P - s.center
-    along = rel @ s.axis
-    radial = np.linalg.norm(rel - np.outer(along, s.axis), axis=1)
+    along = rel @ axis
+    radial = np.linalg.norm(rel - np.outer(along, axis), axis=1)
     seed = a["seed"] + s.part_seed
     warp = fbm(np.c_[along * 2.0, radial * 6, np.zeros(k)], seed, 3) * 1.5
     rings = 0.5 + 0.5 * np.sin(2 * np.pi * (radial / a["grain_scale"] + warp))

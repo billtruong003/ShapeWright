@@ -1,15 +1,15 @@
 {
  "asset": "potted_plant",
- "status": "WARN",
+ "status": "PASS",
  "source_hash": "76709874b096",
  "counts": {
   "error": 0,
-  "warning": 3,
-  "info": 1
+  "warning": 0,
+  "info": 4
  },
  "layers": {
   "source": "PASS",
-  "geometry": "WARN",
+  "geometry": "PASS",
   "assembly": "PASS",
   "budget": "PASS",
   "intent": "PASS",
@@ -41,15 +41,15 @@
    "asset.height / pot.height": 2.1085,
    "leaves_upright.max.y > leaves_mid.max.y and leaves_mid.max.y > leaves_low.max.y": true
   },
-  "uv_utilization": 0.419,
+  "uv_utilization": 0.447,
   "uv_overlap": 0.0,
   "uv_owners": 5,
-  "texel_density_px_m": 355.3,
+  "texel_density_px_m": 365.2,
   "texel_density_target": 256,
   "texture": {
    "resolution": 512,
    "target_px_m": 256.0,
-   "achieved_px_m": 353.8,
+   "achieved_px_m": 365.2,
    "memory_kb": 2048,
    "lifecycle": {
     "DERIVED": 5
@@ -65,33 +65,33 @@
  "issues": [
   {
    "code": "GEO_PART_FRAGMENTED",
-   "severity": "warning",
+   "severity": "info",
    "layer": "geometry",
    "where": "leaves_low",
    "msg": "part consists of 2 disconnected pieces",
-   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
    "data": {
     "pieces": 2
    }
   },
   {
    "code": "GEO_PART_FRAGMENTED",
-   "severity": "warning",
+   "severity": "info",
    "layer": "geometry",
    "where": "leaves_mid",
    "msg": "part consists of 4 disconnected pieces",
-   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
    "data": {
     "pieces": 4
    }
   },
   {
    "code": "GEO_PART_FRAGMENTED",
-   "severity": "warning",
+   "severity": "info",
    "layer": "geometry",
    "where": "leaves_upright",
    "msg": "part consists of 4 disconnected pieces",
-   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
    "data": {
     "pieces": 4
    }
@@ -107,7 +107,7 @@
  ],
  "export": {
   "path": "assets/potted_plant/export/potted_plant.glb",
-  "bytes": 119676,
+  "bytes": 121932,
   "nodes": 11,
   "meshes": 10,
   "materials": 3

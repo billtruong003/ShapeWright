@@ -1,11 +1,11 @@
 {
  "asset": "smith_weapon_rack",
  "status": "PASS",
- "source_hash": "04c74a08bf32",
+ "source_hash": "208528b988cc",
  "counts": {
   "error": 0,
   "warning": 0,
-  "info": 6
+  "info": 4
  },
  "layers": {
   "source": "PASS",
@@ -57,17 +57,15 @@
   "uv_overlap": 0.0,
   "uv_owners": 17,
   "texel_density_px_m": 178.7,
-  "texel_density_target": 256
+  "texel_density_target": 256,
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
  },
  "issues": [
-  {
-   "code": "FAMILY_NO_INTERFACE",
-   "severity": "info",
-   "layer": "source",
-   "where": "extends",
-   "msg": "base asset declares no `interface`; the variant depends on its internals",
-   "hint": "declare interface: {params: [...]} in the base"
-  },
   {
    "code": "GEO_SLIVER_TRIS",
    "severity": "info",
@@ -111,18 +109,11 @@
    "data": {
     "count": 12
    }
-  },
-  {
-   "code": "EXP_VALIDATOR_UNAVAILABLE",
-   "severity": "info",
-   "layer": "export",
-   "msg": "Khronos glTF-Validator not installed; round-trip check only",
-   "hint": "cd tools/gltf-validator && npm install"
   }
  ],
  "export": {
   "path": "assets/smith_weapon_rack/export/smith_weapon_rack.glb",
-  "bytes": 105704,
+  "bytes": 105764,
   "nodes": 32,
   "meshes": 26,
   "materials": 3

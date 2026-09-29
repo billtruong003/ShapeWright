@@ -1,10 +1,10 @@
 {
  "asset": "hand_cart",
- "status": "WARN",
+ "status": "PASS",
  "source_hash": "26c539a79b8b",
  "counts": {
   "error": 0,
-  "warning": 1,
+  "warning": 0,
   "info": 8
  },
  "layers": {
@@ -13,7 +13,7 @@
   "assembly": "PASS",
   "budget": "PASS",
   "intent": "PASS",
-  "surface": "WARN",
+  "surface": "PASS",
   "style": "PASS",
   "export": "PASS"
  },
@@ -48,15 +48,15 @@
    "beam_right.max.z - plank.max.z": 0.9496,
    "plank.size.y": 0.0455
   },
-  "uv_utilization": 0.376,
+  "uv_utilization": 0.327,
   "uv_overlap": 0.0,
   "uv_owners": 29,
-  "texel_density_px_m": 248.0,
+  "texel_density_px_m": 209.3,
   "texel_density_target": 200,
   "texture": {
    "resolution": 1024,
    "target_px_m": 200.0,
-   "achieved_px_m": 224.5,
+   "achieved_px_m": 209.3,
    "memory_kb": 8192,
    "lifecycle": {
     "DERIVED": 29
@@ -70,14 +70,6 @@
   }
  },
  "issues": [
-  {
-   "code": "UV_TEXEL_DENSITY",
-   "severity": "warning",
-   "layer": "surface",
-   "where": "wheel",
-   "msg": "texel density varies 1.77x (wheel: 158 px/m, beam: 278 px/m)",
-   "hint": "each part gets a UV rectangle sized by its area; thin or oddly shaped parts pack their charts loosely into it. Try uv: {seams: regions} on that part, change its proportions/segments, or accept it (warning only). With a lock, re-lock after big size changes"
-  },
   {
    "code": "GEO_SLIVER_TRIS",
    "severity": "info",
@@ -166,7 +158,7 @@
  ],
  "export": {
   "path": "assets/hand_cart/export/hand_cart.glb",
-  "bytes": 746716,
+  "bytes": 750760,
   "nodes": 60,
   "meshes": 58,
   "materials": 3

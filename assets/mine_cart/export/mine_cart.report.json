@@ -46,15 +46,15 @@
    "tub.max.y": 0.8516,
    "tub.size.x": 0.7556
   },
-  "uv_utilization": 0.419,
+  "uv_utilization": 0.366,
   "uv_overlap": 0.0,
   "uv_owners": 24,
-  "texel_density_px_m": 202.5,
+  "texel_density_px_m": 190.9,
   "texel_density_target": 200,
   "texture": {
    "resolution": 1024,
    "target_px_m": 200.0,
-   "achieved_px_m": 204.6,
+   "achieved_px_m": 190.9,
    "memory_kb": 8192,
    "lifecycle": {
     "DERIVED": 24
@@ -69,12 +69,12 @@
  },
  "issues": [
   {
-   "code": "UV_TEXEL_DENSITY",
+   "code": "TEX_DENSITY_BELOW_TARGET",
    "severity": "warning",
    "layer": "surface",
-   "where": "band_high_band",
-   "msg": "texel density varies 2.05x (band_high_band: 111 px/m, chassis: 227 px/m)",
-   "hint": "each part gets a UV rectangle sized by its area; thin or oddly shaped parts pack their charts loosely into it. Try uv: {seams: regions} on that part, change its proportions/segments, or accept it (warning only). With a lock, re-lock after big size changes"
+   "where": "uv",
+   "msg": "200 px/m needs a 2048px atlas; budget allows 1024px (191 px/m achieved)",
+   "hint": "set uv: {texel_density: 190} (what this atlas achieves), raise budget.texture_size, or reduce surface area"
   },
   {
    "code": "GEO_SLIVER_TRIS",
@@ -120,7 +120,7 @@
  ],
  "export": {
   "path": "assets/mine_cart/export/mine_cart.glb",
-  "bytes": 790384,
+  "bytes": 781996,
   "nodes": 49,
   "meshes": 48,
   "materials": 3

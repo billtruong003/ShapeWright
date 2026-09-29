@@ -53,7 +53,8 @@ params:
   YAML bare words become strings, so `size: [seat_width, 0.05, seat_depth]` works.
 - Expression language: numbers, param names, `+ - * / // % **`, comparisons,
   `a if cond else b`, `and/or/not`, and the functions `min max abs round floor ceil
-  sqrt sin cos tan atan2 clamp lerp`, plus the constants `pi tau`.
+  sqrt sin cos tan atan2 clamp lerp rand`, plus the constants `pi tau`.
+  `rand(k)` / `rand(k, seed)` is a repeatable pseudo-random number in 0..1 (per-instance variation).
   Nothing else: no strings, no attribute access on numbers, no other calls.
 - Params may reference each other in any order. Cycles are reported.
 - `min`/`max` produce a `PARAM_OUT_OF_RANGE` warning when violated. `vary` bounds
@@ -165,8 +166,15 @@ one part), distinct from part-level `mirror:`/`array:` (named instances).
 ### Build order inside a part
 
 ```
-measure → shape expression → centre → part ops → rotate → place (position | attach) → array → mirror
+measure → shape expression → centre → part ops → rotate → place (position | attach) → array (+ each) → mirror
 ```
+
+`origin: keep` skips the centring: the shape stays where its own coordinates put it (tube
+paths and strut ends written in asset coordinates, including `measure` results), and
+`position` is an offset. `strut` parts keep their origin by default.
+`rotate_about: anchor` rotates about the unrotated shape's anchor point, and that point is
+what `position`/`attach` places (a leaf tilting about its base). By default the part rotates
+about its centre and the rotated bounding box's anchor is placed.
 
 ### Measure: relationships from real geometry
 
@@ -243,7 +251,9 @@ attach: {to: seat, at: bottom_front_right, offset: [dx, dy, dz]}
 ```
 
 `to` may name a source part (its placement before mirroring or arraying) or an
-instance (`front_leg_left`), or `origin`. Attachments are resolved in
+instance (`front_leg_left`), or `origin`. The same holds for `measure` targets: a
+source-part name does not change when a count changes, while `row_2_front` may stop
+existing. Attachments are resolved in
 dependency order, and cycles are errors.
 
 ### Replication
@@ -256,6 +266,19 @@ mirror: [x, z]                                       # 4 instances: post_front_l
 mirror: {axis: y, at: height / 2}                    # across y = height/2 (top/bottom twins)
 mirror: [z, {axis: y, at: size / 2}]
 ```
+
+Arrays vary per instance with `each:`, evaluated for every instance with `i` (0..n-1) and
+`n`. `rotate`/`scale` act about the part's anchor point, then `translate`, then the
+array step. `skip:` leaves slots out, `start:` offsets a radial array's first angle, and a
+**list** of arrays nests them (names `name_i_j`):
+
+```yaml
+array: {count: 10, radial: y, start: 12, each: {rotate: [0, 0, "-25 - 30 * rand(i)"], scale: [1, "0.8 + 0.4 * rand(i, 7)", 1]}}
+array: {count: 9, radial: z, angle: 180, center: [0, spring_y, 0], skip: [4]}      # voussoirs without the keystone slot
+array: [{count: 8, offset: [0.25, 0, 0]}, {count: 6, offset: [0, 0.12, -0.16], each: {translate: ["(i % 2) * 0.125", 0, 0]}}]
+```
+
+Radial step: `angle / count` for a full 360°, else `angle / (count - 1)` (both ends included).
 
 Mirror suffixes are chosen by side: `_left/_right` (x), `_bottom/_top` (y),
 `_back/_front` (z), ordered z then y then x (`_front_left`). The array is
@@ -271,11 +294,29 @@ Families (v0.1):
 - **Composition:** `boolean` (base + tools, any operation), `combine` (several shells in one part)
 - **Sources:** `mesh_file` (baked/imported/external geometry)
 - **Profiles:** `lathe` (open profile around Y), `revolve` (closed outline
-  around Y), `extrude` (2D polygon with holes and taper), `tube` (sweep along a
-  3D path, optional radius taper)
+  around Y), `extrude` (2D polygon with holes, taper, and `chamfer` for convex
+  outlines), `tube` (sweep along a 3D path, optional radius taper, `corner_radius`
+  rounds every bend: pipe elbows, bent handles)
+- **Members:** `strut` (a beam/brace/rod from a `from` point to a `to` point; box or round
+  section; keeps asset coordinates, so its ends can be `measure` results)
 - **Procedural:** `random_hull` (seeded)
 - **Ops:** `scale rotate translate` · `taper bend twist shear` · `jitter noise inflate` ·
   `subdivide smooth decimate` · `subtract union intersect flat_bottom` · `mirror repeat`
+
+### Point lists: arcs, helices, lines
+
+Every list of points (`extrude.polygon`/`holes`, `lathe.profile`, `revolve.polygon`,
+`tube.path`) may contain **generators** that expand in place, mixed with literal points:
+
+```yaml
+polygon: [[0.5, 0], [0.7, 0], {arc: {center: [0, 0], radius: 0.7, from: 0, to: 180}}, [-0.5, 0],
+          {arc: {center: [0, 0], radius: 0.5, from: 180, to: 0}}]           # a round arch ring
+path: [{helix: {radius: 0.05, pitch: 0.02, turns: 4, axis: y}}]            # wound rope, spring, wrap
+path: [[0, 0, 0], {arc: {center: [0.3, 0, 0], radius: 0.3, from: 180, to: 90, plane: xy, radius_end: 0.2}}]  # a curl
+```
+
+`arc` angles are degrees counter-clockwise from the plane's first axis; `radius_end` makes a
+spiral and `rise` a ramp. `sw doc arc`, `sw doc helix`, `sw doc line`.
 
 Boolean ops take a nested shape as the tool:
 
@@ -283,6 +324,9 @@ Boolean ops take a nested shape as the tool:
 ops:
   - {type: subtract, shape: {type: box, size: [0.14, 0.2, 0.3]}, position: [0, 0, 0], rotate: [0, 45, 0]}
 ```
+
+The tool is centred after its own ops, so `position` places the centre of the tool's
+final bounding box (after its `mirror`/`repeat` ops), in the part's local space.
 
 ## Sockets
 

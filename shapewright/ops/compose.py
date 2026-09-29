@@ -28,7 +28,8 @@ from ..registry import Param, shape
 def boolean(a, b):
     m = b.build_geometry(a["base"], "base")
     for i, t in enumerate(a["tools"]):
-        m = backend.boolean(m, b.build_geometry(t, f"tools[{i}]"), a["operation"]).merged()
+        out = backend.boolean(m, b.build_geometry(t, f"tools[{i}]"), a["operation"]).merged()
+        m = out if a["operation"] == "union" else b.cut_check(m, out, f"{a['operation']} with tools[{i}]")
     return m
 
 

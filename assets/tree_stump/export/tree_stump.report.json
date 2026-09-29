@@ -1,10 +1,10 @@
 {
  "asset": "tree_stump",
- "status": "WARN",
+ "status": "PASS",
  "source_hash": "1c3700bb0aeb",
  "counts": {
   "error": 0,
-  "warning": 1,
+  "warning": 0,
   "info": 1
  },
  "layers": {
@@ -13,7 +13,7 @@
   "assembly": "PASS",
   "budget": "PASS",
   "intent": "PASS",
-  "surface": "WARN",
+  "surface": "PASS",
   "style": "PASS",
   "export": "PASS"
  },
@@ -43,15 +43,15 @@
    "asset.width / (2 * stump_r)": 1.8288,
    "cut_top.max.y >= trunk.max.y": true
   },
-  "uv_utilization": 0.439,
+  "uv_utilization": 0.428,
   "uv_overlap": 0.0,
   "uv_owners": 7,
-  "texel_density_px_m": 226.9,
+  "texel_density_px_m": 255.0,
   "texel_density_target": 200,
   "texture": {
    "resolution": 512,
    "target_px_m": 200.0,
-   "achieved_px_m": 258.3,
+   "achieved_px_m": 255.0,
    "memory_kb": 2048,
    "lifecycle": {
     "DERIVED": 7
@@ -66,14 +66,6 @@
  },
  "issues": [
   {
-   "code": "UV_TEXEL_DENSITY",
-   "severity": "warning",
-   "layer": "surface",
-   "where": "ring_outer",
-   "msg": "texel density varies 2.14x (ring_outer: 126 px/m, cut_top: 270 px/m)",
-   "hint": "each part gets a UV rectangle sized by its area; thin or oddly shaped parts pack their charts loosely into it. Try uv: {seams: regions} on that part, change its proportions/segments, or accept it (warning only). With a lock, re-lock after big size changes"
-  },
-  {
    "code": "UV_UNLOCKED",
    "severity": "info",
    "layer": "surface",
@@ -84,7 +76,7 @@
  ],
  "export": {
   "path": "assets/tree_stump/export/tree_stump.glb",
-  "bytes": 143320,
+  "bytes": 147264,
   "nodes": 21,
   "meshes": 20,
   "materials": 2

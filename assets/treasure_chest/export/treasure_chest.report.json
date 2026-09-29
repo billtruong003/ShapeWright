@@ -223,7 +223,7 @@
  ],
  "export": {
   "path": "assets/treasure_chest/export/treasure_chest.glb",
-  "bytes": 803332,
+  "bytes": 803592,
   "nodes": 47,
   "meshes": 45,
   "materials": 3

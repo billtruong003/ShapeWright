@@ -41,15 +41,15 @@
    "tyre_right.size.y": 0.6,
    "bearing_right.max.x": 0.355
   },
-  "uv_utilization": 0.335,
+  "uv_utilization": 0.361,
   "uv_overlap": 0.0,
   "uv_owners": 11,
-  "texel_density_px_m": 397.5,
+  "texel_density_px_m": 402.3,
   "texel_density_target": 320,
   "texture": {
    "resolution": 1024,
    "target_px_m": 320.0,
-   "achieved_px_m": 387.1,
+   "achieved_px_m": 402.3,
    "memory_kb": 8192,
    "lifecycle": {
     "DERIVED": 11
@@ -91,7 +91,7 @@
  ],
  "export": {
   "path": "assets/wheel_axle/export/wheel_axle.glb",
-  "bytes": 436492,
+  "bytes": 463104,
   "nodes": 26,
   "meshes": 22,
   "materials": 3

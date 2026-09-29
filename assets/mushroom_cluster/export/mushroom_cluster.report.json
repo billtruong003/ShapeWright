@@ -1,15 +1,15 @@
 {
  "asset": "mushroom_cluster",
- "status": "WARN",
+ "status": "PASS",
  "source_hash": "39620ce0e68c",
  "counts": {
   "error": 0,
-  "warning": 3,
-  "info": 1
+  "warning": 0,
+  "info": 4
  },
  "layers": {
   "source": "PASS",
-  "geometry": "WARN",
+  "geometry": "PASS",
   "assembly": "PASS",
   "budget": "PASS",
   "intent": "PASS",
@@ -43,10 +43,10 @@
    "big.height > mid.height and mid.height > small.height": true,
    "small.height / big.height": 0.4137
   },
-  "uv_utilization": 0.409,
+  "uv_utilization": 0.407,
   "uv_overlap": 0.0,
   "uv_owners": 7,
-  "texel_density_px_m": 308.9,
+  "texel_density_px_m": 319.8,
   "texel_density_target": 256,
   "gltf_validator": {
    "numErrors": 0,
@@ -58,33 +58,33 @@
  "issues": [
   {
    "code": "GEO_PART_FRAGMENTED",
-   "severity": "warning",
+   "severity": "info",
    "layer": "geometry",
    "where": "big_cap",
    "msg": "part consists of 9 disconnected pieces",
-   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
    "data": {
     "pieces": 9
    }
   },
   {
    "code": "GEO_PART_FRAGMENTED",
-   "severity": "warning",
+   "severity": "info",
    "layer": "geometry",
    "where": "mid_cap",
    "msg": "part consists of 9 disconnected pieces",
-   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
    "data": {
     "pieces": 9
    }
   },
   {
    "code": "GEO_PART_FRAGMENTED",
-   "severity": "warning",
+   "severity": "info",
    "layer": "geometry",
    "where": "small_cap",
    "msg": "part consists of 9 disconnected pieces",
-   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
    "data": {
     "pieces": 9
    }

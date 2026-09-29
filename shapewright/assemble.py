@@ -41,6 +41,7 @@ from .report import Issue, SourceError
 ROOT = Path(__file__).resolve().parent.parent
 AXIS_TOKENS = {"left": (0, -1), "right": (0, 1), "bottom": (1, -1), "top": (1, 1), "back": (2, -1), "front": (2, 1)}
 SIDE_NAMES = {0: ("left", "right"), 1: ("bottom", "top"), 2: ("back", "front")}
+KEEP_ORIGIN = {"strut"}  # shapes whose parts keep their authored coordinates by default
 EXPR_KEYS = {"type", "doc", "ops", "material", "rotate", "translate"}
 
 
@@ -187,6 +188,18 @@ class BuildCtx:
             mesh = mesh.translated(tr)
         return mesh
 
+    def cut_check(self, before: Mesh, after: Mesh, what: str) -> Mesh:
+        """Warn when a cut (difference, intersection, trim) splits a piece into several (FRESH_AGENT_05:
+        the fragment warning used to fire on intentional combine/repeat pieces instead)."""
+        from .mesh import count_shells
+
+        b0 = before.merged()
+        n0, n1 = count_shells(b0.F, len(b0.V)), count_shells(after.F, len(after.V))
+        if n1 > n0:
+            self.ctx.issues.append(S.Issue("GEO_CUT_SPLIT", "warning", f"{what} split the geometry into {n1} pieces (was {n0})", self.where,
+                                           "geometry", "if intended, make the pieces separate parts; otherwise the tool cuts all the way through"))
+        return after
+
     build_shape = build_geometry  # backwards-compatible name for extensions written against v0.1
 
 
@@ -203,8 +216,12 @@ def _check_mesh(mesh: Mesh, name: str, where: str, ctx: S.Ctx) -> bool:
     return True
 
 
-def build_geometry(raw: Any, env: dict, ctx: S.Ctx, where: str, asset_dir: Path | None = None, materials: dict | None = None) -> Mesh | None:
-    """Evaluate a geometry expression: generator -> recentre -> ops -> rotate -> translate."""
+def build_geometry(raw: Any, env: dict, ctx: S.Ctx, where: str, asset_dir: Path | None = None, materials: dict | None = None,
+                   keep_origin: bool = False) -> Mesh | None:
+    """Evaluate a geometry expression: generator -> recentre -> ops -> rotate -> translate.
+
+    keep_origin: ops still run about the centre, but the result is moved back to where the
+    generator put it (authoring coordinates: tube paths, strut ends)."""
     spec = S.shape_spec(raw, where, ctx)
     if spec is None:
         return None
@@ -231,9 +248,12 @@ def build_geometry(raw: Any, env: dict, ctx: S.Ctx, where: str, asset_dir: Path 
         else:
             unset = mesh.fattr["material"] < 0 if "material" in mesh.fattr else None
             mesh.set_label("material", mat, unset)  # inner expressions keep their own material
+    home = mesh.center() if keep_origin else None
     mesh = apply_ops(mesh.recentered(), raw.get("ops"), env, ctx, f"{where}.ops", asset_dir, materials)
     if mesh is None:
         return None
+    if home is not None:
+        mesh = mesh.translated(home)  # undo exactly the recentring offset
     if raw.get("rotate") is not None:
         rot = S.vec(raw["rotate"], 3, env, f"{where}.rotate", ctx)
         if rot is None:
@@ -722,33 +742,88 @@ class _Group:
         return self.transformed(M)
 
 
-def _replicate(name: str, mesh, raw: dict, env: dict, ctx: S.Ctx, where: str) -> list[tuple[str, Mesh, dict]]:
-    items = [(name, mesh, {})]
+def _replicate(name: str, mesh, raw: dict, env: dict, ctx: S.Ctx, where: str, pivot=None) -> list[tuple[str, Mesh, dict]]:
+    """array (one level or a list of levels, each with optional per-instance `each` transforms and `skip`), then mirror."""
+    items = [(name, mesh, {}, np.asarray(pivot if pivot is not None else mesh.center(), dtype=np.float64))]
     arr = raw.get("array")
-    if arr is not None:
-        if not isinstance(arr, dict):
-            ctx.error("SRC_SCHEMA", f"{where}.array", "array must be a mapping")
-            return items
-        S.check_keys(arr, {"count", "offset", "radial", "angle", "center"}, f"{where}.array", ctx)
-        count = int(S.num(arr.get("count", 1), env, f"{where}.array.count", ctx, 1))
+    levels = arr if isinstance(arr, list) else ([] if arr is None else [arr])
+    if len(levels) > 3:
+        ctx.error("SRC_LIMIT", f"{where}.array", "at most 3 nested array levels")
+        levels = []
+    for li, lvl in enumerate(levels):
+        lw = f"{where}.array" + (f"[{li}]" if isinstance(arr, list) else "")
+        if not isinstance(lvl, dict):
+            ctx.error("SRC_SCHEMA", lw, "array must be a mapping (or a list of mappings for nested arrays)")
+            return [(n, m, i) for n, m, i, _ in items]
+        S.check_keys(lvl, {"count", "offset", "radial", "angle", "center", "start", "each", "skip", "doc"}, lw, ctx)
+        count = int(S.num(lvl.get("count", 1), env, f"{lw}.count", ctx, 1))
         if count < 1 or count > LIMITS.max_array_count:
-            ctx.error("SRC_LIMIT", f"{where}.array.count", f"count must be 1..{LIMITS.max_array_count}")
-            return items
+            ctx.error("SRC_LIMIT", f"{lw}.count", f"count must be 1..{LIMITS.max_array_count}")
+            return [(n, m, i) for n, m, i, _ in items]
+        if len(items) * count > LIMITS.max_instances:
+            ctx.error("SRC_LIMIT", lw, f"{len(items) * count} instances exceeds {LIMITS.max_instances}")
+            return [(n, m, i) for n, m, i, _ in items]
+        skip_raw = lvl.get("skip", [])
+        skip = {int(round(S.num(v, {**env, "n": count}, f"{lw}.skip[{k}]", ctx, -1))) for k, v in enumerate(skip_raw if isinstance(skip_raw, list) else [skip_raw])}
+        each = lvl.get("each") or {}
+        if not isinstance(each, dict):
+            ctx.error("SRC_SCHEMA", f"{lw}.each", "each must be a mapping {translate, rotate, scale} (expressions may use i and n)")
+            each = {}
+        S.check_keys(each, {"translate", "rotate", "scale", "doc"}, f"{lw}.each", ctx)
+        radial = lvl.get("radial")
+        if radial is not None and radial not in ("x", "y", "z"):
+            ctx.error("SRC_SCHEMA", f"{lw}.radial", "radial must be x, y or z")
+            return [(n, m, i) for n, m, i, _ in items]
         out = []
-        for i in range(count):
-            if "radial" in arr:
-                axis = arr["radial"]
-                angle = S.num(arr.get("angle", 360), env, f"{where}.array.angle", ctx, 360)
-                step = angle / count if abs(angle - 360) < 1e-9 else angle / max(count - 1, 1)
-                center = np.asarray(S.vec(arr.get("center", [0, 0, 0]), 3, env, f"{where}.array.center", ctx) or [0, 0, 0])
-                rot = [0.0, 0.0, 0.0]
-                rot["xyz".index(axis)] = step * i
-                m = mesh.translated(-center).transformed(rotation_matrix(rot)).translated(center)
-            else:
-                off = S.vec(arr.get("offset", [0, 0, 0]), 3, env, f"{where}.array.offset", ctx) or [0, 0, 0]
-                m = mesh.translated(np.asarray(off) * i)
-            out.append((f"{name}_{i}" if count > 1 else name, m, {"array_index": i, "instance_of": name} if count > 1 else {}))
+        for nm, m, info, piv in items:
+            for i in range(count):
+                if i in skip:
+                    continue
+                ienv = {**env, "i": i, "n": count}
+                M = np.eye(4)
+                if each:
+                    ew = f"{lw}.each"
+                    sc = S.vec(each.get("scale", 1), 3, ienv, f"{ew}.scale", ctx) if "scale" in each else None
+                    rt = S.vec(each.get("rotate"), 3, ienv, f"{ew}.rotate", ctx) if "rotate" in each else None
+                    tr = S.vec(each.get("translate"), 3, ienv, f"{ew}.translate", ctx) if "translate" in each else None
+                    if sc is not None:
+                        if min(sc) <= 0:
+                            ctx.error("SRC_RANGE", f"{ew}.scale", "scale factors must be > 0 (use mirror to flip)")
+                            return [(n, m_, i_) for n, m_, i_, _ in items]
+                        M = np.diag([*sc, 1.0]) @ M
+                    if rt is not None:
+                        M = rotation_matrix(rt) @ M
+                    T0, T1 = np.eye(4), np.eye(4)
+                    T0[:3, 3], T1[:3, 3] = -piv, piv
+                    M = T1 @ M @ T0  # scale and rotate about the instance's anchor point
+                    if tr is not None:
+                        M[:3, 3] += tr
+                if radial is not None:
+                    angle = S.num(lvl.get("angle", 360), env, f"{lw}.angle", ctx, 360)
+                    start = S.num(lvl.get("start", 0), env, f"{lw}.start", ctx, 0.0)
+                    step = angle / count if abs(angle - 360) < 1e-9 else angle / max(count - 1, 1)
+                    center = np.asarray(S.vec(lvl.get("center", [0, 0, 0]), 3, env, f"{lw}.center", ctx) or [0, 0, 0])
+                    rot = [0.0, 0.0, 0.0]
+                    rot["xyz".index(radial)] = start + step * i
+                    C0, C1 = np.eye(4), np.eye(4)
+                    C0[:3, 3], C1[:3, 3] = -center, center
+                    M = C1 @ rotation_matrix(rot) @ C0 @ M
+                else:
+                    off = S.vec(lvl.get("offset", [0, 0, 0]), 3, env, f"{lw}.offset", ctx) or [0, 0, 0]
+                    M[:3, 3] += np.asarray(off) * i
+                mm = m.transformed(M) if not np.allclose(M, np.eye(4)) else m
+                p2 = M[:3, :3] @ piv + M[:3, 3]
+                if count > 1:
+                    idx = info.get("array_indices", []) + [i]
+                    inf = {**info, "array_index": i, "array_indices": idx, "instance_of": name}
+                    out.append((f"{nm}_{i}", mm, inf, p2))
+                else:
+                    out.append((nm, mm, info, p2))
+        if not out:
+            ctx.error("SRC_SCHEMA", f"{lw}.skip", "every instance was skipped")
+            return [(n, m, i) for n, m, i, _ in items]
         items = out
+    items = [(n, m, i) for n, m, i, _ in items]
     mirror = raw.get("mirror")
     if mirror is not None:
         planes = {}  # axis -> plane coordinate
@@ -788,12 +863,14 @@ def _replicate(name: str, mesh, raw: dict, env: dict, ctx: S.Ctx, where: str) ->
 # --------------------------------------------------------------------------- parts
 
 
-def _placement(raw: dict, mesh_bounds: np.ndarray, env: dict, world: World, ctx: S.Ctx, where: str) -> np.ndarray | None:
-    """Translation that puts this unit's `anchor` where `position`/`attach` says."""
-    self_anchor = anchor_coeffs(raw.get("anchor"), f"{where}.anchor", ctx)
-    if self_anchor is None:
-        return None
-    own = anchor_point(mesh_bounds, self_anchor)
+def _placement(raw: dict, mesh_bounds: np.ndarray, env: dict, world: World, ctx: S.Ctx, where: str,
+               own: np.ndarray | None = None) -> np.ndarray | None:
+    """Translation that puts this unit's `anchor` (or the given `own` point) where `position`/`attach` says."""
+    if own is None:
+        self_anchor = anchor_coeffs(raw.get("anchor"), f"{where}.anchor", ctx)
+        if self_anchor is None:
+            return None
+        own = anchor_point(mesh_bounds, self_anchor)
     if "attach" in raw and "position" in raw:
         ctx.error("SRC_SCHEMA", where, "use either 'position' or 'attach', not both")
         return None
@@ -832,21 +909,51 @@ def build_part(u: Unit, world: World, materials: dict, style: dict, asset_dir: P
     if mvals is None:
         return []
     env = {**u.env, **mvals}
-    mesh = build_geometry(raw["shape"], env, ctx, f"{where}.shape", asset_dir, materials)
+    shape_type = raw["shape"].get("type") if isinstance(raw["shape"], dict) else None
+    origin = raw.get("origin", "keep" if shape_type in KEEP_ORIGIN else "center")
+    about = raw.get("rotate_about", "center")
+    if origin not in ("center", "keep") or about not in ("center", "anchor"):
+        ctx.error("SRC_SCHEMA", where, "origin must be center | keep; rotate_about must be center | anchor")
+        return []
+    keep = origin == "keep"
+    if keep and ("attach" in raw or "anchor" in raw or about == "anchor"):
+        ctx.error("SRC_SCHEMA", where, "a part with origin: keep is placed by its own coordinates; remove anchor/attach/rotate_about "
+                  "(position, if given, is an offset)", "or use origin: center to place it by an anchor")
+        return []
+    mesh = build_geometry(raw["shape"], env, ctx, f"{where}.shape", asset_dir, materials, keep_origin=keep)
     if mesh is None:
         return []
+    home = mesh.center() if keep else np.zeros(3)
     mesh = apply_ops(mesh.recentered(), raw.get("ops"), env, ctx, f"{where}.ops", asset_dir, materials)
     if mesh is None:
         return []
+    mesh = mesh.translated(home)
+    own = None
+    if about == "anchor":
+        coeffs = anchor_coeffs(raw.get("anchor"), f"{where}.anchor", ctx)
+        if coeffs is None:
+            return []
+        own = anchor_point(mesh.bounds(), coeffs)
     if "rotate" in raw:
         rot = S.vec(raw["rotate"], 3, env, f"{where}.rotate", ctx)
         if rot:
-            mesh = mesh.transformed(rotation_matrix(rot))
-    shift = _placement(raw, mesh.bounds(), env, world, ctx, where)
+            piv = own if own is not None else home
+            mesh = mesh.translated(-piv).transformed(rotation_matrix(rot)).translated(piv)
+    if keep:
+        shift = np.asarray(S.vec(raw.get("position", [0, 0, 0]), 3, env, f"{where}.position", ctx) or [0, 0, 0])
+    else:
+        shift = _placement(raw, mesh.bounds(), env, world, ctx, where, own)
     if shift is None:
         return []
     mesh = mesh.translated(shift)
     world.base_bounds[u.name] = mesh.bounds()
+    if own is not None:
+        pivot_point = own + shift
+    elif keep:
+        pivot_point = mesh.center()
+    else:
+        c = anchor_coeffs(raw.get("anchor"), f"{where}.anchor", ctx)
+        pivot_point = anchor_point(mesh.bounds(), c) if c is not None else mesh.center()
 
     shading = raw.get("shading", (style.get("shading") or {}).get("default", "auto"))
     if shading not in ("flat", "smooth", "auto"):
@@ -861,7 +968,7 @@ def build_part(u: Unit, world: World, materials: dict, style: dict, asset_dir: P
         uv = {}
     source_kind = "file" if isinstance(raw["shape"], dict) and raw["shape"].get("type") == "mesh_file" else "native"
     out = []
-    for iname, imesh, info in _replicate(u.name, mesh, raw, env, ctx, where):
+    for iname, imesh, info in _replicate(u.name, mesh, raw, env, ctx, where, pivot_point):
         piv = None
         if raw.get("pivot") is not None:
             c = anchor_coeffs(raw["pivot"], f"{where}.pivot", ctx)

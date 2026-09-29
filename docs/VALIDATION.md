@@ -61,7 +61,8 @@ warnings. It never produces errors, because style is a judgement call.
 | `GEO_INVERTED` | error | closed surface with inward normals |
 | `GEO_DEGENERATE_FACES` | error | zero-area triangles |
 | `GEO_DUPLICATE_FACES` | error | the same triangle twice |
-| `GEO_PART_FRAGMENTED` | warning | a part consists of several disconnected shells (often after a boolean) |
+| `GEO_PART_FRAGMENTED` | info | a part consists of several disconnected shells (expected for `combine`, `repeat`, multi-shell files) |
+| `GEO_CUT_SPLIT` | warning | a subtract/intersect/boolean/flat_bottom cut split a piece into several (reported at the op) |
 | `GEO_SLIVER_TRIS` | info | more than 25% very thin triangles (shading artefacts) |
 
 ### assembly (semantic structure)

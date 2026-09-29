@@ -1,10 +1,10 @@
 {
  "asset": "gearbox",
- "status": "WARN",
+ "status": "PASS",
  "source_hash": "bbb389fe00f5",
  "counts": {
   "error": 0,
-  "warning": 1,
+  "warning": 0,
   "info": 1
  },
  "layers": {
@@ -13,7 +13,7 @@
   "assembly": "PASS",
   "budget": "PASS",
   "intent": "PASS",
-  "surface": "WARN",
+  "surface": "PASS",
   "style": "PASS",
   "export": "PASS"
  },
@@ -51,10 +51,10 @@
    "big_gear.min.z > housing.min.z - 0.02": true,
    "big_gear.min.y > base.max.y": true
   },
-  "uv_utilization": 0.498,
+  "uv_utilization": 0.446,
   "uv_overlap": 0.0,
   "uv_owners": 26,
-  "texel_density_px_m": 475.6,
+  "texel_density_px_m": 514.4,
   "texel_density_target": 512,
   "gltf_validator": {
    "numErrors": 0,
@@ -64,14 +64,6 @@
   }
  },
  "issues": [
-  {
-   "code": "UV_TEXEL_DENSITY",
-   "severity": "warning",
-   "layer": "surface",
-   "where": "foot_bolt",
-   "msg": "texel density varies 1.71x (foot_bolt: 344 px/m, base: 590 px/m)",
-   "hint": "each part gets a UV rectangle sized by its area; thin or oddly shaped parts pack their charts loosely into it. Try uv: {seams: regions} on that part, change its proportions/segments, or accept it (warning only). With a lock, re-lock after big size changes"
-  },
   {
    "code": "GEO_SLIVER_TRIS",
    "severity": "info",
@@ -86,7 +78,7 @@
  ],
  "export": {
   "path": "assets/gearbox/export/gearbox.glb",
-  "bytes": 139676,
+  "bytes": 139876,
   "nodes": 54,
   "meshes": 52,
   "materials": 3

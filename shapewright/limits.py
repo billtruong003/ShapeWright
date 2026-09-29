@@ -28,6 +28,7 @@ class Limits:
     max_mesh_file_bytes: int = 32_000_000
     max_texture_size: int = 4096
     max_image_bytes: int = 32_000_000
+    max_points: int = 2048  # per point list after generators expand
 
 
 LIMITS = Limits()

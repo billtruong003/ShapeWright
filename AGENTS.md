@@ -74,6 +74,11 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
   queries on parts built earlier (`section` of a leaning post at a height,
   `gap` between two legs, `ray` onto a surface). See docs/RELATIONSHIPS.md.
   If a relationship would need hand-maths, that is a sign to measure instead.
+- **Don't compute curves by hand.** Arcs, spirals and helices are point generators inside any point
+  list (`{arc: ...}`, `{helix: ...}`; `sw doc arc`); pipe bends are `tube` `corner_radius`; a beam
+  between two points is a `strut` (ends may be `measure` results). Instances that differ (rows offset
+  by half, leaves at varying angles, a skipped keystone slot) are one `array` with `each:`/`skip:`
+  (`sw doc array`), not hand-numbered parts. Tilting about a base or hinge: `rotate_about: anchor`.
 - Geometry expressions nest: a boolean tool can have its own `ops`, `rotate`,
   `translate` and `material`. See `sw doc boolean`.
 - Several assets that must look like one set: create `packs/NAME.yaml` (shared scale, construction

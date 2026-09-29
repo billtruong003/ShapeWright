@@ -52,6 +52,13 @@ def _lerp(a, b, t):
     return a + (b - a) * t
 
 
+def _rand(k, seed=0):
+    """Deterministic pseudo-random number in [0, 1) for index k (per-instance variation in arrays)."""
+    import zlib
+
+    return zlib.crc32(f"{round(float(k), 9)}:{round(float(seed), 9)}".encode()) / 2**32
+
+
 FUNCTIONS = {
     "min": min,
     "max": max,
@@ -66,6 +73,7 @@ FUNCTIONS = {
     "atan2": lambda y, x: math.degrees(math.atan2(y, x)),
     "clamp": _clamp,
     "lerp": _lerp,
+    "rand": _rand,
 }
 
 CONSTANTS = {"pi": math.pi, "tau": math.tau, "true": True, "false": False}

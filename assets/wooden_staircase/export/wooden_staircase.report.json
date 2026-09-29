@@ -5,7 +5,7 @@
  "counts": {
   "error": 0,
   "warning": 0,
-  "info": 3
+  "info": 2
  },
  "layers": {
   "source": "PASS",
@@ -53,7 +53,13 @@
   "uv_overlap": 0.0,
   "uv_owners": 44,
   "texel_density_px_m": 172.5,
-  "texel_density_target": 512
+  "texel_density_target": 512,
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
  },
  "issues": [
   {
@@ -77,18 +83,11 @@
    "data": {
     "count": 16
    }
-  },
-  {
-   "code": "EXP_VALIDATOR_UNAVAILABLE",
-   "severity": "info",
-   "layer": "export",
-   "msg": "Khronos glTF-Validator not installed; round-trip check only",
-   "hint": "cd tools/gltf-validator && npm install"
   }
  ],
  "export": {
   "path": "assets/wooden_staircase/export/wooden_staircase.glb",
-  "bytes": 212744,
+  "bytes": 213352,
   "nodes": 91,
   "meshes": 88,
   "materials": 2

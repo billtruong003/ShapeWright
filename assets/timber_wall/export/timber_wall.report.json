@@ -53,15 +53,15 @@
    "window_frame.size.x": 0.8026,
    "sill.size.x > window_frame.size.x and sill.max.z > top_plate.max.z": true
   },
-  "uv_utilization": 0.478,
+  "uv_utilization": 0.482,
   "uv_overlap": 0.0,
   "uv_owners": 18,
-  "texel_density_px_m": 133.9,
+  "texel_density_px_m": 134.6,
   "texel_density_target": 120,
   "texture": {
    "resolution": 1024,
    "target_px_m": 120.0,
-   "achieved_px_m": 134.1,
+   "achieved_px_m": 134.6,
    "memory_kb": 8192,
    "lifecycle": {
     "DERIVED": 18
@@ -108,7 +108,7 @@
  ],
  "export": {
   "path": "assets/timber_wall/export/timber_wall.glb",
-  "bytes": 635672,
+  "bytes": 646976,
   "nodes": 40,
   "meshes": 36,
   "materials": 3

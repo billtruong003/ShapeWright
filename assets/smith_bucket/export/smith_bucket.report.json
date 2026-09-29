@@ -1,11 +1,11 @@
 {
  "asset": "smith_bucket",
  "status": "PASS",
- "source_hash": "a3edfcad5ce3",
+ "source_hash": "df20a67c7b5b",
  "counts": {
   "error": 0,
   "warning": 0,
-  "info": 2
+  "info": 0
  },
  "layers": {
   "source": "PASS",
@@ -45,28 +45,18 @@
   "uv_overlap": 0.0,
   "uv_owners": 5,
   "texel_density_px_m": 245.4,
-  "texel_density_target": 256
- },
- "issues": [
-  {
-   "code": "FAMILY_NO_INTERFACE",
-   "severity": "info",
-   "layer": "source",
-   "where": "extends",
-   "msg": "base asset declares no `interface`; the variant depends on its internals",
-   "hint": "declare interface: {params: [...]} in the base"
-  },
-  {
-   "code": "EXP_VALIDATOR_UNAVAILABLE",
-   "severity": "info",
-   "layer": "export",
-   "msg": "Khronos glTF-Validator not installed; round-trip check only",
-   "hint": "cd tools/gltf-validator && npm install"
+  "texel_density_target": 256,
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
   }
- ],
+ },
+ "issues": [],
  "export": {
   "path": "assets/smith_bucket/export/smith_bucket.glb",
-  "bytes": 55396,
+  "bytes": 55416,
   "nodes": 14,
   "meshes": 12,
   "materials": 3

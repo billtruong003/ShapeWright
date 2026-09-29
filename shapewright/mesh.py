@@ -290,6 +290,23 @@ class Mesh:
         return backend.as_trimesh(self)
 
 
+def count_shells(F: np.ndarray, n: int) -> int:
+    """Number of connected pieces (sharing vertices) in a face list."""
+    parent = np.arange(n)
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for a, b, c in F:
+        ra = find(a)
+        parent[find(b)] = ra
+        parent[find(c)] = ra
+    return len({find(v) for v in np.unique(F)})
+
+
 def concat(meshes: list[Mesh]) -> Mesh:
     """Merge: concatenate meshes, remapping label codes; missing attributes get defaults."""
     if not meshes:

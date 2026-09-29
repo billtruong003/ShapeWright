@@ -47,15 +47,15 @@
    "2 * r_in": 1.2,
    "spring_y + r_in": 2.05
   },
-  "uv_utilization": 0.477,
+  "uv_utilization": 0.472,
   "uv_overlap": 0.0,
   "uv_owners": 22,
-  "texel_density_px_m": 132.1,
+  "texel_density_px_m": 129.3,
   "texel_density_target": 120,
   "texture": {
    "resolution": 1024,
    "target_px_m": 120.0,
-   "achieved_px_m": 130.2,
+   "achieved_px_m": 129.3,
    "memory_kb": 8192,
    "lifecycle": {
     "DERIVED": 22
@@ -91,7 +91,7 @@
  ],
  "export": {
   "path": "assets/stone_doorway/export/stone_doorway.glb",
-  "bytes": 607640,
+  "bytes": 605260,
   "nodes": 48,
   "meshes": 44,
   "materials": 2

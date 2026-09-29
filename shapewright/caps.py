@@ -48,6 +48,29 @@ def _named(kind: str) -> dict:
     return out
 
 
+POINT_EXAMPLES = {
+    "arc": "polygon: [[0.5, 0], [0.7, 0], {arc: {center: [0, 0], radius: 0.7, from: 0, to: 180}}, [-0.5, 0], "
+           "{arc: {center: [0, 0], radius: 0.5, from: 180, to: 0}}]   # a round arch ring",
+    "helix": "path: [{helix: {radius: 0.05, pitch: 0.02, turns: 4, axis: y}}]   # wound rope, spring, grip wrap",
+    "line": "path: [[0, 0, 0], {line: {from: [0, 0.5, 0], to: [0.5, 0.5, 0], segments: 4}}]",
+}
+PART_FEATURES = {
+    "array": {"doc": "Named instances: {count, offset} or {count, radial: x|y|z, angle, start, center}. Optional: "
+                     "`each: {translate, rotate, scale}` evaluated per instance with i (0..n-1) and n (rotate/scale about the part's "
+                     "anchor point; rand(i) gives a repeatable 0..1 value), `skip: [indices]`. A list of arrays nests (rows x columns): "
+                     "names name_i_j. Radial step = angle/count for 360, else angle/(count-1).",
+              "example": "array: [{count: 8, offset: [0.2, 0, 0]}, {count: 5, offset: [0, 0.1, 0.15], each: {translate: [\"(i % 2) * 0.1\", 0, 0]}}]"},
+    "mirror": {"doc": "x | y | z | {axis, at} | a list of those: twin instances named _left/_right, _bottom/_top, _back/_front.",
+               "example": "mirror: [x, z]"},
+    "origin": {"doc": "center (default) | keep. keep: the shape keeps its own coordinates (tube paths, strut ends written in asset "
+                      "coordinates, including measure results); position becomes an offset; no anchor/attach. strut parts keep by default.",
+               "example": "{shape: {type: tube, radius: 0.02, path: [[0, 0, 0], [0, 0.5, 0], [0.4, 0.5, 0]], corner_radius: 0.1}, origin: keep}"},
+    "rotate_about": {"doc": "center (default) | anchor: rotate about the unrotated shape's anchor point, which stays where position/attach puts it "
+                            "(a leaf tilting about its base, a lid about its hinge edge).",
+                     "example": "{anchor: bottom, rotate_about: anchor, rotate: [0, 0, 35], position: [0, 0.3, 0]}"},
+}
+
+
 def manifest() -> dict:
     load_builtin()
     load_validators()
@@ -68,6 +91,9 @@ def manifest() -> dict:
         "packs": _named("packs"),
         "material_archetypes": {k: v.describe() for k, v in sorted(__import__("shapewright.materials", fromlist=["ARCHETYPES"]).ARCHETYPES.items())},
         "measure_queries": __import__("shapewright.spatial", fromlist=["QUERY_KINDS"]).QUERY_KINDS,
+        "point_generators": {k: {"doc": v, "example": POINT_EXAMPLES[k]} for k, v in
+                             __import__("shapewright.curves", fromlist=["GENERATORS"]).GENERATORS.items()},
+        "part_features": PART_FEATURES,
         "styles": _named("styles"),
         "exporters": {"glb": "binary glTF 2.0: named part nodes, hierarchy, materials, UV0, normals, sockets, collision, metadata extras"},
     }
@@ -89,6 +115,8 @@ def summary_text() -> str:
               "PACKS     " + (" ".join(m["packs"]) or "-") + "   (packs/NAME.yaml: shared params/materials; `pack: NAME` in an asset)",
               "MATERIALS " + " ".join(m["material_archetypes"]) + "   (material `archetype:` + semantic params; `sw doc wood`; docs/SURFACES.md)",
               "MEASURE   " + " ".join(m["measure_queries"]) + "   (part-level `measure:` queries; docs/RELATIONSHIPS.md)",
+              "POINTS    " + " ".join(m["point_generators"]) + "   (items inside any point list: polygon, holes, profile, path; `sw doc arc`)",
+              "PARTS     " + " ".join(m["part_features"]) + "   (`sw doc array`: per-instance each/skip/start, nested arrays)",
               "EXPORT    glb",
               "", "* = required.  `sw doc NAME` for details, `sw caps --json` for everything."]
     return "\n".join(lines)

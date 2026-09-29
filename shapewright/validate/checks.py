@@ -27,19 +27,9 @@ def _issue(code, sev, layer, msg, where="", hint="", **data):
 
 
 def _components(F: np.ndarray, n: int) -> int:
-    parent = np.arange(n)
+    from ..mesh import count_shells
 
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    for a, b, c in F:
-        ra, rb, rc = find(a), find(b), find(c)
-        parent[rb] = ra
-        parent[find(rc)] = ra
-    return len({find(v) for v in np.unique(F)})
+    return count_shells(F, n)
 
 
 @validator("mesh_integrity", "geometry", "Per-part closed-manifold checks: open/non-manifold edges, winding, inverted, degenerate, duplicate faces, fragments.",
@@ -82,8 +72,8 @@ def mesh_integrity(asset: Asset, surface: Surface, metrics: dict):
             out.append(_issue("GEO_INVERTED", "error", "geometry", "normals point inward (negative volume)", w))
         comps = _components(m.F, len(m.V))
         if comps > 1:
-            out.append(_issue("GEO_PART_FRAGMENTED", "warning", "geometry", f"part consists of {comps} disconnected pieces", w,
-                              "a boolean may have split the part; split it into separate named parts or adjust the cut", pieces=comps))
+            out.append(_issue("GEO_PART_FRAGMENTED", "info", "geometry", f"part consists of {comps} disconnected pieces", w,
+                              "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT", pieces=comps))
         t = m.triangles()
         e2 = sum(np.einsum("ij,ij->i", t[:, i] - t[:, (i + 1) % 3], t[:, i] - t[:, (i + 1) % 3]) for i in range(3))
         q = 4 * np.sqrt(3) * area / np.maximum(e2, 1e-18)
@@ -376,7 +366,7 @@ def uv_layout(asset: Asset, surface: Surface, metrics: dict):
             lo = min(px_per_m, key=px_per_m.get)
             hi = max(px_per_m, key=px_per_m.get)
             out.append(_issue("UV_TEXEL_DENSITY", "warning", "surface", f"texel density varies {spread:.2f}x ({lo}: {px_per_m[lo]:.0f} px/m, {hi}: {px_per_m[hi]:.0f} px/m)", lo,
-                              "each part gets a UV rectangle sized by its area; thin or oddly shaped parts pack their charts loosely into it. Try uv: {seams: regions} on that part, change its proportions/segments, or accept it (warning only). With a lock, re-lock after big size changes"))
+                              "regions are sized by area and chart packing; with a uv.lock.yaml the regions are frozen: re-lock (sw uv ASSET lock) after size changes. Otherwise try uv: {seams: regions} on that part or accept it (warning only)"))
         target = (asset.uv or {}).get("texel_density") or asset.budget.get("texel_density")  # same precedence as the bake
         if target:
             metrics["texel_density_target"] = target
@@ -429,7 +419,7 @@ def surface_textures(asset: Asset, surface: Surface, metrics: dict):
     if tex.needed_resolution > tex.resolution:
         out.append(_issue("TEX_DENSITY_BELOW_TARGET", "warning", "surface",
                           f"{tex.target_px_m:g} px/m needs a {tex.needed_resolution}px atlas; budget allows {tex.resolution}px "
-                          f"({tex.achieved_px_m:.0f} px/m achieved)", "uv", "raise budget.texture_size, lower texel_density, or reduce surface area"))
+                          f"({tex.achieved_px_m:.0f} px/m achieved)", "uv", f"set uv: {{texel_density: {int(tex.achieved_px_m // 10 * 10) or int(tex.achieved_px_m)}}} (what this atlas achieves), raise budget.texture_size, or reduce surface area"))
     for code, sev, msg, where, hint in tex.issues:
         out.append(_issue(code, sev, "surface", msg, where, hint))
     for name, st in tex.material_stats.items():

@@ -205,7 +205,7 @@ _BOOL_PARAMS = [
     _BOOL_PARAMS, "rebuild", category="boolean",
     example="{type: subtract, shape: {type: box, size: [0.1, 0.1, 0.2], ops: [{type: taper, scale: 0.5}]}, position: [0, 0.1, 0]}")
 def subtract(m, a, b):
-    return backend.boolean(m, _tool(a, b), "difference").merged()
+    return b.cut_check(m, backend.boolean(m, _tool(a, b), "difference").merged(), "subtract")
 
 
 @op("union", "Boolean union with extra geometry (fuses into one closed surface).", _BOOL_PARAMS, "rebuild", category="boolean",
@@ -217,7 +217,7 @@ def union(m, a, b):
 @op("intersect", "Boolean intersection with a tool geometry.", _BOOL_PARAMS, "rebuild", category="boolean",
     example="{type: intersect, shape: {type: sphere, radius: 0.3}}")
 def intersect(m, a, b):
-    return backend.boolean(m, _tool(a, b), "intersection").merged()
+    return b.cut_check(m, backend.boolean(m, _tool(a, b), "intersection").merged(), "intersect")
 
 
 @op("flat_bottom", "Cut everything below a height (fraction of local height from the bottom) to create a flat base.",
@@ -226,7 +226,7 @@ def intersect(m, a, b):
 def flat_bottom(m, a, b):
     lo, hi = m.V[:, 1].min(), m.V[:, 1].max()
     cut = lo + (hi - lo) * a["fraction"]
-    out = backend.trim(m, [0, 1, 0], cut).merged()
+    out = b.cut_check(m, backend.trim(m, [0, 1, 0], cut).merged(), "flat_bottom")
     new = out.fattr["origin"] < 0 if "origin" in out.fattr else np.zeros(out.n_tris, bool)
     if new.any():
         out.set_label("region", "cut", new)
