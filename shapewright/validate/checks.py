@@ -95,7 +95,7 @@ def _bbox_gap(a: np.ndarray, b: np.ndarray) -> float:
 
 
 @validator("assembly", "assembly", "Connectivity of parts (nothing floats), grounding, origin placement, parts hidden inside others, unit sanity.",
-           ("ASM_FLOATING_PARTS", "ASM_FLOATING_TAGGED_NEAR", "ASM_BELOW_GROUND", "ASM_NOT_GROUNDED", "ASM_ORIGIN_OFFSET", "ASM_HIDDEN_PART", "ASM_SCALE_SUSPICIOUS"))
+           ("ASM_FLOATING_PARTS", "ASM_FLOATING_TAGGED_NEAR", "ASM_FLOATING_TAG_UNUSED", "ASM_BELOW_GROUND", "ASM_NOT_GROUNDED", "ASM_ORIGIN_OFFSET", "ASM_HIDDEN_PART", "ASM_SCALE_SUSPICIOUS"))
 def assembly(asset: Asset, surface: Surface, metrics: dict):
     out = []
     placement = (asset.meta or {}).get("placement", "floor")
@@ -166,6 +166,11 @@ def assembly(asset: Asset, surface: Surface, metrics: dict):
                           (f"attach them: attach: {{to: {first[0]}, at: <anchor>}} or move them by the gap; " if first else "attach them; ")
                           + "floating_ok is only for parts meant to hover, not for mounted pieces (signs, hooks, handles)",
                           parts=names))
+    unused = [parts[i].name for i in range(n) if i in seen and "floating_ok" in parts[i].tags]
+    if unused:  # FRESH_AGENT_09 run B: tags left on parts that touch; they would hide a later regression
+        out.append(_issue("ASM_FLOATING_TAG_UNUSED", "info", "assembly",
+                          f"floating_ok on part(s) that touch the asset: {', '.join(unused[:8])}", unused[0],
+                          "remove the tag so the floating check keeps protecting them"))
     size = float(np.linalg.norm(b[1] - b[0])) if n else 0.0
     for i in range(n):
         if i in seen or "floating_ok" not in parts[i].tags or not seen:

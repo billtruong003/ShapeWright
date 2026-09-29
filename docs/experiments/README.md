@@ -24,9 +24,10 @@ other vendor, mid-poly). The phases ran it in a different order, so the numbers 
 | [06](FRESH_AGENT_06.md) | mid-poly stress, 44k-tri fountain | 10 performance | gate passed | 0 |
 | [07](FRESH_AGENT_07.md) | import and modify real CC0 assets | 11 import | gate passed | 0 |
 | [08](FRESH_AGENT_08.md) | engine-ready delivery for Godot and Unreal | 12 production | gate passed (Godot in-engine) | 0 |
-| 09 (planned) | a substantially different agent / vendor | 13 cross-agent | — | — |
+| [09](FRESH_AGENT_09.md) | a much smaller model (Haiku 4.5), 2 runs; cross-vendor blocked | 13 cross-agent | partial: mechanical pass, quality model-dependent | 0 |
+| 10 ([plan](FRESH_AGENT_10_PLAN.md)) | repeat-class cost, before/after | 14 agent cost | — | — |
 
-All runs so far used the same model family as the authors. Phase 13 exists to test whether that matters.
+All runs used the same model family as the authors. FA-09 swapped in a much smaller model from that family. No other vendor's agent was available.
 
 **Framework-modification rate** (the success condition warns against it): after the FA-03 spike, every
 change an agent made was a genuine bug or false-positive fix with a regression test, and 0

@@ -70,6 +70,7 @@ warnings. It never produces errors, because style is a judgement call.
 |---|---|---|
 | `ASM_FLOATING_PARTS` | error | parts not connected to the grounded parts (contact tolerance 1 mm, exact Manifold distance); the message gives each part's gap to the nearest connected part |
 | `ASM_FLOATING_TAGGED_NEAR` | warning | a part tagged `floating_ok` is within max(5 cm, 10% of the asset size) of a connected part: almost always a mounted piece placed a little off, not one meant to hover |
+| `ASM_FLOATING_TAG_UNUSED` | info | `floating_ok` on a part that touches the asset: the tag does nothing now and would hide a later regression |
 | `ASM_BELOW_GROUND` | warning | geometry below y = 0 |
 | `ASM_NOT_GROUNDED` | warning | the lowest point is above y = 0 (for floor props) |
 | `ASM_ORIGIN_OFFSET` | warning | origin outside the footprint of the grounded parts |

@@ -126,6 +126,21 @@ A fresh agent delivered three props for Godot and Unreal with 0 framework change
 physics, pivots and draw calls. Records: [PRODUCTION.md](PRODUCTION.md) and
 [experiments/FRESH_AGENT_08.md](experiments/FRESH_AGENT_08.md).
 
+## Phase 13: Cross-agent validation ◐ (partial: cross-vendor blocked by the environment)
+The container has no other vendor's agent or API key. The substitute was a much smaller model
+(Claude Haiku 4.5), run twice on the same signpost prompt.
+
+- Both runs exported validated GLBs with about half the calls and tokens of the larger model, read no
+  framework code, and made 0 framework changes.
+- Run A escaped a 4 mm gap by tagging parts `floating_ok`. The floating error now gives gap
+  distances and guards the tag (`ASM_FLOATING_TAGGED_NEAR`, `ASM_FLOATING_TAG_UNUSED`).
+- Run B used the numbers to produce a connected asset. It never opened a render and relaxed its own
+  checks.
+
+Conclusion: mechanically model-independent; quality depends on the model, and the text channel is
+the framework's lever. Record: [experiments/FRESH_AGENT_09.md](experiments/FRESH_AGENT_09.md).
+**Open:** a run by another vendor's agent.
+
 ## Stage 3: Prototype: a fresh agent succeeds unassisted
 - Run the README task ("tavern chair, < 700 tris, mobile") with a *fresh* agent
   that has only the repository. Record the transcript and friction points, and

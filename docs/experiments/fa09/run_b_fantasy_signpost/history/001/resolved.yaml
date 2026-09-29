@@ -1,0 +1,223 @@
+shapewright: 0.1
+asset:
+  name: fantasy_signpost
+  kind: prop/street/signpost
+  description: Weathered wooden signpost for a fantasy village with two directional arrow signs and a lantern hook.
+  tags:
+  - medieval
+  - village
+  - wood
+  - prop
+profile: mobile_mid
+style: stylized_lowpoly
+budget:
+  triangles: 800
+params:
+  post_height:
+    value: 1.6
+    min: 1.4
+    max: 1.8
+    doc: height of the vertical post above ground
+  post_diameter:
+    value: 0.12
+    min: 0.08
+    max: 0.16
+    doc: diameter of the post
+  post_taper:
+    value: 1.15
+    doc: taper at top vs bottom (post_height
+    scale): null
+  sign_width:
+    value: 0.5
+    min: 0.35
+    max: 0.65
+    doc: width of each arrow sign
+  sign_height:
+    value: 0.25
+    min: 0.15
+    max: 0.35
+    doc: height of each arrow sign
+  sign_thickness:
+    value: 0.025
+    doc: thickness of the wooden arrow sign boards
+  sign_mount_y:
+    value: 1.2
+    doc: height at which the upper sign mounts
+  sign_mount_y2:
+    value: 0.65
+    doc: height at which the lower sign mounts
+  hook_radius:
+    value: 0.04
+    min: 0.02
+    max: 0.06
+    doc: radius of the lantern hook ring
+  wear:
+    value: 0.003
+    doc: weathering jitter amplitude
+materials:
+  oak:
+    archetype: wood
+    color: '#8b7355'
+    roughness: 0.85
+    grain_strength: 0.7
+    edge_wear: 0.5
+    grime: 0.3
+    doc: weathered oak post with age and dirt
+  oak_dark:
+    archetype: wood
+    color: '#5c4a3d'
+    roughness: 0.9
+    grain_strength: 0.6
+    edge_wear: 0.6
+    grime: 0.4
+    doc: darker wood signs and hardware with weathering
+parts:
+  post:
+    doc: vertical wooden post, slightly tapered for stylization
+    shape:
+      type: cylinder
+      radius: post_diameter / 2
+      height: post_height
+      segments: 8
+      chamfer: 0.004
+    ops:
+    - type: taper
+      axis: y
+      scale: post_taper
+    - type: jitter
+      amount: wear
+      seed: 1
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    material: oak
+  upper_sign:
+    doc: arrow-shaped sign pointing left and up, mounted on the upper post
+    shape:
+      type: extrude
+      depth: sign_thickness
+      polygon:
+      - - -sign_width / 2
+        - 0
+      - - -sign_width / 6
+        - sign_height / 3
+      - - -sign_width / 6
+        - sign_height / 2
+      - - sign_width / 6
+        - sign_height / 2
+      - - sign_width / 6
+        - sign_height / 3
+      - - sign_width / 2
+        - 0
+      - - sign_width / 6
+        - -sign_height / 3
+      - - sign_width / 6
+        - -sign_height / 2
+      - - -sign_width / 6
+        - -sign_height / 2
+      - - -sign_width / 6
+        - -sign_height / 3
+    ops:
+    - type: jitter
+      amount: wear * 0.5
+      seed: 2
+    anchor: center
+    position:
+    - sign_width / 2 + 0.01
+    - sign_mount_y
+    - 0
+    rotate:
+    - -20
+    - 0
+    - -30
+    tags:
+    - floating_ok
+    material: oak_dark
+  lower_sign:
+    doc: arrow-shaped sign pointing right and down, mounted on the lower post
+    shape:
+      type: extrude
+      depth: sign_thickness
+      polygon:
+      - - -sign_width / 2
+        - 0
+      - - -sign_width / 6
+        - sign_height / 3
+      - - -sign_width / 6
+        - sign_height / 2
+      - - sign_width / 6
+        - sign_height / 2
+      - - sign_width / 6
+        - sign_height / 3
+      - - sign_width / 2
+        - 0
+      - - sign_width / 6
+        - -sign_height / 3
+      - - sign_width / 6
+        - -sign_height / 2
+      - - -sign_width / 6
+        - -sign_height / 2
+      - - -sign_width / 6
+        - -sign_height / 3
+    ops:
+    - type: jitter
+      amount: wear * 0.5
+      seed: 3
+    anchor: center
+    position:
+    - -sign_width / 2 - 0.01
+    - sign_mount_y2
+    - 0
+    rotate:
+    - 20
+    - 0
+    - 30
+    tags:
+    - floating_ok
+    material: oak_dark
+  hook_ring:
+    doc: iron ring for hanging a lantern at the top of the post
+    shape:
+      type: ring
+      radius: hook_radius * 1.5
+      thickness: hook_radius * 0.6
+      height: hook_radius
+      segments: 8
+    ops:
+    - type: jitter
+      amount: wear * 0.3
+      seed: 4
+    anchor: bottom
+    position:
+    - 0
+    - post_height - hook_radius * 0.5
+    - 0
+    material: oak_dark
+sockets:
+  lantern_hook:
+    doc: attachment point for a hanging lantern
+    attach:
+      to: hook_ring
+      at: top
+      offset:
+      - 0
+      - 0
+      - 0
+collision:
+  mode: box
+checks:
+- expr: asset.height
+  min: 1.5
+  max: 1.7
+  doc: village signpost height
+- expr: post.size.y
+  min: 1.4
+  doc: post is primary form
+- expr: sign_width
+  max: 0.65
+  doc: signs fit proportionally on post
+- expr: post_height - sign_mount_y
+  min: 0.3
+  doc: space above upper sign for lantern hook

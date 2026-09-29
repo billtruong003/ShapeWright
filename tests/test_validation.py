@@ -66,6 +66,8 @@ def test_floating_message_names_the_gap_and_tag_near_parts_warns(make_asset):
     tagged = lifted.replace("    anchor: top\n", "    anchor: top\n    tags: [floating_ok]\n", 1)
     _, c = codes(make_asset(tagged))
     assert "ASM_FLOATING_PARTS" not in c and "ASM_FLOATING_TAGGED_NEAR" in c
+    _, c = codes(make_asset(GOOD.replace("    anchor: top\n", "    anchor: top\n    tags: [floating_ok]\n", 1)))
+    assert "ASM_FLOATING_TAG_UNUSED" in c
     far = GOOD.replace("position: [0, h, 0]", "position: [0, h + 1.0, 0]").replace("    anchor: top\n", "    anchor: top\n    tags: [floating_ok]\n", 1)
     _, c = codes(make_asset(far))
     assert "ASM_FLOATING_TAGGED_NEAR" not in c

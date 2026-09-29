@@ -1,0 +1,87 @@
+{
+ "asset": "fantasy_signpost",
+ "status": "PASS",
+ "source_hash": "b7533a016930",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 196,
+  "parts": 4,
+  "sliver_triangles": 5,
+  "size_m": [
+   0.9578,
+   1.6214,
+   0.1387
+  ],
+  "contacts": 3,
+  "triangles_by_part": {
+   "post": 60,
+   "upper_sign": 36,
+   "lower_sign": 36,
+   "hook_ring": 64
+  },
+  "budget_triangles": 800,
+  "materials": 2,
+  "draw_calls": 4,
+  "collision_proxies": 4,
+  "checks": {
+   "asset.height": 1.6214,
+   "post.size.y": 1.6052,
+   "sign_width": 0.5,
+   "post_height - sign_mount_y": 0.4
+  },
+  "uv_utilization": 0.49,
+  "uv_overlap": 0.0,
+  "uv_owners": 4,
+  "texel_density_px_m": 352.8,
+  "texel_density_target": 256,
+  "texture": {
+   "resolution": 512,
+   "target_px_m": 256.0,
+   "achieved_px_m": 352.8,
+   "memory_kb": 2048,
+   "lifecycle": {
+    "DERIVED": 4
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv lock ASSET` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/fantasy_signpost/export/fantasy_signpost.glb",
+  "bytes": 176560,
+  "nodes": 10,
+  "meshes": 8,
+  "materials": 2,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
+ }
+}

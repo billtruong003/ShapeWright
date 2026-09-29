@@ -1,0 +1,42 @@
+{
+ "iteration": 1,
+ "note": "Initial design: post with two arrow signs and lantern hook",
+ "critique": "Arrow shapes readable with distinct points; post is solid and chunky; hook ring visible at top; wood materials applied with weathering; under budget at 196/800 triangles",
+ "source_hash": "b7533a016930",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 196,
+  "parts": 4,
+  "size_m": [
+   0.9578,
+   1.6214,
+   0.1387
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 1.6214,
+   "post.size.y": 1.6052,
+   "sign_width": 0.5,
+   "post_height - sign_mount_y": 0.4
+  }
+ },
+ "errors": [],
+ "params": {
+  "post_height": 1.6,
+  "post_diameter": 0.12,
+  "post_taper": 1.15,
+  "sign_width": 0.5,
+  "sign_height": 0.25,
+  "sign_thickness": 0.025,
+  "sign_mount_y": 1.2,
+  "sign_mount_y2": 0.65,
+  "hook_radius": 0.04,
+  "wear": 0.003
+ }
+}

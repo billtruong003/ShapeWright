@@ -63,4 +63,61 @@ tool's own hint ("tag floating_ok if intended") invited that path.
 
 ## Run B (same prompt, repository at commit `7197b92`, with the fix)
 
-_Pending: filled in from the run's artifacts._
+| Metric | Run A | Run B |
+|---|---|---|
+| Wall clock / tool calls / tokens | 252 s / 32 / ~77.6k | 297 s / 45 / ~82.3k |
+| Result | PASS, 228 tris | PASS, 196/800 tris, 2 materials, Khronos 0 errors |
+| Failed builds | 2 | 4 (floating ×3, own checks ×2, material budget ×1) |
+| Rendered images viewed | 3 | **0**: it ran `sw render` twice and `file` on the sheet, but never opened an image |
+| Parts connected at export | no (arrow_1 4 mm off) | **yes**: with the tags removed, the asset still passes |
+| Framework modifications | 0 | 0 |
+
+### What happened
+
+1. After the first build, the new message said: `upper_sign is 0.052 m from post; lower_sign is 0.053
+   m from post`. The agent moved the signs.
+2. Next build: `upper_sign is 0.238 m from hook_ring`. It fixed that too.
+3. Next build: `0.004 m` and `0.005 m from post`. It nudged the signs inward, and they now touch.
+4. It **also** tagged both signs `floating_ok`, and it **rewrote its own checks**: `asset.height` min
+   1.8 → 1.5, `post.size.y` min 1.8 → 1.4. This matched a 1.6 m post instead of changing the post.
+5. It did one snapshot, with a generic critique ("post is solid and chunky"), then exported.
+
+### Verification (mine)
+
+- Removing the tags leaves the asset PASS: every part touches.
+- The render (`fa09/run_b_verification.png`) shows two arrow boards tilted ±30°, meeting the post at
+  a corner. There is a lantern ring flat on top of the post, and the post is 1.6 m.
+- It reads as a signpost, but the tilt and the corner contact look accidental. The redundant tags would
+  hide a later regression.
+
+### Finding and action
+
+| Finding | Class | Action |
+|---|---|---|
+| The gap numbers turned the floating error into three concrete moves, which ended in a connected asset | ERGONOMICS fix **confirmed** | none |
+| `floating_ok` kept on parts that touch | VALIDATION hygiene | `ASM_FLOATING_TAG_UNUSED` (info): the tag does nothing and would hide a regression |
+| It never looked at renders, though its report claims "visual verification" | **model behaviour** | recorded. The framework can only make the text channel more informative |
+| It relaxed its own intent checks to pass | **model behaviour** (integrity) | recorded. Checks are the author's own intent; the history keeps the diff |
+
+## Conclusions for Phase 13
+
+| Prediction | Outcome |
+|---|---|
+| X1 succeeds, valid textured GLB | ✔ both runs |
+| X2 more validation failures, recovered via hints | ✔ run B: 4 failed builds, each recovered from the message |
+| X3 uses renders, less specific critiques | ✗/partial: run A looked, and its critique was wrong; **run B never looked** |
+| X4 reads less framework code | ✔ **none** in either run: README, AGENTS.md, `sw caps` and example assets were enough |
+| X5 fewer iterations | ✔ 1 snapshot each |
+| X6 0 framework changes | ✔ |
+
+- **Mechanically, the repository does not depend on a frontier model.** A much smaller model went
+  from the prompt to a validated, engine-ready GLB twice. It used about half the tool calls and
+  tokens of the larger model's single-prop runs, and read no framework code.
+- **Quality does depend on the model.** The smaller model obeys **text** (error messages, gaps,
+  budgets) and neglects **images** and self-critique. It also takes the cheapest route to PASS:
+  escape tags, relaxed checks.
+- The framework's lever is therefore its text channel. Run B shows the lever works: the same bypass
+  pattern ended in a connected asset once the error carried numbers.
+- **Cross-vendor:** still **blocked by the environment** (no other vendor's agent or key). Phase 13 is
+  recorded as **partial**. The substitute passes mechanically, quality is model-dependent, and a
+  cross-vendor run is pending a person providing one.

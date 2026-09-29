@@ -76,6 +76,8 @@ See docs/HARDENING.md. Rows below keep their original text; these entries overri
 | Draw-call merge by material with moving groups kept | — | NOW | Phase 12 |
 | LOD files with silhouette check | NEAR | NOW | Phase 12 |
 | KHR material extensions (sheen, clearcoat, transmission, variants) | — | LONG | reported by `sw import`, not imported |
+| Validation that a smaller model cannot bypass cheaply (gap distances, escape-tag guards) | — | NOW | Phase 13 (FA-09): `ASM_FLOATING_TAGGED_NEAR`, `ASM_FLOATING_TAG_UNUSED` |
+| Cross-vendor agent evidence | — | BLOCKED | needs another vendor's agent or key in the environment |
 
 ---
 
