@@ -53,28 +53,71 @@ def _to_manifold(mesh: Mesh, vnames: list[str]):
     return m.as_original()
 
 
-def _from_manifold(result, sources: list[tuple[int, Mesh]], vnames: list[str]) -> Mesh:
-    """Rebuild a Mesh from a Manifold result, inheriting face attributes by provenance."""
+def _to_manifold_tracked(mesh: Mesh, vnames: list[str]):
+    """As _to_manifold, plus the coplanar-group id of every input triangle.
+
+    After as_original(), Manifold's face_id is a coplanar-group id, not the input
+    triangle index (FRESH_AGENT_05). Output faces report that group; _from_manifold
+    maps it back to the input triangles of the group."""
+    import manifold3d as mf
+
+    m0 = mf.Manifold(mf.Mesh(vert_properties=np.ascontiguousarray(mesh.V.astype(np.float32)), tri_verts=mesh.F.astype(np.uint32),
+                             face_id=np.arange(len(mesh.F), dtype=np.uint32)))
+    m = _to_manifold(mesh, vnames)
+    group = np.empty(len(mesh.F), dtype=np.int64)
+    group[np.asarray(m0.to_mesh().face_id, dtype=np.int64)] = np.asarray(m.to_mesh().face_id, dtype=np.int64)  # same triangle order
+    return m, group
+
+
+def _containing(src: Mesh, cand: np.ndarray, P: np.ndarray) -> np.ndarray:
+    """For points P on a plane shared by candidate triangles `cand`, the candidate containing each point (closest if none)."""
+    A, B, C = (src.V[src.F[cand, k]] for k in range(3))
+    v0, v1 = B - A, C - A
+    d00, d01, d11 = (v0 * v0).sum(1), (v0 * v1).sum(1), (v1 * v1).sum(1)
+    den = np.where(np.abs(d00 * d11 - d01 * d01) < 1e-30, 1e-30, d00 * d11 - d01 * d01)
+    w = P[:, None, :] - A[None]
+    d20, d21 = np.einsum("mtk,tk->mt", w, v0), np.einsum("mtk,tk->mt", w, v1)
+    bv, bw = (d11 * d20 - d01 * d21) / den, (d00 * d21 - d01 * d20) / den
+    inside = np.minimum(np.minimum(bv, bw), 1 - bv - bw)
+    return cand[np.argmax(inside, axis=1)]
+
+
+def _from_manifold(result, sources: list[tuple[int, Mesh, np.ndarray]], vnames: list[str]) -> Mesh:
+    """Rebuild a Mesh from a Manifold result, inheriting face attributes by provenance.
+
+    sources: (original_id, input mesh, coplanar-group id per input triangle)."""
     out = result.to_mesh()
     props = np.asarray(out.vert_properties, dtype=np.float64)
     F = np.asarray(out.tri_verts, dtype=np.int64).reshape(-1, 3)
-    offsets, ids = {}, {}
+    offsets = {}
     start = 0
-    for oid, m in sources:
+    for oid, m, _ in sources:
         offsets[oid] = start
-        ids[oid] = len(m.F)
         start += len(m.F)
-    source = concat([m for _, m in sources])
+    source = concat([m for _, m, _ in sources])
     face_src = np.full(len(F), -1, dtype=np.int64)
     run_index = np.asarray(out.run_index, dtype=np.int64) // 3
     face_id = np.asarray(out.face_id, dtype=np.int64) if out.face_id is not None and len(out.face_id) else None
+    by_oid = {oid: (m, g) for oid, m, g in sources}
     for r, oid in enumerate(np.asarray(out.run_original_id, dtype=np.int64)):
         if oid not in offsets or face_id is None:
             continue
         lo, hi = run_index[r], run_index[r + 1]
-        fid = face_id[lo:hi]
-        ok = fid < ids[oid]
-        face_src[lo:hi][ok] = offsets[oid] + fid[ok]
+        m, group = by_oid[oid]
+        # signature of each input triangle's face labels: a group whose triangles agree needs no geometry test
+        sig = np.unique(np.column_stack([np.asarray(v).reshape(len(m.F), -1) for v in m.fattr.values()] or [np.zeros((len(m.F), 1))]),
+                        axis=0, return_inverse=True)[1].reshape(-1)
+        order = np.argsort(group, kind="stable")
+        starts = np.searchsorted(group[order], face_id[lo:hi])
+        first = order[np.minimum(starts, len(order) - 1)]
+        ok = group[first] == face_id[lo:hi]
+        pick = np.where(ok, first, -1)
+        for gid in np.unique(face_id[lo:hi][ok]):
+            cand = np.flatnonzero(group == gid)
+            if len(cand) > 1 and len(np.unique(sig[cand])) > 1:
+                sel = np.flatnonzero(face_id[lo:hi] == gid)
+                pick[sel] = _containing(m, cand, props[F[lo + sel], :3].mean(axis=1))
+        face_src[lo:hi] = np.where(pick >= 0, offsets[oid] + pick, -1)
     res = source.remapped(props[:, :3], F, face_src, policy="rebuild")
     col = 3
     for k in vnames:
@@ -93,16 +136,16 @@ def boolean(a: Mesh, b: Mesh, operation: str) -> Mesh:
     face they came from (Manifold provenance); vertex attributes are interpolated;
     corner attributes are invalidated."""
     vn = _vprops([a, b])
-    ma, mb = _to_manifold(a, vn), _to_manifold(b, vn)
+    (ma, ga), (mb, gb) = _to_manifold_tracked(a, vn), _to_manifold_tracked(b, vn)
     res = {"union": ma + mb, "difference": ma - mb, "intersection": ma ^ mb}[operation]
-    return _from_manifold(res, [(ma.original_id(), a), (mb.original_id(), b)], vn)
+    return _from_manifold(res, [(ma.original_id(), a, ga), (mb.original_id(), b, gb)], vn)
 
 
 def trim(mesh: Mesh, normal, offset: float) -> Mesh:
     """Keep the half-space normal . p >= offset. Cap faces are new (face_src = -1)."""
     vn = _vprops([mesh])
-    m = _to_manifold(mesh, vn)
-    return _from_manifold(m.trim_by_plane(list(map(float, normal)), float(offset)), [(m.original_id(), mesh)], vn)
+    m, g = _to_manifold_tracked(mesh, vn)
+    return _from_manifold(m.trim_by_plane(list(map(float, normal)), float(offset)), [(m.original_id(), mesh, g)], vn)
 
 
 def min_gap(a: Mesh, b: Mesh, search: float) -> float:

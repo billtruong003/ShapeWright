@@ -79,6 +79,57 @@ def test_boolean_tool_faces_keep_tool_provenance_and_material():
     assert set(m.label_values("material")[~tool_faces]) == {"wood"}
 
 
+def test_multi_tool_union_keeps_each_face_provenance():
+    # Regression (found by FRESH_AGENT_05): from the second tool on, the boolean's base already mixes sources.
+    # manifold3d's as_original() replaced face ids with coplanar-group ids, so faces were
+    # traced back to the wrong input triangle (materials leaked between base and tools).
+    # Disjoint pieces: the union must keep every input triangle with its own provenance.
+    ctx = Ctx()
+    disc = {"type": "cylinder", "radius": 0.02, "height": 0.01, "segments": 7}
+    m = build_geometry({"type": "boolean", "operation": "union",
+                        "base": {"type": "lathe", "segments": 12, "material": "a",
+                                 "profile": [[0, 0.02], [0.12, 0], [0.11, 0.05], [0.06, 0.09], [0, 0.1]]},
+                        "tools": [{"type": "combine", "material": "b", "translate": [0, 0.07, 0],
+                                   "ops": [{"type": "repeat", "count": 3, "radial": "y"}],
+                                   "items": [{**disc, "translate": [0.07, 0, 0]}, {**disc, "translate": [-0.07, 0, 0]}]},
+                                  {**disc, "material": "b", "translate": [0, 0.1, 0.02]}]},
+                       {}, ctx, "parts.x.shape", materials={"a": {}, "b": {}})
+    assert not ctx.issues, ctx.issues
+    mat, origin = m.label_values("material"), m.label_values("origin")
+    counts = {o: int((origin == o).sum()) for o in set(origin)}
+    assert counts == {"parts.x.shape.base": 72, "parts.x.shape.tools[0].items[0]": 72,
+                      "parts.x.shape.tools[0].items[1]": 72, "parts.x.shape.tools[1]": 24}
+    assert set(mat[origin == "parts.x.shape.base"]) == {"a"}
+    assert set(mat[origin != "parts.x.shape.base"]) == {"b"}
+
+
+def test_boolean_resolves_labels_inside_a_coplanar_group():
+    # a flat face whose two triangles carry different materials: Manifold reports one
+    # coplanar group for both, so the label must come from the triangle containing the face
+    from shapewright import backend
+
+    ctx = Ctx()
+    a = build_geometry({"type": "box", "size": [1, 1, 1]}, {}, ctx, "a").recentered()
+    top = np.flatnonzero(a.face_normals()[0][:, 1] > 0.9)
+    a.set_label("material", "wood")
+    a.set_label("material", "paint", np.isin(np.arange(len(a.F)), top[:1]))
+    tool = build_geometry({"type": "box", "size": [0.2, 0.2, 0.2], "translate": [2, 0, 0]}, {}, ctx, "t").recentered()
+    tool = apply_ops(tool, [{"type": "translate", "offset": [2, 0, 0]}], {}, ctx, "t")
+    tool.set_label("material", "iron")
+    out = backend.boolean(a, tool, "union")
+    mat, n = out.label_values("material"), out.face_normals()[0]
+    cen = out.V[out.F].mean(1)
+    up = (n[:, 1] > 0.9) & (cen[:, 0] < 1)
+    painted = cen[mat == "paint"]
+    assert up.sum() >= 2 and len(painted) >= 1 and set(mat[up]) == {"wood", "paint"}
+    tri = a.V[a.F[top[0]]]  # every painted output face lies inside the painted input triangle
+    for c in painted:
+        v0, v1, w = tri[1] - tri[0], tri[2] - tri[0], c - tri[0]
+        d = np.linalg.lstsq(np.c_[v0, v1], w, rcond=None)[0]
+        assert d.min() >= -1e-6 and d.sum() <= 1 + 1e-6
+    assert set(mat[cen[:, 0] > 1.5]) == {"iron"}
+
+
 def test_trim_marks_new_faces_as_cut():
     ctx = Ctx()
     m = build_geometry({"type": "icosphere", "radius": 0.3, "subdivisions": 2, "ops": [{"type": "flat_bottom", "fraction": 0.3}]}, {}, ctx, "p")

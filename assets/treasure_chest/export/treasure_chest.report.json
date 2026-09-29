@@ -56,7 +56,7 @@
   "uv_overlap": 0.0,
   "uv_owners": 29,
   "texel_density_px_m": 332.5,
-  "texel_density_target": 256,
+  "texel_density_target": 300,
   "texture": {
    "resolution": 1024,
    "target_px_m": 300.0,
@@ -223,7 +223,7 @@
  ],
  "export": {
   "path": "assets/treasure_chest/export/treasure_chest.glb",
-  "bytes": 804056,
+  "bytes": 803332,
   "nodes": 47,
   "meshes": 45,
   "materials": 3
