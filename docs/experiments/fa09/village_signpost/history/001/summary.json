@@ -1,0 +1,42 @@
+{
+ "iteration": 1,
+ "note": "initial design",
+ "critique": "Weathered wooden signpost complete: tapered post, two directional arrows at different heights (45\u00b0 and -135\u00b0), curved lantern hook at the top. Weathered wood texture with grain and edge wear applied. 228/800 triangles. Ready for export.",
+ "source_hash": "f00264daddb6",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 3
+ },
+ "metrics": {
+  "triangles": 228,
+  "parts": 5,
+  "size_m": [
+   0.4555,
+   2.2045,
+   0.3363
+  ],
+  "materials": 1,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 2.2045,
+   "arrow_1.max.y - arrow_1.min.y": 0.2016,
+   "post.size.x": 0.121
+  }
+ },
+ "errors": [],
+ "params": {
+  "post_height": 2.2,
+  "post_base": 0.12,
+  "post_top": 0.08,
+  "arrow_length": 0.45,
+  "arrow_height": 0.2,
+  "arrow_thickness": 0.025,
+  "arrow1_y": 1.4,
+  "arrow2_y": 0.8,
+  "hook_height": 1.8,
+  "hook_radius": 0.08,
+  "wear": 0.003
+ }
+}

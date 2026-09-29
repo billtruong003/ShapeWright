@@ -1,0 +1,214 @@
+shapewright: 0.1
+asset:
+  name: village_signpost
+  kind: prop/street/signpost
+  description: Weathered wooden signpost with two directional arrows and a lantern hook for a fantasy village.
+  tags:
+  - fantasy
+  - village
+  - medieval
+  - wooden
+  - weathered
+profile: mobile_mid
+style: stylized_lowpoly
+budget:
+  triangles: 800
+params:
+  post_height:
+    value: 2.2
+    min: 1.8
+    max: 2.8
+    doc: height of the main post
+  post_base:
+    value: 0.12
+    min: 0.08
+    max: 0.16
+    doc: square cross-section of the post base
+  post_top:
+    value: 0.08
+    doc: square cross-section at the top (tapered)
+  arrow_length:
+    value: 0.45
+    min: 0.35
+    max: 0.6
+    doc: arrow sign length
+  arrow_height:
+    value: 0.2
+    min: 0.12
+    max: 0.28
+    doc: arrow sign height
+  arrow_thickness:
+    value: 0.025
+    doc: arrow sign thickness
+  arrow1_y:
+    value: 1.4
+    doc: height of first arrow
+  arrow2_y:
+    value: 0.8
+    doc: height of second arrow
+  hook_height:
+    value: 1.8
+    doc: height of the lantern hook
+  hook_radius:
+    value: 0.08
+    doc: radius of the lantern hook curve
+  wear:
+    value: 0.003
+    doc: weathering jitter amplitude
+materials:
+  weathered_wood:
+    archetype: wood
+    color: '#6b4423'
+    grain_strength: 0.6
+    grain_scale: 0.025
+    streaks: 0.5
+    knots: 0.4
+    edge_wear: 0.65
+    edge_color: '#8a6f4d'
+    edge_width: 0.006
+    grime: 0.35
+    roughness: 0.88
+    seed: 101
+parts:
+  post:
+    doc: main vertical post, tapered toward the top
+    shape:
+      type: chamfer_box
+      size:
+      - post_base
+      - post_height
+      - post_base
+      chamfer: 0.015
+    ops:
+    - type: taper
+      axis: y
+      scale: post_top / post_base
+    - type: jitter
+      amount: wear
+      seed: 1
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    material: weathered_wood
+  arrow_1:
+    doc: first directional arrow sign, pointing upper-right
+    shape:
+      type: extrude
+      polygon:
+      - - -arrow_length / 2
+        - -arrow_height / 2
+      - - arrow_length / 2
+        - 0
+      - - -arrow_length / 2
+        - arrow_height / 2
+      depth: arrow_thickness
+      chamfer: 0.003
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 2
+    rotate:
+    - 0
+    - 45
+    - 0
+    rotate_about: anchor
+    anchor: center
+    position:
+    - post_base * 0.5
+    - arrow1_y
+    - post_base * 0.4
+    tags:
+    - floating_ok
+    material: weathered_wood
+  arrow_2:
+    doc: second directional arrow sign, pointing lower-left
+    shape:
+      type: extrude
+      polygon:
+      - - -arrow_length / 2
+        - -arrow_height / 2
+      - - arrow_length / 2
+        - 0
+      - - -arrow_length / 2
+        - arrow_height / 2
+      depth: arrow_thickness
+      chamfer: 0.003
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 3
+    rotate:
+    - 0
+    - -135
+    - 0
+    rotate_about: anchor
+    anchor: center
+    position:
+    - -post_base * 0.5
+    - arrow2_y
+    - post_base * 0.4
+    tags:
+    - floating_ok
+    material: weathered_wood
+  hook_arm:
+    doc: curved arm extending from the post to support the lantern hook
+    shape:
+      type: tube
+      path:
+      - - 0
+        - hook_height
+        - post_base * 0.4
+      - - hook_radius * 0.3
+        - hook_height + hook_radius * 0.3
+        - post_base * 0.4 + hook_radius * 0.5
+      - - hook_radius
+        - hook_height
+        - post_base * 0.4 + hook_radius
+      radius: 0.018
+      sides: 6
+      corner_radius: 0.02
+    origin: keep
+    tags:
+    - floating_ok
+    material: weathered_wood
+  hook_ring:
+    doc: ring at the end of the arm for hanging a lantern
+    shape:
+      type: ring
+      radius: 0.032
+      thickness: 0.012
+      height: 0.035
+      segments: 8
+    anchor: center
+    position:
+    - hook_radius
+    - hook_height
+    - post_base * 0.4 + hook_radius
+    material: weathered_wood
+    tags:
+    - floating_ok
+sockets:
+  lantern_attach:
+    doc: attachment point for a hanging lantern
+    attach:
+      to: origin
+      offset:
+      - hook_radius
+      - hook_height
+      - post_base * 0.5 + hook_radius
+collision:
+  mode: box
+checks:
+- expr: asset.height
+  min: 1.8
+  max: 3.0
+  doc: signpost is tall enough for a landmark
+- expr: arrow_1.max.y - arrow_1.min.y
+  min: 0.12
+  max: 0.3
+  doc: arrow sign height is reasonable
+- expr: post.size.x
+  min: 0.08
+  doc: post is chunky enough to look solid

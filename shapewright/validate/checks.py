@@ -95,7 +95,7 @@ def _bbox_gap(a: np.ndarray, b: np.ndarray) -> float:
 
 
 @validator("assembly", "assembly", "Connectivity of parts (nothing floats), grounding, origin placement, parts hidden inside others, unit sanity.",
-           ("ASM_FLOATING_PARTS", "ASM_BELOW_GROUND", "ASM_NOT_GROUNDED", "ASM_ORIGIN_OFFSET", "ASM_HIDDEN_PART", "ASM_SCALE_SUSPICIOUS"))
+           ("ASM_FLOATING_PARTS", "ASM_FLOATING_TAGGED_NEAR", "ASM_BELOW_GROUND", "ASM_NOT_GROUNDED", "ASM_ORIGIN_OFFSET", "ASM_HIDDEN_PART", "ASM_SCALE_SUSPICIOUS"))
 def assembly(asset: Asset, surface: Surface, metrics: dict):
     out = []
     placement = (asset.meta or {}).get("placement", "floor")
@@ -145,12 +145,36 @@ def assembly(asset: Asset, surface: Surface, metrics: dict):
         for j in adj[i] - seen:
             seen.add(j)
             stack.append(j)
-    floating = [parts[i].name for i in range(n) if i not in seen and "floating_ok" not in parts[i].tags]
+    def nearest(i):
+        """(name, gap in metres) of the closest connected part."""
+        cand = sorted((float(np.linalg.norm(np.maximum(0, np.maximum(B[j, 0] - B[i, 1], B[i, 0] - B[j, 1])))), j) for j in seen)[:3]
+        best = None
+        for bgap, j in cand:
+            gap = bgap if not (closed[i] and closed[j]) else backend.solid_gap(solid[i], solid[j], max(bgap * 2, 0.05) + 0.5)
+            if best is None or gap < best[1]:
+                best = (parts[j].name, gap)
+        return best
+    floating = [i for i in range(n) if i not in seen and "floating_ok" not in parts[i].tags]
     if floating:
+        names = [parts[i].name for i in floating]
+        near = [(parts[i].name, nearest(i)) for i in floating[:4]]
+        detail = "; ".join(f"{nm} is {g:.3f} m from {other}" for nm, (other, g) in [(a, b) for a, b in near if b])
+        first = next((b for _, b in near if b), None)
         out.append(_issue("ASM_FLOATING_PARTS", "error", "assembly",
-                          f"{len(floating)} part(s) do not touch the rest of the asset: {', '.join(floating[:8])}", floating[0],
-                          "attach them to a neighbouring part (attach / measure) or check offsets; tag floating_ok if intended",
-                          parts=floating))
+                          f"{len(names)} part(s) do not touch the rest of the asset: {', '.join(names[:8])}" + (f" ({detail})" if detail else ""),
+                          names[0],
+                          (f"attach them: attach: {{to: {first[0]}, at: <anchor>}} or move them by the gap; " if first else "attach them; ")
+                          + "floating_ok is only for parts meant to hover, not for mounted pieces (signs, hooks, handles)",
+                          parts=names))
+    size = float(np.linalg.norm(b[1] - b[0])) if n else 0.0
+    for i in range(n):
+        if i in seen or "floating_ok" not in parts[i].tags or not seen:
+            continue
+        nb = nearest(i)
+        if nb and nb[1] < max(0.05, 0.1 * size):  # FRESH_AGENT_09: the tag silenced mounted parts hanging a few cm off
+            out.append(_issue("ASM_FLOATING_TAGGED_NEAR", "warning", "assembly",
+                              f"'{parts[i].name}' is tagged floating_ok but only {nb[1]:.3f} m from {nb[0]}: probably a placement error",
+                              parts[i].name, f"attach it to {nb[0]} (attach / measure) and remove floating_ok"))
     metrics["contacts"] = int(sum(len(v) for v in adj.values()) // 2)
 
     hidden = []

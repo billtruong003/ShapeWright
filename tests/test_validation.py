@@ -57,6 +57,20 @@ def test_injected_defects_are_reported(make_asset, edit, code):
     assert code in c
 
 
+def test_floating_message_names_the_gap_and_tag_near_parts_warns(make_asset):
+    # FRESH_AGENT_09: an agent silenced ASM_FLOATING_PARTS by tagging a mounted sign floating_ok
+    lifted = GOOD.replace("position: [0, h, 0]", "position: [0, h + 0.004, 0]")
+    r, c = codes(make_asset(lifted))
+    issue = next(i for i in r["issues"] if i["code"] == "ASM_FLOATING_PARTS")
+    assert "0.004 m from leg" in str(issue) and "floating_ok is only for" in str(issue)
+    tagged = lifted.replace("    anchor: top\n", "    anchor: top\n    tags: [floating_ok]\n", 1)
+    _, c = codes(make_asset(tagged))
+    assert "ASM_FLOATING_PARTS" not in c and "ASM_FLOATING_TAGGED_NEAR" in c
+    far = GOOD.replace("position: [0, h, 0]", "position: [0, h + 1.0, 0]").replace("    anchor: top\n", "    anchor: top\n    tags: [floating_ok]\n", 1)
+    _, c = codes(make_asset(far))
+    assert "ASM_FLOATING_TAGGED_NEAR" not in c
+
+
 def test_hidden_part_detected(make_asset):
     text = GOOD.replace("checks:", """  inner:
     shape: {type: box, size: [0.1, 0.02, 0.1]}

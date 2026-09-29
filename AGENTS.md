@@ -110,7 +110,9 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
   arithmetic, params, `min max abs sqrt sin cos tan atan2 clamp lerp`, and
   `part.size.x`-style metrics inside `checks` are allowed.
 - If a validator reports `ASM_FLOATING_PARTS`, the part really does not touch
-  anything. Check offsets and anchors in `sw stats` rather than tagging it `floating_ok`.
+  anything; the message says how far it is from the nearest part. Fix offsets and anchors (`sw stats`)
+  rather than tagging it `floating_ok`, which is only for parts meant to hover. A tagged part that sits
+  within a few cm of the asset still gets `ASM_FLOATING_TAGGED_NEAR`.
 - Every asset in `assets/` is a regression benchmark: a new asset needs its geometry hash recorded with
   `python3 tests/update_golden.py` before `pytest` passes.
 - `.build/` holds renders and reports. It is disposable and git-ignored, so
