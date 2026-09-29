@@ -64,9 +64,11 @@ params:
 Params may be `true`/`false` (switches, evaluated as 1/0), e.g. `has_back: true`
 with `enabled: has_back` on parts.
 
-**YAML trap:** in flow lists, YAML splits at commas, including commas inside
-function calls. Quote such expressions: `rotate: ["-atan2(lean, back_height)", 0, 0]`.
-The error message detects this case and says so.
+**Commas inside expressions:** in `[...]` and `{...}`, YAML splits at commas, including commas inside
+function calls. Shapewright joins the pieces back when the parentheses are unbalanced, so
+`rotate: [-atan2(lean, back_height), 0, 0]` and `{amount: max(a, b)}` work unquoted (Phase 14).
+Quoting (`"-atan2(lean, back_height)"`) still works. Text with commas **and** colons, such as
+`doc: legs, rails: dark`, must still be quoted.
 
 ## Materials
 

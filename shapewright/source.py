@@ -144,7 +144,30 @@ def read_yaml(path: Path) -> dict:
         raise SourceError([Issue("SRC_PARSE", "error", f"YAML parse error: {msg}", str(path), "source", hint)]) from None
     if not isinstance(data, dict):
         raise SourceError([Issue("SRC_PARSE", "error", "top level must be a mapping", str(path), "source")])
-    return data
+    return _rejoin_mapping_splits(data)
+
+
+def _rejoin_mapping_splits(node):
+    """Undo YAML's split of a flow mapping at commas inside an expression: {amount: max(a, b)} parses
+    as {amount: "max(a", "b)": None}. Keys with no value that continue an unbalanced value are joined
+    back into it. Lists are handled where numbers are read (rejoin_split_exprs)."""
+    if isinstance(node, list):
+        return [_rejoin_mapping_splits(v) for v in node]
+    if not isinstance(node, dict):
+        return node
+    out: dict = {}
+    open_key = None
+    for k, v in node.items():
+        if open_key is not None and v is None and isinstance(k, str):
+            out[open_key] += ", " + k
+            if out[open_key].count("(") <= out[open_key].count(")"):
+                open_key = None
+            continue
+        open_key = None
+        out[k] = _rejoin_mapping_splits(v)
+        if isinstance(v, str) and v.count("(") > v.count(")"):
+            open_key = k
+    return out
 
 
 FAMILY_OPEN_KEYS = {"shapewright", "extends", "asset", "params", "budget", "profile", "style", "materials", "checks", "notes", "uv", "collision", "pack"}
@@ -350,10 +373,30 @@ def num(value: Any, env: dict, where: str, ctx: Ctx, default: float | None = Non
     return default
 
 
+def rejoin_split_exprs(value: list) -> list:
+    """Undo YAML's split of a flow list at commas inside an expression: [atan2(a, b), 0] parses as
+    ["atan2(a", "b)", 0]. A string with unbalanced parentheses is never a valid expression, so the
+    pieces are joined back until they balance (FRESH_AGENT_05-09: 15 failed builds from this trap)."""
+    out, buf = [], None
+    for v in value:
+        if buf is not None:
+            buf += ", " + str(v)
+            if buf.count("(") <= buf.count(")"):
+                out.append(buf)
+                buf = None
+        elif isinstance(v, str) and v.count("(") > v.count(")"):
+            buf = v
+        else:
+            out.append(v)
+    return out if buf is None else out + [buf]
+
+
 def vec(value: Any, n: int, env: dict, where: str, ctx: Ctx) -> list[float] | None:
     if isinstance(value, (int, float, str)) and n == 3:
         v = num(value, env, where, ctx)
         return None if v is None else [v, v, v]
+    if isinstance(value, (list, tuple)) and len(value) > n:
+        value = rejoin_split_exprs(list(value))
     if not isinstance(value, (list, tuple)) or len(value) != n:
         hint = ""
         if isinstance(value, (list, tuple)) and any(isinstance(v, str) and v.count("(") != v.count(")") for v in value):

@@ -164,3 +164,15 @@ def test_yaml_flow_comma_trap_gets_a_hint(make_asset):
         build(make_asset("parts:\n  a: {shape: {type: box, size: [0.1, 0.1, 0.1]}, doc: legs, rails: dark}\n"))
     issue = next(i for i in e.value.issues if i.code == "SRC_SCHEMA")
     assert "rails" in issue.message and "quote" in issue.hint
+
+
+def test_expressions_split_by_yaml_commas_are_rejoined(make_asset):
+    # Phase 14: the flow-list comma trap cost 15 failed builds across FA-05..09
+    text = GOOD.replace("position: [0, h, 0]", "position: [0, max(h, min(0.3, 0.2)), 0]").replace(
+        "shape: {type: chamfer_box, size: [w, 0.05, w], chamfer: 0.01}",
+        "shape: {type: chamfer_box, size: [w, 0.05, w], chamfer: max(0.005, min(0.01, 0.02))}")
+    r, _ = codes(make_asset(text))
+    assert r["status"] == "PASS", r["issues"]
+    a = build(make_asset(text))
+    top = next(p for p in a.parts if p.name == "top")
+    assert abs(top.mesh.bounds()[1][1] - 0.45) < 1e-6
