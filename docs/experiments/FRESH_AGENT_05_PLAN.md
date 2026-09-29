@@ -61,3 +61,18 @@ frequent framework changes or one-off custom generators." It is operationalized 
 after the Phase 9 additions, a **held-out** fresh run over classes not used to design them
 (for example: a battle axe, a bridge section, a lantern, a cactus, a wheelbarrow) completes with
 ≤ 1 framework change and no asset-specific generator, with every asset valid and exported.
+
+## Gate run: predictions (written after the additions, before the held-out run)
+
+Held-out classes, none used to design the Phase 9 additions: **battle axe, rope-bridge section,
+hanging lantern, stylized cactus in a pot, wheelbarrow**. One fresh agent, same isolation, same
+report request. Pass: all five valid and exported, ≤ 1 framework change, no asset-specific
+generator (a new shape/op made for one asset), no mesh-file escape.
+
+| # | Prediction |
+|---|---|
+| H1 | The agent finds the point generators and `array.each` through AGENTS.md / `sw caps` and uses them in ≥ 3 of 5 assets (bridge planks/ropes, cactus arms, lantern frame, axe head curve) |
+| H2 | `strut` or `origin: keep` is used for the wheelbarrow handles/legs or the bridge rope posts |
+| H3 | Hand-computed sin/cos placement appears in ≤ 1 asset (vs 6 of 17 in the probe) |
+| H4 | Rope sag (a catenary) is written as an `arc` or hand points; no dedicated curve exists, and this is acceptable |
+| H5 | 0 framework changes |
