@@ -1,0 +1,46 @@
+{
+ "iteration": 1,
+ "note": "blockout: lathe stump, base/waist/face boxes, tube horn, heel",
+ "critique": "Stump reads as a bell/pot: too wide (0.64) and short (0.42) with a smooth flare; anvil is dwarfed (face top only 0.66 m). horn: thin needle, centred on the face instead of flush with its top -> radius 0.05, top-aligned. heel: tiny stub below face top -> flush with face top, bigger, hardy hole. waist: straight machined post -> taper. base: flat slab -> arched notch to read as feet. No hand-crafted touch -> jitter. Nothing tells the story -> add hammer on the face, iron band on stump, roots.",
+ "source_hash": "126154138899",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 310,
+  "parts": 6,
+  "size_m": [
+   0.7585,
+   0.6605,
+   0.6401
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "anvil_face.max.y": 0.66,
+   "asset.height": 0.6605,
+   "anvil_face.size.x / stump.size.x": 0.698
+  }
+ },
+ "errors": [],
+ "params": {
+  "stump_r": 0.26,
+  "stump_h": 0.42,
+  "stump_sides": 9.0,
+  "base_w": 0.34,
+  "base_d": 0.26,
+  "base_h": 0.07,
+  "waist_w": 0.18,
+  "waist_d": 0.13,
+  "waist_h": 0.11,
+  "face_w": 0.44,
+  "face_d": 0.19,
+  "face_h": 0.09,
+  "horn_len": 0.24,
+  "heel_len": 0.1,
+  "embed": 0.01
+ }
+}

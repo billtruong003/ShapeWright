@@ -37,6 +37,12 @@ Write the plan in your head or in the source's `notes:` before writing parts:
 - **Budget split:** roughly 44 triangles per chamfer_box, and
   `2 × segments × rings` for revolved shapes. Keep 20% headroom.
 
+**Budgets vs style:** the profile's `budget` is the hard limit (validation
+error). A style's `max_materials`/`max_parts` are soft guidance (warnings). You
+may override the budget in the source (`budget: {materials: 3}`) when the design
+needs it, but say so in your final report: it is a production trade-off the
+user should see.
+
 ## 3. Create
 
 `./sw new NAME` (template) or `./sw new NAME --from BASE` (inherit). Start

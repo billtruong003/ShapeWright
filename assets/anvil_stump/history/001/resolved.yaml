@@ -1,0 +1,186 @@
+shapewright: 0.1
+asset:
+  name: anvil_stump
+  kind: prop/crafting/anvil
+  description: Chunky stylized low-poly blacksmith's anvil standing on a wooden tree stump.
+profile: mobile_mid
+style: stylized_lowpoly
+budget:
+  triangles: 900
+params:
+  stump_r:
+    value: 0.26
+    min: 0.2
+    max: 0.35
+    doc: stump radius at the top
+  stump_h:
+    value: 0.42
+    min: 0.35
+    max: 0.5
+    doc: stump height (anvil face lands ~0.75 m
+    blacksmith knuckle height): null
+  stump_sides: 9
+  base_w:
+    value: 0.34
+    doc: foot length along X
+  base_d:
+    value: 0.26
+    doc: foot depth along Z
+  base_h: 0.07
+  waist_w: 0.18
+  waist_d: 0.13
+  waist_h: 0.11
+  face_w:
+    value: 0.44
+    doc: flat working face length
+  face_d: 0.19
+  face_h: 0.09
+  horn_len: 0.24
+  heel_len: 0.1
+  embed: 0.01
+materials:
+  wood:
+    base_color: '#8a5a36'
+    roughness: 0.9
+  iron:
+    base_color: '#4a4d52'
+    metallic: 0.6
+    roughness: 0.55
+parts:
+  stump:
+    shape:
+      type: lathe
+      segments: stump_sides
+      profile:
+      - - 0
+        - 0
+      - - stump_r * 1.25
+        - 0
+      - - stump_r * 1.12
+        - 0.06
+      - - stump_r * 1.02
+        - 0.15
+      - - stump_r
+        - stump_h - 0.02
+      - - stump_r - 0.02
+        - stump_h
+      - - 0
+        - stump_h
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    material: wood
+  anvil_base:
+    shape:
+      type: chamfer_box
+      size:
+      - base_w
+      - base_h
+      - base_d
+      chamfer: 0.015
+    ops:
+    - type: taper
+      axis: y
+      scale: 0.75
+    anchor: bottom
+    attach:
+      to: stump
+      at: top
+      offset:
+      - 0
+      - -embed
+      - 0
+    material: iron
+  anvil_waist:
+    shape:
+      type: chamfer_box
+      size:
+      - waist_w
+      - waist_h
+      - waist_d
+      chamfer: 0.012
+    anchor: bottom
+    attach:
+      to: anvil_base
+      at: top
+      offset:
+      - 0
+      - -embed
+      - 0
+    material: iron
+  anvil_face:
+    shape:
+      type: chamfer_box
+      size:
+      - face_w
+      - face_h
+      - face_d
+      chamfer: 0.015
+    anchor: bottom
+    attach:
+      to: anvil_waist
+      at: top
+      offset:
+      - 0
+      - -embed
+      - 0
+    material: iron
+  horn:
+    shape:
+      type: tube
+      path:
+      - - 0
+        - 0
+        - 0
+      - - horn_len * 0.5
+        - 0.005
+        - 0
+      - - horn_len
+        - 0.03
+        - 0
+      radius: face_h * 0.45
+      radius_end: 0.008
+      sides: 8
+    anchor: left
+    attach:
+      to: anvil_face
+      at: right
+      offset:
+      - -0.02
+      - 0.005
+      - 0
+    material: iron
+  heel:
+    shape:
+      type: chamfer_box
+      size:
+      - heel_len
+      - face_h * 0.7
+      - face_d * 0.7
+      chamfer: 0.012
+    anchor: right
+    attach:
+      to: anvil_face
+      at: left
+      offset:
+      - 0.02
+      - face_h * 0.15
+      - 0
+    material: iron
+collision:
+  mode: hull
+checks:
+- expr: anvil_face.max.y
+  min: 0.65
+  max: 0.8
+  doc: working height of the face
+- expr: asset.height
+  min: 0.65
+  max: 0.85
+- expr: anvil_face.size.x / stump.size.x
+  min: 0.6
+  max: 1.1
+  doc: anvil reads as sitting on the stump
+  not dwarfed or overhanging: null

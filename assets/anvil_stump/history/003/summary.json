@@ -1,0 +1,59 @@
+{
+ "iteration": 3,
+ "note": "materials + polish: bark/end_grain/iron (3 mats), end-grain cap on stump, blunter roots with shared UVs, hammer handle flat on face with yaw, thicker band (texel warning cleared)",
+ "critique": "PASS, 680/900. Stump now reads as a cut stump from above (light end grain). Shear on the stump was tried and removed: it pushed the stump through the straight iron band. Handle rotate 85/96 both tilted it up (rotation sign guessed wrong); now 90 with a 14 deg yaw, resting on the face. UV_TEXEL_DENSITY on stump_band was 1.50x; band height 0.05 -> 0.06 brings it under the threshold (borderline). Remaining: roots still read a bit like splinters in the 3/4 material view -> try random_hull lumps.",
+ "source_hash": "a3eced6712b4",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 680,
+  "parts": 15,
+  "size_m": [
+   0.7491,
+   0.8692,
+   0.6283
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "anvil_face.max.y": 0.8162,
+   "asset.height": 0.8692,
+   "anvil_face.size.x / stump.size.x": 0.8944,
+   "horn.max.y <= anvil_face.max.y + 0.005": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "stump_r": 0.22,
+  "stump_h": 0.5,
+  "stump_sides": 9.0,
+  "bark_wobble": 0.01,
+  "root_count": 5.0,
+  "root_len": 0.2,
+  "root_h": 0.12,
+  "root_w": 0.15,
+  "root_angle": 35.0,
+  "base_w": 0.4,
+  "base_d": 0.3,
+  "base_h": 0.08,
+  "waist_w": 0.22,
+  "waist_d": 0.17,
+  "waist_h": 0.14,
+  "face_w": 0.46,
+  "face_d": 0.2,
+  "face_h": 0.1,
+  "horn_len": 0.22,
+  "horn_r": 0.055,
+  "heel_len": 0.12,
+  "embed": 0.01,
+  "wear": 0.003,
+  "hammer_len": 0.13,
+  "hammer_head": 0.055,
+  "handle_r": 0.019,
+  "handle_len": 0.3
+ }
+}

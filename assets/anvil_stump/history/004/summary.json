@@ -1,0 +1,59 @@
+{
+ "iteration": 4,
+ "note": "hull-lump roots, lighter iron",
+ "critique": "Roots as tapered random_hull lumps (flat_bottom) read as organic root flares instead of splinters/fins; 720/900 tris. Iron #4a4d52 -> #5a5f66 so the anvil doesn't go black on phone screens. No significant findings left: silhouette reads as anvil-on-stump at thumbnail size, chamfers on all boxes, end grain visible from above, hammer adds story. Stopping: validation PASS, last critique clean, constraints met.",
+ "source_hash": "ea945f61e34a",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 720,
+  "parts": 15,
+  "size_m": [
+   0.7949,
+   0.8692,
+   0.7021
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "anvil_face.max.y": 0.8162,
+   "asset.height": 0.8692,
+   "anvil_face.size.x / stump.size.x": 0.8944,
+   "horn.max.y <= anvil_face.max.y + 0.005": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "stump_r": 0.22,
+  "stump_h": 0.5,
+  "stump_sides": 9.0,
+  "bark_wobble": 0.01,
+  "root_count": 5.0,
+  "root_len": 0.28,
+  "root_h": 0.13,
+  "root_w": 0.17,
+  "root_angle": 35.0,
+  "base_w": 0.4,
+  "base_d": 0.3,
+  "base_h": 0.08,
+  "waist_w": 0.22,
+  "waist_d": 0.17,
+  "waist_h": 0.14,
+  "face_w": 0.46,
+  "face_d": 0.2,
+  "face_h": 0.1,
+  "horn_len": 0.22,
+  "horn_r": 0.055,
+  "heel_len": 0.12,
+  "embed": 0.01,
+  "wear": 0.003,
+  "hammer_len": 0.13,
+  "hammer_head": 0.055,
+  "handle_r": 0.019,
+  "handle_len": 0.3
+ }
+}

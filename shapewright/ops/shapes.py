@@ -163,7 +163,7 @@ def lathe(a, b):
        [Param("polygon", "points2", doc="outer contour [[x, y], ...]"),
         Param("depth", "num", doc="extrusion depth along Z", min=0),
         Param("holes", "list", [], "list of inner contours"),
-        Param("scale_top", "vec2", [1.0, 1.0], "XY scale of the far face (taper)")],
+        Param("scale_top", "vec2", [1.0, 1.0], "XY scale of the far face (taper), about the polygon's own origin (0, 0), not its centre")],
        example="{type: extrude, polygon: [[-0.2,0],[0.2,0],[0.15,0.3],[-0.15,0.3]], depth: 0.04}")
 def extrude(a, b):
     contours = [np.array(a["polygon"], dtype=np.float64)]

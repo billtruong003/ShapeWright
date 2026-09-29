@@ -1,0 +1,59 @@
+{
+ "iteration": 2,
+ "note": "chunky revision: taller slimmer stump with jitter, iron band, radial buttress roots, notched anvil foot, tapered waist, fat top-flush horn, heel with hardy hole, hammer on face",
+ "critique": "Reads as an anvil on a stump now. Roots went through 3 tries: tube roots read as spider legs, extruded side profiles as paper planks, tapered footprints as rocket fins; blunt low wedges (5x) read as root flares. Remaining: stump is a straight column (no taper/lean) and end grain is indistinguishable from bark; hammer_handle rotate 85 tilts up and away from the face -> ~96 so it droops toward the face; UV_TEXEL_DENSITY warning on stump_band (1.5x).",
+ "source_hash": "12cac2b99faf",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 630,
+  "parts": 14,
+  "size_m": [
+   0.7531,
+   0.8594,
+   0.6316
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "anvil_face.max.y": 0.8064,
+   "asset.height": 0.8594,
+   "anvil_face.size.x / stump.size.x": 0.9355,
+   "horn.max.y <= anvil_face.max.y + 0.005": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "stump_r": 0.22,
+  "stump_h": 0.5,
+  "stump_sides": 9.0,
+  "bark_wobble": 0.01,
+  "root_count": 5.0,
+  "root_len": 0.2,
+  "root_h": 0.13,
+  "root_w": 0.15,
+  "root_angle": 35.0,
+  "base_w": 0.4,
+  "base_d": 0.3,
+  "base_h": 0.08,
+  "waist_w": 0.22,
+  "waist_d": 0.17,
+  "waist_h": 0.14,
+  "face_w": 0.46,
+  "face_d": 0.2,
+  "face_h": 0.1,
+  "horn_len": 0.22,
+  "horn_r": 0.055,
+  "heel_len": 0.12,
+  "embed": 0.01,
+  "wear": 0.003,
+  "hammer_len": 0.13,
+  "hammer_head": 0.055,
+  "handle_r": 0.016,
+  "handle_len": 0.3
+ }
+}

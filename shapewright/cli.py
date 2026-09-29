@@ -163,7 +163,7 @@ def cmd_review(a):
     (asset.build_dir / "report.json").write_text(dump(report))
     sheet = asset.build_dir / "sheet.png"
     contact_sheet(asset, surface, tile=a.size).save(sheet)
-    print(format_text(report))
+    print(format_text(report, a.verbose))
     print(f"\nsheet: {_rel(sheet)}   (front/right/top ortho clay, 3/4 clay, parts, back 3/4, wire, UV)")
     style = asset.style or {}
     if style:
@@ -461,6 +461,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--size", type=int, default=512)
     p = add("review", cmd_review, "validate + sheet + checklist")
     p.add_argument("--size", type=int, default=320, help="tile size of the sheet")
+    p.add_argument("--verbose", "-v", action="store_true", help="also show info items")
     p = add("snapshot", cmd_snapshot, "record an iteration")
     p.add_argument("-m", "--message")
     p.add_argument("--critique")

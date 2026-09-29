@@ -12,6 +12,7 @@ and defaults. This document explains the structure.
 | Units | metres |
 | Axes | +Y up, the **front of the asset faces +Z**, right is +X (glTF convention; no conversion on export) |
 | Angles | degrees everywhere, including `sin`/`cos`/`tan`/`atan2` in expressions |
+| Rotation | `rotate: [rx, ry, rz]` applies X, then Y, then Z, about the part centre. Positive angles follow the right-hand rule (counter-clockwise when looking from the + end of the axis toward the origin): +rx turns +Y toward +Z, +ry turns +Z toward +X, +rz turns +X toward +Y. Example: `rotate: [90, 0, 0]` lays a Y-axis cylinder along -Z...+Z (its top ends up pointing toward +Z) |
 | Origin | on the ground (y = 0), horizontally under the parts that rest on the ground |
 | Side names | `left` = -X, `right` = +X, `back` = -Z, `front` = +Z, `bottom` = -Y, `top` = +Y (world directions, not the object's "own" left) |
 
@@ -198,7 +199,7 @@ dependency order, and cycles are errors.
 
 ```yaml
 array: {count: 3, offset: [0.1, 0, 0]}               # names: slat_0, slat_1, slat_2
-array: {count: 8, radial: y, angle: 360, center: [0, 0, 0]}
+array: {count: 8, radial: y, angle: 360, center: [0, 0, 0]}   # center is in WORLD coordinates
 mirror: x                                            # across the plane x = 0
 mirror: [x, z]                                       # 4 instances: post_front_left, ...
 mirror: {axis: y, at: height / 2}                    # across y = height/2 (top/bottom twins)

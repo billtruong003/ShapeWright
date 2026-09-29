@@ -144,4 +144,70 @@ Test count went from 84 to 163. `sw bench` reports 8/8 PASS.
 
 ## Fresh-agent experiment
 
-*Filled in from the observed run; see the section below.*
+Full record: [experiments/FRESH_AGENT_01.md](experiments/FRESH_AGENT_01.md).
+
+**Setup.** The committed repository (after hardening) was cloned into an
+isolated directory. A new agent with no project context got a user-style
+request for an asset **not in the examples**: *a stylized low-poly
+blacksmith's anvil on a wooden tree stump, mobile, < 900 triangles, clean UVs,
+chunky, inspect and improve, export*. It was told to work only in the clone
+and to report what it did. Results were verified against the files, not only
+against its report.
+
+| Measure | Result (verified) |
+|---|---|
+| Discovered the workflow | yes: README → AGENTS.md → `sw doctor`/`caps` → examples → ASSET_FORMAT/AGENT_WORKFLOW |
+| Human interventions | 0 |
+| Modelling iterations | ~12 edit/review cycles, 4 snapshots with specific critiques |
+| Validation failures | 0 errors throughout; 2 warnings (`UV_TEXEL_DENSITY`, `STYLE_THIN_FEATURE`), both fixed deliberately |
+| Visual inspection used | yes, after almost every review, plus targeted renders (isolated part, top view of roots, material view, compare) |
+| Self-correction | yes, driven by images: stump "bell" → taller; needle horn → fat, flush; roots went through 5 forms (tubes = "spider legs", extrusions = "planks", fins, splinters, finally seeded hull lumps) |
+| Export | succeeded; re-import round-trip passed (Khronos validator not installed in the clone, reported as info) |
+| Final metrics | 720/900 tris, 0.80 × 0.87 × 0.70 m, 15 parts, 3 materials (budget override stated and justified), UV overlap 0, all layers PASS |
+| Time | ~9 min wall clock (542 s) |
+| Cost | 65 tool calls, ~150k subagent tokens |
+
+**Friction it found (all fixed after the run, except the last):** `review`
+printed "--verbose to show" but did not accept `--verbose`; rotation direction
+was undocumented (it guessed wrong once); the UV tile painted intentionally
+shared UVs red while the metric said 0 overlap; the `UV_TEXEL_DENSITY` hint
+suggested re-locking when there was no lock; `extrude.scale_top` origin and the
+radial-array `center` frame were undocumented; profile vs style material limits
+conflicted (now documented: profile = hard limit, style = guidance, overrides
+must be reported). *Not fixed:* the agent had to read `surface.py` to understand
+why a thin band packs loosely in its UV region; UV.md explains it, but the
+warning does not point there strongly enough.
+
+### Verdict: robust modelling environment or procedural asset scripts?
+
+**Both, and the experiment shows exactly where the line is.**
+
+*Evidence for "environment":* a context-free agent found the loop from the
+repository alone, iterated on **visual** evidence rather than guessing,
+wrote specific quantified critiques, respected budgets, stopped for a stated
+reason, and shipped a validated GLB in about 9 minutes with no human help. The
+inspect/validate/snapshot/compare/export loop is robust, and it is what an agent
+needs that a "script library" does not give.
+
+*Evidence for "still scripts":* the agent modelled with the **v0.1 subset**:
+primitives, `attach`, arithmetic in positions, one array. It used **none** of
+the hardened relationship and reuse features (`measure`, components,
+`boolean` composition, `enabled`). Either the asset did not need them (plausible
+for a stack of blocks) or they are not surfaced where an agent decides how to
+place things. Its source is 163 lines with hand-placed coordinates, readable
+but not much more robust than a script. Validators never produced an error:
+the loop was driven by perception, and the deterministic layers acted as a
+safety net, not a guide.
+
+*So:* the **process** is native to agents; the **modelling vocabulary** is not
+yet. Hardening made the kernel able to grow (attributes, backend boundary,
+composition, queries, sources, stable UVs, reuse), but an agent reaches for the
+simplest thing that works, and on this task that was still "place boxes by
+numbers".
+
+*Caveats:* one run, one asset, and the fresh agent was the same model family
+that wrote the documentation (a friendlier reader than a different vendor's
+agent). The next experiments should use (1) an asset whose parts must follow
+deformed neighbours (a leaning shelf, a cart with splayed wheels) to test
+whether `measure` is discovered at the point of need, (2) a two-asset pack to
+test components, and (3) a different agent vendor.

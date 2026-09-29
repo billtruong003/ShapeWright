@@ -302,10 +302,15 @@ def render_uv(asset: Asset, surface: Surface, size: int = 512, focus: list[str] 
     for f in focus or []:
         focus_set |= {p.name for p in asset.parts_named(f)}
     tris, owner, segs = [], [], []
+    seen_shared = set()
     for i, p in enumerate(asset.parts):
         sp = surface.parts[p.name]
         if sp.corner_uv is None:
             continue
+        if sp.uv_owner.endswith("*"):  # instances sharing UVs on purpose: draw one representative
+            if sp.uv_owner in seen_shared:
+                continue
+            seen_shared.add(sp.uv_owner)
         uv = sp.corner_uv.copy()
         px = np.stack([uv[..., 0] * size, (1 - uv[..., 1]) * size], -1)
         tris.append(px)

@@ -1,0 +1,152 @@
+# Stylized blacksmith's anvil on a tree stump (mobile game prop).
+# Anvil long axis runs along X; the horn points to +X (right), the heel to -X.
+shapewright: 0.1
+asset:
+  name: anvil_stump
+  kind: prop/crafting/anvil
+  description: Chunky stylized low-poly blacksmith's anvil standing on a wooden tree stump.
+profile: mobile_mid
+style: stylized_lowpoly
+budget: {triangles: 900}
+
+params:
+  # stump
+  stump_r:      {value: 0.22, min: 0.18, max: 0.3, doc: stump radius at the top}
+  stump_h:      {value: 0.5, min: 0.4, max: 0.55, doc: stump height (anvil face lands ~0.8 m, blacksmith knuckle height)}
+  stump_sides:  9
+  bark_wobble:  0.01
+  root_count:   5
+  root_len:     0.2
+  root_h:       0.13
+  root_w:       0.15
+  root_angle:   35
+  # anvil
+  base_w:       {value: 0.4, doc: foot length along X}
+  base_d:       {value: 0.3, doc: foot depth along Z}
+  base_h:       0.08
+  waist_w:      0.22
+  waist_d:      0.17
+  waist_h:      0.14
+  face_w:       {value: 0.46, doc: flat working face length}
+  face_d:       0.2
+  face_h:       0.1
+  horn_len:     0.22
+  horn_r:       0.055
+  heel_len:     0.12
+  embed:        0.01
+  wear:         0.003
+  # hammer
+  hammer_len:   0.13
+  hammer_head:  0.055
+  handle_r:     0.016
+  handle_len:   0.3
+
+materials:
+  wood: {base_color: "#8a5a36", roughness: 0.9}
+  iron: {base_color: "#4a4d52", metallic: 0.6, roughness: 0.55}
+
+parts:
+  stump:
+    shape:
+      type: lathe
+      segments: stump_sides
+      profile:
+        - [0, 0]
+        - [stump_r * 1.16, 0]
+        - [stump_r * 1.07, 0.06]
+        - [stump_r * 1.01, 0.16]
+        - [stump_r, stump_h - 0.02]
+        - [stump_r - 0.02, stump_h]
+        - [0, stump_h]
+    ops: [{type: jitter, amount: bark_wobble, seed: 4}]
+    shading: flat
+    anchor: bottom
+    position: [0, 0, 0]
+    material: wood
+
+  root:
+    doc: buttress roots flaring out at the foot of the stump (footprint extruded upward, tapering toward the stump)
+    shape:
+      type: extrude
+      polygon: [[0, -root_w / 2], [root_len * 0.6, -root_w * 0.35], [root_len, -root_w * 0.2], [root_len, root_w * 0.2], [root_len * 0.6, root_w * 0.35], [0, root_w / 2]]
+      depth: root_h
+      scale_top: [0.4, 0.8]
+    ops: [{type: jitter, amount: 0.005, seed: 9}]
+    rotate: [-90, root_angle, 0]
+    anchor: bottom
+    position: ["(stump_r - 0.02) * cos(root_angle)", 0, "-(stump_r - 0.02) * sin(root_angle)"]
+    array: {count: root_count, radial: y, angle: 360, center: [0, 0, 0]}
+    shading: flat
+    material: wood
+
+  stump_band:
+    doc: iron hoop keeping the stump from splitting
+    shape: {type: ring, radius: stump_r + 0.014, thickness: 0.026, height: 0.05, segments: stump_sides}
+    position: [0, stump_h - 0.09, 0]
+    shading: flat
+    material: iron
+
+  anvil_base:
+    doc: splayed foot with an arched notch so it reads as four feet
+    shape: {type: chamfer_box, size: [base_w, base_h, base_d], chamfer: 0.015}
+    ops:
+      - {type: taper, axis: y, scale: 0.72}
+      - {type: subtract, shape: {type: box, size: [base_w * 0.42, base_h * 0.6, base_d * 2]}, position: [0, -base_h * 0.5, 0]}
+      - {type: subtract, shape: {type: box, size: [base_w * 2, base_h * 0.6, base_d * 0.4]}, position: [0, -base_h * 0.5, 0]}
+    anchor: bottom
+    attach: {to: stump, at: top, offset: [0, -embed, 0]}
+    shading: flat
+    material: iron
+
+  anvil_waist:
+    shape: {type: chamfer_box, size: [waist_w, waist_h, waist_d], chamfer: 0.012}
+    ops: [{type: taper, axis: y, scale: 0.8}]
+    anchor: bottom
+    attach: {to: anvil_base, at: top, offset: [0, -embed, 0]}
+    material: iron
+
+  anvil_face:
+    shape: {type: chamfer_box, size: [face_w, face_h, face_d], chamfer: 0.018}
+    ops: [{type: jitter, amount: wear, seed: 2}]
+    anchor: bottom
+    attach: {to: anvil_waist, at: top, offset: [0, -embed, 0]}
+    material: iron
+
+  horn:
+    shape: {type: tube, path: [[0, 0, 0], [horn_len * 0.55, -0.012, 0], [horn_len, -0.008, 0]], radius: horn_r, radius_end: 0.012, sides: 8}
+    anchor: top_left
+    attach: {to: anvil_face, at: top_right, offset: [-0.03, -0.004, 0]}
+    shading: auto
+    material: iron
+
+  heel:
+    doc: rectangular tail with the hardy hole
+    shape: {type: chamfer_box, size: [heel_len, face_h * 0.75, face_d * 0.75], chamfer: 0.012}
+    ops:
+      - {type: subtract, shape: {type: box, size: [0.028, face_h * 2, 0.028]}, position: [-heel_len * 0.15, 0, 0]}
+    anchor: top_right
+    attach: {to: anvil_face, at: top_left, offset: [0.03, -0.004, 0]}
+    shading: flat
+    material: iron
+
+  hammer_head:
+    doc: smith's hammer resting on the face
+    shape: {type: chamfer_box, size: [hammer_len, hammer_head, hammer_head], chamfer: 0.01}
+    anchor: bottom
+    attach: {to: anvil_face, at: top, offset: [-0.07, -0.002, -0.02]}
+    material: iron
+
+  hammer_handle:
+    shape: {type: cylinder, radius: handle_r, radius_top: handle_r * 1.2, height: handle_len, segments: 6}
+    rotate: [85, 0, 0]
+    anchor: back
+    attach: {to: hammer_head, at: center, offset: [0, -0.008, -0.01]}
+    material: wood
+
+collision: {mode: hull}
+
+checks:
+  - {expr: anvil_face.max.y, min: 0.72, max: 0.85, doc: working height of the face}
+  - {expr: asset.height, min: 0.72, max: 0.9}
+  - {expr: anvil_face.size.x / stump.size.x, min: 0.8, max: 1.3, doc: anvil reads as sitting on the stump, not dwarfed}
+  - {expr: horn.max.y <= anvil_face.max.y + 0.005, doc: horn top flush with the face}

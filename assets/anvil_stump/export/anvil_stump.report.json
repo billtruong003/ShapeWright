@@ -1,0 +1,73 @@
+{
+ "asset": "anvil_stump",
+ "status": "PASS",
+ "source_hash": "ea945f61e34a",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 720,
+  "parts": 15,
+  "sliver_triangles": 7,
+  "size_m": [
+   0.7949,
+   0.8692,
+   0.7021
+  ],
+  "contacts": 15,
+  "triangles_by_part": {
+   "stump": 108,
+   "root": 140,
+   "stump_band": 72,
+   "stump_top": 32,
+   "anvil_base": 108,
+   "anvil_waist": 44,
+   "anvil_face": 44,
+   "horn": 44,
+   "heel": 64,
+   "hammer_head": 44,
+   "hammer_handle": 20
+  },
+  "budget_triangles": 900,
+  "materials": 3,
+  "checks": {
+   "anvil_face.max.y": 0.8162,
+   "asset.height": 0.8692,
+   "anvil_face.size.x / stump.size.x": 0.8944,
+   "horn.max.y <= anvil_face.max.y + 0.005": true
+  },
+  "uv_utilization": 0.421,
+  "uv_overlap": 0.0,
+  "uv_owners": 11,
+  "texel_density_px_m": 208.1,
+  "texel_density_target": 256
+ },
+ "issues": [
+  {
+   "code": "EXP_VALIDATOR_UNAVAILABLE",
+   "severity": "info",
+   "layer": "export",
+   "msg": "Khronos glTF-Validator not installed; round-trip check only",
+   "hint": "cd tools/gltf-validator && npm install"
+  }
+ ],
+ "export": {
+  "path": "assets/anvil_stump/export/anvil_stump.glb",
+  "bytes": 84684,
+  "nodes": 31,
+  "meshes": 30,
+  "materials": 3
+ }
+}
