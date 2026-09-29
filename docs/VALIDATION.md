@@ -49,6 +49,7 @@ warnings. It never produces errors, because style is a judgement call.
 | `MEASURE_FAILED` | a `measure` query has no answer (plane/ray misses, parts overlap for `gap`) | check the query against `sw stats` |
 | `COMPONENT_PRIVATE` | `with:` sets a param the component does not expose | use a public param (listed in the hint) |
 | `FAMILY_PRIVATE` | a variant overrides something outside the base's `interface` | ask the base to expose it (public param / `enabled:` switch) |
+| `PACK_OVERRIDE` | an asset redefines a pack param/material or uses a different profile/style | use a new name, or change the pack for every member |
 | `FAMILY_NO_INTERFACE` (info) | the base declares no interface; the variant depends on internals | add `interface:` to the base |
 
 ### geometry (per part)
@@ -120,6 +121,12 @@ parts at the profile's texture size).
 | `EXP_ROUNDTRIP_BOUNDS` | error | bounds changed on re-import |
 | `EXP_VALIDATOR_UNAVAILABLE` | info | the Node validator is not installed |
 | `VALIDATOR_CRASHED` | error | a validator raised; the others still ran (report it as a bug) |
+
+## Pack findings (`sw pack`, informational)
+
+`PACK_MATERIAL_DRIFT` (one material name, several definitions), `PACK_MATERIAL_UNIQUE`,
+`PACK_PARAM_DIFFERS` (same param name, different values), `PACK_DENSITY` / `PACK_DENSITY_SPREAD`
+(detail density in tris/m², texel density in px/m). They describe a set; they are not errors.
 
 ## Adding a validator
 

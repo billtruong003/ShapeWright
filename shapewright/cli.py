@@ -443,6 +443,25 @@ def cmd_bench(a):
     return worst
 
 
+def cmd_pack(a):
+    from .pack import format_pack, pack_sheet, run_pack, select, sheet_path
+
+    paths = select(a.assets or [], a.tag, pack=a.pack)
+    if len(paths) < 2:
+        print("a pack needs at least two assets: name them, select members with --pack NAME (their `pack:`), or --tag TAG")
+        return 2
+    assets, surfaces, reports, rep = run_pack(paths)
+    if a.json:
+        print(json.dumps(rep, indent=1))
+    else:
+        print(format_pack(rep))
+    out = Path(a.out) if a.out else sheet_path(a.pack or a.tag or "_".join(x.name for x in assets[:3]))
+    pack_sheet(assets, surfaces, tile=a.size).save(out)
+    print(f"\npack sheet: {_rel(out)}   (rows: front ortho clay, 3/4 material, 3/4 silhouette; one common scale)")
+    print("LOOK AT IT: same scale and ground? same plank / leg / band language? same palette? similar detail density?")
+    return 1 if any(r["status"] == "FAIL" for r in reports) else 0
+
+
 def cmd_doctor(a):
     import importlib
     import shutil
@@ -536,6 +555,13 @@ def build_parser() -> argparse.ArgumentParser:
     p = add("family", cmd_family, "validate a base asset and all its variants")
     p = add("bench", cmd_bench, "validate all assets", asset=False)
     p.add_argument("--dir")
+    p = add("pack", cmd_pack, "review several assets as one set (common-scale sheet + consistency report)", asset=False)
+    p.add_argument("assets", nargs="*", help="asset names/paths (or use --tag)")
+    p.add_argument("--pack", help="select every asset whose source says `pack: NAME`")
+    p.add_argument("--tag", help="select every asset under assets/ whose asset.tags contains TAG")
+    p.add_argument("--out", help="sheet path (default: .build/packs/<tag>.png)")
+    p.add_argument("--size", type=int, default=300, help="tile size")
+    p.add_argument("--json", action="store_true")
     add("doctor", cmd_doctor, "environment check", asset=False)
     return ap
 

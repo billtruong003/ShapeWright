@@ -1,0 +1,99 @@
+{
+ "asset": "smith_wall_shelf",
+ "status": "PASS",
+ "source_hash": "d52613a7109b",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 4
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 580,
+  "parts": 15,
+  "sliver_triangles": 40,
+  "size_m": [
+   0.9046,
+   0.357,
+   0.2792
+  ],
+  "contacts": 36,
+  "triangles_by_part": {
+   "back_board_plank": 88,
+   "back_board_batten": 88,
+   "shelf_plank": 88,
+   "shelf_batten": 88,
+   "bracket": 32,
+   "strap_l_band": 56,
+   "strap_r_band": 56,
+   "hook": 84
+  },
+  "budget_triangles": 1200,
+  "materials": 3,
+  "checks": {
+   "asset.min.z": 0.0,
+   "shelf.max.y": 0.345,
+   "bracket.max.z < shelf.max.z": true
+  },
+  "uv_utilization": 0.453,
+  "uv_overlap": 0.0,
+  "uv_owners": 14,
+  "texel_density_px_m": 260.2,
+  "texel_density_target": 256
+ },
+ "issues": [
+  {
+   "code": "FAMILY_NO_INTERFACE",
+   "severity": "info",
+   "layer": "source",
+   "where": "extends",
+   "msg": "base asset declares no `interface`; the variant depends on its internals",
+   "hint": "declare interface: {params: [...]} in the base"
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shelf_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shelf_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "EXP_VALIDATOR_UNAVAILABLE",
+   "severity": "info",
+   "layer": "export",
+   "msg": "Khronos glTF-Validator not installed; round-trip check only",
+   "hint": "cd tools/gltf-validator && npm install"
+  }
+ ],
+ "export": {
+  "path": "assets/smith_wall_shelf/export/smith_wall_shelf.glb",
+  "bytes": 61904,
+  "nodes": 19,
+  "meshes": 16,
+  "materials": 3
+ }
+}

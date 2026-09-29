@@ -1,0 +1,55 @@
+{
+ "iteration": 1,
+ "note": "blockout: leg_frame + tray-on-rails + slotted top board + 2 straps + spear and greatsword",
+ "critique": "0.72 m sword hilt ended below the board (check caught it) -> blade = rack_h - 0.2; spear shaft/head under 3 cm style minimum -> r 0.021 / head r 0.05; frame legs 0.08 over 1.15 m look spindly - revisit at pack review",
+ "source_hash": "4f982e02135f",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 6
+ },
+ "metrics": {
+  "triangles": 1134,
+  "parts": 23,
+  "size_m": [
+   1.0851,
+   1.794,
+   0.4712
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "top_board.max.y": 1.2,
+   "top_board.max.y - bench_h": 0.35,
+   "sword_pommel.max.y > top_board.max.y + 0.1": true,
+   "spear_head.min.y > top_board.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "board_t": 0.045,
+  "seam": 0.008,
+  "leg": 0.08,
+  "leg_taper": 0.88,
+  "rail": 0.05,
+  "band_w": 0.045,
+  "band_t": 0.012,
+  "rivet_r": 0.011,
+  "wear": 0.004,
+  "bench_h": 0.85,
+  "seat_h": 0.5,
+  "rack_w": 1.0,
+  "rack_d": 0.36,
+  "rack_h": 1.2,
+  "top_t": 0.054,
+  "top_over": 0.04,
+  "shelf_y": 0.14,
+  "slots": 5.0,
+  "slot_w": 0.05,
+  "slot_len": 0.162,
+  "pitch": 0.184,
+  "slot_z": 0.093,
+  "has_weapons": 1.0
+ }
+}

@@ -1,4 +1,27 @@
-# Reuse: components, optional parts and asset families
+# Reuse: components, packs, families, variants and instances
+
+## The five concepts (Phase 6 semantics)
+
+| Concept | Encapsulates | Mechanism | Changes allowed from outside | Evidence |
+|---|---|---|---|---|
+| **Component** | *structure* (a sub-assembly) | `components/NAME.yaml`, `component:` + `with:` | public params only; group placement, `mirror`/`array` of the whole group | blacksmith pack: `plank_top` ×11, `iron_band` ×9, `leg_frame` ×3 |
+| **Pack** | *shared vocabulary of a set* (scale, construction params, palette, profile/style) | `packs/NAME.yaml`, `pack: NAME` in each member | none: pack params/materials are **read-only** in members (`PACK_OVERRIDE`); members add their own | blacksmith pack: 0 material drift across 6 assets |
+| **Family** | *intent* of a base design | `interface: {params}` on a base asset | via variants only | tavern_chair, wooden_staircase |
+| **Variant** | a family member | `extends:` + public params | public params, metadata, budget, extra checks | tavern_stool, staircase variants |
+| **Instance** | repetition inside one asset | part `array`/`mirror`, `repeat`/`mirror` ops, component-instance `array`/`mirror`, `share_instances` UVs | per-instance transforms and names | treads, balusters, legs, crate bands |
+
+**Why "pack" was added (not planned):** in FRESH_AGENT_03 the agent needed shared scale and materials for
+six structurally different assets. The only sharing mechanism was `extends`, so it wrote a parts-less
+"kit" base that every asset extended, and modified `sw family` so a base without parts would pass. It
+worked (zero drift) but collapsed two concepts: **inheritance of a design** and **membership of a set**.
+A kit base also carries `FAMILY_NO_INTERFACE` on every member and would let members override the shared
+palette. The pack makes membership explicit and drift impossible, and leaves `extends` for families.
+
+Rules of thumb for agents:
+- Same *structure* in several places → **component**.
+- Several different assets that must look like one set → **pack**.
+- One design with knobs → **family** (`interface`) + **variants**.
+- The same thing several times in one asset → **instances** (`array`, `mirror`).
 
 ## Problem (v0.1)
 
@@ -88,6 +111,7 @@ directly or transitively. It is the contract test to run after editing a base.
 
 ## Not solved (yet)
 
-- Component instances cannot be `mirror`ed or `array`ed (instantiate twice).
-- Components cannot nest other components.
+- Components cannot nest other components (FRESH_AGENT_03 duplicated a foot-band recipe because of this).
+- Component instances cannot take `measure:` queries (the agent re-derived a component's rail height by hand).
+- ~~Component instances cannot be mirrored or arrayed~~: **fixed in Phase 6.**
 - There is no versioning of interfaces; a base removing a public param breaks variants loudly (by design) but without a migration path.

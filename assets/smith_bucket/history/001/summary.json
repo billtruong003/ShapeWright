@@ -1,0 +1,51 @@
+{
+ "iteration": 1,
+ "note": "blockout: lathe staves, measured hoops with facet-centred rivets, ears, square-bar bail",
+ "critique": "rivets at 14 deg sat on a hoop vertex and floated (GEO_PART_FRAGMENTED) -> rivet_a = 180/staves on the facet centre, radius * cos; curved 7-point bail tripped UV_TEXEL_DENSITY 1.85x -> 3-segment forged bail (PASS, matches crate handles)",
+ "source_hash": "a3edfcad5ce3",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 556,
+  "parts": 6,
+  "size_m": [
+   0.3765,
+   0.5738,
+   0.3683
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "body.max.y": 0.3646,
+   "body.size.x / body.size.y": 0.9846,
+   "bail.max.y - body.max.y": 0.2093
+  }
+ },
+ "errors": [],
+ "params": {
+  "board_t": 0.045,
+  "seam": 0.008,
+  "leg": 0.08,
+  "leg_taper": 0.88,
+  "rail": 0.05,
+  "band_w": 0.045,
+  "band_t": 0.012,
+  "rivet_r": 0.011,
+  "wear": 0.004,
+  "bench_h": 0.85,
+  "seat_h": 0.5,
+  "bucket_h": 0.36,
+  "top_r": 0.18,
+  "base_r": 0.145,
+  "wall": 0.03,
+  "staves": 12.0,
+  "hoop_lo": 0.07,
+  "hoop_hi": 0.29,
+  "rivet_a": 15.0,
+  "bail_h": 0.2
+ }
+}

@@ -1,0 +1,293 @@
+shapewright: 0.1
+profile: mobile_mid
+style: stylized_lowpoly
+budget:
+  triangles: 1200
+  materials: 3
+params:
+  board_t:
+    value: 0.045
+    doc: plank thickness for shelves, seats, crate walls
+  seam:
+    value: 0.008
+    doc: gap between neighbouring planks
+  leg:
+    value: 0.08
+    doc: section of every leg / post
+  leg_taper:
+    value: 0.88
+    doc: legs narrow toward the top (foot wider)
+  rail:
+    value: 0.05
+    doc: section of rails / stretchers
+  band_w:
+    value: 0.045
+    doc: iron band width
+  band_t:
+    value: 0.012
+    doc: how far an iron band stands proud of what it wraps
+  rivet_r:
+    value: 0.011
+    doc: rivet head radius
+  wear:
+    value: 0.004
+    doc: hand-made jitter
+  bench_h:
+    value: 0.85
+    doc: workbench top; anvil_stump face is ~0.8
+  seat_h:
+    value: 0.5
+    doc: smith stool seat (a bit taller than a tavern stool)
+  bucket_h:
+    value: 0.36
+    min: 0.28
+    max: 0.45
+  top_r:
+    value: 0.18
+    doc: outer radius at the rim
+  base_r:
+    value: 0.145
+    doc: outer radius at the foot
+  wall:
+    value: 0.03
+    doc: stave thickness (chunky
+    like board_t): null
+  staves:
+    value: 12
+    doc: facets around; each reads as a stave
+  hoop_lo:
+    value: 0.07
+    doc: hoop centre heights
+  hoop_hi:
+    value: bucket_h - 0.07
+  rivet_a:
+    value: 180 / staves
+    doc: rivets sit on the middle of the two front hoop facets (degrees)
+  bail_h:
+    value: 0.2
+    doc: handle rise above the rim
+materials:
+  wood:
+    base_color: '#9a6a40'
+    roughness: 0.85
+    doc: boards, planks, staves
+  wood_dark:
+    base_color: '#5e3b22'
+    roughness: 0.9
+    doc: legs, rails, battens, brackets
+  iron:
+    base_color: '#5a5f66'
+    metallic: 0.6
+    roughness: 0.55
+    doc: bands, rivets, handles (same as anvil_stump)
+asset:
+  name: smith_bucket
+  kind: prop/container/bucket
+  description: Tapered stave quench bucket with riveted iron hoops and an iron bail handle (blacksmith workstation pack).
+  tags:
+  - blacksmith_pack
+parts:
+  body:
+    doc: tapered staves with a sunk floor
+    shape:
+      type: lathe
+      segments: staves
+      profile:
+      - - 0
+        - 0.03
+      - - base_r - wall
+        - 0.03
+      - - base_r - 0.012
+        - 0
+      - - base_r
+        - 0.012
+      - - top_r
+        - bucket_h
+      - - top_r - wall
+        - bucket_h
+      - - base_r - wall * 1.1
+        - 0.05
+      - - 0
+        - 0.05
+    ops:
+    - type: jitter
+      amount: wear * 0.6
+      seed: 71
+    shading: flat
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    material: wood
+  hoop_low:
+    doc: riveted iron hoop hugging the staves at its height
+    measure:
+      s:
+        section: body
+        axis: y
+        at: hoop_lo
+    shape:
+      type: boolean
+      operation: union
+      base:
+        type: ring
+        radius: s.size.x / 2 + band_t
+        thickness: band_t + 0.004
+        height: band_w
+        segments: staves
+      tools:
+      - type: cylinder
+        radius: rivet_r
+        height: band_t
+        segments: 6
+        rotate:
+        - 90
+        - rivet_a
+        - 0
+        translate:
+        - (s.size.x / 2 + band_t) * cos(rivet_a) * sin(rivet_a)
+        - 0
+        - (s.size.x / 2 + band_t) * cos(rivet_a) * cos(rivet_a)
+      - type: cylinder
+        radius: rivet_r
+        height: band_t
+        segments: 6
+        rotate:
+        - 90
+        - -rivet_a
+        - 0
+        translate:
+        - -(s.size.x / 2 + band_t) * cos(rivet_a) * sin(rivet_a)
+        - 0
+        - (s.size.x / 2 + band_t) * cos(rivet_a) * cos(rivet_a)
+    position:
+    - 0
+    - hoop_lo
+    - 0
+    shading: flat
+    tags:
+    - thin_ok
+    material: iron
+  hoop_high:
+    measure:
+      s:
+        section: body
+        axis: y
+        at: hoop_hi
+    shape:
+      type: boolean
+      operation: union
+      base:
+        type: ring
+        radius: s.size.x / 2 + band_t
+        thickness: band_t + 0.004
+        height: band_w
+        segments: staves
+      tools:
+      - type: cylinder
+        radius: rivet_r
+        height: band_t
+        segments: 6
+        rotate:
+        - 90
+        - rivet_a
+        - 0
+        translate:
+        - (s.size.x / 2 + band_t) * cos(rivet_a) * sin(rivet_a)
+        - 0
+        - (s.size.x / 2 + band_t) * cos(rivet_a) * cos(rivet_a)
+      - type: cylinder
+        radius: rivet_r
+        height: band_t
+        segments: 6
+        rotate:
+        - 90
+        - -rivet_a
+        - 0
+        translate:
+        - -(s.size.x / 2 + band_t) * cos(rivet_a) * sin(rivet_a)
+        - 0
+        - (s.size.x / 2 + band_t) * cos(rivet_a) * cos(rivet_a)
+    position:
+    - 0
+    - hoop_hi
+    - 0
+    shading: flat
+    tags:
+    - thin_ok
+    material: iron
+  ear:
+    doc: two long staves rise above the rim to carry the bail
+    measure:
+      rim:
+        section: body
+        axis: y
+        at: bucket_h - 0.01
+    shape:
+      type: chamfer_box
+      size:
+      - 0.035
+      - 0.1
+      - 0.06
+      chamfer: 0.008
+    anchor: bottom
+    position:
+    - rim.max.x - 0.018
+    - bucket_h - 0.06
+    - 0
+    mirror: x
+    uv:
+      share_instances: true
+    material: wood_dark
+  bail:
+    doc: square-bar iron handle
+    measure:
+      e:
+        bounds: ear_right
+    shape:
+      type: tube
+      radius: 0.011
+      sides: 4
+      path:
+      - - -e.max.x
+        - 0
+        - 0
+      - - -e.max.x * 0.7
+        - bail_h
+        - 0
+      - - e.max.x * 0.7
+        - bail_h
+        - 0
+      - - e.max.x
+        - 0
+        - 0
+    anchor: bottom
+    position:
+    - 0
+    - e.max.y - 0.04
+    - 0
+    shading: flat
+    tags:
+    - thin_ok
+    material: iron
+sockets:
+  handle:
+    attach:
+      to: bail
+      at: top
+    doc: carry / hang point
+collision:
+  mode: hull
+checks:
+- expr: body.max.y
+  min: bucket_h - 0.005
+  max: bucket_h + 0.01
+- expr: body.size.x / body.size.y
+  min: 0.85
+  max: 1.1
+  doc: stout bucket proportions
+- expr: bail.max.y - body.max.y
+  min: 0.1
+  max: 0.25
+  doc: bail clears the rim for a hand

@@ -1,0 +1,25 @@
+# Reusable prop detail: a smith's hammer (handle along +Y, head at the top).
+# Used by the blacksmith pack: leaning in the tool crate, lying on the workbench.
+# Rotate the instance to lean or lay it down; place it by the group anchor.
+shapewright: 0.1
+component: smith_hammer
+doc: Hammer with a tapered wooden handle and a chamfered iron head across the handle top. Materials `handle` and `head`.
+
+params:
+  handle_len: {value: 0.42, min: 0.2, max: 0.8}
+  handle_r:   {value: 0.018, doc: handle radius at the grip}
+  head_len:   {value: 0.15, doc: head length (across the handle)}
+  head:       {value: 0.06, doc: head section}
+
+parts:
+  handle:
+    shape: {type: cylinder, radius: handle_r, radius_top: handle_r * 1.15, height: handle_len, segments: 6}
+    anchor: bottom
+    position: [0, 0, 0]
+    material: handle
+
+  head:
+    shape: {type: chamfer_box, size: [head, head, head_len], chamfer: 0.01}
+    anchor: top
+    attach: {to: handle, at: top, offset: [0, 0.012, 0]}
+    material: head

@@ -1,0 +1,50 @@
+{
+ "iteration": 1,
+ "note": "blockout+: 4 rotated plank_top walls, floor, 2 riveted iron_bands, square-bar handles, smith_hammer + chisel",
+ "critique": "reads as an open tool crate; one rivet fell off the band (repeat was already centred, extra translate) -> fixed in iron_band; band UV texel spread 1.53x remains: xatlas charts the band's rim as a hollow rectangle; accepted (iron is flat-coloured), see report",
+ "source_hash": "f800e474da17",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 1072,
+  "parts": 24,
+  "size_m": [
+   0.7357,
+   0.4413,
+   0.4312
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height - crate_h": 0.0813,
+   "hammer_head.min.y > crate_h - 0.04": true,
+   "wall_front.size.x": 0.6246
+  }
+ },
+ "errors": [],
+ "params": {
+  "board_t": 0.045,
+  "seam": 0.008,
+  "leg": 0.08,
+  "leg_taper": 0.88,
+  "rail": 0.05,
+  "band_w": 0.045,
+  "band_t": 0.012,
+  "rivet_r": 0.011,
+  "wear": 0.004,
+  "bench_h": 0.85,
+  "seat_h": 0.5,
+  "crate_l": 0.62,
+  "crate_d": 0.4,
+  "crate_h": 0.36,
+  "wall_t": 0.045,
+  "inner_l": 0.53,
+  "band_y": 0.07,
+  "handle_y": 0.2232,
+  "has_tools": 1.0
+ }
+}

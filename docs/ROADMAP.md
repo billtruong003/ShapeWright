@@ -43,6 +43,11 @@ Research ([research/SPATIAL_RELATIONSHIPS.md](research/SPATIAL_RELATIONSHIPS.md)
 fresh-agent benchmark with predictions written first, independent perturbation testing, and fixes at the
 layer that failed. Result: [experiments/FRESH_AGENT_02.md](experiments/FRESH_AGENT_02.md).
 
+## Phase 6: Reuse, components and asset families ✅ (gate passed with caveats)
+A fresh agent built a coherent six-asset pack with four reused components. It exposed a concept collapse
+(`extends` used as set membership), fixed by first-class **packs**, plus a real bug and missing
+pack-review tooling (both adopted from the agent). Record: [experiments/FRESH_AGENT_03.md](experiments/FRESH_AGENT_03.md).
+
 ## Stage 3: Prototype: a fresh agent succeeds unassisted
 - Run the README task ("tavern chair, < 700 tris, mobile") with a *fresh* agent
   that has only the repository. Record the transcript and friction points, and

@@ -1,0 +1,328 @@
+shapewright: 0.1
+profile: mobile_mid
+style: stylized_lowpoly
+budget:
+  triangles: 1200
+  materials: 3
+params:
+  board_t:
+    value: 0.045
+    doc: plank thickness for shelves, seats, crate walls
+  seam:
+    value: 0.008
+    doc: gap between neighbouring planks
+  leg:
+    value: 0.08
+    doc: section of every leg / post
+  leg_taper:
+    value: 0.88
+    doc: legs narrow toward the top (foot wider)
+  rail:
+    value: 0.05
+    doc: section of rails / stretchers
+  band_w:
+    value: 0.045
+    doc: iron band width
+  band_t:
+    value: 0.012
+    doc: how far an iron band stands proud of what it wraps
+  rivet_r:
+    value: 0.011
+    doc: rivet head radius
+  wear:
+    value: 0.004
+    doc: hand-made jitter
+  bench_h:
+    value: 0.85
+    doc: workbench top; anvil_stump face is ~0.8
+  seat_h:
+    value: 0.5
+    doc: smith stool seat (a bit taller than a tavern stool)
+  crate_l:
+    value: 0.62
+    min: 0.45
+    max: 0.9
+    doc: length along x
+  crate_d:
+    value: 0.4
+    min: 0.3
+    max: 0.6
+  crate_h:
+    value: 0.36
+    min: 0.25
+    max: 0.5
+  wall_t: board_t
+  inner_l: crate_l - 2 * wall_t
+  band_y:
+    value: 0.07
+    doc: band distance from the bottom and from the rim
+  handle_y: crate_h * 0.62
+  has_tools: true
+materials:
+  wood:
+    base_color: '#9a6a40'
+    roughness: 0.85
+    doc: boards, planks, staves
+  wood_dark:
+    base_color: '#5e3b22'
+    roughness: 0.9
+    doc: legs, rails, battens, brackets
+  iron:
+    base_color: '#5a5f66'
+    metallic: 0.6
+    roughness: 0.55
+    doc: bands, rivets, handles (same as anvil_stump)
+asset:
+  name: smith_tool_crate
+  kind: prop/container/crate
+  description: Open plank tool crate with iron bands, side handles and tools inside (blacksmith workstation pack).
+  tags:
+  - blacksmith_pack
+parts:
+  wall_front:
+    doc: planks face out, battens inside
+    component: plank_top
+    with:
+      length: crate_l
+      width: crate_h
+      thickness: wall_t
+      planks: 2
+      gap: seam
+      wear: wear
+      batten_from_end: wall_t + 0.05
+    materials:
+      top: wood
+      under: wood_dark
+    rotate:
+    - 90
+    - 0
+    - 0
+    anchor: bottom_front
+    position:
+    - 0
+    - 0
+    - crate_d / 2
+  wall_back:
+    component: plank_top
+    with:
+      length: crate_l
+      width: crate_h
+      thickness: wall_t
+      planks: 2
+      gap: seam
+      wear: wear
+      batten_from_end: wall_t + 0.05
+    materials:
+      top: wood
+      under: wood_dark
+    rotate:
+    - -90
+    - 0
+    - 0
+    anchor: bottom_back
+    position:
+    - 0
+    - 0
+    - -crate_d / 2
+  wall_right:
+    doc: short walls fit between the long ones
+    component: plank_top
+    with:
+      length: crate_d - 2 * wall_t
+      width: crate_h
+      thickness: wall_t
+      planks: 2
+      gap: seam
+      wear: wear
+      batten_from_end: 0.085
+    materials:
+      top: wood
+      under: wood_dark
+    rotate:
+    - 90
+    - 90
+    - 0
+    anchor: bottom_right
+    position:
+    - crate_l / 2
+    - 0
+    - 0
+  wall_left:
+    component: plank_top
+    with:
+      length: crate_d - 2 * wall_t
+      width: crate_h
+      thickness: wall_t
+      planks: 2
+      gap: seam
+      wear: wear
+      batten_from_end: 0.085
+    materials:
+      top: wood
+      under: wood_dark
+    rotate:
+    - 90
+    - -90
+    - 0
+    anchor: bottom_left
+    position:
+    - -crate_l / 2
+    - 0
+    - 0
+  floor:
+    shape:
+      type: chamfer_box
+      size:
+      - inner_l + 0.004
+      - wall_t * 0.8
+      - crate_d - 2 * wall_t + 0.004
+      chamfer: 0.01
+    anchor: bottom
+    position:
+    - 0
+    - 0.012
+    - 0
+    material: wood_dark
+  band_low:
+    component: iron_band
+    with:
+      inner_x: crate_l
+      inner_z: crate_d
+      band_w: band_w
+      band_t: band_t
+      rivet_r: rivet_r
+      rivets: 2
+      rivet_gap: crate_l * 0.55
+    materials:
+      metal: iron
+    position:
+    - 0
+    - band_y
+    - 0
+  band_high:
+    component: iron_band
+    with:
+      inner_x: crate_l
+      inner_z: crate_d
+      band_w: band_w
+      band_t: band_t
+      rivet_r: rivet_r
+      rivets: 2
+      rivet_gap: crate_l * 0.55
+    materials:
+      metal: iron
+    position:
+    - 0
+    - crate_h - band_y
+    - 0
+  handle:
+    doc: square-bar iron grip on each short side
+    shape:
+      type: tube
+      path:
+      - - 0
+        - 0
+        - -0.09
+      - - 0.045
+        - 0.0
+        - -0.07
+      - - 0.045
+        - 0.0
+        - 0.07
+      - - 0
+        - 0
+        - 0.09
+      radius: 0.012
+      sides: 4
+    anchor: left
+    position:
+    - crate_l / 2 - 0.004
+    - handle_y
+    - 0
+    mirror: x
+    uv:
+      share_instances: true
+    shading: flat
+    tags:
+    - thin_ok
+    material: iron
+  hammer:
+    enabled: has_tools
+    doc: the same smith_hammer component that lies on the workbench
+    component: smith_hammer
+    with:
+      handle_len: 0.42
+    materials:
+      handle: wood
+      head: iron
+    rotate:
+    - 0
+    - 0
+    - -28
+    anchor: bottom_left
+    attach:
+      to: floor
+      at: top_left
+      offset:
+      - 0.045
+      - -0.006
+      - -0.06
+  chisel:
+    enabled: has_tools
+    doc: long square cold chisel leaning in the other corner
+    shape:
+      type: chamfer_box
+      size:
+      - 0.032
+      - 0.4
+      - 0.032
+      chamfer: 0.006
+      ops:
+      - type: taper
+        axis: y
+        scale:
+        - 0.9
+        - 1
+        - 0.3
+    rotate:
+    - 20
+    - 0
+    - 18
+    anchor: bottom
+    attach:
+      to: floor
+      at: top
+      offset:
+      - 0.16
+      - -0.006
+      - 0.05
+    tags:
+    - thin_ok
+    material: iron
+sockets:
+  lift_left:
+    attach:
+      to: handle_left
+      at: left
+    doc: carry point
+  lift_right:
+    attach:
+      to: handle_right
+      at: right
+  inside:
+    attach:
+      to: floor
+      at: top
+    doc: drop more tools here
+collision:
+  mode: single_box
+checks:
+- expr: asset.height - crate_h
+  max: 0.25
+  doc: tools poke out but do not dominate
+- expr: hammer_head.min.y > crate_h - 0.04
+  when: has_tools
+  doc: hammer head shows above the rim
+- expr: wall_front.size.x
+  min: crate_l - 0.005
+  max: crate_l + 0.01

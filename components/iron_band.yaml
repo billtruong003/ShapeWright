@@ -1,0 +1,46 @@
+# Reusable detail: a riveted iron band wrapped around a rectangular section.
+# The band axis is Y; rotate the instance to wrap along x or z. The band is
+# hollow (a real collar), so it can wrap open containers without filling them.
+# Rivets are fused into the band (boolean union), so the band owns one UV region
+# instead of scattering tiny rivet charts with poor texel density.
+# Used by the blacksmith pack (workbench top, stool seat, crate, wall shelf, weapon rack).
+shapewright: 0.1
+component: iron_band
+doc: Hollow rectangular iron collar with 1-4 rivet heads on its front (+z) face. Material `metal`.
+
+params:
+  inner_x: {value: 0.1, min: 0.01, max: 3.0, doc: wrapped section along x (before instance rotation)}
+  inner_z: {value: 0.1, min: 0.01, max: 3.0, doc: wrapped section along z}
+  band_w:  {value: 0.045, doc: band width (along Y)}
+  band_t:  {value: 0.012, doc: band thickness (proud of the wrapped part)}
+  rivet_r: {value: 0.011, doc: rivet head radius}
+  rivets:  {value: 2, min: 1, max: 4, doc: rivet heads on the front face}
+  rivet_gap: {value: 0.08, doc: spacing between rivets along x}
+  grip:    {value: 0.002, doc: how much the band bites into the wrapped part (contact)}
+
+private:
+  outer_x: inner_x + 2 * band_t
+  outer_z: inner_z + 2 * band_t
+
+parts:
+  band:
+    shape:
+      type: boolean
+      operation: union
+      base:
+        type: boolean
+        operation: difference
+        base: {type: box, size: [outer_x, band_w, outer_z]}
+        tools:
+          - {type: box, size: [inner_x - 2 * grip, band_w * 2, inner_z - 2 * grip]}
+      tools:
+        - type: cylinder
+          radius: rivet_r
+          height: band_t
+          segments: 6
+          ops: [{type: repeat, count: rivets, offset: [rivet_gap, 0, 0]}]
+          rotate: [90, 0, 0]
+          translate: [0, 0, outer_z / 2 + band_t * 0.1]   # the repeated rivets are centred first
+    shading: flat
+    tags: [thin_ok]
+    material: metal

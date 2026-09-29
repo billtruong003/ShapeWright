@@ -1,0 +1,50 @@
+{
+ "iteration": 1,
+ "note": "blockout: plank_top top + shelf, leg_frame (aprons, side rails, foot bands), two iron_band straps with centred rivet",
+ "critique": "reads as a workbench; shelf initially floated 2.5 cm above the side rails (planks ended inside the rails) -> length = rail centre span, placed on rail top; legs 0.092 looked spindly under a 1.5 m top -> bench_leg = leg*1.3; rivets invisible when 2 were squeezed on a 7 cm edge -> single centred rivet option in iron_band; UV texel warning on rivets (tiny cylinder) still open",
+ "source_hash": "1d6eb6de75df",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 6
+ },
+ "metrics": {
+  "triangles": 1092,
+  "parts": 25,
+  "size_m": [
+   1.5046,
+   0.862,
+   0.7512
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "top.max.y": 0.85,
+   "top.max.y - seat_h": 0.35,
+   "frame_leg_front_left.min.y": 0.0
+  }
+ },
+ "errors": [],
+ "params": {
+  "board_t": 0.045,
+  "seam": 0.008,
+  "leg": 0.08,
+  "leg_taper": 0.88,
+  "rail": 0.05,
+  "band_w": 0.045,
+  "band_t": 0.012,
+  "rivet_r": 0.011,
+  "wear": 0.004,
+  "bench_h": 0.85,
+  "seat_h": 0.5,
+  "length": 1.5,
+  "width": 0.72,
+  "top_t": 0.07,
+  "overhang": 0.06,
+  "frame_w": 1.38,
+  "frame_d": 0.6,
+  "shelf_y": 0.16,
+  "bench_leg": 0.104
+ }
+}

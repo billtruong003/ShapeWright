@@ -33,6 +33,7 @@ checks: [...]
 uv: {method: regions, resolution: 512, padding_px: 4}   # regions (default) | atlas (v0.1) | none
 collision: {mode: none | single_box | box | hull}
 interface: {params: [...]}       # optional: family contract for variants (docs/FAMILIES.md)
+pack: blacksmith                 # optional: member of packs/blacksmith.yaml (shared params/materials; read-only here)
 notes: free text
 ```
 
@@ -169,6 +170,18 @@ tags: [open_ok]   # if the file is not watertight
 Paths must stay inside the asset directory (GLB, OBJ, STL, PLY). Authored UVs
 and vertex colours are kept. `sw import FILE NAME [--split]` writes such a
 source for you.
+
+### Packs (sets of assets)
+
+`packs/NAME.yaml` holds `pack`, `doc`, `params`, `materials`, `profile`, `style`, `budget`. A member asset
+writes `pack: NAME` (or a relative `.yaml` path). The pack's params and materials are merged in and are
+**read-only**: redefining one is `PACK_OVERRIDE`. The profile and style are the pack's; budget keys are
+defaults a member may override. `sw pack --pack NAME` reviews all members together at a common scale.
+
+### Replicating component instances
+
+`mirror:` and `array:` on a component instance replicate the whole placed group. Instances are named
+`<instance>_left` / `<instance>_0`, and their parts `<instance>_left_<part>`.
 
 ### Per-part UV settings
 

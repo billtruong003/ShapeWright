@@ -1,0 +1,130 @@
+{
+ "asset": "smith_weapon_rack",
+ "status": "PASS",
+ "source_hash": "04c74a08bf32",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 6
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 1030,
+  "parts": 25,
+  "sliver_triangles": 106,
+  "size_m": [
+   1.0851,
+   1.794,
+   0.4712
+  ],
+  "contacts": 46,
+  "triangles_by_part": {
+   "frame_leg": 176,
+   "frame_foot_band": 48,
+   "frame_side_rail": 88,
+   "frame_long_rail": 88,
+   "tray_plank": 88,
+   "tray_batten": 88,
+   "top_board": 164,
+   "strap_l_band": 56,
+   "strap_r_band": 56,
+   "spear_shaft": 20,
+   "sword_blade": 44,
+   "spear_head": 6,
+   "sword_guard": 44,
+   "sword_grip": 20,
+   "sword_pommel": 44
+  },
+  "budget_triangles": 1200,
+  "materials": 3,
+  "checks": {
+   "spear_shaft.max.z < frame_long_rail_front.min.z": true,
+   "top_board.max.y": 1.2,
+   "top_board.max.y - bench_h": 0.35,
+   "sword_pommel.max.y > top_board.max.y + 0.1": true,
+   "spear_head.min.y > top_board.max.y": true
+  },
+  "uv_utilization": 0.455,
+  "uv_overlap": 0.0,
+  "uv_owners": 17,
+  "texel_density_px_m": 178.7,
+  "texel_density_target": 256
+ },
+ "issues": [
+  {
+   "code": "FAMILY_NO_INTERFACE",
+   "severity": "info",
+   "layer": "source",
+   "where": "extends",
+   "msg": "base asset declares no `interface`; the variant depends on its internals",
+   "hint": "declare interface: {params: [...]} in the base"
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "spear_shaft",
+   "msg": "12/20 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "sword_blade",
+   "msg": "14/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 14
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tray_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "tray_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "EXP_VALIDATOR_UNAVAILABLE",
+   "severity": "info",
+   "layer": "export",
+   "msg": "Khronos glTF-Validator not installed; round-trip check only",
+   "hint": "cd tools/gltf-validator && npm install"
+  }
+ ],
+ "export": {
+  "path": "assets/smith_weapon_rack/export/smith_weapon_rack.glb",
+  "bytes": 105704,
+  "nodes": 32,
+  "meshes": 26,
+  "materials": 3
+ }
+}

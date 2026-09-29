@@ -1,0 +1,92 @@
+{
+ "asset": "smith_tool_crate",
+ "status": "WARN",
+ "source_hash": "f800e474da17",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 2
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "WARN",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 1072,
+  "parts": 24,
+  "sliver_triangles": 74,
+  "size_m": [
+   0.7357,
+   0.4413,
+   0.4312
+  ],
+  "contacts": 49,
+  "triangles_by_part": {
+   "wall_front_plank": 88,
+   "wall_front_batten": 88,
+   "wall_back_plank": 88,
+   "wall_back_batten": 88,
+   "wall_right_plank": 88,
+   "wall_right_batten": 88,
+   "wall_left_plank": 88,
+   "wall_left_batten": 88,
+   "floor": 44,
+   "band_low_band": 80,
+   "band_high_band": 80,
+   "handle": 56,
+   "hammer_handle": 20,
+   "hammer_head": 44,
+   "chisel": 44
+  },
+  "budget_triangles": 1200,
+  "materials": 3,
+  "checks": {
+   "asset.height - crate_h": 0.0813,
+   "hammer_head.min.y > crate_h - 0.04": true,
+   "wall_front.size.x": 0.6246
+  },
+  "uv_utilization": 0.491,
+  "uv_overlap": 0.0,
+  "uv_owners": 23,
+  "texel_density_px_m": 205.8,
+  "texel_density_target": 256
+ },
+ "issues": [
+  {
+   "code": "UV_TEXEL_DENSITY",
+   "severity": "warning",
+   "layer": "surface",
+   "where": "band_high_band",
+   "msg": "texel density varies 1.53x (band_high_band: 141 px/m, wall_back_plank: 215 px/m)",
+   "hint": "each part gets a UV rectangle sized by its area; thin or oddly shaped parts pack their charts loosely into it. Try uv: {seams: regions} on that part, change its proportions/segments, or accept it (warning only). With a lock, re-lock after big size changes"
+  },
+  {
+   "code": "FAMILY_NO_INTERFACE",
+   "severity": "info",
+   "layer": "source",
+   "where": "extends",
+   "msg": "base asset declares no `interface`; the variant depends on its internals",
+   "hint": "declare interface: {params: [...]} in the base"
+  },
+  {
+   "code": "EXP_VALIDATOR_UNAVAILABLE",
+   "severity": "info",
+   "layer": "export",
+   "msg": "Khronos glTF-Validator not installed; round-trip check only",
+   "hint": "cd tools/gltf-validator && npm install"
+  }
+ ],
+ "export": {
+  "path": "assets/smith_tool_crate/export/smith_tool_crate.glb",
+  "bytes": 105868,
+  "nodes": 29,
+  "meshes": 25,
+  "materials": 3
+ }
+}

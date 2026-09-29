@@ -37,6 +37,10 @@ See docs/HARDENING.md. Rows below keep their original text; these entries overri
 | Parametric-robustness testing (`--set`), `first/last/count` in checks | — | NOW | Phase 5 (FRESH_AGENT_02) |
 | Support/load-path validation ("supported", not just "touching") | — | NEAR | Phase 5 finding |
 | Generated lists (per-index profiles, saw-tooth stringers) | — | NEAR | Phase 5 finding; evaluate in Phase 9 |
+| Asset packs: shared params/palette, pack review sheet (§30) | NEAR | NOW | `packs/`, `pack:`, `sw pack` (Phase 6) |
+| Component-instance mirror/array | — | NOW | Phase 6 |
+| Nested components; `measure` on component instances | — | NEAR | Phase 6 findings |
+| Pack-level texture/texel budgets | — | Phase 7 design | Phase 6 finding |
 
 ---
 

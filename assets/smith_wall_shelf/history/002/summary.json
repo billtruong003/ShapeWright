@@ -1,0 +1,54 @@
+{
+ "iteration": 2,
+ "note": "final: shared iron_band update (plain box)",
+ "critique": "no shelf-specific findings at pack review; exported",
+ "source_hash": "d52613a7109b",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 3
+ },
+ "metrics": {
+  "triangles": 580,
+  "parts": 15,
+  "size_m": [
+   0.9046,
+   0.357,
+   0.2792
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.min.z": 0.0,
+   "shelf.max.y": 0.345,
+   "bracket.max.z < shelf.max.z": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "board_t": 0.045,
+  "seam": 0.008,
+  "leg": 0.08,
+  "leg_taper": 0.88,
+  "rail": 0.05,
+  "band_w": 0.045,
+  "band_t": 0.012,
+  "rivet_r": 0.011,
+  "wear": 0.004,
+  "bench_h": 0.85,
+  "seat_h": 0.5,
+  "shelf_w": 0.9,
+  "shelf_d": 0.26,
+  "back_h": 0.3,
+  "shelf_t": 0.045,
+  "cleat": 0.035,
+  "back_front": 0.08,
+  "shelf_top": 0.345,
+  "bracket_x": 0.32,
+  "bracket_h": 0.24,
+  "bracket_d": 0.15,
+  "bracket_t": 0.06,
+  "hooks": 3.0
+ }
+}

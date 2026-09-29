@@ -1,0 +1,47 @@
+{
+ "iteration": 2,
+ "note": "final: shared component updates (plain-box bands, long_rail_y default)",
+ "critique": "no stool-specific changes; pack sheet shows it matches the bench/rack leg and band language; exported",
+ "source_hash": "5e29c24311cc",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 632,
+  "parts": 17,
+  "size_m": [
+   0.4246,
+   0.512,
+   0.4112
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "seat.max.y": 0.5,
+   "frame.size.x / seat.size.x": 0.8573
+  }
+ },
+ "errors": [],
+ "params": {
+  "board_t": 0.045,
+  "seam": 0.008,
+  "leg": 0.08,
+  "leg_taper": 0.88,
+  "rail": 0.05,
+  "band_w": 0.045,
+  "band_t": 0.012,
+  "rivet_r": 0.011,
+  "wear": 0.004,
+  "bench_h": 0.85,
+  "seat_h": 0.5,
+  "seat_w": 0.42,
+  "seat_d": 0.38,
+  "seat_t": 0.054,
+  "splay_in": 0.04,
+  "frame_w": 0.34,
+  "frame_d": 0.3
+ }
+}

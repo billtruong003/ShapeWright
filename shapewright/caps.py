@@ -33,6 +33,7 @@ COMMANDS = {
     "import FILE NAME [--split]": "create an asset from GLB/OBJ/STL/PLY (parts per node/piece; geometry stays in the file)",
     "uv ASSET lock|show": "lock UV regions (uv.lock.yaml) so edits never move other parts' UVs",
     "family ASSET": "validate a base asset and every variant that extends it",
+    "pack ASSET... | --pack NAME | --tag TAG": "review assets as one set: common-scale sheet + material/param/density consistency report",
     "bench": "validate every asset under assets/ (CI)",
     "doctor": "check the environment and optional tools",
 }
@@ -63,6 +64,7 @@ def manifest() -> dict:
         "validators": [{"name": v.name, "layer": v.layer, "doc": v.doc, "codes": list(v.codes)} for v in VALIDATORS],
         "profiles": _named("profiles"),
         "components": _named("components"),
+        "packs": _named("packs"),
         "measure_queries": __import__("shapewright.spatial", fromlist=["QUERY_KINDS"]).QUERY_KINDS,
         "styles": _named("styles"),
         "exporters": {"glb": "binary glTF 2.0: named part nodes, hierarchy, materials, UV0, normals, sockets, collision, metadata extras"},
@@ -82,6 +84,7 @@ def summary_text() -> str:
               "VALIDATION LAYERS  " + " ".join(dict.fromkeys(v["layer"] for v in m["validators"])) + " export",
               "PROFILES  " + " ".join(m["profiles"]), "STYLES    " + " ".join(m["styles"]),
               "COMPONENTS " + (" ".join(m["components"]) or "-") + "   (components/NAME.yaml; use with `component:` in a part)",
+              "PACKS     " + (" ".join(m["packs"]) or "-") + "   (packs/NAME.yaml: shared params/materials; `pack: NAME` in an asset)",
               "MEASURE   " + " ".join(m["measure_queries"]) + "   (part-level `measure:` queries; docs/RELATIONSHIPS.md)",
               "EXPORT    glb",
               "", "* = required.  `sw doc NAME` for details, `sw caps --json` for everything."]

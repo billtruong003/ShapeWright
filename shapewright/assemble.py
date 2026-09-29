@@ -171,10 +171,21 @@ class BuildCtx:
         return out
 
     def build_geometry(self, raw, where) -> Mesh:
-        mesh = build_geometry(raw, self.env, self.ctx, f"{self.where}.{where}", self.asset_dir, self.materials)
+        # Nested expressions are centred, then their own `translate` is applied as an
+        # offset from that centre. (Recentring after the translate used to discard it,
+        # so `combine` items and `boolean` tools could not be positioned.)
+        translate = raw.get("translate") if isinstance(raw, dict) else None
+        inner = {k: v for k, v in raw.items() if k != "translate"} if translate is not None else raw
+        mesh = build_geometry(inner, self.env, self.ctx, f"{self.where}.{where}", self.asset_dir, self.materials)
         if mesh is None:
             raise ValueError(f"invalid geometry at {where} (see earlier errors)")
-        return mesh.recentered()
+        mesh = mesh.recentered()
+        if translate is not None:
+            tr = S.vec(translate, 3, self.env, f"{self.where}.{where}.translate", self.ctx)
+            if tr is None:
+                raise ValueError(f"invalid translate at {where}")
+            mesh = mesh.translated(tr)
+        return mesh
 
     build_shape = build_geometry  # backwards-compatible name for extensions written against v0.1
 
@@ -614,7 +625,35 @@ def measure(raw: dict, env: dict, world: World, ctx: S.Ctx, where: str) -> dict 
 # --------------------------------------------------------------------------- replication
 
 
-def _replicate(name: str, mesh: Mesh, raw: dict, env: dict, ctx: S.Ctx, where: str) -> list[tuple[str, Mesh, dict]]:
+class _Group:
+    """A placed component instance, replicated like a single mesh (same array/mirror code path)."""
+
+    def __init__(self, parts: list):
+        self.parts = parts
+
+    def bounds(self) -> np.ndarray:
+        return np.stack([np.min([p.bounds[0] for p in self.parts], 0), np.max([p.bounds[1] for p in self.parts], 0)])
+
+    def center(self) -> np.ndarray:
+        b = self.bounds()
+        return (b[0] + b[1]) / 2
+
+    def transformed(self, M: np.ndarray) -> "_Group":
+        import dataclasses
+
+        out = []
+        for p in self.parts:
+            piv = None if p.pivot is None else (M[:3, :3] @ p.pivot + M[:3, 3])
+            out.append(dataclasses.replace(p, mesh=p.mesh.transformed(M), pivot=piv, instance=dict(p.instance), tags=list(p.tags)))
+        return _Group(out)
+
+    def translated(self, d) -> "_Group":
+        M = np.eye(4)
+        M[:3, 3] = d
+        return self.transformed(M)
+
+
+def _replicate(name: str, mesh, raw: dict, env: dict, ctx: S.Ctx, where: str) -> list[tuple[str, Mesh, dict]]:
     items = [(name, mesh, {})]
     arr = raw.get("array")
     if arr is not None:
@@ -765,10 +804,6 @@ def build_part(u: Unit, world: World, materials: dict, style: dict, asset_dir: P
 
 def build_group(u: Unit, world: World, materials: dict, style: dict, asset_dir: Path, ctx: S.Ctx) -> list[Part]:
     """Build a component instance in its own space, then place it as one group."""
-    for k in ("array", "mirror"):
-        if k in u.raw:
-            ctx.error("SRC_SCHEMA", f"{u.where}.{k}", f"component instances do not support '{k}' yet",
-                      "instantiate the component several times with different positions")
     local = World()
     local.parts = []
     built: list[Part] = []
@@ -803,7 +838,18 @@ def build_group(u: Unit, world: World, materials: dict, style: dict, asset_dir: 
     for name, b in local.base_bounds.items():
         world.base_bounds[name] = b + shift
     world.base_bounds[u.name] = group_bounds + shift
-    return built
+    if "array" not in u.raw and "mirror" not in u.raw:
+        return built
+    out = []  # replicate the whole placed group: band -> band_left / band_right, parts renamed with the instance
+    for rep_name, group, info in _replicate(u.name, _Group(built), u.raw, u.env, ctx, u.where):
+        for p in group.parts:
+            p.name = rep_name + p.name[len(u.name):]
+            p.component = rep_name
+            if info:
+                p.instance = {**p.instance, **info, "component_instance_of": u.name}
+            out.append(p)
+        world.base_bounds[rep_name] = group.bounds()
+    return out
 
 
 # --------------------------------------------------------------------------- main build

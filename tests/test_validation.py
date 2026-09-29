@@ -122,3 +122,10 @@ def test_yaml_parse_error_is_reported(make_asset):
     with pytest.raises(SourceError) as e:
         build(make_asset("parts: [unclosed"))
     assert e.value.issues[0].code == "SRC_PARSE"
+
+
+def test_yaml_flow_comma_trap_gets_a_hint(make_asset):
+    with pytest.raises(SourceError) as e:
+        build(make_asset("parts:\n  a: {shape: {type: box, size: [0.1, 0.1, 0.1]}, doc: legs, rails: dark}\n"))
+    issue = next(i for i in e.value.issues if i.code == "SRC_SCHEMA")
+    assert "rails" in issue.message and "quote" in issue.hint

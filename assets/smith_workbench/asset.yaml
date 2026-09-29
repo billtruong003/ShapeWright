@@ -1,0 +1,81 @@
+# Blacksmith pack 1/6: the workbench. Shared pack (params, materials, budget) via `pack: blacksmith`;
+# construction via components: plank_top (top + lower shelf), leg_frame (legs, rails,
+# foot bands), iron_band (riveted straps around the top ends), smith_hammer.
+shapewright: 0.1
+pack: blacksmith          # shared params/materials/profile/style (packs/blacksmith.yaml)
+asset:
+  name: smith_workbench
+  kind: prop/crafting/workbench
+  description: Heavy plank-top blacksmith workbench with iron-banded legs and a low shelf (blacksmith workstation pack).
+  tags: [blacksmith_pack]
+
+params:
+  length:    {value: 1.5, min: 1.1, max: 2.0}
+  width:     {value: 0.72, min: 0.55, max: 0.9}
+  top_t:     {value: 0.07, doc: "thicker than board_t, a work surface"}
+  overhang:  0.06
+  frame_w:   length - 2 * overhang
+  frame_d:   width - 2 * overhang
+  shelf_y:   0.16
+  bench_leg: {value: leg * 1.4, doc: "heavier legs than the stool and rack, this bench takes hammering"}
+
+parts:
+  top:
+    component: plank_top
+    with: {length: length, width: width, thickness: top_t, planks: 3, gap: seam, wear: wear, batten_from_end: overhang + leg + 0.06}
+    materials: {top: wood, under: wood_dark}
+    anchor: top
+    position: [0, bench_h, 0]
+
+  frame:
+    component: leg_frame
+    with: {width: frame_w, depth: frame_d, height: bench_h - top_t + 0.004, leg: bench_leg, taper: leg_taper, rail: rail,
+           rail_y: shelf_y, side_rails: 1, long_rails: 0, aprons: 1, band_w: band_w, band_t: band_t, wear: wear}
+    materials: {structure: wood_dark, metal: iron}
+    anchor: bottom
+    position: [0, 0, 0]
+
+  shelf:
+    doc: low shelf resting on the side rails
+    component: plank_top
+    with: {length: frame_w - bench_leg, width: frame_d - 0.02, thickness: board_t * 0.8, planks: 2, gap: seam, wear: wear, batten_from_end: rail * 0.5 + 0.045}
+    materials: {top: wood, under: wood_dark}
+    anchor: bottom
+    doc: "low shelf: planks rest on the side rails, battens hang just inside them (batten 0.04 tall, 0.005 into the planks)"
+    position: [0, shelf_y + rail / 2 - 0.035 - 0.003, 0]
+
+  strap_l:
+    doc: riveted iron strap around the left end of the top
+    component: iron_band
+    with: {inner_x: top_t, inner_z: width, band_w: band_w, band_t: band_t, rivet_r: rivet_r, rivets: 1}
+    materials: {metal: iron}
+    rotate: [0, 0, 90]
+    anchor: center
+    position: [-(length / 2 - 0.12), bench_h - top_t / 2, 0]
+
+  strap_r:
+    component: iron_band
+    with: {inner_x: top_t, inner_z: width, band_w: band_w, band_t: band_t, rivet_r: rivet_r, rivets: 1}
+    materials: {metal: iron}
+    rotate: [0, 0, 90]
+    anchor: center
+    position: [length / 2 - 0.12, bench_h - top_t / 2, 0]
+
+  hammer:
+    doc: the same smith_hammer component that leans in the tool crate, lying on the top
+    component: smith_hammer
+    with: {handle_len: 0.42}
+    materials: {handle: wood, head: iron}
+    rotate: [0, 0, 90]
+    anchor: bottom
+    attach: {to: top, at: top, offset: [0.3, -0.003, 0.13]}
+
+sockets:
+  work_surface: {attach: {to: top, at: top}, doc: place tools / ingots on the top}
+
+collision: {mode: single_box}
+
+checks:
+  - {expr: top.max.y, min: bench_h - 0.005, max: bench_h + 0.01, doc: pack-wide workbench height}
+  - {expr: top.max.y - seat_h, min: 0.3, max: 0.4, doc: stool tucks under comfortably}
+  - {expr: frame_leg_front_left.min.y, max: 0.001, doc: legs reach the floor}

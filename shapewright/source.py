@@ -37,6 +37,15 @@ TOP_KEYS = {
     "collision": "collision proxy settings",
     "notes": "free text for humans and agents",
     "interface": "family contract for variants: {params: [public names], doc} (see docs/FAMILIES.md)",
+    "pack": "shared pack vocabulary: name (packs/NAME.yaml) or relative .yaml path; its params/materials are read-only here",
+}
+
+PACK_KEYS = {
+    "shapewright": "format version", "pack": "pack name", "doc": "what the set is",
+    "params": "shared construction language and scale (read-only in member assets)",
+    "materials": "shared palette (read-only in member assets)",
+    "profile": "production profile for every member", "style": "style for every member",
+    "budget": "default budget (members may tighten or override individual keys)", "notes": "free text",
 }
 
 PART_KEYS = {
@@ -68,7 +77,8 @@ INSTANCE_KEYS = {
     "anchor": "anchor of the whole component group", "position": "world position of the group anchor",
     "attach": "place the group relative to another part", "rotate": "rotate the group (degrees)",
     "parent": "semantic parent for the component's root parts", "tags": "tags added to every component part",
-    "doc": "purpose", "array": "(not supported for components yet)", "mirror": "(not supported for components yet)",
+    "doc": "purpose", "array": "repeat the whole group (names: <instance>_0.., parts <instance>_0_<part>)",
+    "mirror": "mirror the whole group (names: <instance>_left/_right, parts <instance>_left_<part>)",
 }
 
 COMPONENT_KEYS = {
@@ -117,13 +127,18 @@ def read_yaml(path: Path) -> dict:
     try:
         data = yaml.safe_load(raw) or {}
     except yaml.YAMLError as e:
-        raise SourceError([Issue("SRC_PARSE", "error", f"YAML parse error: {e}", str(path), "source")]) from None
+        msg = str(e)
+        hint = ""
+        if "flow" in msg or "expected ',' or" in msg or "mapping values are not allowed" in msg:
+            hint = ("inside {...} or [...] YAML splits at commas and colons: quote text and expressions that contain them, "
+                    'e.g. doc: "legs, rails: dark wood" or ["atan2(a, b)", 0, 0]')
+        raise SourceError([Issue("SRC_PARSE", "error", f"YAML parse error: {msg}", str(path), "source", hint)]) from None
     if not isinstance(data, dict):
         raise SourceError([Issue("SRC_PARSE", "error", "top level must be a mapping", str(path), "source")])
     return data
 
 
-FAMILY_OPEN_KEYS = {"shapewright", "extends", "asset", "params", "budget", "profile", "style", "materials", "checks", "notes", "uv", "collision"}
+FAMILY_OPEN_KEYS = {"shapewright", "extends", "asset", "params", "budget", "profile", "style", "materials", "checks", "notes", "uv", "collision", "pack"}
 
 
 def load_source(path: Path, _depth: int = 0, ctx: Ctx | None = None) -> dict:
@@ -169,7 +184,58 @@ def load_source(path: Path, _depth: int = 0, ctx: Ctx | None = None) -> dict:
                                         "extends", "source", "declare interface: {params: [...]} in the base"))
             data = _deep_merge(base, child)
         data["_extends"] = str(base_path)
+    if "pack" in data and "_pack" not in data:
+        data = apply_pack(data, path)
     return data
+
+
+def resolve_pack_path(ref: str, asset_path: Path) -> Path:
+    from .assemble import ROOT
+
+    ref = str(ref)
+    p = (asset_path.parent / ref).resolve() if ref.endswith(".yaml") else ROOT / "packs" / f"{ref}.yaml"
+    if not p.exists():
+        options = sorted(q.stem for q in (ROOT / "packs").glob("*.yaml"))
+        raise SourceError([Issue("SRC_REF", "error", f"pack not found: {ref}", "pack", "source",
+                                 suggest(ref, options).strip() or f"packs: {', '.join(options) or 'none'} (packs/NAME.yaml)")])
+    return p
+
+
+def apply_pack(data: dict, asset_path: Path) -> dict:
+    """Merge a pack's shared vocabulary into an asset source.
+
+    A pack is not a base asset: it has no parts and nothing is inherited
+    structurally. Its params and materials are read-only in members, so the set
+    cannot drift; profile/style are the pack's; budget keys are defaults.
+    """
+    pack_path = resolve_pack_path(data["pack"], asset_path)
+    pack = read_yaml(pack_path)
+    errors = []
+    for k in pack:
+        if k not in PACK_KEYS:
+            errors.append(Issue("SRC_SCHEMA", "error", f"unknown key '{k}' in pack", f"pack:{pack_path.name}.{k}", "source",
+                                suggest(k, PACK_KEYS).strip() or f"allowed: {', '.join(PACK_KEYS)}"))
+    for section in ("params", "materials"):
+        for k in (data.get(section) or {}):
+            if k in (pack.get(section) or {}):
+                errors.append(Issue("PACK_OVERRIDE", "error", f"{section[:-1]} '{k}' is defined by pack '{pack.get('pack', pack_path.stem)}' and is read-only",
+                                    f"{section}.{k}", "source",
+                                    "use a new name for an asset-specific value, or change it in the pack for every member"))
+    for k in ("profile", "style"):
+        if k in data and k in pack and data[k] != pack[k]:
+            errors.append(Issue("PACK_OVERRIDE", "error", f"{k} '{data[k]}' differs from the pack's '{pack[k]}'", k, "source",
+                                "members share the pack's profile and style"))
+    if errors:
+        raise SourceError(errors)
+    out = dict(data)
+    out["params"] = {**(pack.get("params") or {}), **(data.get("params") or {})}
+    out["materials"] = {**(pack.get("materials") or {}), **(data.get("materials") or {})}
+    for k in ("profile", "style"):
+        if k in pack:
+            out[k] = pack[k]
+    out["budget"] = {**(pack.get("budget") or {}), **(data.get("budget") or {})}
+    out["_pack"] = str(pack.get("pack") or pack_path.stem)
+    return out
 
 
 def source_hash(data: dict) -> str:
@@ -353,8 +419,10 @@ def check_keys(raw: dict, allowed: dict | set, where: str, ctx: Ctx):
         if str(key).startswith("_"):
             continue
         if key not in allowed:
-            ctx.error("SRC_SCHEMA", f"{where}.{key}" if where else str(key), f"unknown key '{key}'",
-                      suggest(key, allowed).strip() or f"allowed: {', '.join(sorted(allowed))}")
+            hint = suggest(key, allowed).strip() or f"allowed: {', '.join(sorted(allowed))}"
+            if isinstance(raw.get("doc"), str):  # `{doc: legs, rails: dark}` silently becomes two keys in YAML flow style
+                hint += "; if this key came from text after a comma or colon inside {...}, quote that text: doc: \"legs, rails: dark\""
+            ctx.error("SRC_SCHEMA", f"{where}.{key}" if where else str(key), f"unknown key '{key}'", hint)
 
 
 def lookup_spec(table: dict, kind: str, raw: Any, where: str, ctx: Ctx) -> OpSpec | None:

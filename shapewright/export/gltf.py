@@ -191,6 +191,7 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
         "version": __version__, "source_hash": asset.source_hash, "units": "m", "up": "+Y", "front": "+Z",
         "kind": asset.meta.get("kind", ""), "params": {k: round(v, 6) for k, v in asset.env.items()},
         "profile": asset.profile.get("name", ""), "style": asset.style.get("name", ""), "validation": validation_status,
+        "pack": asset.source.get("_pack", ""),
         "uv": {"method": surface.uv_method, "lock": surface.lock},
     }}
     if not nodes[0]["children"]:

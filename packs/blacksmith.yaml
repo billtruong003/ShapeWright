@@ -1,0 +1,37 @@
+# Blacksmith workstation pack: the shared vocabulary of the set (Phase 6, FRESH_AGENT_03).
+# Written by the fresh agent as a parts-less `extends` base ("kit"); migrated by the
+# maintainers to a first-class pack. Members say `pack: blacksmith`; these params and
+# materials are read-only in members, so the set cannot drift.
+# It fixes what makes the six assets read as one set:
+#   - one profile/style/budget, one 3-material palette (shared with anvil_stump's iron)
+#   - the construction language as named params: board thickness and seams,
+#     leg/post section, rail section, iron band width/thickness, rivet size, wear
+#   - pack-wide heights (workbench top vs anvil face, stool seat)
+# Construction itself is shared through components: plank_top (boards),
+# leg_frame (four banded legs + rails) and iron_band (riveted strap).
+shapewright: 0.1
+pack: blacksmith
+doc: Stylized blacksmith workstation set (workbench, stool, weapon rack, wall shelf, tool crate, bucket).
+profile: mobile_mid
+style: stylized_lowpoly
+budget: {triangles: 1200, materials: 3}   # wood boards / dark structural wood / iron
+
+params:
+  # construction language
+  board_t:   {value: 0.045, doc: "plank thickness for shelves, seats, crate walls"}
+  seam:      {value: 0.008, doc: gap between neighbouring planks}
+  leg:       {value: 0.08, doc: section of every leg / post}
+  leg_taper: {value: 0.88, doc: legs narrow toward the top (foot wider)}
+  rail:      {value: 0.05, doc: section of rails / stretchers}
+  band_w:    {value: 0.045, doc: iron band width}
+  band_t:    {value: 0.012, doc: how far an iron band stands proud of what it wraps}
+  rivet_r:   {value: 0.011, doc: rivet head radius}
+  wear:      {value: 0.004, doc: hand-made jitter}
+  # pack-wide dimensions
+  bench_h:   {value: 0.85, doc: "workbench top; anvil_stump face is ~0.8"}
+  seat_h:    {value: 0.5, doc: "smith stool seat (a bit taller than a tavern stool)"}
+
+materials:
+  wood:      {base_color: "#9a6a40", roughness: 0.85, doc: "boards, planks, staves"}
+  wood_dark: {base_color: "#5e3b22", roughness: 0.9, doc: "legs, rails, battens, brackets"}
+  iron:      {base_color: "#5a5f66", metallic: 0.6, roughness: 0.55, doc: "bands, rivets, handles (same as anvil_stump)"}

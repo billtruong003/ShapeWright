@@ -94,3 +94,16 @@ def test_family_command_validates_all_members(capsys):
     assert main(["family", "tavern_chair"]) == 0
     out = capsys.readouterr().out
     assert "tavern_chair" in out and "tavern_stool" in out and "interface:" in out
+
+
+def test_component_instances_can_be_mirrored_and_arrayed(make_asset):
+    a = build(make_asset(INSTANCE.format(with_="length: 0.6, width: 0.3, planks: 2")
+                         .replace("    position: [0, 0.75, 0]\n", "    position: [0.5, 0.75, 0]\n    mirror: x\n", 1)))
+    left = [p for p in a.parts if p.component == "top_left"]
+    right = [p for p in a.parts if p.component == "top_right"]
+    assert left and right and len(left) == len(right)
+    assert {p.name for p in right} >= {"top_right_plank_0", "top_right_batten_left"}
+    assert abs(sum(p.mesh.center()[0] for p in left) + sum(p.mesh.center()[0] for p in right)) < 1e-9  # mirror image
+    arr = build(make_asset(INSTANCE.format(with_="length: 0.4, width: 0.3, planks: 2, batten_from_end: 0.1")
+                           .replace("    position: [0, 0.75, 0]\n", "    position: [0, 0.75, 0]\n    array: {count: 3, offset: [0.5, 0, 0]}\n", 1), "arr"))
+    assert {p.component for p in arr.parts if p.component} == {"top_0", "top_1", "top_2"}

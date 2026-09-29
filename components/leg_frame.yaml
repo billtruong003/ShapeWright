@@ -1,0 +1,83 @@
+# Reusable sub-assembly: four square legs with iron foot bands, tied by rails.
+# Used by the blacksmith pack (workbench, stool, weapon_rack). The leg, band and
+# rail construction is private; users set only sizes and which rails exist.
+shapewright: 0.1
+component: leg_frame
+doc: Four tapered square legs (mirror x/z) with iron foot bands, optional low rails and top aprons. Materials `structure` and `metal`.
+
+params:                       # public interface
+  width:     {value: 1.2, min: 0.2, max: 3.0, doc: outer leg-to-leg span along x}
+  depth:     {value: 0.6, min: 0.2, max: 1.5, doc: outer leg-to-leg span along z}
+  height:    {value: 0.8, min: 0.2, max: 2.5, doc: leg height}
+  leg:       {value: 0.08, doc: leg section at the foot}
+  taper:     {value: 0.88, doc: leg section scale at the top}
+  rail:      {value: 0.05, doc: rail section}
+  rail_y:    {value: 0.15, doc: height of the low rails (centre)}
+  side_rails: {value: 1, doc: low rails along z (left and right)}
+  long_rails: {value: 0, doc: rails along x (front and back)}
+  long_rail_y: {value: rail_y + rail * 0.6, doc: height of the rails along x (default just above the side rails)}
+  aprons:    {value: 0, doc: rails along x just under the top (front and back)}
+  apron_h:   {value: 0.09, doc: apron height}
+  band_w:    {value: 0.045, doc: foot band width}
+  band_t:    {value: 0.012, doc: foot band thickness}
+  band_lift: {value: 0.03, doc: foot band distance from the ground}
+  wear:      {value: 0.004, doc: hand-made jitter}
+
+private:
+  lx: width / 2 - leg / 2
+  lz: depth / 2 - leg / 2
+  foot_band: leg + 2 * band_t
+
+parts:
+  leg:
+    shape: {type: chamfer_box, size: [leg, height, leg], chamfer: 0.012}
+    ops:
+      - {type: taper, axis: y, scale: taper}
+      - {type: jitter, amount: wear, seed: 41}
+    anchor: bottom
+    position: [lx, 0, lz]
+    mirror: [x, z]
+    uv: {share_instances: true}
+    material: structure
+
+  foot_band:
+    doc: iron shoe band around each leg foot (same recipe as iron_band, which cannot nest here)
+    shape: {type: box, size: [foot_band, band_w, foot_band]}
+    anchor: bottom
+    position: [lx, band_lift, lz]
+    mirror: [x, z]
+    uv: {share_instances: true}
+    shading: flat
+    tags: [thin_ok]
+    material: metal
+
+  side_rail:
+    enabled: side_rails
+    doc: low stretchers along z, ends buried half a leg deep
+    shape: {type: chamfer_box, size: [rail, rail, depth - leg], chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: 42}]
+    position: [lx, rail_y, 0]
+    mirror: x
+    uv: {share_instances: true}
+    material: structure
+
+  long_rail:
+    enabled: long_rails
+    doc: stretchers along x (front and back)
+    shape: {type: chamfer_box, size: [width - leg, rail, rail], chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: 43}]
+    position: [0, long_rail_y, lz]
+    mirror: z
+    uv: {share_instances: true}
+    material: structure
+
+  apron:
+    enabled: aprons
+    doc: rails just under the top, flush with the leg tops
+    shape: {type: chamfer_box, size: [width - leg, apron_h, rail * 0.8], chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: 44}]
+    anchor: top
+    position: [0, height, lz]
+    mirror: z
+    uv: {share_instances: true}
+    material: structure

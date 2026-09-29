@@ -1,0 +1,125 @@
+{
+ "asset": "smith_workbench",
+ "status": "PASS",
+ "source_hash": "aa9dc5fcd72b",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 6
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 972,
+  "parts": 25,
+  "sliver_triangles": 173,
+  "size_m": [
+   1.5046,
+   0.907,
+   0.7512
+  ],
+  "contacts": 65,
+  "triangles_by_part": {
+   "top_plank": 132,
+   "top_batten": 88,
+   "frame_leg": 176,
+   "frame_foot_band": 48,
+   "frame_side_rail": 88,
+   "frame_apron": 88,
+   "shelf_plank": 88,
+   "shelf_batten": 88,
+   "strap_l_band": 56,
+   "strap_r_band": 56,
+   "hammer_handle": 20,
+   "hammer_head": 44
+  },
+  "budget_triangles": 1200,
+  "materials": 3,
+  "checks": {
+   "top.max.y": 0.85,
+   "top.max.y - seat_h": 0.35,
+   "frame_leg_front_left.min.y": 0.0
+  },
+  "uv_utilization": 0.524,
+  "uv_overlap": 0.0,
+  "uv_owners": 17,
+  "texel_density_px_m": 143.1,
+  "texel_density_target": 256
+ },
+ "issues": [
+  {
+   "code": "FAMILY_NO_INTERFACE",
+   "severity": "info",
+   "layer": "source",
+   "where": "extends",
+   "msg": "base asset declares no `interface`; the variant depends on its internals",
+   "hint": "declare interface: {params: [...]} in the base"
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "frame_apron_back",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "frame_apron_front",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shelf_plank_0",
+   "msg": "15/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 15
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shelf_plank_1",
+   "msg": "15/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 15
+   }
+  },
+  {
+   "code": "EXP_VALIDATOR_UNAVAILABLE",
+   "severity": "info",
+   "layer": "export",
+   "msg": "Khronos glTF-Validator not installed; round-trip check only",
+   "hint": "cd tools/gltf-validator && npm install"
+  }
+ ],
+ "export": {
+  "path": "assets/smith_workbench/export/smith_workbench.glb",
+  "bytes": 95880,
+  "nodes": 28,
+  "meshes": 26,
+  "materials": 3
+ }
+}

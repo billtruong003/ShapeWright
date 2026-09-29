@@ -1,0 +1,129 @@
+# Blacksmith pack 3/6: weapon rack. Same leg_frame and shelf-on-rails recipe as the
+# workbench (tray = plank_top resting on the side rails), a slotted top board held by
+# two riveted iron_bands, and two optional display weapons standing in the slots.
+shapewright: 0.1
+extends: ../blacksmith_kit/kit.yaml
+asset:
+  name: smith_weapon_rack
+  kind: prop/crafting/weapon_rack
+  description: Upright weapon rack with a slotted top board, plank tray and iron-banded legs (blacksmith workstation pack).
+  tags: [blacksmith_pack]
+
+params:
+  rack_w:   {value: 1.0, min: 0.7, max: 1.6, doc: leg-to-leg span along x}
+  rack_d:   {value: 0.36, min: 0.28, max: 0.5}
+  rack_h:   {value: 1.2, min: 1.0, max: 1.5, doc: top of the slotted board}
+  top_t:    {value: board_t * 1.2}
+  top_over: {value: 0.04, doc: top board overhang past the legs}
+  shelf_y:  0.14
+  slots:    {value: 5, min: 3, max: 8}
+  slot_w:   {value: 0.05, doc: slot width (weapon hafts are ~0.035)}
+  slot_len: {value: rack_d * 0.45, doc: slot depth from the front edge}
+  pitch:    (rack_w - leg) / slots
+  slot_z:   (rack_d / 2 + top_over) - slot_len + slot_w / 2 + 0.01
+  has_weapons: {value: true, doc: display spear and sword (sockets mark every slot either way)}
+
+parts:
+  frame:
+    component: leg_frame
+    with: {width: rack_w, depth: rack_d, height: rack_h - top_t + 0.004, leg: leg, taper: leg_taper, rail: rail,
+           rail_y: shelf_y, side_rails: 1, long_rails: 0, aprons: 0, band_w: band_w, band_t: band_t, wear: wear}
+    materials: {structure: wood_dark, metal: iron}
+    anchor: bottom
+    position: [0, 0, 0]
+
+  tray:
+    doc: "planks rest on the side rails, battens hang just inside them (same recipe as the workbench shelf)"
+    component: plank_top
+    with: {length: rack_w - leg, width: rack_d - 0.02, thickness: board_t * 0.8, planks: 2, gap: seam, wear: wear, batten_from_end: rail * 0.5 + 0.045}
+    materials: {top: wood, under: wood_dark}
+    anchor: bottom
+    position: [0, shelf_y + rail / 2 - 0.035 - 0.003, 0]
+
+  top_board:
+    doc: slotted board; weapon hafts drop into the slots from the front
+    shape: {type: chamfer_box, size: [rack_w + 2 * top_over, top_t, rack_d + 2 * top_over], chamfer: 0.014}
+    ops:
+      - {type: subtract, shape: {type: box, size: [slot_w, top_t * 3, slot_len * 2], ops: [{type: repeat, count: slots, offset: [pitch, 0, 0]}]},
+         position: [0, 0, rack_d / 2 + top_over]}
+      - {type: jitter, amount: wear, seed: 51}
+    anchor: top
+    position: [0, rack_h, 0]
+    shading: flat
+    material: wood
+
+  strap_l:
+    component: iron_band
+    with: {inner_x: top_t, inner_z: rack_d + 2 * top_over, band_w: band_w, band_t: band_t, rivet_r: rivet_r, rivets: 1}
+    materials: {metal: iron}
+    rotate: [0, 0, 90]
+    position: [-(rack_w / 2 - leg / 2), rack_h - top_t / 2, 0]
+
+  strap_r:
+    component: iron_band
+    with: {inner_x: top_t, inner_z: rack_d + 2 * top_over, band_w: band_w, band_t: band_t, rivet_r: rivet_r, rivets: 1}
+    materials: {metal: iron}
+    rotate: [0, 0, 90]
+    position: [rack_w / 2 - leg / 2, rack_h - top_t / 2, 0]
+
+  spear_shaft:
+    enabled: has_weapons
+    shape: {type: cylinder, radius: 0.021, height: rack_h + 0.2, segments: 6}
+    anchor: bottom
+    attach: {to: tray, at: top, offset: [-pitch, -0.004, slot_z]}
+    material: wood_dark
+
+  spear_head:
+    enabled: has_weapons
+    doc: leaf-shaped iron head
+    shape: {type: cylinder, radius: 0.05, radius_top: 0.0, height: 0.22, segments: 4, ops: [{type: scale, factor: [1, 1, 0.4]}]}
+    anchor: bottom
+    attach: {to: spear_shaft, at: top, offset: [0, -0.02, 0]}
+    shading: flat
+    material: iron
+
+  sword_blade:
+    enabled: has_weapons
+    shape: {type: chamfer_box, size: [0.07, rack_h - 0.2, 0.02], chamfer: 0.006, ops: [{type: taper, axis: y, scale: [0.35, 1, 0.6]}]}
+    rotate: [0, 0, 180]
+    anchor: bottom
+    attach: {to: tray, at: top, offset: [pitch, -0.004, slot_z]}
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+  sword_guard:
+    enabled: has_weapons
+    shape: {type: chamfer_box, size: [0.2, 0.035, 0.04], chamfer: 0.008}
+    anchor: bottom
+    attach: {to: sword_blade, at: top, offset: [0, -0.01, 0]}
+    material: iron
+
+  sword_grip:
+    enabled: has_weapons
+    shape: {type: cylinder, radius: 0.018, height: 0.16, segments: 6}
+    anchor: bottom
+    attach: {to: sword_guard, at: top, offset: [0, -0.005, 0]}
+    material: wood_dark
+
+  sword_pommel:
+    enabled: has_weapons
+    shape: {type: chamfer_box, size: [0.05, 0.04, 0.05], chamfer: 0.01}
+    anchor: bottom
+    attach: {to: sword_grip, at: top, offset: [0, -0.005, 0]}
+    material: iron
+
+sockets:
+  slot_0: {attach: {to: tray, at: top, offset: [-2 * pitch, 0, slot_z]}, doc: weapon butt position under slot 0}
+  slot_1: {attach: {to: tray, at: top, offset: [-pitch, 0, slot_z]}}
+  slot_2: {attach: {to: tray, at: top, offset: [0, 0, slot_z]}}
+  slot_3: {attach: {to: tray, at: top, offset: [pitch, 0, slot_z]}}
+  slot_4: {attach: {to: tray, at: top, offset: [2 * pitch, 0, slot_z]}}
+
+collision: {mode: single_box}
+
+checks:
+  - {expr: top_board.max.y, min: rack_h - 0.005, max: rack_h + 0.01}
+  - {expr: top_board.max.y - bench_h, min: 0.25, max: 0.5, doc: taller than the workbench, below eye level}
+  - {expr: sword_pommel.max.y > top_board.max.y + 0.1, when: has_weapons, doc: hilts stand clear of the board}
+  - {expr: spear_head.min.y > top_board.max.y, when: has_weapons, doc: spear head above the board}

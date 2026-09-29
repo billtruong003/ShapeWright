@@ -1,0 +1,50 @@
+{
+ "iteration": 2,
+ "note": "pack review fixes: bench_leg leg*1.4, smith_hammer component lying on the top, plain-box bands",
+ "critique": "pack sheet: workbench had the lowest detail density (124 tris/m2) and thinnest-looking legs for its size -> heavier legs, hammer (shared with the crate) gives the top a focal detail; bands lost the 5 mm chamfer (invisible at 1.2 cm) which fixed the UV texel spread",
+ "source_hash": "aa9dc5fcd72b",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 6
+ },
+ "metrics": {
+  "triangles": 972,
+  "parts": 25,
+  "size_m": [
+   1.5046,
+   0.907,
+   0.7512
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "top.max.y": 0.85,
+   "top.max.y - seat_h": 0.35,
+   "frame_leg_front_left.min.y": 0.0
+  }
+ },
+ "errors": [],
+ "params": {
+  "board_t": 0.045,
+  "seam": 0.008,
+  "leg": 0.08,
+  "leg_taper": 0.88,
+  "rail": 0.05,
+  "band_w": 0.045,
+  "band_t": 0.012,
+  "rivet_r": 0.011,
+  "wear": 0.004,
+  "bench_h": 0.85,
+  "seat_h": 0.5,
+  "length": 1.5,
+  "width": 0.72,
+  "top_t": 0.07,
+  "overhang": 0.06,
+  "frame_w": 1.38,
+  "frame_d": 0.6,
+  "shelf_y": 0.16,
+  "bench_leg": 0.112
+ }
+}

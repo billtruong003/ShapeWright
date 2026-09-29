@@ -1,0 +1,51 @@
+# Blacksmith pack 2/6: the stool. Same leg_frame as the workbench (lighter legs),
+# a two-plank plank_top seat and one riveted iron_band across the seat.
+shapewright: 0.1
+pack: blacksmith          # shared params/materials/profile/style (packs/blacksmith.yaml)
+asset:
+  name: smith_stool
+  kind: prop/furniture/stool
+  description: Square two-plank blacksmith stool with iron-banded legs (blacksmith workstation pack).
+  tags: [blacksmith_pack]
+
+params:
+  seat_w:  {value: 0.42, min: 0.32, max: 0.5, doc: seat length along x}
+  seat_d:  {value: 0.38, min: 0.3, max: 0.45}
+  seat_t:  {value: board_t * 1.2, doc: seat boards a bit thicker than shelf boards}
+  splay_in: {value: 0.04, doc: legs set in from the seat edge}
+  frame_w: seat_w - 2 * splay_in
+  frame_d: seat_d - 2 * splay_in
+
+parts:
+  seat:
+    component: plank_top
+    with: {length: seat_w, width: seat_d, thickness: seat_t, planks: 2, gap: seam, wear: wear, batten_from_end: splay_in + leg / 2 - 0.04}
+    materials: {top: wood, under: wood_dark}
+    anchor: top
+    position: [0, seat_h, 0]
+
+  frame:
+    component: leg_frame
+    with: {width: frame_w, depth: frame_d, height: seat_h - seat_t + 0.004, leg: leg, taper: leg_taper, rail: rail * 0.9,
+           rail_y: 0.17, side_rails: 1, long_rails: 1, aprons: 0, band_w: band_w, band_t: band_t, wear: wear}
+    materials: {structure: wood_dark, metal: iron}
+    anchor: bottom
+    position: [0, 0, 0]
+
+  strap:
+    doc: iron band tying the two seat planks together
+    component: iron_band
+    with: {inner_x: seat_t, inner_z: seat_d, band_w: band_w, band_t: band_t, rivet_r: rivet_r, rivets: 1}
+    materials: {metal: iron}
+    rotate: [0, 0, 90]
+    anchor: center
+    position: [0, seat_h - seat_t / 2, 0]
+
+sockets:
+  sit_point: {attach: {to: seat, at: top}}
+
+collision: {mode: single_box}
+
+checks:
+  - {expr: seat.max.y, min: seat_h - 0.005, max: seat_h + 0.01, doc: pack-wide seat height}
+  - {expr: frame.size.x / seat.size.x, min: 0.7, max: 0.95, doc: legs sit under the seat}

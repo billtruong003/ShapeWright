@@ -76,7 +76,11 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
   If a relationship would need hand-maths, that is a sign to measure instead.
 - Geometry expressions nest: a boolean tool can have its own `ops`, `rotate`,
   `translate` and `material`. See `sw doc boolean`.
-- Reuse beats copying: `components/` holds sub-assemblies (listed by `sw caps`). `enabled: expr` makes parts optional.
+- Several assets that must look like one set: create `packs/NAME.yaml` (shared scale, construction
+  params, palette) and put `pack: NAME` in each asset; review the set with `sw pack --pack NAME`.
+  Don't use `extends` for this: `extends` is for variants of one design.
+- Reuse beats copying: `components/` holds sub-assemblies (listed by `sw caps`); component instances can
+  be `mirror`ed and `array`ed like parts. `enabled: expr` makes parts optional.
   Variants of a base with an `interface:` may only set its public params.
 - Geometry that primitives can't express: produce a mesh file by any means,
   put it in the asset directory and use `{type: mesh_file, path: ...}`, or

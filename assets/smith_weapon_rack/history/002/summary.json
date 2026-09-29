@@ -1,0 +1,57 @@
+{
+ "iteration": 2,
+ "note": "pack review fixes: rack_leg = leg*1.15, front/back mid rails via new leg_frame long_rail_y, weapons moved to the inner end of the slots",
+ "critique": "pack sheet: rack read tall and spindly next to stool/workbench (only a low tray tied the legs) -> mid-height long rails (same rail recipe) + slightly heavier posts; spear shaft passed 5 mm through the new front rail -> slot_z at the slot end + check",
+ "source_hash": "04c74a08bf32",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 6
+ },
+ "metrics": {
+  "triangles": 1030,
+  "parts": 25,
+  "size_m": [
+   1.0851,
+   1.794,
+   0.4712
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "spear_shaft.max.z < frame_long_rail_front.min.z": true,
+   "top_board.max.y": 1.2,
+   "top_board.max.y - bench_h": 0.35,
+   "sword_pommel.max.y > top_board.max.y + 0.1": true,
+   "spear_head.min.y > top_board.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "board_t": 0.045,
+  "seam": 0.008,
+  "leg": 0.08,
+  "leg_taper": 0.88,
+  "rail": 0.05,
+  "band_w": 0.045,
+  "band_t": 0.012,
+  "rivet_r": 0.011,
+  "wear": 0.004,
+  "bench_h": 0.85,
+  "seat_h": 0.5,
+  "rack_w": 1.0,
+  "rack_d": 0.36,
+  "rack_h": 1.2,
+  "top_t": 0.054,
+  "top_over": 0.04,
+  "shelf_y": 0.14,
+  "rack_leg": 0.092,
+  "slots": 5.0,
+  "slot_w": 0.05,
+  "slot_len": 0.162,
+  "pitch": 0.1816,
+  "slot_z": 0.083,
+  "has_weapons": 1.0
+ }
+}

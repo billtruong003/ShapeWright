@@ -1,0 +1,54 @@
+{
+ "iteration": 1,
+ "note": "blockout: upright plank_top back board (battens as wall spacers), plank_top shelf, extruded brackets, 2 iron_band straps, 3 hooks",
+ "critique": "bracket orientation checked in right ortho (long edge against the back board, diagonal rising to the front) - rotate [0,-90,0] is correct, [0,90,0] mirrored it; round 5-sided hooks tripped UV_TEXEL_DENSITY 1.55-1.62x -> square 4-sided forged-bar hooks (PASS, also more smithy); straps wrap the shelf back edge so the shelf starts band_t off the wall",
+ "source_hash": "d52613a7109b",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 4
+ },
+ "metrics": {
+  "triangles": 644,
+  "parts": 15,
+  "size_m": [
+   0.9046,
+   0.357,
+   0.2792
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.min.z": 0.0,
+   "shelf.max.y": 0.345,
+   "bracket.max.z < shelf.max.z": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "board_t": 0.045,
+  "seam": 0.008,
+  "leg": 0.08,
+  "leg_taper": 0.88,
+  "rail": 0.05,
+  "band_w": 0.045,
+  "band_t": 0.012,
+  "rivet_r": 0.011,
+  "wear": 0.004,
+  "bench_h": 0.85,
+  "seat_h": 0.5,
+  "shelf_w": 0.9,
+  "shelf_d": 0.26,
+  "back_h": 0.3,
+  "shelf_t": 0.045,
+  "cleat": 0.035,
+  "back_front": 0.08,
+  "shelf_top": 0.345,
+  "bracket_x": 0.32,
+  "bracket_h": 0.24,
+  "bracket_d": 0.15,
+  "bracket_t": 0.06,
+  "hooks": 3.0
+ }
+}

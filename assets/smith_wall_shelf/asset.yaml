@@ -1,0 +1,99 @@
+# Blacksmith pack 4/6: wall shelf. Back board and shelf are the same plank_top
+# component (the back board rotated upright, battens against the wall as spacers),
+# dark-wood brackets, riveted iron_band straps over the brackets and iron hooks
+# for tongs. Wall prop: the wall is the plane z = 0, the shelf faces +Z,
+# the origin is at the bottom-centre of the back board on the wall.
+shapewright: 0.1
+pack: blacksmith          # shared params/materials/profile/style (packs/blacksmith.yaml)
+asset:
+  name: smith_wall_shelf
+  kind: prop/furniture/wall_shelf
+  description: Plank wall shelf on wooden brackets with iron straps and tong hooks (blacksmith workstation pack).
+  tags: [blacksmith_pack]
+  placement: wall
+
+params:
+  shelf_w:  {value: 0.9, min: 0.6, max: 1.4}
+  shelf_d:  {value: 0.26, min: 0.18, max: 0.35}
+  back_h:   {value: 0.3, doc: height of the back board}
+  shelf_t:  board_t
+  cleat:    {value: 0.035, doc: back-board battens act as wall spacers (batten 0.04, 0.005 into the planks)}
+  back_front: cleat + board_t
+  shelf_top: back_h + shelf_t
+  bracket_x: shelf_w / 2 - 0.13
+  bracket_h: back_h * 0.8
+  bracket_d: shelf_d - back_front - 0.03
+  bracket_t: rail * 1.2
+  hooks:    {value: 3, min: 0, max: 5}
+
+parts:
+  back_board:
+    doc: upright plank_top; planks face the room, battens against the wall
+    component: plank_top
+    with: {length: shelf_w - 0.08, width: back_h, thickness: board_t, planks: 2, gap: seam, wear: wear, batten_from_end: 0.08}
+    materials: {top: wood, under: wood_dark}
+    rotate: [90, 0, 0]
+    anchor: bottom_back
+    position: [0, 0, 0]
+
+  shelf:
+    component: plank_top
+    with: {length: shelf_w, width: shelf_d - band_t, thickness: shelf_t, planks: 2, gap: seam, wear: wear, batten_from_end: shelf_w / 2 - bracket_x - 0.04}
+    materials: {top: wood, under: wood_dark}
+    anchor: top_back
+    position: [0, shelf_top, band_t]
+
+  bracket:
+    doc: triangular brace under the shelf, against the back board
+    shape:
+      type: extrude
+      polygon: [[0, 0], [0.05, 0], [bracket_d, bracket_h - 0.06], [bracket_d, bracket_h], [0, bracket_h]]
+      depth: bracket_t
+      rotate: [0, -90, 0]
+    ops: [{type: jitter, amount: wear * 0.5, seed: 61}]
+    anchor: top_back
+    position: [bracket_x, back_h + 0.004, back_front - 0.004]
+    mirror: x
+    uv: {share_instances: true}
+    shading: flat
+    material: wood_dark
+
+  strap_l:
+    doc: riveted strap over each bracket, wrapping the shelf board
+    component: iron_band
+    with: {inner_x: shelf_t, inner_z: shelf_d - band_t, band_w: band_w, band_t: band_t, rivet_r: rivet_r, rivets: 1}
+    materials: {metal: iron}
+    rotate: [0, 0, 90]
+    anchor: back
+    position: [-bracket_x, shelf_top - shelf_t / 2, 0]
+
+  strap_r:
+    component: iron_band
+    with: {inner_x: shelf_t, inner_z: shelf_d - band_t, band_w: band_w, band_t: band_t, rivet_r: rivet_r, rivets: 1}
+    materials: {metal: iron}
+    rotate: [0, 0, 90]
+    anchor: back
+    position: [bracket_x, shelf_top - shelf_t / 2, 0]
+
+  hook:
+    enabled: hooks > 0
+    doc: forged square-bar J-hooks in the back board for tongs and ladles
+    shape: {type: tube, path: [[0, 0.06, 0], [0, 0, 0.01], [0, 0.0, 0.06], [0, 0.04, 0.08]], radius: 0.012, sides: 4}
+    anchor: back
+    position: ["-(hooks - 1) * 0.12 / 2", back_h * 0.4, back_front - 0.006]
+    array: {count: hooks, offset: [0.12, 0, 0]}
+    uv: {seams: regions}
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+sockets:
+  shelf_surface: {attach: {to: shelf, at: top}, doc: place jars / ingots}
+  hook_0: {attach: {to: hook_0, at: top_front}, doc: hang a tool}
+
+collision: {mode: single_box}
+
+checks:
+  - {expr: asset.min.z, min: -0.002, max: 0.002, doc: the back sits on the wall plane}
+  - {expr: shelf.max.y, min: shelf_top - 0.005, max: shelf_top + 0.01}
+  - {expr: bracket.max.z < shelf.max.z, doc: brackets stay under the shelf}
