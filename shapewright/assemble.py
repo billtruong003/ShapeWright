@@ -423,6 +423,17 @@ def resolve_materials(raw: dict, env: dict, ctx: S.Ctx) -> dict:
             "layers": layers,
             "instance_of": m.get("_instance_of"),
         }
+        if arch_name == "authored":
+            texs = args.get("textures") or {}
+            if not isinstance(texs, dict) or not all(isinstance(v, str) for v in texs.values()):
+                ctx.error("SRC_SCHEMA", f"{where}.textures", "textures must map channels to image paths", f"channels: {', '.join(M.AUTHORED_CHANNELS)}")
+                texs = {}
+            for ch in texs:
+                if ch not in M.AUTHORED_CHANNELS:
+                    ctx.error("SRC_SCHEMA", f"{where}.textures.{ch}", f"unknown texture channel '{ch}'",
+                              suggest(ch, M.AUTHORED_CHANNELS).strip() or f"channels: {', '.join(M.AUTHORED_CHANNELS)}")
+            mat["authored"] = True
+            mat["textures"] = {k: v for k, v in texs.items() if k in M.AUTHORED_CHANNELS}
         mat["textured"] = M.is_textured(mat)
         resolved[name] = mat
     return resolved

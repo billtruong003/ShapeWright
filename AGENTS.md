@@ -90,6 +90,10 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
 - Geometry that primitives can't express: produce a mesh file by any means,
   put it in the asset directory and use `{type: mesh_file, path: ...}`, or
   `sw import FILE NAME`. It is validated, rendered and exported like the rest.
+- Imported assets keep their materials and textures (`archetype: authored`). Rename parts from a
+  `--mode parts` render. Repair them with `{type: clean}` and reduce them with `{type: decimate}`;
+  both keep the UVs. Replace a piece by deleting it and adding a native part. Assign a procedural
+  material only to parts whose look you want to change. docs/IMPORT.md.
 - Surface detail comes from material **archetypes**, not geometry or hand-made images:
   `materials: {oak: {archetype: wood, color: ..., grain_strength: ..., edge_wear: ...}}`.
   `sw doc wood` (or metal, stone, painted, flat) lists the params. Look at the result

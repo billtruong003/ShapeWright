@@ -107,3 +107,27 @@ a native part, make a variant, and export.
 | I4 | Replacing a handle/part means deleting an imported piece and adding a native part: works, with a `measure` for fit |
 | I5 | The agent is surprised that a changed material is baked while untouched parts keep their textures (two texture sets). The report must explain it |
 | I6 | 0 framework changes (the gate) |
+
+## Implementation status (before FRESH_AGENT_07)
+
+Implemented as designed: authored pass-through materials (importer, surface, bake, validation,
+export, preview renders), the `clean` op (winding by breadth-first search over shared edges, hole
+fans), UV-preserving `decimate` (corner transfer through one source face; `resample` corners
+are now *transferred*), node-named pieces, and unit/extension hints. Tests: `tests/test_import.py`,
+which uses its own minimal glTF reader, independent of trimesh.
+
+### A bug this phase found: every exported texture was mirrored vertically (Phase 8 to 10)
+
+Internal UVs are v-up (trimesh flips v on load), but glTF's v runs down from the image's top row.
+The exporter wrote v unchanged, so **every textured GLB since Phase 8 sampled its atlas mirrored**
+in engines. Nothing that existed could see it:
+- the Khronos validator checks structure, not appearance;
+- the round-trip check re-imports through trimesh, which flips v back;
+- our renderer uses internal UVs.
+
+It surfaced when the authored-UV round trip was checked against the original file's raw accessors.
+Fixed in the exporter; `test_exported_atlas_follows_the_gltf_uv_convention` samples the exported
+image as an engine would. All 33 committed exports were re-exported.
+
+**Lesson:** export correctness needs at least one check that reads the file with the target's
+conventions, not with the library we imported through.

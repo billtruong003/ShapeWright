@@ -56,7 +56,7 @@ POLICY = {
     "preserve":  ("preserved",         "preserved",         "preserved"),      # transforms, deformers
     "refine":    ("interpolated",      "inherited",         "interpolated"),   # subdivision
     "rebuild":   ("interpolated",      "inherited",         "invalidated"),    # booleans, trims (backend provenance)
-    "resample":  ("transferred",       "transferred",       "invalidated"),    # decimate, remesh, hull of a mesh
+    "resample":  ("transferred",       "transferred",       "transferred"),    # decimate (corners via one source face per new face)
     "generate":  ("default",           "assigned",          "absent"),         # generators create fresh geometry
 }
 

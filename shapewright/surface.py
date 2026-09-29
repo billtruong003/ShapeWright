@@ -48,6 +48,7 @@ class SurfacePart:
     face_material: np.ndarray  # (m,) object: material name per face (None = part material)
     colors: np.ndarray | None = None  # (k, 4) float32 linear RGBA
     uv_owner: str = ""
+    authored: bool = False  # UVs are the part's own (authored material), not an atlas region
 
 
 @dataclass
@@ -87,6 +88,19 @@ def corner_normals(mesh: Mesh, mode: str, angle_deg: float) -> np.ndarray:
 
 
 # ------------------------------------------------------------------ UV owners and charts
+
+
+def is_authored(asset: Asset, part) -> bool:
+    """The part's material brings its own textures and UVs (docs/IMPORT.md)."""
+    return bool((asset.materials.get(part.material or "") or {}).get("authored"))
+
+
+def atlas_view(asset: Asset) -> Asset:
+    """The asset as the atlas sees it: parts with authored materials take no atlas space."""
+    import dataclasses
+
+    keep = [p for p in asset.parts if not is_authored(asset, p)]
+    return asset if len(keep) == len(asset.parts) else dataclasses.replace(asset, parts=keep)
 
 
 def uv_owners(asset: Asset) -> dict[str, str]:
@@ -159,6 +173,7 @@ def read_lock(asset_dir: Path) -> dict | None:
 
 
 def compute_layout(asset: Asset, resolution: int, padding: int):
+    asset = atlas_view(asset)
     owners = uv_owners(asset)
     first = {}
     for p in asset.parts:
@@ -200,6 +215,7 @@ def write_lock(asset: Asset) -> Path:
 
 
 def _unwrap_regions(asset: Asset, resolution: int, padding: int, surface: Surface) -> dict[str, np.ndarray]:
+    asset = atlas_view(asset)
     owners, first, charts, rects = compute_layout(asset, resolution, padding)
     lock = read_lock(asset.dir)
     if lock:
@@ -232,6 +248,7 @@ def _unwrap_regions(asset: Asset, resolution: int, padding: int, surface: Surfac
 
 def _unwrap_atlas(asset: Asset, resolution: int, padding: int) -> dict[str, np.ndarray]:
     """v0.1 behaviour: one global unwrap (unstable across edits)."""
+    asset = atlas_view(asset)
     from .mesh import concat
 
     whole = concat([p.mesh for p in asset.parts])
@@ -264,7 +281,11 @@ def build_surface(asset: Asset) -> Surface:
             surface.uv_method = "none"
             corner_uvs = {}
     for p in asset.parts:
-        cuv = corner_uvs.get(p.name)
+        auth = is_authored(asset, p)
+        if auth:  # authored textures map through the part's own UVs, unchanged
+            cuv = p.mesh.cattr["uv"].astype(np.float64) if "uv" in p.mesh.cattr and "uv" not in p.mesh.invalidated else None
+        else:
+            cuv = corner_uvs.get(p.name)
         pos = p.mesh.V[p.mesh.F]  # (m,3,3)
         nrm = corner_normals(p.mesh, p.shading, p.smooth_angle)
         cols = [pos.reshape(-1, 3), nrm.reshape(-1, 3)]
@@ -289,5 +310,6 @@ def build_surface(asset: Asset) -> Surface:
             mats,
             col[p.mesh.F].reshape(-1, 4)[sel].astype(np.float32) if col is not None else None,
             surface.owners.get(p.name, p.name),
+            auth,
         )
     return surface

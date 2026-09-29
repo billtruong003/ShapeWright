@@ -311,9 +311,14 @@ def uv_layout(asset: Asset, surface: Surface, metrics: dict):
     oob = []
     groups: dict[str, list] = {}
     shared = {o for o in surface.owners.values() if o.endswith("*")}
+    authored_charts = set()  # owners whose atlas charts come from the file's own UVs
     for p in asset.parts:
         sp = surface.parts[p.name]
         uv = sp.corner_uv
+        if sp.authored or uv is None:
+            continue  # authored materials use their own UVs (may tile/overlap by design); see authored_materials
+        if "uv" in p.mesh.cattr and "uv" not in p.mesh.invalidated:
+            authored_charts.add(sp.uv_owner)
         if uv.min() < -1e-6 or uv.max() > 1 + 1e-6:
             oob.append(p.name)
         o = sp.uv_owner
@@ -341,9 +346,15 @@ def uv_layout(asset: Asset, surface: Surface, metrics: dict):
     metrics["uv_overlap"] = round(ratio, 4)
     metrics["uv_owners"] = len(groups)
     if ratio > 0.002:
-        involved = sorted(o.rstrip("*") for o, m in masks.items() if (m & overlap).any())
-        out.append(_issue("UV_OVERLAP", "error", "surface", f"{ratio:.1%} of used UV area overlaps", ",".join(involved[:6]),
-                          "run `sw uv lock` after structural changes, or remove authored overlapping UVs", ratio=round(ratio, 4)))
+        inv = [o for o, m in masks.items() if (m & overlap).any()]
+        involved = sorted(o.rstrip("*") for o in inv)
+        if inv and all(o in authored_charts for o in inv):  # mirrored/stacked islands from the file: shared texels, by design
+            out.append(_issue("UV_OVERLAP", "warning", "surface", f"{ratio:.1%} of used UV area overlaps (authored UVs from the file)",
+                              ",".join(involved[:6]), "mirrored islands share baked texels; fine unless each side needs its own detail",
+                              ratio=round(ratio, 4)))
+        else:
+            out.append(_issue("UV_OVERLAP", "error", "surface", f"{ratio:.1%} of used UV area overlaps", ",".join(involved[:6]),
+                              "run `sw uv lock` after structural changes, or remove authored overlapping UVs", ratio=round(ratio, 4)))
     if surface.uv_method == "regions":
         if surface.lock == "stale":
             out.append(_issue("UV_LOCK_STALE", "warning", "surface", f"uv.lock.yaml does not match the parts ({', '.join(surface.lock_notes[:6])}); "
@@ -401,6 +412,41 @@ def style_heuristics(asset: Asset, surface: Surface, metrics: dict):
     max_mat = h.get("max_materials")
     if max_mat and len({p.material for p in asset.parts}) > max_mat:
         out.append(_issue("STYLE_MATERIALS", "warning", "style", f"more than {max_mat} materials", ""))
+    return out
+
+
+# ---------------------------------------------------------------- authored materials (Phase 11)
+
+
+@validator("authored_materials", "surface", "Imported/authored texture sets: files present and inside the asset, parts still have their UVs.",
+           ("TEX_AUTHORED_IMAGE_INVALID", "TEX_AUTHORED_UV_MISSING", "TEX_AUTHORED_SETS"))
+def authored_materials(asset: Asset, surface: Surface, metrics: dict):
+    from ..bake import authored_image_path
+
+    out = []
+    used = {p.material for p in asset.parts}
+    sets = [n for n, m in asset.materials.items() if m.get("authored") and n in used]
+    for name in sets:
+        for ch, rel in asset.materials[name]["textures"].items():
+            try:
+                authored_image_path(asset.dir, rel)
+            except ValueError as e:
+                out.append(_issue("TEX_AUTHORED_IMAGE_INVALID", "error", "surface", str(e), f"materials.{name}.textures.{ch}",
+                                  "keep imported textures under the asset directory (sw import copies them to source/textures)"))
+    for p in asset.parts:
+        sp = surface.parts[p.name]
+        if sp.authored and sp.corner_uv is None:
+            out.append(_issue("TEX_AUTHORED_UV_MISSING", "error", "surface", f"'{p.name}' uses authored material '{p.material}' but has no UVs "
+                              f"(an op dropped them: {', '.join(sorted(p.mesh.invalidated)) or 'none recorded'})", p.name,
+                              "apply topology-changing ops (booleans) before import, use decimate/clean (they keep UVs), "
+                              "or give the part a procedural material"))
+    if sets:
+        metrics["authored_texture_sets"] = len(sets)
+        from ..bake import needs_textures
+
+        if needs_textures(asset):
+            out.append(_issue("TEX_AUTHORED_SETS", "info", "surface", f"{len(sets)} authored texture set(s) + the baked atlas are exported "
+                              "(one material/draw call per set)", "", "Phase 12 budgets decide whether to merge"))
     return out
 
 

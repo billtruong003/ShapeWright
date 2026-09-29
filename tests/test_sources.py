@@ -41,7 +41,7 @@ def test_split_gives_addressable_pieces(tmp_path):
     shifted = ["f " + " ".join(str(int(i) + 8) for i in f.split()[1:]) for f in faces]
     two.write_text("\n".join(verts + moved + faces + shifted) + "\n")
     res = import_file(two, tmp_path / "pieces", "pieces", split=True)
-    assert [r["part"] for r in res["parts"]] == ["piece_01", "piece_02"]
+    assert [r["part"] for r in res["parts"]] == ["two_obj_01", "two_obj_02"]  # pieces keep their node's name (Phase 11)
     a = build(tmp_path / "pieces")
     assert len(a.parts) == 2 and np.isclose(a.bounds()[1][0] - a.bounds()[0][0], 0.7)
 

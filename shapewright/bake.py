@@ -135,6 +135,37 @@ def _dilate(img: np.ndarray, filled: np.ndarray, steps: int) -> np.ndarray:
 # ------------------------------------------------------------------ images
 
 
+def authored_image_path(asset_dir: Path, rel: str) -> Path:
+    """Sandboxed path of an image referenced by the source (same rules as image layers)."""
+    p = Path(rel)
+    if p.is_absolute() or ".." in p.parts:
+        raise ValueError(f"image path '{rel}' must be relative and stay inside the asset directory")
+    full = (asset_dir / p).resolve()
+    if asset_dir.resolve() not in full.parents or full.suffix.lower() not in IMAGE_TYPES or not full.exists():
+        raise ValueError(f"image '{rel}' not found or not PNG/JPEG inside the asset directory")
+    if full.stat().st_size > LIMITS.max_image_bytes:
+        raise ValueError(f"image '{rel}' larger than {LIMITS.max_image_bytes} bytes")
+    return full
+
+
+def load_authored(asset_dir: Path, rel: str) -> np.ndarray:
+    """RGB float image for previews of authored materials (cached per path)."""
+    from PIL import Image
+
+    full = authored_image_path(asset_dir, rel)
+    key = (str(full), full.stat().st_mtime_ns)
+    if key not in _AUTHORED_CACHE:
+        with Image.open(full) as im:
+            if max(im.size) > LIMITS.max_texture_size:
+                raise ValueError(f"image '{rel}' is {im.size}, larger than {LIMITS.max_texture_size}px")
+            _AUTHORED_CACHE.clear() if len(_AUTHORED_CACHE) > 16 else None
+            _AUTHORED_CACHE[key] = np.asarray(im.convert("RGB"), dtype=np.float32) / 255.0
+    return _AUTHORED_CACHE[key]
+
+
+_AUTHORED_CACHE: dict = {}
+
+
 def _load_image(asset_dir: Path, rel: str) -> np.ndarray:
     from PIL import Image
 
@@ -177,7 +208,7 @@ def _resolution(asset: Asset, surface: Surface, target: float) -> tuple[int, int
     seen = set()
     for p in asset.parts:
         sp = surface.parts[p.name]
-        if sp.uv_owner in seen or sp.corner_uv is None:
+        if sp.uv_owner in seen or sp.corner_uv is None or sp.authored:
             continue
         seen.add(sp.uv_owner)
         _, a = p.mesh.face_normals()
@@ -208,8 +239,8 @@ def bake(asset: Asset, surface: Surface) -> Textures | None:
     ground = min(float(p.mesh.V[:, 1].min()) for p in asset.parts if len(p.mesh.V))
     for p in asset.parts:
         sp = surface.parts[p.name]
-        if sp.corner_uv is None or sp.uv_owner in seen_owner:
-            continue  # shared-UV instances reuse the first instance's texels
+        if sp.corner_uv is None or sp.uv_owner in seen_owner or sp.authored:
+            continue  # shared-UV instances reuse the first instance's texels; authored parts keep their own
         seen_owner.add(sp.uv_owner)
         mesh = p.mesh
         texel, fid, bary = _rasterize_uv(np.stack([sp.corner_uv[..., 0] * res, (1 - sp.corner_uv[..., 1]) * res], -1), res)

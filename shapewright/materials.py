@@ -255,7 +255,24 @@ def painted(a, s: Samples) -> Channels:
     return Channels(np.clip(base, 0, 1), np.clip(rough, 0, 1), np.zeros(k))
 
 
+AUTHORED_CHANNELS = ("base_color", "metallic_roughness", "normal", "occlusion", "emissive")
+
+
+@archetype("authored", "Texture set authored elsewhere (written by `sw import`): the part keeps its own UVs and textures, "
+           "which pass through to the export unchanged. Not baked into the asset atlas; assign a procedural archetype "
+           "to re-surface the part instead (docs/IMPORT.md).", [
+    Param("metallic", "num", 1.0, "metallic factor (multiplies the metallic_roughness texture's blue channel)", min=0, max=1),
+    Param("textures", "any", {}, "{base_color, metallic_roughness, normal, occlusion, emissive}: image paths inside the asset directory")],
+    example="{archetype: authored, textures: {base_color: source/textures/body_base_color.png}, color: '#ffffff', roughness: 1.0}")
+def authored(a, s: Samples) -> Channels:  # preview only; authored parts are never baked
+    k = len(s.P)
+    return Channels(np.tile(np.asarray(a["color"]), (k, 1)), _const(k, a["roughness"]), _const(k, a["metallic"]))
+
+
 def is_textured(mat: dict) -> bool:
+    """Needs the asset's baked atlas (authored materials bring their own textures)."""
+    if mat.get("archetype") == "authored":
+        return False
     args = mat.get("args", {})
     return mat.get("archetype", "flat") != "flat" or bool(mat.get("layers")) or args.get("edge_wear", 0) > 0 or args.get("grime", 0) > 0
 

@@ -59,7 +59,7 @@ without one.
 | `preserve` | preserved | preserved | preserved | scale, rotate, translate, taper, bend, twist, shear, jitter, noise, inflate, smooth |
 | `refine` | interpolated (edge midpoints) | inherited by child faces | interpolated (barycentric) | subdivide |
 | `rebuild` | interpolated (through Manifold vertex properties) | inherited from the source face (Manifold per-triangle provenance) | **invalidated** | subtract, union, intersect, flat_bottom, mirror, repeat, boolean, combine |
-| `resample` | transferred (nearest vertex) | transferred (nearest face) | **invalidated** | decimate (and future remesh) |
+| `resample` | transferred (nearest vertex) | transferred (nearest face) | transferred: each new face maps its corners through the one source face under its centroid, so a face never straddles two UV charts (Phase 11; before, **invalidated**) | decimate (and future remesh) |
 | `generate` | defaults | assigned: `origin` = expression path, `region` by normal | absent | generators, `mesh_file` (which carries file UVs/colours) |
 
 Mechanics: topology-changing ops build the new mesh with

@@ -215,7 +215,26 @@ tags: [open_ok]   # if the file is not watertight
 
 Paths must stay inside the asset directory (GLB, OBJ, STL, PLY). Authored UVs
 and vertex colours are kept. `sw import FILE NAME [--split]` writes such a
-source for you.
+source for you. It also writes one **`authored`** material per file material, with its textures
+(base colour, metallic-roughness, normal, occlusion, emissive) saved under `source/textures/`:
+
+```yaml
+materials:
+  bottle_mat: {archetype: authored, textures: {base_color: source/textures/bottle_mat_base_color.png,
+               normal: source/textures/bottle_mat_normal.png}, color: "#ffffff", roughness: 1.0, metallic: 1.0}
+```
+
+- Parts with an authored material keep their own UVs and textures, which pass through to the export
+  unchanged. They are not baked and take no atlas space.
+- UV overlap and tiling are the author's business on those parts.
+- To re-surface an imported part, give it a procedural material (`archetype: wood`, ...). It is then
+  baked into the asset atlas through its authored UVs.
+- Ops that rebuild topology (booleans) drop authored UVs (`TEX_AUTHORED_UV_MISSING`).
+- `decimate` and `clean` keep them.
+- Repair ops for imported geometry: `{type: clean}` welds vertices, drops zero-area and duplicate
+  faces, fixes winding, and can `fill_holes: true`.
+
+See docs/IMPORT.md.
 
 ### Packs (sets of assets)
 

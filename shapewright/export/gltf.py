@@ -79,7 +79,11 @@ class _Builder:
         if normals is not None:
             attrs["NORMAL"] = self.add(normals.astype(np.float32), FLOAT, "VEC3", ARRAY_BUFFER)
         if uvs is not None:
-            attrs["TEXCOORD_0"] = self.add(uvs.astype(np.float32), FLOAT, "VEC2", ARRAY_BUFFER)
+            # internal UVs are v-up (v = 0 at the image bottom, as trimesh loads them); glTF's v runs
+            # down from the image's top row. Without this flip every texture sampled mirrored in engines
+            # (found in Phase 11; the Khronos validator and trimesh round-trips cannot see it).
+            uv_file = np.stack([uvs[:, 0], 1.0 - uvs[:, 1]], 1)
+            attrs["TEXCOORD_0"] = self.add(uv_file.astype(np.float32), FLOAT, "VEC2", ARRAY_BUFFER)
         if colors is not None:
             attrs["COLOR_0"] = self.add(colors.astype(np.float32), FLOAT, "VEC4", ARRAY_BUFFER)
         flat = indices.reshape(-1)
@@ -153,11 +157,51 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
             textures.append({"source": len(images) - 1, "sampler": 0})
         samplers.append({"magFilter": 9729, "minFilter": 9987, "wrapS": 33071, "wrapT": 33071})
     materials, mat_index = [], {}
+    image_of: dict = {}  # authored image path -> texture index (each file embedded once, bytes unchanged)
+
+    def authored_texture(rel: str) -> int:
+        from ..bake import authored_image_path
+
+        full = authored_image_path(asset.dir, rel)
+        if rel not in image_of:
+            if len(samplers) == (1 if tex is not None else 0):
+                samplers.append({"magFilter": 9729, "minFilter": 9987, "wrapS": 10497, "wrapT": 10497})  # repeat, as authored
+            mime = "image/png" if full.suffix.lower() == ".png" else "image/jpeg"
+            images.append({"name": full.stem, "mimeType": mime, "bufferView": b.add_bytes(full.read_bytes())})
+            textures.append({"source": len(images) - 1, "sampler": len(samplers) - 1})
+            image_of[rel] = len(textures) - 1
+        return image_of[rel]
+
     used = {p.material for p in asset.parts} | {m for sp in surface.parts.values() for m in sp.face_material if m}
     for name, m in asset.materials.items():
         if name not in used:
             continue
         base = list(srgb_to_linear(m["base_color"][:3])) + [m["base_color"][3] if len(m["base_color"]) > 3 else 1.0]
+        if m.get("authored"):  # pass-through texture set (docs/IMPORT.md)
+            t = m.get("textures") or {}
+            pbr = {"baseColorFactor": [round(float(v), 6) for v in base], "metallicFactor": float(m["metallic"]),
+                   "roughnessFactor": float(m["roughness"])}
+            if "base_color" in t:
+                pbr["baseColorTexture"] = {"index": authored_texture(t["base_color"])}
+            if "metallic_roughness" in t:
+                pbr["metallicRoughnessTexture"] = {"index": authored_texture(t["metallic_roughness"])}
+            mat = {"name": name, "pbrMetallicRoughness": pbr, "extras": {"shapewright_material": {"archetype": "authored"}}}
+            if "normal" in t:
+                mat["normalTexture"] = {"index": authored_texture(t["normal"])}
+            if "occlusion" in t:
+                mat["occlusionTexture"] = {"index": authored_texture(t["occlusion"])}
+            if "emissive" in t:
+                mat["emissiveTexture"] = {"index": authored_texture(t["emissive"])}
+                mat["emissiveFactor"] = [round(float(v), 6) for v in srgb_to_linear((m.get("emissive") or [1, 1, 1])[:3])]
+            elif m.get("emissive"):
+                mat["emissiveFactor"] = [round(float(v), 6) for v in srgb_to_linear(m["emissive"][:3])]
+            if m.get("alpha_mode", "OPAQUE") != "OPAQUE":
+                mat["alphaMode"] = m["alpha_mode"]
+            if m.get("double_sided"):
+                mat["doubleSided"] = True
+            mat_index[name] = len(materials)
+            materials.append(mat)
+            continue
         mat = {"name": name, "pbrMetallicRoughness": {"baseColorFactor": [round(float(v), 6) for v in base],
                                                         "metallicFactor": float(m["metallic"]), "roughnessFactor": float(m["roughness"])}}
         if tex is not None:  # every material samples the shared baked atlas; its recipe travels in extras

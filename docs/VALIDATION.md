@@ -103,6 +103,9 @@ warnings. It never produces errors, because style is a judgement call.
 | `UV_UNLOCKED` | info | no lock; regions follow areas and may move (lock before texturing) |
 | `ATTR_INVALIDATED` | info / warning | a topology-changing op dropped attributes (warning if an imported part lost its authored UVs) |
 
+| `TEX_AUTHORED_IMAGE_INVALID` | error | an authored (imported) texture is missing, outside the asset directory or too large |
+| `TEX_AUTHORED_UV_MISSING` | error | a part with an authored material lost its UVs (a boolean dropped them) |
+| `TEX_AUTHORED_SETS` | info | authored texture sets are exported next to the baked atlas (one material each) |
 | `TEX_DENSITY_BELOW_TARGET` | warning | `texel_density` needs a larger atlas than `budget.texture_size` allows |
 | `TEX_IMAGE_INVALID` | error | a layer image is missing, outside the asset directory, not an image or too large |
 | `TEX_UV_SOURCE_MISSING` | warning | `projection: uv` on geometry without authored UVs; the layer was skipped |

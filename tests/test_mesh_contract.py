@@ -61,7 +61,8 @@ def test_every_op_obeys_its_declared_attribute_policy(name):
         if out.n_tris != 2 * base.n_tris or name not in ("mirror", "repeat"):
             assert "uv" in out.invalidated or "uv" in out.cattr
     elif spec.topology == "resample":
-        assert "uv" in out.invalidated
+        # Phase 11: corners (UVs) are transferred through one source triangle per new face
+        assert "uv" in out.cattr and "uv" not in out.invalidated and np.isfinite(out.cattr["uv"]).all()
         assert (out.fattr["origin"] >= 0).all() and set(out.label_values("material")) == {"wood"}
 
 

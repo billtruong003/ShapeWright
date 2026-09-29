@@ -157,8 +157,11 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
         from ..bake import textures_for
 
         tex = textures_for(asset, surface)
-        if tex is None:  # no textured materials: show the flat-material equivalent
+        has_authored = any(surface.parts[p.name].authored and surface.parts[p.name].corner_uv is not None for p in parts)
+        if tex is None and not has_authored:  # no textured materials: show the flat-material equivalent
             mode = "material" if mode in ("textured", "albedo") else "clay"
+        elif tex is None and mode in ("texel", "seams"):
+            mode = "textured"  # atlas-only views; authored sets have no atlas
     tris, nrms, fnorm, owner, labels, cuvs = [], [], [], [], [], []
     for pi, p in enumerate(parts):
         if mode in ("provenance", "regions"):
@@ -172,30 +175,31 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
         fn, _ = p.mesh.face_normals()
         fnorm.append(fn)
         owner.append(np.full(len(sp.indices), pi))
-        if tex is not None:
-            cuvs.append(sp.corner_uv)
+        if mode in TEXTURE_MODES:
+            cuvs.append(sp.corner_uv if sp.corner_uv is not None else np.zeros((len(sp.indices), 3, 2)))
     T = np.concatenate(tris)
     N = np.concatenate(nrms)
     FN = np.concatenate(fnorm)
     OWN = np.concatenate(owner)
     scr, key = cam.project(T)
     front = cam.facing(T.mean(1), FN)
-    buf = rasterize(scr, key, N, front, W, H, np.concatenate(cuvs) if tex is not None else None)
+    buf = rasterize(scr, key, N, front, W, H, np.concatenate(cuvs) if cuvs else None)
 
     hit = buf.tri >= 0
     img = np.tile(BG if mode != "silhouette" else np.ones(3), (H, W, 1)).astype(np.float64)
     pid = np.where(hit, OWN[np.clip(buf.tri, 0, None)], -1)
 
-    if tex is not None:
+    if mode in TEXTURE_MODES:
         uv = buf.extra[hit]
-        r = tex.resolution
-        tx = np.clip((uv[:, 0] * r).astype(int), 0, r - 1)
-        ty = np.clip(((1 - uv[:, 1]) * r).astype(int), 0, r - 1)
-        base = tex.base[ty, tx]
+        base, rgh, mtl = _surface_samples(asset, surface, parts, pid[hit], uv, tex)
+        if tex is not None:
+            r = tex.resolution
+            tx = np.clip((uv[:, 0] * r).astype(int), 0, r - 1)
+            ty = np.clip(((1 - uv[:, 1]) * r).astype(int), 0, r - 1)
         if mode == "roughness":
-            col = np.repeat(tex.orm[ty, tx, 1:2], 3, 1)
+            col = np.repeat(rgh[:, None], 3, 1)
         elif mode == "metallic":
-            col = np.repeat(tex.orm[ty, tx, 2:3], 3, 1)
+            col = np.repeat(mtl[:, None], 3, 1)
         elif mode == "texel":
             chk = ((tx // 8 + ty // 8) % 2).astype(float)
             col = np.stack([0.35 + 0.5 * chk, 0.35 + 0.5 * chk, 0.45 + 0.4 * chk], 1)
@@ -209,7 +213,7 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
             key_l /= np.linalg.norm(key_l)
             lam = 0.45 + 0.55 * np.clip(n @ key_l, 0, 1) + 0.06 * n[:, 1]
             if mode == "textured":
-                rough, metal = tex.orm[ty, tx, 1], tex.orm[ty, tx, 2]
+                rough, metal = rgh, mtl
                 half = key_l - cam.fwd
                 half /= np.linalg.norm(half)
                 spec = np.clip(n @ half, 0, 1) ** (2 + 60 * (1 - rough) ** 2) * (1 - rough) ** 2
@@ -392,6 +396,46 @@ TEXTURED_TILES = [
     ("front", "clay"), ("right", "clay"), ("top", "clay"), ("front_right", "textured"),
     ("front_right", "parts"), ("back_left", "textured"), ("front_right", "texel"), ("uv", "uv"),
 ]
+
+
+def _surface_samples(asset: Asset, surface: Surface, parts, pid: np.ndarray, uv: np.ndarray, tex):
+    """Per hit pixel: base colour (sRGB), roughness, metallic. Atlas parts sample the baked atlas;
+    authored parts sample their own images through their own UVs; others show their flat material."""
+    from ..bake import load_authored
+
+    k = len(pid)
+    base, rgh, mtl = np.zeros((k, 3)), np.full(k, 0.8), np.zeros(k)
+    if tex is not None:
+        r = tex.resolution
+        tx = np.clip((uv[:, 0] * r).astype(int), 0, r - 1)
+        ty = np.clip(((1 - uv[:, 1]) * r).astype(int), 0, r - 1)
+        base, rgh, mtl = tex.base[ty, tx].copy(), tex.orm[ty, tx, 1].copy(), tex.orm[ty, tx, 2].copy()
+    for i, p in enumerate(parts):
+        sp = surface.parts[p.name]
+        sel = pid == i
+        if not sel.any() or (tex is not None and not sp.authored):
+            continue
+        m = asset.materials.get(p.material or "") or {}
+        base[sel] = np.asarray((m.get("base_color") or [0.8, 0.8, 0.8])[:3])
+        rgh[sel], mtl[sel] = float(m.get("roughness", 0.8)), float(m.get("metallic", 0.0))
+        if not sp.authored or sp.corner_uv is None:
+            continue
+        t = m.get("textures") or {}
+        u, v = uv[sel, 0], uv[sel, 1]
+
+        def sample(rel):
+            img = load_authored(asset.dir, rel)
+            h, w = img.shape[:2]
+            return img[np.clip(((1 - v % 1.0) * h).astype(int), 0, h - 1), np.clip(((u % 1.0) * w).astype(int), 0, w - 1)]
+        try:
+            if "base_color" in t:
+                base[sel] = base[sel] * sample(t["base_color"])
+            if "metallic_roughness" in t:
+                mr = sample(t["metallic_roughness"])
+                rgh[sel], mtl[sel] = rgh[sel] * mr[:, 1], mtl[sel] * mr[:, 2]
+        except ValueError:
+            base[sel] = np.array([1.0, 0.0, 1.0])  # missing texture: magenta (the validator explains)
+    return base, rgh, mtl
 
 
 def contact_sheet(asset: Asset, surface: Surface, tile: int = 384, tiles=None, focus=None, frame=None) -> Image.Image:

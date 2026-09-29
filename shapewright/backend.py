@@ -311,7 +311,148 @@ def simplify(mesh: Mesh, ratio: float) -> Mesh:
     import fast_simplification
 
     V, F = fast_simplification.simplify(mesh.V.astype(np.float32), mesh.F.astype(np.int32), target_reduction=1 - ratio)
-    return _transfer(mesh, V, F, "resample")
+    if not mesh.cattr or not len(F):
+        return _transfer(mesh, V, F, "resample")
+    return _transfer_with_corners(mesh, np.asarray(V, dtype=np.float64), np.asarray(F, dtype=np.int64))
+
+
+def _point_triangle_dist2(P: np.ndarray, T: np.ndarray) -> np.ndarray:
+    """Squared distance from points P (n,3) to triangles T (n,3,3), pairwise (Ericson's closest-point test)."""
+    a, b, c = T[:, 0], T[:, 1], T[:, 2]
+    ab, ac, ap = b - a, c - a, P - a
+    d1, d2 = (ab * ap).sum(1), (ac * ap).sum(1)
+    bp = P - b
+    d3, d4 = (ab * bp).sum(1), (ac * bp).sum(1)
+    cp = P - c
+    d5, d6 = (ab * cp).sum(1), (ac * cp).sum(1)
+    va, vb, vc = d3 * d6 - d5 * d4, d5 * d2 - d1 * d6, d1 * d4 - d3 * d2
+
+    def safe(x):
+        return np.where(np.abs(x) < 1e-30, 1e-30, x)
+    den = safe(va + vb + vc)
+    q = a + ab * (vb / den)[:, None] + ac * (vc / den)[:, None]  # interior (lowest precedence)
+    # regions in increasing precedence, so the earlier tests of Ericson's sequence win
+    e4, e5 = d4 - d3, d5 - d6
+    q = np.where(((va <= 0) & (e4 >= 0) & (e5 >= 0))[:, None], b + (c - b) * (e4 / safe(e4 + e5))[:, None], q)
+    q = np.where(((vb <= 0) & (d2 >= 0) & (d6 <= 0))[:, None], a + ac * (d2 / safe(d2 - d6))[:, None], q)
+    q = np.where(((d6 >= 0) & (d5 <= d6))[:, None], c, q)
+    q = np.where(((vc <= 0) & (d1 >= 0) & (d3 <= 0))[:, None], a + ab * (d1 / safe(d1 - d3))[:, None], q)
+    q = np.where(((d3 >= 0) & (d4 <= d3))[:, None], b, q)
+    q = np.where(((d1 <= 0) & (d2 <= 0))[:, None], a, q)
+    return ((P - q) ** 2).sum(1)
+
+
+def _closest_faces(src: Mesh, P: np.ndarray, k: int = 8) -> np.ndarray:
+    """Index of the source face nearest each point: centroid KD-tree for candidates, exact distance to choose."""
+    from scipy.spatial import cKDTree
+
+    k = min(k, len(src.F))
+    _, cand = cKDTree(src.triangles().mean(1)).query(P, k=k)
+    cand = np.asarray(cand).reshape(len(P), k)
+    T = src.V[src.F[cand.reshape(-1)]]
+    d = _point_triangle_dist2(np.repeat(P, k, 0), T).reshape(len(P), k)
+    return cand[np.arange(len(P)), np.argmin(d, 1)]
+
+
+def _transfer_with_corners(src: Mesh, V: np.ndarray, F: np.ndarray) -> Mesh:
+    """Resample keeping corner attributes (UVs): each new face takes one source triangle (the one
+    under its centroid) and maps all three corners through it, so a face never straddles two UV
+    charts (docs/IMPORT.md). Corners outside the source triangle are extrapolated in its plane."""
+    from scipy.spatial import cKDTree
+
+    face_src = _closest_faces(src, V[F].mean(1))
+    T = src.V[src.F[face_src]]  # (m, 3, 3) source triangle per new face
+    A, e0, e1 = T[:, 0], T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]
+    d00, d01, d11 = (e0 * e0).sum(1), (e0 * e1).sum(1), (e1 * e1).sum(1)
+    den = np.where(np.abs(d00 * d11 - d01 * d01) < 1e-30, 1e-30, d00 * d11 - d01 * d01)
+    w = V[F] - A[:, None, :]  # (m, 3 corners, 3)
+    d20, d21 = np.einsum("mck,mk->mc", w, e0), np.einsum("mck,mk->mc", w, e1)
+    b1 = (d11[:, None] * d20 - d01[:, None] * d21) / den[:, None]
+    b2 = (d00[:, None] * d21 - d01[:, None] * d20) / den[:, None]
+    bary = np.stack([1 - b1 - b2, b1, b2], -1)  # (m, 3 corners, 3 source corners)
+    vert_src = cKDTree(src.V).query(V)[1][:, None]
+    return src.remapped(V, F, face_src, vert_src, None, bary, policy="resample")
+
+
+def _edge_users(F: np.ndarray):
+    """Undirected edges -> the faces using them, with each face's direction (+1 = low->high vertex)."""
+    a, b = F.reshape(-1), F[:, [1, 2, 0]].reshape(-1)
+    key = np.minimum(a, b) * (int(F.max()) + 1) + np.maximum(a, b)
+    face = np.repeat(np.arange(len(F)), 3)
+    sign = np.where(a < b, 1, -1)
+    order = np.argsort(key, kind="stable")
+    ks = key[order]
+    starts = np.r_[0, np.flatnonzero(ks[1:] != ks[:-1]) + 1]
+    ends = np.r_[starts[1:], len(ks)]
+    return order, starts, ends, face, sign, a, b
+
+
+def consistent_winding(mesh: Mesh) -> np.ndarray:
+    """Boolean mask of faces to flip so each connected shell has consistent winding and closed shells
+    face outward (breadth-first over shared edges; no external graph library)."""
+    from collections import deque
+
+    F = mesh.F
+    m = len(F)
+    order, starts, ends, face, sign, _, _ = _edge_users(F)
+    nbr: list[list] = [[] for _ in range(m)]
+    boundary = np.zeros(m, dtype=bool)
+    for s0, e0 in zip(starts, ends):
+        users = order[s0:e0]
+        if len(users) == 1:
+            boundary[face[users[0]]] = True
+        elif len(users) == 2:
+            u, v = users
+            nbr[face[u]].append((face[v], sign[u], sign[v]))
+            nbr[face[v]].append((face[u], sign[v], sign[u]))
+    o = np.zeros(m, dtype=np.int8)
+    flip = np.zeros(m, dtype=bool)
+    tri = mesh.V[F]
+    vol6 = np.einsum("ij,ij->i", tri[:, 0], np.cross(tri[:, 1], tri[:, 2]))
+    for seed in range(m):
+        if o[seed]:
+            continue
+        o[seed] = 1
+        comp, closed = [seed], not boundary[seed]
+        q = deque([seed])
+        while q:
+            f = q.popleft()
+            for g, sf, sg in nbr[f]:
+                want = -sf * o[f] * sg  # shared edge must run opposite ways
+                if not o[g]:
+                    o[g] = want
+                    comp.append(g)
+                    closed &= not boundary[g]
+                    q.append(g)
+        comp = np.array(comp)
+        if closed and (vol6[comp] * o[comp]).sum() < 0:
+            o[comp] = -o[comp]
+        flip[comp] = o[comp] < 0
+    return flip
+
+
+def hole_faces(mesh: Mesh) -> np.ndarray:
+    """Fan triangles closing each simple boundary loop, wound to match the surrounding faces. (k, 3)."""
+    F = mesh.F
+    order, starts, ends, face, sign, a, b = _edge_users(F)
+    single = order[starts[(ends - starts) == 1]]
+    nxt: dict = {}
+    for i in single:  # boundary edge as the adjacent face traverses it: a -> b; the hole runs b -> a
+        nxt.setdefault(int(b[i]), []).append(int(a[i]))
+    out = []
+    used: set = set()
+    for start in list(nxt):
+        if start in used or len(nxt[start]) != 1:
+            continue
+        loop, v = [start], nxt[start][0]
+        while v != start and v in nxt and len(nxt[v]) == 1 and v not in used and len(loop) < 100000:
+            loop.append(v)
+            v = nxt[v][0]
+        if v != start or len(loop) < 3:
+            continue
+        used.update(loop)
+        out += [[loop[0], loop[k], loop[k + 1]] for k in range(1, len(loop) - 1)]
+    return np.asarray(out, dtype=np.int64).reshape(-1, 3)
 
 
 def smooth_taubin(mesh: Mesh, iterations: int, lamb: float) -> Mesh:
@@ -395,6 +536,54 @@ def load_mesh_file(path, max_triangles: int) -> list[tuple[str, Mesh]]:
             m.set_vertex("color", np.asarray(vc, dtype=np.float64) / 255.0)
         out.append((str(node), m))
     return out
+
+
+def load_file_materials(path) -> tuple[dict, list[str]]:
+    """Materials of a mesh file: {node: {name, color (linear RGBA), metallic, roughness, emissive (linear RGB),
+    alpha_mode, double_sided, images: {channel: PIL image}}} plus glTF extensions the file uses (not imported)."""
+    import json as _json
+    import struct as _struct
+
+    import trimesh
+
+    scene = trimesh.load(str(path), force="scene", process=False)
+    out = {}
+    for node in sorted(scene.graph.nodes_geometry):
+        _, gname = scene.graph[node]
+        g = scene.geometry[gname]
+        m = getattr(getattr(g, "visual", None), "material", None)
+        if m is None or not hasattr(m, "baseColorFactor"):
+            continue
+
+        def fac(v, n, d):
+            if v is None:
+                return [d] * n
+            a = np.asarray(v, dtype=np.float64).reshape(-1)[:n]
+            return list(a / 255.0) if a.dtype.kind in "iu" or a.max() > 1.0 else list(a)
+        images = {}
+        for ch, attr in (("base_color", "baseColorTexture"), ("metallic_roughness", "metallicRoughnessTexture"),
+                         ("normal", "normalTexture"), ("occlusion", "occlusionTexture"), ("emissive", "emissiveTexture")):
+            img = getattr(m, attr, None)
+            if img is not None:
+                images[ch] = img
+        out[str(node)] = {
+            "name": getattr(m, "name", None) or str(gname),
+            "color": fac(m.baseColorFactor, 4, 1.0),
+            "metallic": 1.0 if m.metallicFactor is None else float(m.metallicFactor),
+            "roughness": 1.0 if m.roughnessFactor is None else float(m.roughnessFactor),
+            "emissive": None if getattr(m, "emissiveFactor", None) is None else fac(m.emissiveFactor, 3, 0.0),
+            "alpha_mode": getattr(m, "alphaMode", None) or "OPAQUE",
+            "double_sided": bool(getattr(m, "doubleSided", False)),
+            "images": images,
+        }
+    ext = []
+    if str(path).lower().endswith(".glb"):
+        blob = open(path, "rb").read(20)
+        n = _struct.unpack("<I", blob[12:16])[0]
+        with open(path, "rb") as f:
+            f.seek(20)
+            ext = sorted(_json.loads(f.read(n)).get("extensionsUsed", []))
+    return out, ext
 
 
 def load_scene_summary(path) -> dict:

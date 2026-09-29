@@ -185,6 +185,48 @@ def decimate(m, a, b):
     return backend.simplify(m, a["ratio"]).merged()
 
 
+@op("clean", "Repair imported/baked geometry: weld coincident vertices, drop zero-area and duplicate faces, make winding "
+    "consistent (outward for closed shells), optionally fill holes. Kept faces keep their UVs and labels.",
+    [Param("weld", "bool", True, "weld coincident vertices"),
+     Param("degenerate", "bool", True, "remove zero-area faces"),
+     Param("duplicates", "bool", True, "remove faces that repeat another face's vertices"),
+     Param("winding", "bool", True, "flip faces so each shell has consistent (outward) winding"),
+     Param("fill_holes", "bool", False, "close boundary loops with new faces (region 'cut'; UVs of new faces are 0)")],
+    "rebuild", category="topology", example="{type: clean, fill_holes: true}")
+def clean(m, a, b):
+    if a["weld"]:
+        m = m.merged()
+    keep = np.ones(m.n_tris, dtype=bool)
+    if a["degenerate"]:
+        _, area = m.face_normals()
+        size = float(np.linalg.norm(m.size())) or 1.0
+        keep &= area >= (size * 1e-5) ** 2
+    if a["duplicates"]:
+        key = np.sort(m.F, axis=1)
+        _, first = np.unique(key, axis=0, return_index=True)
+        uniq = np.zeros(m.n_tris, dtype=bool)
+        uniq[first] = True
+        keep &= uniq
+    if not keep.all():
+        m = m.subset(np.flatnonzero(keep))
+    if a["winding"] and m.n_tris:
+        flip = backend.consistent_winding(m)
+        if flip.any():
+            m = m.copy()
+            m.F[flip] = m.F[flip][:, ::-1]
+            for k in m.cattr:
+                m.cattr[k][flip] = m.cattr[k][flip][:, ::-1]
+    if a["fill_holes"] and m.n_tris:
+        new = backend.hole_faces(m)
+        if len(new):
+            patch = Mesh(m.V, new)
+            patch.set_label("region", "cut")
+            if "uv" in m.cattr:
+                patch.set_corner("uv", np.zeros((len(new), 3, 2)))
+            m = concat([m, patch]).merged()
+    return m
+
+
 # ------------------------------------------------------------------ booleans (rebuild)
 
 
