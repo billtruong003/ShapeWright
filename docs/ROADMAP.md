@@ -110,6 +110,22 @@ were history rebuilds, base-folder file roots for variants, a root-name clash, n
 `clean`, and decimate warnings. Records: [IMPORT.md](IMPORT.md) and
 [experiments/FRESH_AGENT_07.md](experiments/FRESH_AGENT_07.md).
 
+## Phase 12: Game-ready production ✅ (gate passed; Godot verified in-engine, Unreal/Unity by convention)
+Research imported every export into **Godot 4.3** headless. It showed one draw call per part, Unreal
+collision naming turning into visible meshes in Godot, no tangents and no LODs.
+
+Built:
+- engine targets (`godot`, `unity`, `unreal`) as an export adapter;
+- static merge by rigid group (fountain 806 → 4 draw calls);
+- convex collision named for each engine, following moving groups;
+- tangents;
+- LOD files with a silhouette check;
+- `sw export --target`.
+
+A fresh agent delivered three props for Godot and Unreal with 0 framework changes; Godot confirmed
+physics, pivots and draw calls. Records: [PRODUCTION.md](PRODUCTION.md) and
+[experiments/FRESH_AGENT_08.md](experiments/FRESH_AGENT_08.md).
+
 ## Stage 3: Prototype: a fresh agent succeeds unassisted
 - Run the README task ("tavern chair, < 700 tris, mobile") with a *fresh* agent
   that has only the repository. Record the transcript and friction points, and

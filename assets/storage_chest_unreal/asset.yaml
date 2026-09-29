@@ -1,0 +1,10 @@
+# Unreal Engine 5 version of storage_chest: same design (extends the base, sets no
+# geometry), `unreal` profile -> UCX_ convex collision, static parts merged per
+# material, hinged lid kept as its own node at the hinge, LOD1 file at 50%.
+shapewright: 0.1
+extends: ../storage_chest
+asset:
+  name: storage_chest_unreal
+  kind: prop/container/chest
+  description: Plank storage chest with iron straps, side handles and a hinged lid that opens in-game (Unreal Engine 5 export).
+profile: unreal

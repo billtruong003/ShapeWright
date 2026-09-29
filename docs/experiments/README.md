@@ -23,7 +23,7 @@ other vendor, mid-poly). The phases ran it in a different order, so the numbers 
 | [05](FRESH_AGENT_05.md) | 17-class breadth matrix (4 agents) + held-out 5-class gate | 9 breadth | gate passed | 1 + 1 (bug / false positive) |
 | [06](FRESH_AGENT_06.md) | mid-poly stress, 44k-tri fountain | 10 performance | gate passed | 0 |
 | [07](FRESH_AGENT_07.md) | import and modify real CC0 assets | 11 import | gate passed | 0 |
-| [08](FRESH_AGENT_08_PLAN.md) | engine-ready delivery for Godot and Unreal | 12 production | running | — |
+| [08](FRESH_AGENT_08.md) | engine-ready delivery for Godot and Unreal | 12 production | gate passed (Godot in-engine) | 0 |
 | 09 (planned) | a substantially different agent / vendor | 13 cross-agent | — | — |
 
 All runs so far used the same model family as the authors. Phase 13 exists to test whether that matters.

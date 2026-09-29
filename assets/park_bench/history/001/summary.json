@@ -1,0 +1,56 @@
+{
+ "iteration": 1,
+ "note": "blockout + fixes: seat slats placed on measured seat_rail top (4 slats floated 2.5 mm above the rail), legs start on 3 cm foot pads (rear strut corner was 3 mm below ground -> origin-offset warning), iron lightened",
+ "critique": "cast_iron.color #4a4f55 still PBR_METAL_TOO_DARK -> #4c5057; silhouette reads as a classic park bench from front_right; back slats sit against the raked posts; seat 0.467 m, arm 0.23 m above seat",
+ "source_hash": "509ad99b2afe",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 9
+ },
+ "metrics": {
+  "triangles": 1160,
+  "parts": 22,
+  "size_m": [
+   1.6023,
+   0.864,
+   0.6633
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "seat_slat.max.y": 0.4671,
+   "asset.height": 0.864,
+   "asset.depth": 0.6633,
+   "armrest.max.y - seat_slat.max.y": 0.2289
+  }
+ },
+ "errors": [],
+ "params": {
+  "L": 1.6,
+  "frame_x": 0.66,
+  "seat_y": 0.44,
+  "seat_front": 0.24,
+  "seat_back": -0.2,
+  "foot_front": 0.26,
+  "foot_back": -0.3,
+  "arm_y": 0.66,
+  "back_top": 0.86,
+  "lean": 16.0,
+  "bar": 0.045,
+  "bar_d": 0.05,
+  "seat_slats": 5.0,
+  "slat_t": 0.028,
+  "slat_w": 0.075,
+  "slat_gap": 0.012,
+  "back_slats": 3.0,
+  "back_w": 0.09,
+  "back_gap": 0.03,
+  "back_y0": 0.54,
+  "post_z0": -0.2,
+  "post_y0": 0.415,
+  "foot_h": 0.03,
+  "wear": 0.003
+ }
+}

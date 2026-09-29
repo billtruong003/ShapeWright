@@ -1,0 +1,173 @@
+# Wall-mounted iron torch bracket with its torch (Godot 4 version; torch_bracket_unreal
+# extends this source and switches the profile). Wall prop: the wall is the plane z = 0,
+# the bracket faces +Z, the origin is at the bottom-centre of the wall plate on the wall.
+# A forged wall plate with two bolts, a square-bar arm and a diagonal brace carrying a
+# conical cup; the wooden torch rests in the cup, its head wrapped in pitch-soaked cloth.
+# The flame is left to the engine (particles/light) at the `flame` socket.
+shapewright: 0.1
+asset:
+  name: torch_bracket
+  kind: prop/light/torch_sconce
+  description: Forged iron wall torch bracket with a conical cup holding a cloth-wrapped wooden torch.
+  placement: wall
+profile: godot
+style: stylized_lowpoly
+budget: {triangles: 1000, materials: 3}
+uv: {texel_density: 512}
+
+params:
+  plate_w: {value: 0.1, min: 0.07, max: 0.14, doc: wall plate width}
+  plate_h: {value: 0.24, min: 0.16, max: 0.3, doc: wall plate height}
+  plate_t: {value: 0.02, doc: wall plate thickness}
+  bar: {value: 0.022, doc: square bar section of the arm}
+  reach: {value: 0.15, min: 0.1, max: 0.22, doc: cup centre distance from the wall}
+  cup_y0: {value: 0.15, doc: cup bottom height}
+  cup_h: {value: 0.07}
+  cup_r0: {value: 0.024, doc: cup inner radius at the bottom}
+  cup_r1: {value: 0.04, doc: cup inner radius at the top}
+  cup_wall: 0.007
+  arm_y: cup_y0 + cup_h * 0.6
+  torch_len: {value: 0.42, min: 0.3, max: 0.55, doc: wooden handle length}
+  torch_r0: {value: 0.019, doc: handle radius at the bottom}
+  torch_r1: {value: 0.026, doc: handle radius at the top}
+  torch_y0: {value: cup_y0 - 0.12, doc: handle bottom (sticks out below the cup)}
+  head_h: {value: 0.12, doc: cloth-wrapped head height}
+  head_r: {value: 0.045}
+  tilt: {value: 15, min: 0, max: 30, doc: cup and torch lean away from the wall (degrees)}
+  head_lap: {value: 0.035, doc: how far the cloth wraps down over the handle}
+  top_rel: {value: torch_y0 + torch_len - head_lap + head_h - cup_y0, doc: torch top along the axis, from the cup bottom}
+  has_torch: true
+
+interface:
+  params: [plate_w, plate_h, reach, tilt, torch_len, has_torch]
+
+materials:
+  iron:
+    archetype: metal
+    color: "#555a61"
+    roughness: 0.6
+    variation: 0.35
+    scale: 0.03
+    rust: 0.2
+    rust_color: "#6e4027"
+    edge_wear: 0.55
+    edge_color: "#a3a8ad"
+    edge_width: 0.005
+    grime: 0.15
+    seed: 51
+  wood:
+    archetype: wood
+    color: "#7a5230"
+    grain_strength: 0.5
+    grain_scale: 0.01
+    streaks: 0.6
+    knots: 0.3
+    edge_wear: 0.3
+    roughness: 0.85
+    seed: 52
+  pitch_cloth:
+    archetype: painted
+    color: "#3a2c22"
+    under_color: "#1c1612"
+    chips: 0.3
+    roughness: 0.9
+    grime: 0.5
+    seed: 53
+
+parts:
+  wall_plate:
+    doc: forged plate against the wall, pointed at the bottom
+    shape:
+      type: extrude
+      polygon: [[0, 0], [plate_w / 2, plate_h * 0.18], [plate_w / 2, plate_h * 0.9], [plate_w * 0.3, plate_h], [-plate_w * 0.3, plate_h], [-plate_w / 2, plate_h * 0.9], [-plate_w / 2, plate_h * 0.18]]
+      depth: plate_t
+      chamfer: 0.004
+    anchor: bottom_back
+    position: [0, 0, 0]
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+  bolt:
+    doc: square-headed wall bolts above and below the arm
+    shape: {type: cylinder, radius: 0.012, height: 0.012, segments: 4, chamfer: 0.003, rotate: [90, 45, 0]}
+    anchor: back
+    position: [0, plate_h * 0.3, plate_t - 0.002]
+    array: {count: 2, offset: [0, plate_h * 0.55, 0]}
+    shading: flat
+    tags: [thin_ok]
+    uv: {share_instances: true}
+    material: iron
+
+  cup:
+    doc: conical cup (hollow, open at both ends) that holds the torch handle
+    shape:
+      type: revolve
+      polygon: [[cup_r0, 0], [cup_r0 + cup_wall, 0], [cup_r1 + cup_wall + 0.006, cup_h], [cup_r1 + cup_wall + 0.006, cup_h + 0.01], [cup_r1, cup_h + 0.01]]
+      segments: 8
+    rotate: [tilt, 0, 0]
+    rotate_about: anchor
+    anchor: bottom
+    position: [0, cup_y0, reach]
+    shading: flat
+    material: iron
+
+  arm:
+    doc: square bar from the plate to the cup, with a small upward kink
+    measure:
+      c: {section: cup, axis: y, at: arm_y}
+    shape: {type: tube, path: [[0, arm_y - 0.012, plate_t - 0.004], [0, arm_y - 0.012, c.min.z * 0.45], [0, arm_y, c.min.z + 0.004]], radius: bar * 0.7, sides: 4, corner_radius: 0.03}
+    origin: keep
+    shading: flat
+    material: iron
+
+  brace:
+    doc: diagonal brace from the plate bottom up under the arm
+    measure:
+      c: {section: cup, axis: y, at: cup_y0 + 0.004}
+    shape: {type: strut, from: [0, plate_h * 0.14, plate_t - 0.004], to: [0, cup_y0 + 0.004, c.min.z + 0.003], size: [0.02, 0.02], chamfer: 0.003}
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+  scroll:
+    doc: decorative curl under the brace
+    shape:
+      type: tube
+      path: [{arc: {center: [0, 0, 0], radius: 0.03, from: 180, to: 490, plane: yz, radius_end: 0.012}}]
+      radius: 0.006
+      sides: 4
+    anchor: top_back
+    position: [0, plate_h * 0.62, plate_t - 0.002]
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+  torch:
+    enabled: has_torch
+    doc: >-
+      wooden handle (widening upward) with the pitch-soaked cloth head, one part so both tilt
+      with the cup about the cup-bottom centre; the handle sits in the cup and sticks out below
+    shape:
+      type: combine
+      items:
+        - {type: cylinder, radius: torch_r0, radius_top: torch_r1, height: torch_len, segments: 7, material: wood, ops: [{type: jitter, amount: 0.0015, seed: 54}]}
+        - {type: cylinder, radius: head_r * 0.8, radius_top: head_r, height: head_h, segments: 8, chamfer: 0.012, material: pitch_cloth,
+           translate: [0, torch_len / 2 - head_lap + head_h / 2, 0],
+           ops: [{type: twist, axis: y, angle: 25}, {type: jitter, amount: 0.002, seed: 55}]}
+    rotate: [tilt, 0, 0]
+    rotate_about: anchor
+    anchor: bottom
+    position: [0, "cup_y0 + (torch_y0 - cup_y0) * cos(tilt)", "reach + (torch_y0 - cup_y0) * sin(tilt)"]
+    material: wood
+
+sockets:
+  flame: {attach: {to: origin, offset: [0, "cup_y0 + top_rel * cos(tilt)", "reach + top_rel * sin(tilt)"]}, rotate: [tilt, 0, 0], doc: top of the torch head on the torch axis; flame particles and omni light (only when has_torch)}
+
+collision: {mode: single_hull}
+
+checks:
+  - {expr: torch.max.y, min: 0.45, max: 0.6, doc: torch top, when: has_torch}
+  - {expr: cup.min.z, min: 0.08, doc: torch axis keeps the flame clear of the wall}
+  - {expr: asset.height, min: 0.4, max: 0.65, when: has_torch}
+  - {expr: wall_plate.min.z, min: -0.001, max: 0.001, doc: plate flush on the wall plane z = 0}

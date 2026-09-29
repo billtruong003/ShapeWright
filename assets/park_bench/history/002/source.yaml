@@ -1,0 +1,154 @@
+# Park bench (Godot 4 version; park_bench_unreal extends this source and switches the
+# profile). Two cast-iron side frames built from struts (front leg rising into the
+# armrest post, rear leg, seat rail, raked back post, armrest), wooden seat slats on the
+# seat rails and back slats against the back posts. Static prop: everything merges to one
+# primitive per material. Collision: one convex hull per slat and per leg, so the seat is
+# flat for physics and the space under the seat stays walkable for small props.
+shapewright: 0.1
+asset:
+  name: park_bench
+  kind: prop/furniture/bench
+  description: Slatted wooden park bench on cast-iron side frames with armrests.
+profile: godot
+style: stylized_lowpoly
+budget: {triangles: 1500, materials: 2}
+uv: {texel_density: 256}
+
+params:
+  L: {value: 1.6, min: 1.2, max: 2.2, doc: slat length (x)}
+  frame_x: {value: 0.66, doc: side frame distance from the centre}
+  seat_y: {value: 0.44, min: 0.4, max: 0.48, doc: top of the seat rail (slats sit on it)}
+  seat_front: {value: 0.24, doc: front end of the seat rail (z)}
+  seat_back: {value: -0.2, doc: back end of the seat rail (z)}
+  foot_front: {value: 0.26, doc: front foot position (z)}
+  foot_back: {value: -0.3, doc: rear foot position (z)}
+  arm_y: {value: 0.66, doc: armrest height}
+  back_top: {value: 0.86, doc: top of the back post}
+  lean: {value: 16, min: 8, max: 25, doc: back rake in degrees}
+  bar: {value: 0.055, doc: cast-iron frame section (x thickness)}
+  bar_d: {value: 0.06, doc: cast-iron frame section (in the frame plane)}
+  seat_slats: 5
+  slat_t: {value: 0.032, doc: slat thickness}
+  slat_w: {value: 0.075, doc: seat slat width}
+  slat_gap: 0.012
+  back_slats: 3
+  back_w: {value: 0.09, doc: back slat width}
+  back_gap: 0.03
+  back_y0: {value: seat_y + 0.1, doc: centre height of the lowest back slat}
+  post_z0: seat_back
+  post_y0: seat_y - bar_d / 2
+  foot_h: {value: 0.03, doc: cast foot pad height (legs start on top of it)}
+  wear: 0.003
+
+interface:
+  params: [L, frame_x, seat_y, lean, seat_slats, back_slats, wear]
+
+materials:
+  wood:
+    archetype: wood
+    color: "#9a6a3e"
+    grain_strength: 0.5
+    grain_scale: 0.02
+    streaks: 0.6
+    knots: 0.5
+    edge_wear: 0.5
+    edge_color: "#c9a27a"
+    edge_width: 0.01
+    roughness: 0.85
+    grime: 0.2
+    seed: 31
+  cast_iron:
+    archetype: metal
+    color: "#555a61"
+    roughness: 0.55
+    variation: 0.3
+    scale: 0.05
+    rust: 0.15
+    rust_color: "#5e3a24"
+    edge_wear: 0.4
+    edge_color: "#7c8288"
+    edge_width: 0.006
+    seed: 32
+
+parts:
+  # ------------------------------------------------------------ cast-iron side frames (mirror x)
+  front_leg:
+    doc: front leg rising straight into the armrest post
+    shape: {type: strut, from: [frame_x, foot_h - 0.005, foot_front], to: [frame_x, arm_y, seat_front - 0.02], size: [bar, bar_d], chamfer: 0.008}
+    mirror: x
+    material: cast_iron
+
+  rear_leg:
+    doc: splayed rear leg meeting the seat rail at the back post
+    shape: {type: strut, from: [frame_x, foot_h - 0.005, foot_back], to: [frame_x, seat_y, post_z0], size: [bar, bar_d], chamfer: 0.008}
+    mirror: x
+    material: cast_iron
+
+  seat_rail:
+    doc: horizontal rail under the seat slats
+    shape: {type: strut, from: [frame_x, seat_y - bar_d / 2, seat_front + 0.02], to: [frame_x, seat_y - bar_d / 2, seat_back - 0.02], size: [bar, bar_d], chamfer: 0.008}
+    mirror: x
+    material: cast_iron
+
+  back_post:
+    doc: raked back post carrying the back slats
+    shape:
+      type: strut
+      from: [frame_x, post_y0, post_z0]
+      to: [frame_x, back_top, "post_z0 - (back_top - post_y0) * tan(lean)"]
+      size: [bar, bar_d]
+      chamfer: 0.008
+    mirror: x
+    material: cast_iron
+
+  armrest:
+    doc: armrest from the back post to the top of the front leg, slight downward curl at the front
+    measure:
+      post: {section: back_post_right, axis: y, at: arm_y}
+    shape: {type: tube, path: [[frame_x, arm_y, post.center.z], [frame_x, arm_y + 0.01, 0.1], [frame_x, arm_y, seat_front + 0.03], [frame_x, arm_y - 0.04, seat_front + 0.05]], radius: 0.026, sides: 6, corner_radius: 0.04}
+    origin: keep
+    mirror: x
+    shading: auto
+    material: cast_iron
+
+  foot:
+    doc: flat cast feet under the legs
+    shape: {type: chamfer_box, size: [bar + 0.025, foot_h, 0.1], chamfer: 0.008}
+    anchor: bottom
+    position: [frame_x, 0, foot_front]
+    mirror: [x, {axis: z, at: (foot_front + foot_back) / 2}]
+    material: cast_iron
+
+  # ------------------------------------------------------------ wooden slats
+  seat_slat:
+    doc: seat slats resting on the seat rails
+    shape: {type: chamfer_box, size: [L, slat_t, slat_w], chamfer: 0.008}
+    ops: [{type: jitter, amount: wear, seed: 41}]
+    measure:
+      rail: {bounds: seat_rail_right}
+    anchor: bottom_front
+    position: [0, rail.max.y - 0.002, seat_front + 0.02]
+    array: {count: seat_slats, offset: [0, 0, -(slat_w + slat_gap)]}
+    material: wood
+
+  back_slat:
+    doc: back slats in front of the raked back posts
+    shape: {type: chamfer_box, size: [L, back_w, slat_t], chamfer: 0.008}
+    ops: [{type: jitter, amount: wear, seed: 42}]
+    rotate: [-lean, 0, 0]
+    position: [0, back_y0, "post_z0 - (back_y0 - post_y0) * tan(lean) + (bar_d / 2 + slat_t / 2 - 0.004) / cos(lean)"]
+    array: {count: back_slats, offset: [0, "(back_w + back_gap) * cos(lean)", "-(back_w + back_gap) * sin(lean)"]}
+    material: wood
+
+sockets:
+  sit_left: {attach: {to: seat_slat_2, at: top, offset: [-0.45, 0, 0]}, doc: sitting position}
+  sit_center: {attach: {to: seat_slat_2, at: top}}
+  sit_right: {attach: {to: seat_slat_2, at: top, offset: [0.45, 0, 0]}}
+
+collision: {mode: hull, parts: [seat_slat, back_slat, front_leg, rear_leg]}
+
+checks:
+  - {expr: seat_slat.max.y, min: 0.43, max: 0.5, doc: comfortable seat height}
+  - {expr: asset.height, min: 0.8, max: 0.95, doc: park bench back height}
+  - {expr: asset.depth, min: 0.55, max: 0.75}
+  - {expr: armrest.max.y - seat_slat.max.y, min: 0.18, max: 0.26, doc: armrest above the seat}

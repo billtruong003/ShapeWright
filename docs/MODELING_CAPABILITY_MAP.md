@@ -70,8 +70,11 @@ See docs/HARDENING.md. Rows below keep their original text; these entries overri
 | Repair of imported meshes (weld, degenerate, winding, holes) | — | NOW | `clean` op |
 | UV-preserving decimation | — | NOW | `decimate` transfers corners (Phase 11) |
 | Variants reusing the base's files | — | NOW | extends file roots (FA-07) |
-| Tangents for normal-mapped exports | — | Phase 12 | FA-07 |
-| Collision: single hull, hand-placed primitives | — | Phase 12 | FA-07 |
+| Tangents for normal-mapped exports | — | NOW | Phase 12 |
+| Collision: single hull, per-part, per rigid group | — | NOW | Phase 12 (hand-placed primitives: NEAR) |
+| Engine targets (Godot verified; Unity/Unreal by convention) | — | NOW | Phase 12 |
+| Draw-call merge by material with moving groups kept | — | NOW | Phase 12 |
+| LOD files with silhouette check | NEAR | NOW | Phase 12 |
 | KHR material extensions (sheen, clearcoat, transmission, variants) | — | LONG | reported by `sw import`, not imported |
 
 ---

@@ -1,0 +1,10 @@
+# Unreal Engine 5 version of park_bench: same design (extends the base, sets no
+# geometry), `unreal` profile -> UCX_ convex collision hulls, static parts merged per
+# material, LOD1 file at 50%.
+shapewright: 0.1
+extends: ../park_bench
+asset:
+  name: park_bench_unreal
+  kind: prop/furniture/bench
+  description: Slatted wooden park bench on cast-iron side frames with armrests (Unreal Engine 5 export).
+profile: unreal

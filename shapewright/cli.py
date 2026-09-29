@@ -276,13 +276,15 @@ def cmd_export(a):
     from .validate.run import collect, dump, format_text, make_report
 
     asset, surface = _load(a.asset)
+    if a.target:  # one asset, several engines (FRESH_AGENT_08 needed a variant per engine)
+        asset._export_target = a.target
     found, metrics = collect(asset, surface)  # validators run once (Phase 10: export used to run them twice)
     report = make_report(asset, found, metrics)
     if report["status"] == "FAIL" and not a.force:
         print(format_text(report))
         print("\nexport refused: fix the errors above (or pass --force for a debug export)")
         return 1
-    out = Path(a.out) if a.out else asset.dir / "export" / f"{asset.name}.glb"
+    out = Path(a.out) if a.out else asset.dir / "export" / (f"{asset.name}_{a.target}.glb" if a.target else f"{asset.name}.glb")
     info = write_glb(asset, surface, out, report["status"])
     issues, extra = khronos_validate(out)
     issues += roundtrip(asset, out)
@@ -562,6 +564,8 @@ def build_parser() -> argparse.ArgumentParser:
     p = add("restore", cmd_restore, "restore an iteration's source")
     p.add_argument("n", type=int)
     p = add("export", cmd_export, "export GLB")
+    p.add_argument("--target", choices=["generic", "godot", "unity", "unreal"],
+                   help="engine packaging for this export (default: the profile's); writes export/NAME_TARGET.glb")
     p.add_argument("--out")
     p.add_argument("--force", action="store_true")
     p.add_argument("--json", action="store_true")

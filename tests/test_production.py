@@ -74,7 +74,7 @@ def test_generic_target_keeps_part_nodes(make_asset, tmp_path):
 
 
 def test_collision_modes_and_proxy_warning(make_asset, tmp_path):
-    for mode, count in (("single_hull", 1), ("single_box", 1), ("hull", 5)):
+    for mode, count in (("single_hull", 2), ("single_box", 2), ("hull", 5)):  # single modes: one per rigid group (static + lid)
         a = chest(make_asset, collision=mode, name=f"c_{mode}")
         out = tmp_path / f"{mode}.glb"
         write_glb(a, build_surface(a), out)
@@ -136,3 +136,37 @@ def test_godot_imports_convex_bodies_and_merged_meshes(make_asset, tmp_path):
     r = check([out], os.environ["SW_GODOT"])[str(out)]
     assert r["meshes"] == 2 and r["surfaces"] == 4 and r["bodies"] == 5 and set(r["shapes"]) == {"ConvexPolygonShape3D"}
     assert abs(r["min_y"]) < 1e-4
+
+
+def test_collision_follows_moving_groups_and_is_named_after_its_mesh(make_asset, tmp_path):
+    """FRESH_AGENT_08: the lid had no collision of its own, and Unreal matches UCX_<mesh>_NN to a mesh by name."""
+    a = chest(make_asset, collision="single_box", name="c2")
+    s = build_surface(a)
+    out = tmp_path / "g.glb"
+    write_glb(a, s, out)
+    g = glb(out)
+    lid = next(n for n in g["nodes"] if n["name"] == "lid")
+    kids = [g["nodes"][i]["name"] for i in lid.get("children", [])]
+    assert kids == ["lid_00-convcolonly"]  # Godot: under the lid node, so it moves with the lid
+    a._export_target = "unreal"
+    write_glb(a, s, tmp_path / "u.glb")
+    names = {n["name"] for n in glb(tmp_path / "u.glb")["nodes"]}
+    assert {"UCX_c2_static_00", "UCX_lid_00"} <= names
+
+
+def test_export_target_override(make_asset, tmp_path):
+    from shapewright.export.targets import export_settings
+
+    a = chest(make_asset, name="c3")
+    assert export_settings(a)["target"].name == "godot" and export_settings(a)["lods"] == []
+    s = export_settings(a, "unreal")
+    assert s["target"].name == "unreal" and s["merge"] == "by_material" and s["lods"] == [0.5]
+
+
+def test_strut_depth_axis_is_consistent(make_asset):
+    a = build(make_asset("materials: {m: {color: '#888888'}}\nparts:\n"
+                         "  f: {shape: {type: strut, from: [0, 0, 0], to: [0, 0.5, 0.1], size: [0.02, 0.06], depth_axis: z}, material: m}\n"
+                         "  s: {shape: {type: strut, from: [1, 0, 0], to: [1.1, 0.5, 0], size: [0.02, 0.06], depth_axis: z}, material: m}\n", "legs"))
+    sz = [p.mesh.size() for p in a.parts]
+    assert sz[1][2] == pytest.approx(0.06, abs=1e-6)  # depth along z for the leg leaning in x
+    assert sz[0][2] > 0.05  # and (mostly) along z for the one leaning in z

@@ -1,0 +1,49 @@
+{
+ "iteration": 1,
+ "note": "blockout: plate+bolts, square-bar arm, brace, scroll, conical cup, vertical torch with cloth head",
+ "critique": "torch vertical: flame hugs the wall and reads as a stick in a cup -> tilt cup+torch 15 deg away from the wall about the cup bottom (combine handle+head into one torch part so they tilt together); torch_head r 0.036/h 0.10 stubby -> 0.045/0.12; iron PBR_METALLIC_MIXED 26% -> rust 0.3->0.2, grime 0.3->0.15; plate_t 0.016 -> 0.02, brace 0.016 -> 0.02, tag plate/bolt/brace thin_ok (forged bar stock is thin by nature)",
+ "source_hash": "eb8ff2c12dd4",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 4,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 540,
+  "parts": 9,
+  "size_m": [
+   0.106,
+   0.5207,
+   0.203
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "torch_head.min.z": 0.1167,
+   "asset.height": 0.5207,
+   "wall_plate.min.z": 0.0
+  }
+ },
+ "errors": [],
+ "params": {
+  "plate_w": 0.1,
+  "plate_h": 0.24,
+  "plate_t": 0.016,
+  "bar": 0.022,
+  "reach": 0.15,
+  "cup_y0": 0.15,
+  "cup_h": 0.07,
+  "cup_r0": 0.024,
+  "cup_r1": 0.04,
+  "cup_wall": 0.007,
+  "arm_y": 0.192,
+  "torch_len": 0.42,
+  "torch_r0": 0.019,
+  "torch_r1": 0.026,
+  "torch_y0": 0.03,
+  "head_h": 0.1,
+  "head_r": 0.036,
+  "has_torch": 1.0
+ }
+}

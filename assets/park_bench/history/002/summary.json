@@ -1,0 +1,56 @@
+{
+ "iteration": 2,
+ "note": "cast_iron #555a61 (PBR ok), frame bar 0.055/0.06, slats 32 mm",
+ "critique": "frame no longer spindly in side view; seat 0.471, arm +0.225; remaining nit: strut width/depth axes differ between near-vertical front_leg and the other struts (x 0.055 vs 0.06), not visible. No significant findings; stop.",
+ "source_hash": "dac985ec5497",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 9
+ },
+ "metrics": {
+  "triangles": 1160,
+  "parts": 22,
+  "size_m": [
+   1.6023,
+   0.8654,
+   0.6665
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "seat_slat.max.y": 0.4711,
+   "asset.height": 0.8654,
+   "asset.depth": 0.6665,
+   "armrest.max.y - seat_slat.max.y": 0.2249
+  }
+ },
+ "errors": [],
+ "params": {
+  "L": 1.6,
+  "frame_x": 0.66,
+  "seat_y": 0.44,
+  "seat_front": 0.24,
+  "seat_back": -0.2,
+  "foot_front": 0.26,
+  "foot_back": -0.3,
+  "arm_y": 0.66,
+  "back_top": 0.86,
+  "lean": 16.0,
+  "bar": 0.055,
+  "bar_d": 0.06,
+  "seat_slats": 5.0,
+  "slat_t": 0.032,
+  "slat_w": 0.075,
+  "slat_gap": 0.012,
+  "back_slats": 3.0,
+  "back_w": 0.09,
+  "back_gap": 0.03,
+  "back_y0": 0.54,
+  "post_z0": -0.2,
+  "post_y0": 0.41,
+  "foot_h": 0.03,
+  "wear": 0.003
+ }
+}

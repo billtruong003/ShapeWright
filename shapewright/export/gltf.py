@@ -25,7 +25,7 @@ from .. import __version__
 from ..assemble import Asset
 from ..mesh import rotation_matrix
 from ..surface import Surface
-from .targets import export_settings
+from .targets import export_settings, rigid_groups
 
 FLOAT, UINT16, UINT32 = 5126, 5123, 5125
 ARRAY_BUFFER, ELEMENT_ARRAY_BUFFER = 34962, 34963
@@ -122,8 +122,10 @@ def _tangents(P: np.ndarray, N: np.ndarray, UV: np.ndarray, F: np.ndarray) -> np
     return np.c_[t, w]
 
 
-def _collision_meshes(asset: Asset) -> list[tuple[int, np.ndarray, np.ndarray]]:
-    """Convex collision proxies: none | single_box | single_hull | box | hull (per part); `parts:` limits which parts."""
+def _collision_meshes(asset: Asset, groups: dict | None = None) -> list[tuple[str | None, np.ndarray, np.ndarray]]:
+    """Convex collision proxies: none | single_box | single_hull | box | hull (per part); `parts:` limits which parts.
+    With rigid groups (merged export) the single modes give one proxy per group, so a hinged lid's collision
+    moves with the lid (FRESH_AGENT_08); each proxy carries its group key."""
     cfg = asset.collision or {}
     mode = cfg.get("mode", "none")
     if mode == "none":
@@ -131,21 +133,21 @@ def _collision_meshes(asset: Asset) -> list[tuple[int, np.ndarray, np.ndarray]]:
     from .. import backend
 
     only = set(cfg.get("parts") or [])
-    parts = [p for p in asset.parts if not only or p.base in only or p.name in only]
-    if not parts:
-        return []
-    V_all = np.concatenate([p.mesh.V for p in parts])
-    if mode == "single_box":
-        t = backend.box_bounds(np.stack([V_all.min(0), V_all.max(0)]))
-        return [(0, t.V, t.F)]
-    if mode == "single_hull":
-        t = backend.convex_hull(V_all)
-        return [(0, t.V, t.F)]
+    chosen = {p.name for p in asset.parts if not only or p.base in only or p.name in only}
+    buckets = {k: [p for p in ps if p.name in chosen] for k, ps in (groups or {None: asset.parts}).items()}
     out = []
-    for i, p in enumerate(parts):
-        V = p.mesh.V
-        t = backend.box_bounds(np.stack([V.min(0), V.max(0)])) if mode == "box" else backend.convex_hull(V)
-        out.append((i, t.V, t.F))
+    for k, parts in buckets.items():
+        if not parts:
+            continue
+        if mode in ("single_box", "single_hull"):
+            V = np.concatenate([p.mesh.V for p in parts])
+            t = backend.box_bounds(np.stack([V.min(0), V.max(0)])) if mode == "single_box" else backend.convex_hull(V)
+            out.append((k, t.V, t.F))
+            continue
+        for p in parts:
+            V = p.mesh.V
+            t = backend.box_bounds(np.stack([V.min(0), V.max(0)])) if mode == "box" else backend.convex_hull(V)
+            out.append((k, t.V, t.F))
     return out
 
 
@@ -161,7 +163,7 @@ def _recipe(m: dict) -> dict:
             **({"instance_of": m["instance_of"]} if m.get("instance_of") else {})}
 
 
-def _write_groups(b: _Builder, asset: Asset, surface, nodes: list, meshes: list, mat_index: dict, normal_mapped) -> None:
+def _write_groups(b: _Builder, asset: Asset, surface, nodes: list, meshes: list, mat_index: dict, normal_mapped) -> dict:
     """Static parts -> `<asset>_static`; each moving group -> a node named after its head part, placed at
     the head's pivot and parented to the group that holds the head's parent."""
     from .targets import STATIC, rigid_groups
@@ -191,6 +193,7 @@ def _write_groups(b: _Builder, asset: Asset, surface, nodes: list, meshes: list,
         if np.any(np.abs(rel) > 0):
             nodes[node_of[k]]["translation"] = [float(v) for v in rel]
         nodes[parent_idx].setdefault("children", []).append(node_of[k])
+    return {k: (node_of[k], nodes[node_of[k]]["name"], pivot_of[k]) for k in groups}
 
 
 def merged_node_name(asset: Asset) -> str:
@@ -335,8 +338,9 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
     pivots = {p.name: (p.pivot if p.pivot is not None else np.zeros(3)) for p in asset.parts}
     settings = export_settings(asset)
     normal_mapped = {mat_index[n] for n, m in asset.materials.items() if n in mat_index and "normal" in (m.get("textures") or {})}
+    group_nodes: dict = {}
     if settings["merge"] == "by_material":  # rigid groups: one node per group, one primitive per material
-        _write_groups(b, asset, surface, nodes, meshes, mat_index, normal_mapped)
+        group_nodes = _write_groups(b, asset, surface, nodes, meshes, mat_index, normal_mapped)
     else:
         for p in asset.parts:
             sp = surface.parts[p.name]
@@ -369,12 +373,18 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
             node["rotation"] = [float(v) for v in matrix_to_quat(rotation_matrix(s.rotation))]
         nodes.append(node)
         nodes[0]["children"].append(len(nodes) - 1)
-    for idx, V, F in _collision_meshes(asset):
-        prim = b.mesh_primitive(np.asarray(V, dtype=np.float32), np.asarray(F, dtype=np.uint32))
-        name = settings["target"].collision_name(asset.name, idx, convex=True)
+    placed = group_nodes if settings["merge"] == "by_material" else None
+    counter: dict = {}
+    for key, V, F in _collision_meshes(asset, rigid_groups(asset) if placed is not None else None):
+        owner, owner_name, pivot = (0, asset.name, np.zeros(3)) if placed is None else placed[key]
+        idx = counter[owner_name] = counter.get(owner_name, -1) + 1
+        name = settings["target"].collision_name(owner_name, idx, convex=True)
+        local = settings["target"].name == "godot" and owner != 0  # Godot: child of the group node, so it moves with it
+        verts = np.asarray(V, dtype=np.float64) - (pivot if local else 0)
+        prim = b.mesh_primitive(verts.astype(np.float32), np.asarray(F, dtype=np.uint32))
         meshes.append({"name": name, "primitives": [prim]})
-        nodes.append({"name": name, "mesh": len(meshes) - 1, "extras": {"collision": True}})
-        nodes[0]["children"].append(len(nodes) - 1)
+        nodes.append({"name": name, "mesh": len(meshes) - 1, "extras": {"collision": True, "for": owner_name}})
+        nodes[owner if local else 0].setdefault("children", []).append(len(nodes) - 1)
 
     nodes[0]["extras"] = {"shapewright": {
         "version": __version__, "source_hash": asset.source_hash, "units": "m", "up": "+Y", "front": "+Z",

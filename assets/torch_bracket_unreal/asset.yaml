@@ -1,0 +1,11 @@
+# Unreal Engine 5 version of torch_bracket: same design (extends the base, sets no
+# geometry), `unreal` profile -> UCX_ convex collision, static parts merged per material,
+# LOD1 file at 50%. The flame (Niagara + point light) goes on SOCKET_flame.
+shapewright: 0.1
+extends: ../torch_bracket
+asset:
+  name: torch_bracket_unreal
+  kind: prop/light/torch_sconce
+  description: Forged iron wall torch bracket with a conical cup holding a cloth-wrapped wooden torch (Unreal Engine 5 export).
+  placement: wall
+profile: unreal

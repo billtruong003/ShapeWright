@@ -1,0 +1,304 @@
+{
+ "asset": "storage_chest_unreal",
+ "status": "PASS",
+ "source_hash": "1cd72df58e6f",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 19
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 1268,
+  "parts": 41,
+  "sliver_triangles": 190,
+  "size_m": [
+   1.0414,
+   0.567,
+   0.552
+  ],
+  "contacts": 94,
+  "triangles_by_part": {
+   "wall_front": 264,
+   "wall_side": 264,
+   "floor": 12,
+   "body_strap": 48,
+   "corner_guard": 80,
+   "handle": 56,
+   "staple": 44,
+   "lid": 20,
+   "lid_rail_back": 44,
+   "lid_rail_front": 44,
+   "lid_rail_side": 88,
+   "lid_plank": 132,
+   "lid_strap": 24,
+   "rail_strap": 48,
+   "hasp": 44,
+   "hinge": 56
+  },
+  "budget_triangles": 1500,
+  "materials": 2,
+  "draw_calls": 4,
+  "checks": {
+   "asset.height": 0.567,
+   "asset.width": 1.0414,
+   "lid_plank.min.y": 0.52
+  },
+  "uv_utilization": 0.578,
+  "uv_overlap": 0.0,
+  "uv_owners": 29,
+  "texel_density_px_m": 327.0,
+  "texel_density_target": 320,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 320.0,
+   "achieved_px_m": 327.0,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 29
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "body_strap_back_left",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "body_strap_back_right",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "body_strap_front_left",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "body_strap_front_right",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "lid",
+   "msg": "12/20 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "lid_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "lid_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "lid_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "lid_rail_back",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "lid_rail_front",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "lid_strap_left",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "lid_strap_right",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "wall_front_0_back",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "wall_front_0_front",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "wall_front_1_back",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "wall_front_1_front",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "wall_front_2_back",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "wall_front_2_front",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv lock ASSET` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/storage_chest_unreal/export/storage_chest_unreal.glb",
+  "bytes": 727400,
+  "nodes": 5,
+  "meshes": 3,
+  "materials": 2,
+  "target": "unreal",
+  "merge": "by_material",
+  "lods": [
+   {
+    "lod": 1,
+    "ratio": 0.5,
+    "path": "assets/storage_chest_unreal/export/storage_chest_unreal_LOD1.glb",
+    "triangles": 760,
+    "silhouette_iou": 0.962,
+    "bytes": 700300
+   }
+  ]
+ }
+}

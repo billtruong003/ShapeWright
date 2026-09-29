@@ -1,0 +1,171 @@
+{
+ "asset": "park_bench",
+ "status": "PASS",
+ "source_hash": "b19b36462fcc",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 8
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 1160,
+  "parts": 22,
+  "sliver_triangles": 208,
+  "size_m": [
+   1.6023,
+   0.8654,
+   0.6665
+  ],
+  "contacts": 36,
+  "triangles_by_part": {
+   "front_leg": 88,
+   "rear_leg": 88,
+   "seat_rail": 88,
+   "back_post": 88,
+   "foot": 176,
+   "back_slat": 132,
+   "armrest": 280,
+   "seat_slat": 220
+  },
+  "budget_triangles": 1500,
+  "materials": 2,
+  "draw_calls": 2,
+  "collision_proxies": 12,
+  "checks": {
+   "seat_slat.max.y": 0.4711,
+   "asset.height": 0.8654,
+   "asset.depth": 0.6665,
+   "armrest.max.y - seat_slat.max.y": 0.2249
+  },
+  "uv_utilization": 0.602,
+  "uv_overlap": 0.0,
+  "uv_owners": 22,
+  "texel_density_px_m": 408.8,
+  "texel_density_target": 256,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 256.0,
+   "achieved_px_m": 408.8,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 22
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "back_slat_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "back_slat_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "back_slat_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "seat_slat_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "seat_slat_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "seat_slat_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "seat_slat_3",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "seat_slat_4",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  }
+ ],
+ "export": {
+  "path": "assets/park_bench/export/park_bench.glb",
+  "bytes": 766236,
+  "nodes": 17,
+  "meshes": 13,
+  "materials": 2,
+  "target": "godot",
+  "merge": "by_material",
+  "lods": []
+ }
+}

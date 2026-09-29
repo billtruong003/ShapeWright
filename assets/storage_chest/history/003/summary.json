@@ -1,0 +1,50 @@
+{
+ "iteration": 3,
+ "note": "lid root is now a hinge pin on the hinge axis (0, H, -D/2 - strap_t); knuckles centred on it; export node renamed lid",
+ "critique": "swing test on the GLB (rotate lid node about X at its translation): with the old pivot on the back-bottom edge of the skirt, parts behind the pivot dipped into the back straps (overlap grew 23->100 cm3 from 10 to 110 deg). Now only the pin/knuckles overlap (constant, rotation-invariant) up to 90 deg; rail straps graze the body straps beyond ~95 deg -> engine hinge limit 0..90 deg. No other findings.",
+ "source_hash": "35a8ebf97e13",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 18
+ },
+ "metrics": {
+  "triangles": 1268,
+  "parts": 41,
+  "size_m": [
+   1.0414,
+   0.567,
+   0.552
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.567,
+   "asset.width": 1.0414,
+   "lid_plank.min.y": 0.52
+  }
+ },
+ "errors": [],
+ "params": {
+  "W": 0.9,
+  "D": 0.5,
+  "H": 0.42,
+  "wall_t": 0.04,
+  "body_planks": 3.0,
+  "plank_h": 0.14,
+  "rail_h": 0.1,
+  "lid_t": 0.035,
+  "lid_over": 0.012,
+  "lid_planks": 3.0,
+  "lid_seam": 0.004,
+  "lid_pw": 0.172,
+  "strap_w": 0.05,
+  "strap_t": 0.012,
+  "strap_x": 0.27,
+  "guard_g": 0.07,
+  "guard_t": 0.012,
+  "knuckle_r": 0.016,
+  "wear": 0.003
+ }
+}

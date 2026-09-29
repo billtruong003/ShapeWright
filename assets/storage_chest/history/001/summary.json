@@ -1,0 +1,50 @@
+{
+ "iteration": 1,
+ "note": "blockout: plank body, flat 3-plank lid on skirt, straps, guards, handles, hasp+staple, hinge knuckles; lid group pivots at back top edge",
+ "critique": "lid_rail_back.rail_h 0.08 -> 0.1: lid reads thin next to a 0.42 body; hasp 0.05x0.11 -> 0.06x0.13: lock detail too small at thumbnail; uv.texel_density -> 320 to silence TEX_DENSITY_BELOW_TARGET (1024 cap)",
+ "source_hash": "23b64dad0424",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 18
+ },
+ "metrics": {
+  "triangles": 1248,
+  "parts": 40,
+  "size_m": [
+   1.0414,
+   0.547,
+   0.548
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.547,
+   "asset.width": 1.0414,
+   "lid_plank.min.y": 0.5
+  }
+ },
+ "errors": [],
+ "params": {
+  "W": 0.9,
+  "D": 0.5,
+  "H": 0.42,
+  "wall_t": 0.04,
+  "body_planks": 3.0,
+  "plank_h": 0.14,
+  "rail_h": 0.08,
+  "lid_t": 0.035,
+  "lid_over": 0.012,
+  "lid_planks": 3.0,
+  "lid_seam": 0.004,
+  "lid_pw": 0.172,
+  "strap_w": 0.05,
+  "strap_t": 0.012,
+  "strap_x": 0.27,
+  "guard_g": 0.07,
+  "guard_t": 0.012,
+  "knuckle_r": 0.016,
+  "wear": 0.003
+ }
+}

@@ -22,7 +22,7 @@ from pathlib import Path
 
 SCRIPT = r'''
 extends SceneTree
-var report = {"nodes": 0, "meshes": 0, "surfaces": 0, "materials": {}, "bodies": 0, "shapes": [], "markers": [], "names": []}
+var report = {"nodes": 0, "meshes": 0, "surfaces": 0, "materials": {}, "bodies": 0, "body_parents": [], "shapes": [], "markers": [], "names": []}
 var aabb = null
 func walk(n, xf):
 	report["nodes"] += 1
@@ -44,6 +44,7 @@ func walk(n, xf):
 					"emission": m.emission_enabled, "transparency": m.transparency}
 	if n is StaticBody3D or n is RigidBody3D or n is Area3D:
 		report["bodies"] += 1
+		report["body_parents"].append(str(n.get_parent().name) if n.get_parent() else "")
 	if n is CollisionShape3D and n.shape:
 		report["shapes"].append(n.shape.get_class())
 	if n.get_class() == "Node3D" and n.get_child_count() == 0:

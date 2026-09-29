@@ -1,0 +1,233 @@
+# Wooden storage chest with an opening lid (Godot 4 version; the Unreal version is
+# storage_chest_unreal, which extends this source and only switches the profile).
+# Plank body (front/back boards span the full width, side boards fit between them),
+# iron straps and corner guards, side handles and a front hasp over a lock staple.
+# The lid is a hinged group: `lid_rail_back` carries the pivot on the hinge line at the
+# back top edge of the body, every other lid part is parented to it, so the exporter
+# keeps the lid as its own node at the hinge (rotate it about local X to open).
+# Collision covers the body only (the lid swings, a static proxy must not cover it).
+shapewright: 0.1
+asset:
+  name: storage_chest
+  kind: prop/container/chest
+  description: Plank storage chest with iron straps, side handles and a hinged lid that opens in-game.
+profile: godot
+style: stylized_lowpoly
+budget: {triangles: 1500, materials: 2}
+uv: {texel_density: 320}   # 1024px cap (profile) gives ~330 px/m for this surface area
+
+params:
+  W: {value: 0.9, min: 0.6, max: 1.2, doc: body width (x)}
+  D: {value: 0.5, min: 0.4, max: 0.7, doc: body depth (z)}
+  H: {value: 0.42, min: 0.3, max: 0.55, doc: body height (the lid sits on top)}
+  wall_t: {value: 0.04, doc: board thickness}
+  body_planks: 3
+  plank_h: H / body_planks
+  rail_h: {value: 0.1, doc: lid rail (skirt) height}
+  lid_t: {value: 0.035, doc: lid plank thickness}
+  lid_over: {value: 0.012, doc: lid plank overhang past the body}
+  lid_planks: 3
+  lid_seam: 0.004
+  lid_pw: (D + 2 * lid_over - (lid_planks - 1) * lid_seam) / lid_planks
+  strap_w: {value: 0.05, doc: iron strap width}
+  strap_t: {value: 0.012, doc: iron strap thickness}
+  strap_x: {value: 0.27, doc: strap distance from the centre}
+  guard_g: {value: 0.07, doc: corner guard leg length}
+  guard_t: {value: 0.012}
+  knuckle_r: 0.016
+  wear: 0.003
+
+interface:
+  params: [W, D, H, rail_h, strap_x, wear]
+
+materials:
+  oak:
+    archetype: wood
+    color: "#8a5a34"
+    grain_strength: 0.55
+    grain_scale: 0.014
+    streaks: 0.7
+    knots: 0.8
+    edge_wear: 0.6
+    edge_color: "#c29466"
+    edge_width: 0.012
+    roughness: 0.85
+    seed: 21
+  iron:
+    archetype: metal
+    color: "#4a4e55"
+    roughness: 0.6
+    variation: 0.35
+    scale: 0.04
+    rust: 0.25
+    rust_color: "#6e4027"
+    edge_wear: 0.55
+    edge_color: "#a3a8ad"
+    edge_width: 0.007
+    seed: 22
+
+parts:
+  # ------------------------------------------------------------ body (static)
+  wall_front:
+    doc: horizontal boards spanning the full width (front and back)
+    shape: {type: chamfer_box, size: [W, plank_h, wall_t], chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: 11}]
+    anchor: bottom_front
+    position: [0, 0, D / 2]
+    array: {count: body_planks, offset: [0, plank_h, 0]}
+    mirror: z
+    material: oak
+
+  wall_side:
+    doc: side boards between the front and back boards
+    shape: {type: chamfer_box, size: [wall_t, plank_h, D - 2 * wall_t], chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: 12}]
+    anchor: bottom_right
+    position: [W / 2, 0, 0]
+    array: {count: body_planks, offset: [0, plank_h, 0]}
+    mirror: x
+    material: oak
+
+  floor:
+    doc: bottom board closing the box
+    shape: {type: box, size: [W - 2 * wall_t, 0.03, D - 2 * wall_t]}
+    anchor: bottom
+    position: [0, 0.01, 0]
+    material: oak
+
+  body_strap:
+    doc: vertical iron straps on front and back, in line with the lid straps
+    shape: {type: box, size: [strap_w, H, strap_t]}
+    anchor: bottom_back
+    position: [strap_x, 0, D / 2]
+    mirror: [x, z]
+    shading: flat
+    tags: [thin_ok]
+    uv: {share_instances: true}
+    material: iron
+
+  corner_guard:
+    doc: L-shaped iron guard on each vertical body corner
+    shape:
+      type: extrude
+      polygon: [[0, 0], [-guard_g, 0], [-guard_g, guard_t], [-guard_t, guard_t], [-guard_t, guard_g], [0, guard_g]]
+      depth: H
+    rotate: [-90, 0, 0]
+    anchor: bottom_front_right
+    position: [W / 2 + guard_t, 0, D / 2 + guard_t]
+    mirror: [x, z]
+    shading: flat
+    tags: [thin_ok]
+    uv: {share_instances: true}
+    material: iron
+
+  handle:
+    doc: square-bar iron grip on each side
+    shape: {type: tube, path: [[0, 0, -0.1], [0.05, 0, -0.08], [0.05, 0, 0.08], [0, 0, 0.1]], radius: 0.018, sides: 4}
+    anchor: left
+    position: [W / 2 - 0.004, H * 0.65, 0]
+    mirror: x
+    uv: {share_instances: true}
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+  staple:
+    doc: iron lock staple on the front top board; the lid hasp drops over it
+    shape: {type: chamfer_box, size: [0.07, 0.06, 0.016], chamfer: 0.004}
+    anchor: top_back
+    position: [0, H - 0.03, D / 2 - 0.003]
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+  # ------------------------------------------------------------ lid (hinged group)
+  lid_rail_back:
+    doc: back skirt board of the lid; root of the lid group, pivot on the hinge line
+    shape: {type: chamfer_box, size: [W, rail_h, wall_t], chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: 13}]
+    anchor: bottom_back
+    position: [0, H, -D / 2]
+    pivot: bottom_back
+    material: oak
+
+  lid_rail_front:
+    shape: {type: chamfer_box, size: [W, rail_h, wall_t], chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: 17}]
+    anchor: bottom_front
+    position: [0, H, D / 2]
+    parent: lid_rail_back
+    material: oak
+
+  lid_rail_side:
+    shape: {type: chamfer_box, size: [wall_t, rail_h, D - 2 * wall_t], chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: 18}]
+    anchor: bottom_right
+    position: [W / 2, H, 0]
+    mirror: x
+    parent: lid_rail_back
+    material: oak
+
+  lid_plank:
+    doc: flat lid boards running along the width, slight overhang all round
+    shape: {type: chamfer_box, size: [W + 2 * lid_over, lid_t, lid_pw], chamfer: 0.01}
+    ops: [{type: jitter, amount: wear, seed: 14}]
+    anchor: bottom_back
+    position: [0, H + rail_h, -D / 2 - lid_over]
+    array: {count: lid_planks, offset: [0, 0, lid_pw + lid_seam]}
+    parent: lid_rail_back
+    material: oak
+
+  lid_strap:
+    doc: iron strap across the lid top, in line with the body straps
+    shape: {type: box, size: [strap_w, strap_t, D + 2 * lid_over + 2 * strap_t]}
+    anchor: bottom
+    position: [strap_x, H + rail_h + lid_t, 0]
+    mirror: x
+    parent: lid_rail_back
+    shading: flat
+    tags: [thin_ok]
+    uv: {share_instances: true}
+    material: iron
+
+  rail_strap:
+    doc: straps continue down the lid skirt front and back
+    shape: {type: box, size: [strap_w, rail_h + lid_t, strap_t]}
+    anchor: bottom_back
+    position: [strap_x, H, D / 2 + lid_over]
+    mirror: [x, z]
+    parent: lid_rail_back
+    shading: flat
+    tags: [thin_ok]
+    uv: {share_instances: true}
+    material: iron
+
+  hasp:
+    doc: iron hasp hanging from the lid front over the staple
+    shape: {type: chamfer_box, size: [0.06, 0.13, 0.012], chamfer: 0.004}
+    anchor: bottom_back
+    position: [0, H - 0.05, D / 2 + 0.01]
+    parent: lid_rail_back
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+  hinge:
+    doc: hinge knuckles on the hinge line at the back top edge
+    shape: {type: cylinder, radius: knuckle_r, height: 0.1, segments: 8, rotate: [0, 0, 90]}
+    position: [strap_x, H, -D / 2 - knuckle_r * 0.5]
+    mirror: x
+    parent: lid_rail_back
+    shading: flat
+    uv: {share_instances: true}
+    material: iron
+
+sockets:
+  loot: {attach: {to: floor, at: top}, doc: where loot spawns when the lid opens}
+
+collision: {mode: single_box, parts: [wall_front, wall_side]}   # body only: the lid swings open
+
+checks:
+  - {expr: asset.height, min: 0.5, max: 0.64, doc: body plus flat lid}
+  - {expr: asset.width, min: 0.85, max: 1.05, doc: two-hand storage chest}
+  - {expr: lid_plank.min.y, min: H + rail_h - 0.005, max: H + rail_h + 0.005, doc: lid boards sit on the skirt}

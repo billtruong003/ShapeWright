@@ -73,6 +73,18 @@ Unreal project. Every Godot export is checked in Godot.
 | E5 | LOD files are produced for the Unreal set; the agent does not check their silhouettes unless the report surfaces it |
 | E6 | 0 framework changes |
 
+## Gate result (FRESH_AGENT_08)
+
+**PASS for Godot, verified in the engine.** A fresh agent's chest (hinged lid), bench and torch bracket
+imported with convex physics, 2–4 draw calls, the lid as its own node on the hinge, sockets,
+textures and correct scale. **Unreal and Unity pass by documented convention only.** Follow-ups:
+- collision per rigid group, so the lid's collision moves with it (checked in Godot);
+- `UCX_<mesh>_NN` naming;
+- `sw export --target`;
+- `strut.depth_axis`.
+
+Record: [experiments/FRESH_AGENT_08.md](experiments/FRESH_AGENT_08.md).
+
 ## Implementation status (before the gate)
 
 Implemented as designed. Verified in **Godot 4.3** on six assets exported with the `godot` target

@@ -197,7 +197,9 @@ def extrude(a, b):
         Param("sides", "int", 8, "sides of a round section", **SEG),
         Param("chamfer", "num", 0.0, "edge chamfer in metres", min=0),
         Param("extend", "num", 0.0, "extra length past each end (to bury ends in what they join)", min=0),
-        Param("roll", "num", 0.0, "rotation about the strut's own axis, degrees")],
+        Param("roll", "num", 0.0, "rotation about the strut's own axis, degrees"),
+        Param("depth_axis", "str", "auto", "which asset axis the section's depth faces: auto (normal of the strut's vertical "
+              "plane) | x | y | z; set it so a row of leaning legs keeps one orientation", choices=("auto", "x", "y", "z"))],
        example="{type: strut, from: [-0.4, 0.1, 0], to: [0.4, 0.9, 0], size: [0.08, 0.06], chamfer: 0.008}")
 def strut(a, b):
     p0, p1 = np.asarray(a["from"], dtype=np.float64), np.asarray(a["to"], dtype=np.float64)
@@ -206,10 +208,16 @@ def strut(a, b):
     if length < 1e-6:
         raise ValueError("strut `from` and `to` are the same point")
     y = d / length
-    up = np.array([0.0, 1.0, 0.0]) if abs(y[1]) < 0.99 else np.array([0.0, 0.0, 1.0])
-    z = np.cross(y, up)  # depth axis: horizontal, normal to the vertical plane holding the strut
-    if abs(y[1]) >= 0.99:
-        z = np.array([0.0, 0.0, 1.0])
+    if a["depth_axis"] != "auto":  # the chosen axis, made perpendicular to the strut (FRESH_AGENT_08)
+        want = np.eye(3)["xyz".index(a["depth_axis"])]
+        z = want - y * (want @ y)
+        if np.linalg.norm(z) < 1e-6:
+            raise ValueError(f"depth_axis {a['depth_axis']} is parallel to the strut")
+    else:
+        up = np.array([0.0, 1.0, 0.0]) if abs(y[1]) < 0.99 else np.array([0.0, 0.0, 1.0])
+        z = np.cross(y, up)  # depth axis: horizontal, normal to the vertical plane holding the strut
+        if abs(y[1]) >= 0.99:
+            z = np.array([0.0, 0.0, 1.0])
     z /= np.linalg.norm(z)
     x = np.cross(y, z)
     L = length + 2 * a["extend"]
