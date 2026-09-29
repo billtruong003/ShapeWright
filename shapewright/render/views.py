@@ -66,7 +66,14 @@ MODES = {
     "silhouette": "black shape on white; readability at a distance",
     "provenance": "faces coloured by the geometry expression that created them (e.g. boolean cut faces), with legend",
     "regions": "faces coloured by surface region (top/bottom/side/bevel/cut...), with legend",
+    "textured": "baked material textures, lit (material appearance: grain, wear, rust, colour balance)",
+    "albedo": "baked base colour, unlit (colour balance, value range)",
+    "roughness": "baked roughness as grey (white = matte)",
+    "metallic": "baked metallic as grey (white = metal)",
+    "texel": "checker at 8x8 texels: stretching and texel-density differences show as uneven squares",
+    "seams": "base colour with UV chart borders in red (seam placement)",
 }
+TEXTURE_MODES = {"textured", "albedo", "roughness", "metallic", "texel", "seams"}
 FOV = 30.0
 
 
@@ -145,7 +152,14 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
     bounds = frame if frame is not None else (np.stack([np.min([p.bounds[0] for p in parts], 0), np.max([p.bounds[1] for p in parts], 0)]))
     cam = Camera(view, bounds, W, H)
 
-    tris, nrms, fnorm, owner, labels = [], [], [], [], []
+    tex = None
+    if mode in TEXTURE_MODES:
+        from ..bake import textures_for
+
+        tex = textures_for(asset, surface)
+        if tex is None:  # no textured materials: show the flat-material equivalent
+            mode = "material" if mode in ("textured", "albedo") else "clay"
+    tris, nrms, fnorm, owner, labels, cuvs = [], [], [], [], [], []
     for pi, p in enumerate(parts):
         if mode in ("provenance", "regions"):
             labels.append(p.mesh.label_values("origin" if mode == "provenance" else "region"))
@@ -158,19 +172,55 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
         fn, _ = p.mesh.face_normals()
         fnorm.append(fn)
         owner.append(np.full(len(sp.indices), pi))
+        if tex is not None:
+            cuvs.append(sp.corner_uv)
     T = np.concatenate(tris)
     N = np.concatenate(nrms)
     FN = np.concatenate(fnorm)
     OWN = np.concatenate(owner)
     scr, key = cam.project(T)
     front = cam.facing(T.mean(1), FN)
-    buf = rasterize(scr, key, N, front, W, H)
+    buf = rasterize(scr, key, N, front, W, H, np.concatenate(cuvs) if tex is not None else None)
 
     hit = buf.tri >= 0
     img = np.tile(BG if mode != "silhouette" else np.ones(3), (H, W, 1)).astype(np.float64)
     pid = np.where(hit, OWN[np.clip(buf.tri, 0, None)], -1)
 
-    if mode == "silhouette":
+    if tex is not None:
+        uv = buf.extra[hit]
+        r = tex.resolution
+        tx = np.clip((uv[:, 0] * r).astype(int), 0, r - 1)
+        ty = np.clip(((1 - uv[:, 1]) * r).astype(int), 0, r - 1)
+        base = tex.base[ty, tx]
+        if mode == "roughness":
+            col = np.repeat(tex.orm[ty, tx, 1:2], 3, 1)
+        elif mode == "metallic":
+            col = np.repeat(tex.orm[ty, tx, 2:3], 3, 1)
+        elif mode == "texel":
+            chk = ((tx // 8 + ty // 8) % 2).astype(float)
+            col = np.stack([0.35 + 0.5 * chk, 0.35 + 0.5 * chk, 0.45 + 0.4 * chk], 1)
+        elif mode == "seams":
+            col = np.where(tex.seams[ty, tx][:, None], np.array([1.0, 0.0, 0.0]), base)
+        else:
+            col = base
+        if mode in ("textured", "texel"):
+            n = buf.normal[hit]
+            key_l = -cam.fwd * 0.55 + cam.up * 0.55 - cam.right * 0.45
+            key_l /= np.linalg.norm(key_l)
+            lam = 0.45 + 0.55 * np.clip(n @ key_l, 0, 1) + 0.06 * n[:, 1]
+            if mode == "textured":
+                rough, metal = tex.orm[ty, tx, 1], tex.orm[ty, tx, 2]
+                half = key_l - cam.fwd
+                half /= np.linalg.norm(half)
+                spec = np.clip(n @ half, 0, 1) ** (2 + 60 * (1 - rough) ** 2) * (1 - rough) ** 2
+                f0 = 0.04 * (1 - metal)[:, None] + col * metal[:, None]
+                col = col * (1 - 0.6 * metal)[:, None] * lam[:, None] + f0 * spec[:, None] * 1.5 + col * metal[:, None] * 0.35
+            else:
+                col = col * lam[:, None]
+        img[hit] = np.clip(col, 0, 1)
+        img[hit & ~buf.front] = BACKFACE
+        n = buf.normal
+    elif mode == "silhouette":
         img[hit] = 0.0
     elif mode == "normals":
         img[hit] = buf.normal[hit] * 0.5 + 0.5
@@ -338,8 +388,17 @@ SHEET_TILES = [
 ]
 
 
+TEXTURED_TILES = [
+    ("front", "clay"), ("right", "clay"), ("top", "clay"), ("front_right", "textured"),
+    ("front_right", "parts"), ("back_left", "textured"), ("front_right", "texel"), ("uv", "uv"),
+]
+
+
 def contact_sheet(asset: Asset, surface: Surface, tile: int = 384, tiles=None, focus=None, frame=None) -> Image.Image:
-    tiles = tiles or SHEET_TILES
+    if tiles is None:
+        from ..bake import needs_textures
+
+        tiles = TEXTURED_TILES if needs_textures(asset) and surface.uv_method != "none" else SHEET_TILES
     cols = 4
     rows = math.ceil(len(tiles) / cols)
     sheet = Image.new("RGB", (cols * tile, rows * tile), (255, 255, 255))

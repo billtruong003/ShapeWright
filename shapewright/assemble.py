@@ -227,7 +227,7 @@ def build_geometry(raw: Any, env: dict, ctx: S.Ctx, where: str, asset_dir: Path 
     if raw.get("material") is not None:
         mat = raw["material"]
         if materials is not None and mat not in materials:
-            ctx.error("SRC_REF", f"{where}.material", f"unknown material '{mat}'", suggest(mat, materials).strip())
+            ctx.error("SRC_REF", f"{where}.material", f"unknown material '{mat}'", _material_hint(mat, materials))
         else:
             unset = mesh.fattr["material"] < 0 if "material" in mesh.fattr else None
             mesh.set_label("material", mat, unset)  # inner expressions keep their own material
@@ -306,24 +306,93 @@ def parse_color(value: Any, where: str, ctx: S.Ctx) -> list[float]:
     return [0.8, 0.8, 0.8]
 
 
+def _material_hint(name: str, known) -> str:
+    return suggest(name, known).strip() or f"defined materials: {', '.join(sorted(known)) or '(none)'}"
+
+
 def resolve_materials(raw: dict, env: dict, ctx: S.Ctx) -> dict:
-    out = {}
-    for name, m in (raw or {}).items():
+    """Resolve material recipes: archetype + semantic params, `use:` instances, layers.
+
+    Every material keeps the v0.1 fields (base_color, metallic, roughness, ...) so
+    flat materials behave exactly as before; textured ones also carry `archetype`,
+    resolved `args` and `layers` for the bake stage (docs/SURFACES.md)."""
+    from . import materials as M
+
+    raw = raw or {}
+    resolved: dict = {}
+
+    def flatten(name: str, stack: tuple) -> dict | None:
+        m = raw.get(name)
         where = f"materials.{name}"
         if not isinstance(m, dict):
             ctx.error("SRC_SCHEMA", where, "material must be a mapping")
+            return None
+        if "use" not in m:
+            return dict(m)
+        base = m["use"]
+        if base in stack or base == name:
+            ctx.error("SRC_CYCLE", f"{where}.use", f"material instance cycle: {' -> '.join(stack + (name, base))}")
+            return None
+        if base not in raw:
+            ctx.error("SRC_REF", f"{where}.use", f"unknown material '{base}'", _material_hint(base, raw))
+            return None
+        parent = flatten(base, stack + (name,))
+        if parent is None:
+            return None
+        return {**parent, **{k: v for k, v in m.items() if k != "use"}, "_instance_of": base}
+
+    for name in raw:
+        where = f"materials.{name}"
+        m = flatten(name, ())
+        if m is None:
             continue
-        S.check_keys(m, S.MATERIAL_KEYS, where, ctx)
-        out[name] = {
-            "base_color": parse_color(m.get("base_color", "#cccccc"), f"{where}.base_color", ctx),
-            "metallic": S.num(m.get("metallic", 0.0), env, f"{where}.metallic", ctx, 0.0),
-            "roughness": S.num(m.get("roughness", 0.8), env, f"{where}.roughness", ctx, 0.8),
+        if "base_color" in m and "color" not in m:
+            m["color"] = m.pop("base_color")  # v0.1 name
+        elif "base_color" in m:
+            m.pop("base_color")
+        arch_name = m.get("archetype", "flat")
+        arch = M.ARCHETYPES.get(arch_name)
+        if arch is None:
+            ctx.error("SRC_SCHEMA", f"{where}.archetype", f"unknown archetype '{arch_name}'", M.unknown_archetype_hint(arch_name))
+            continue
+        extra = {"archetype", "layers", "emissive", "alpha", "alpha_mode", "double_sided", "doc", "_instance_of", "metallic", "use"}
+        S.check_keys(m, {p.name for p in arch.params} | extra, where, ctx)
+        args = S.resolve_args(arch, {k: v for k, v in m.items() if k not in extra or k == "metallic" and arch_name == "flat"},
+                              env, where, ctx) or {}
+        color = args.get("color") or [0.8, 0.8, 0.8]
+        metallic = args.get("metallic", 1.0 if arch_name == "metal" else S.num(m.get("metallic", 0.0), env, f"{where}.metallic", ctx, 0.0))
+        layers = []
+        for i, lay in enumerate(m.get("layers") or []):
+            lw = f"{where}.layers[{i}]"
+            if not isinstance(lay, dict) or not ({"image", "vertex_color"} & set(lay)):
+                ctx.error("SRC_SCHEMA", lw, "a layer needs `image: path` or `vertex_color: true`")
+                continue
+            S.check_keys(lay, {"image", "vertex_color", "projection", "scale", "opacity", "mask", "tint", "doc"}, lw, ctx)
+            proj = lay.get("projection", "triplanar")
+            mask = lay.get("mask", "none")
+            if proj not in ("triplanar", "uv") or mask not in ("none", "edge", "inverse_edge"):
+                ctx.error("SRC_SCHEMA", lw, "projection: triplanar | uv; mask: none | edge | inverse_edge")
+                continue
+            layers.append({"image": lay.get("image"), "vertex_color": bool(lay.get("vertex_color")), "projection": proj,
+                           "scale": S.num(lay.get("scale", 0.5), env, f"{lw}.scale", ctx, 0.5),
+                           "opacity": S.num(lay.get("opacity", 1.0), env, f"{lw}.opacity", ctx, 1.0), "mask": mask,
+                           "tint": S.parse_color_value(lay.get("tint"))})
+        mat = {
+            "base_color": list(color),
+            "metallic": float(metallic),
+            "roughness": float(args.get("roughness", 0.8)),
             "emissive": parse_color(m["emissive"], f"{where}.emissive", ctx) if "emissive" in m else None,
             "alpha_mode": m.get("alpha_mode", "OPAQUE"),
             "double_sided": bool(m.get("double_sided", False)),
             "doc": m.get("doc", ""),
+            "archetype": arch_name,
+            "args": {**args, "metallic": float(metallic)},
+            "layers": layers,
+            "instance_of": m.get("_instance_of"),
         }
-    return out
+        mat["textured"] = M.is_textured(mat)
+        resolved[name] = mat
+    return resolved
 
 
 # --------------------------------------------------------------------------- units of work
@@ -785,7 +854,7 @@ def build_part(u: Unit, world: World, materials: dict, style: dict, asset_dir: P
     smooth_angle = S.num(raw.get("smooth_angle", (style.get("shading") or {}).get("smooth_angle", 40)), env, f"{where}.smooth_angle", ctx, 40.0)
     material = raw.get("material")
     if material is not None and material not in materials:
-        ctx.error("SRC_REF", f"{where}.material", f"unknown material '{material}'", suggest(material, materials).strip())
+        ctx.error("SRC_REF", f"{where}.material", f"unknown material '{material}'", _material_hint(material, materials))
     uv = raw.get("uv") or {}
     if not isinstance(uv, dict):
         ctx.error("SRC_SCHEMA", f"{where}.uv", "part uv must be a mapping, e.g. {share_instances: true}")

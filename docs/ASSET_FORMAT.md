@@ -77,6 +77,39 @@ materials:
 Colours are sRGB (`"#rrggbb"`, `"#rrggbbaa"` or `[r, g, b]` in 0..1). They are
 converted to linear on export.
 
+### Textured materials (archetypes)
+
+A material can name an **archetype**: a procedural recipe with semantic params
+(`sw doc wood` lists them with ranges and an example; `sw caps` lists all
+archetypes). Available: `flat` (default, untextured), `wood`, `metal`, `stone`,
+`painted`.
+
+```yaml
+materials:
+  oak:   {archetype: wood, color: "#8a5a36", grain_strength: 0.35, grain_scale: 0.03, edge_wear: 0.3}
+  iron:  {archetype: metal, color: "#5a5f66", roughness: 0.5, edge_wear: 0.5, rust: 0.2}
+  oak_light: {use: oak, color: "#b08050"}     # instance: inherits oak, overrides colour
+  sign:  {archetype: painted, color: "#3f6b8a", under_color: "#6b4a30", chips: 0.5,
+          layers: [{image: textures/emblem.png, projection: triplanar, scale: 0.4, opacity: 0.8}]}
+```
+
+- Common params on every archetype: `color`, `roughness`, `edge_wear` (0..1,
+  scuffed convex edges), `edge_color`, `edge_width` (m), `seed`.
+- `use: NAME` makes an instance of another material in the same asset (or pack).
+- `layers:` stack on top of the archetype: `image: path` (inside the asset
+  directory) or `vertex_color: true`, with `projection: triplanar | uv`,
+  `scale` (m per tile, triplanar), `opacity`, `mask: none | edge | inverse_edge`, `tint`.
+  `projection: uv` needs authored UVs (a `mesh_file` part); otherwise the layer is
+  skipped with `TEX_UV_SOURCE_MISSING`.
+- Textures are evaluated in object space (continuous across UV seams) and baked
+  into the UV0 atlas: base colour (sRGB) + ORM (occlusion/roughness/metallic).
+  Atlas size follows `uv: {texel_density: PX_PER_M}` (default 256), capped by
+  `budget.texture_size` (`TEX_DENSITY_BELOW_TARGET` when the cap wins).
+- An asset whose materials are all `flat` without edge wear or layers exports no
+  textures, exactly as before. The legacy `base_color:` key still works as `color:`.
+- Lock UVs (`sw uv ASSET lock`) before texturing so part edits don't move texels.
+  Design: docs/SURFACES.md.
+
 ## Parts
 
 ```yaml

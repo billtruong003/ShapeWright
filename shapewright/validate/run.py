@@ -47,9 +47,12 @@ def format_text(report: dict, verbose: bool = False) -> str:
     size = "x".join(f"{v:.3f}" for v in m.get("size_m", []))
     lines = [
         f"{report['status']} {report['asset']}  tris {m.get('triangles')}{budget}  parts {m.get('parts')}  size {size} m  "
-        f"materials {m.get('materials', '?')}  uv_overlap {m.get('uv_overlap', '-')}  texel {m.get('texel_density_px_m', '-')} px/m",
+        f"materials {m.get('materials', '?')}  uv_overlap {m.get('uv_overlap', '-')}  texel {m.get('texel_density_px_m', '-')} px/m (median part)",
         "layers: " + " ".join(f"{k}={v}" for k, v in report["layers"].items()),
     ]
+    if m.get("texture"):
+        t = m["texture"]
+        lines.append(f"texture: {t['resolution']}px atlas, {t['achieved_px_m']} px/m area-average (target {t['target_px_m']:g}), ~{t['memory_kb']} KB, lifecycle {t.get('lifecycle')}")
     if m.get("checks"):
         lines.append("checks: " + ", ".join(f"{k}={v}" for k, v in m["checks"].items()))
     for i in report["issues"]:

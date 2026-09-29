@@ -409,3 +409,49 @@ def style_heuristics(asset: Asset, surface: Surface, metrics: dict):
     if max_mat and len({p.material for p in asset.parts}) > max_mat:
         out.append(_issue("STYLE_MATERIALS", "warning", "style", f"more than {max_mat} materials", ""))
     return out
+
+
+# ---------------------------------------------------------------- textures (Phase 8)
+
+
+@validator("surface_textures", "surface", "Baked material textures: density vs target, budgets, images, PBR plausibility, texture lifecycle.",
+           ("TEX_DENSITY_BELOW_TARGET", "TEX_IMAGE_INVALID", "TEX_UV_SOURCE_MISSING", "PBR_ALBEDO_RANGE", "PBR_METAL_TOO_DARK",
+            "PBR_METALLIC_MIXED", "TEX_LIFECYCLE"))
+def surface_textures(asset: Asset, surface: Surface, metrics: dict):
+    from ..bake import textures_for
+
+    tex = textures_for(asset, surface)
+    if tex is None:
+        return []
+    out = []
+    metrics["texture"] = {"resolution": tex.resolution, "target_px_m": tex.target_px_m, "achieved_px_m": round(tex.achieved_px_m, 1),
+                          "memory_kb": int(tex.resolution ** 2 * 4 * 2 / 1024)}
+    if tex.needed_resolution > tex.resolution:
+        out.append(_issue("TEX_DENSITY_BELOW_TARGET", "warning", "surface",
+                          f"{tex.target_px_m:g} px/m needs a {tex.needed_resolution}px atlas; budget allows {tex.resolution}px "
+                          f"({tex.achieved_px_m:.0f} px/m achieved)", "uv", "raise budget.texture_size, lower texel_density, or reduce surface area"))
+    for code, sev, msg, where, hint in tex.issues:
+        out.append(_issue(code, sev, "surface", msg, where, hint))
+    for name, st in tex.material_stats.items():
+        mat = asset.materials.get(name) or {}
+        lum = 0.2126 * st["mean_srgb"][0] + 0.7152 * st["mean_srgb"][1] + 0.0722 * st["mean_srgb"][2]
+        if st["metallic_mean"] < 0.5 and not (30 <= lum <= 240):
+            out.append(_issue("PBR_ALBEDO_RANGE", "warning", "surface", f"mean base colour luminance {lum:.0f}/255 outside 30..240 for a non-metal",
+                              f"materials.{name}", "very dark or very bright albedo reads badly under game lighting; adjust color"))
+        if st["metallic_mean"] >= 0.5 and lum < 90:
+            out.append(_issue("PBR_METAL_TOO_DARK", "warning", "surface", f"metal with mean base colour luminance {lum:.0f}/255",
+                              f"materials.{name}", "metals get their colour from reflections; a brighter base (≥ ~110) reads as metal"))
+        if st["metallic_mixed_fraction"] > 0.2:
+            out.append(_issue("PBR_METALLIC_MIXED", "warning", "surface", f"{st['metallic_mixed_fraction']:.0%} of texels are neither metal nor non-metal",
+                              f"materials.{name}", "metallic should be ~0 or ~1; use rust/paint layers for transitions"))
+        del mat
+    states = {}
+    for part, st in tex.lifecycle.items():
+        states.setdefault(st, []).append(part)
+    metrics["texture"]["lifecycle"] = {k: len(v) for k, v in states.items()}
+    bad = {k: v for k, v in states.items() if k in ("REGION_KEPT", "RELAYOUT", "INVALID")}
+    for st, parts in bad.items():
+        out.append(_issue("TEX_LIFECYCLE", "warning" if st != "INVALID" else "error", "surface",
+                          f"authored texture content is {st} on: {', '.join(parts[:6])}", parts[0],
+                          "see docs/SURFACES.md#3 (procedural materials are always DERIVED and never go stale)"))
+    return out

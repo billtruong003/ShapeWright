@@ -67,6 +67,13 @@ class _Builder:
         self.accessors.append(acc)
         return len(self.accessors) - 1
 
+    def add_bytes(self, raw: bytes) -> int:
+        while len(self.bin) % 4:
+            self.bin.append(0)
+        self.views.append({"buffer": 0, "byteOffset": len(self.bin), "byteLength": len(raw)})
+        self.bin.extend(raw)
+        return len(self.views) - 1
+
     def mesh_primitive(self, positions, indices, normals=None, uvs=None, material=None, colors=None) -> dict:
         attrs = {"POSITION": self.add(positions.astype(np.float32), FLOAT, "VEC3", ARRAY_BUFFER, minmax=True)}
         if normals is not None:
@@ -106,6 +113,15 @@ def _collision_meshes(asset: Asset) -> list[tuple[str, np.ndarray, np.ndarray]]:
     return out
 
 
+def _recipe(m: dict) -> dict:
+    def conv(v):
+        if isinstance(v, (list, tuple)) and len(v) in (3, 4) and all(isinstance(x, float) for x in v):
+            return "#" + "".join(f"{int(round(x * 255)):02x}" for x in v[:3])
+        return v
+    return {"archetype": m.get("archetype", "flat"), "params": {k: conv(v) for k, v in (m.get("args") or {}).items()},
+            **({"instance_of": m["instance_of"]} if m.get("instance_of") else {})}
+
+
 def _primitives(b: _Builder, sp, part, pivot, mat_index: dict) -> list[dict]:
     """One primitive per effective material (face `material` attribute, else the part's)."""
     eff = np.array([m if m else part.material for m in sp.face_material], dtype=object)
@@ -126,7 +142,16 @@ def _primitives(b: _Builder, sp, part, pivot, mat_index: dict) -> list[dict]:
 
 
 def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str = "UNKNOWN") -> dict:
+    from ..bake import textures_for, to_png_bytes
+
     b = _Builder()
+    tex = textures_for(asset, surface)
+    images, textures, samplers = [], [], []
+    if tex is not None:
+        for label, arr in (("base_color", tex.base), ("orm", tex.orm)):
+            images.append({"name": f"{asset.name}_{label}", "mimeType": "image/png", "bufferView": b.add_bytes(to_png_bytes(arr))})
+            textures.append({"source": len(images) - 1, "sampler": 0})
+        samplers.append({"magFilter": 9729, "minFilter": 9987, "wrapS": 33071, "wrapT": 33071})
     materials, mat_index = [], {}
     used = {p.material for p in asset.parts} | {m for sp in surface.parts.values() for m in sp.face_material if m}
     for name, m in asset.materials.items():
@@ -135,6 +160,11 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
         base = list(srgb_to_linear(m["base_color"][:3])) + [m["base_color"][3] if len(m["base_color"]) > 3 else 1.0]
         mat = {"name": name, "pbrMetallicRoughness": {"baseColorFactor": [round(float(v), 6) for v in base],
                                                         "metallicFactor": float(m["metallic"]), "roughnessFactor": float(m["roughness"])}}
+        if tex is not None:  # every material samples the shared baked atlas; its recipe travels in extras
+            mat["pbrMetallicRoughness"] = {"baseColorFactor": [1.0, 1.0, 1.0, round(float(base[3]), 6)],
+                                           "baseColorTexture": {"index": 0}, "metallicRoughnessTexture": {"index": 1},
+                                           "metallicFactor": 1.0, "roughnessFactor": 1.0}
+            mat["extras"] = {"shapewright_material": _recipe(m)}
         if m.get("emissive"):
             mat["emissiveFactor"] = [round(float(v), 6) for v in srgb_to_linear(m["emissive"][:3])]
         if m.get("alpha_mode", "OPAQUE") != "OPAQUE":
@@ -208,6 +238,8 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
     }
     if materials:
         gltf["materials"] = materials
+    if images:
+        gltf["images"], gltf["textures"], gltf["samplers"] = images, textures, samplers
     js = json.dumps(gltf, separators=(",", ":"), sort_keys=True).encode()
     js += b" " * ((4 - len(js) % 4) % 4)
     while len(b.bin) % 4:

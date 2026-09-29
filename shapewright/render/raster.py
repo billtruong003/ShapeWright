@@ -14,8 +14,9 @@ import numpy as np
 
 
 class Buffers:
-    def __init__(self, w: int, h: int):
+    def __init__(self, w: int, h: int, extra_dim: int = 0):
         self.w, self.h = w, h
+        self.extra = np.zeros((h, w, extra_dim)) if extra_dim else None
         self.depth = np.full((h, w), -np.inf)  # larger = closer
         self.tri = np.full((h, w), -1, dtype=np.int64)
         self.normal = np.zeros((h, w, 3))
@@ -26,10 +27,12 @@ def edge(ax, ay, bx, by, px, py):
     return (bx - ax) * (py - ay) - (by - ay) * (px - ax)
 
 
-def rasterize(screen: np.ndarray, key: np.ndarray, normals: np.ndarray, front: np.ndarray, w: int, h: int) -> Buffers:
+def rasterize(screen: np.ndarray, key: np.ndarray, normals: np.ndarray, front: np.ndarray, w: int, h: int,
+              extra: np.ndarray | None = None) -> Buffers:
     """screen: (m,3,2) pixel coords; key: (m,3) closeness (interpolated linearly);
-    normals: (m,3,3) per-corner normals; front: (m,) front-facing flags."""
-    buf = Buffers(w, h)
+    normals: (m,3,3) per-corner normals; front: (m,) front-facing flags;
+    extra: optional (m,3,k) per-corner attributes (e.g. UVs) interpolated into buf.extra."""
+    buf = Buffers(w, h, 0 if extra is None else extra.shape[2])
     for t in range(len(screen)):
         (x0, y0), (x1, y1), (x2, y2) = screen[t]
         area = edge(x0, y0, x1, y1, x2, y2)
@@ -56,6 +59,9 @@ def rasterize(screen: np.ndarray, key: np.ndarray, normals: np.ndarray, front: n
         n = b0[..., None] * normals[t, 0] + b1[..., None] * normals[t, 1] + b2[..., None] * normals[t, 2]
         buf.normal[miny:maxy + 1, minx:maxx + 1][win] = n[win]
         buf.front[miny:maxy + 1, minx:maxx + 1][win] = front[t]
+        if extra is not None:
+            e = b0[..., None] * extra[t, 0] + b1[..., None] * extra[t, 1] + b2[..., None] * extra[t, 2]
+            buf.extra[miny:maxy + 1, minx:maxx + 1][win] = e[win]
     length = np.linalg.norm(buf.normal, axis=2, keepdims=True)
     buf.normal = np.where(length > 1e-12, buf.normal / np.maximum(length, 1e-12), 0)
     return buf

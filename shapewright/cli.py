@@ -94,9 +94,9 @@ def cmd_doc(a):
     from .caps import manifest
 
     m = manifest()
-    for fam in ("shapes", "ops"):
+    for fam in ("shapes", "ops", "material_archetypes"):
         if a.name in m[fam]:
-            print(compact_json({fam[:-1]: a.name, **m[fam][a.name]}))
+            print(compact_json({fam.rstrip("s").replace("material_archetype", "archetype"): a.name, **m[fam][a.name]}))
             return 0
     if a.name in m["views"] or a.name in m["modes"]:
         print(m["views"].get(a.name) or m["modes"].get(a.name))
@@ -462,6 +462,19 @@ def cmd_pack(a):
     return 1 if any(r["status"] == "FAIL" for r in reports) else 0
 
 
+def cmd_materials(a):
+    from .preview import material_sheet
+
+    asset, _ = _load(a.asset, a.set)
+    out = asset.build_dir / "materials.png"
+    img, notes = material_sheet(asset, tile=a.size)
+    img.save(out)
+    for n in notes:
+        print(n)
+    print(f"material sheet: {_rel(out)}   (top: lit textured on reference shapes, bottom: unlit albedo)")
+    return 0
+
+
 def cmd_doctor(a):
     import importlib
     import shutil
@@ -494,7 +507,7 @@ def build_parser() -> argparse.ArgumentParser:
         p = sub.add_parser(name, help=help_)
         if asset:
             p.add_argument("asset", help="asset directory, asset.yaml path, or name under assets/")
-            if name in ("stats", "validate", "render", "review"):
+            if name in ("stats", "validate", "render", "review", "materials"):
                 p.add_argument("--set", action="append", metavar="PARAM=VALUE[,..]",
                                help="try param values without editing the source (e.g. --set steps=14,rise=0.2)")
         p.set_defaults(fn=fn)
@@ -511,7 +524,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--verbose", "-v", action="store_true")
     p = add("render", cmd_render, "inspection images")
     p.add_argument("--view", action="append", help="front back left right top bottom front_right front_left back_right back_left low_front uv")
-    p.add_argument("--mode", action="append", help="clay parts material wire normals silhouette")
+    p.add_argument("--mode", action="append", help="clay parts material wire normals silhouette provenance regions textured albedo roughness metallic texel seams")
     p.add_argument("--part", action="append", help="highlight part(s): source or instance names; repeat or comma-separate")
     p.add_argument("--isolate", action="store_true", help="render only the --part parts")
     p.add_argument("--sheet", action="store_true", help="contact sheet of standard views")
@@ -553,6 +566,8 @@ def build_parser() -> argparse.ArgumentParser:
     p = add("uv", cmd_uv, "UV regions: `sw uv ASSET lock` writes uv.lock.yaml; `show` lists regions")
     p.add_argument("action", choices=("lock", "show"))
     p = add("family", cmd_family, "validate a base asset and all its variants")
+    p = add("materials", cmd_materials, "material sheet (each material on reference shapes)")
+    p.add_argument("--size", type=int, default=256)
     p = add("bench", cmd_bench, "validate all assets", asset=False)
     p.add_argument("--dir")
     p = add("pack", cmd_pack, "review several assets as one set (common-scale sheet + consistency report)", asset=False)

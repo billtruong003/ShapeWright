@@ -85,6 +85,11 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
 - Geometry that primitives can't express: produce a mesh file by any means,
   put it in the asset directory and use `{type: mesh_file, path: ...}`, or
   `sw import FILE NAME`. It is validated, rendered and exported like the rest.
+- Surface detail comes from material **archetypes**, not geometry or hand-made images:
+  `materials: {oak: {archetype: wood, color: ..., grain_strength: ..., edge_wear: ...}}`.
+  `sw doc wood` (or metal, stone, painted, flat) lists the params. Look at the result
+  with `sw materials ASSET` and `sw render ASSET --mode textured`; critique in terms of
+  params ("grain too busy -> grain_scale 0.03 -> 0.05").
 - Before any texturing work: `sw uv ASSET lock` and commit `uv.lock.yaml`.
 - To prove an asset stays correct when its params change, try values without
   editing the file: `sw validate ASSET --set steps=14,rise=0.2` (also works on

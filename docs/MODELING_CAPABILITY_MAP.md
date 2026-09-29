@@ -40,7 +40,14 @@ See docs/HARDENING.md. Rows below keep their original text; these entries overri
 | Asset packs: shared params/palette, pack review sheet (§30) | NEAR | NOW | `packs/`, `pack:`, `sw pack` (Phase 6) |
 | Component-instance mirror/array | — | NOW | Phase 6 |
 | Nested components; `measure` on component instances | — | NEAR | Phase 6 findings |
-| Pack-level texture/texel budgets | — | Phase 7 design | Phase 6 finding |
+| Pack-level texture/texel budgets | — | PARTIAL | per-asset `texel_density` + `budget.texture_size` (Phase 8); pack-level budget still NEAR |
+| Procedural stylized materials (§11) | NEAR | NOW | archetypes `wood/metal/stone/painted/flat` with semantic params, `use:` instances (Phase 8) |
+| Texture baking to atlas: base colour + ORM (§11, §12) | LONG | NOW (procedural + image layers) | object-space evaluation baked into UV0, deterministic, seam dilation |
+| Edge wear from geometry (curvature masks) | LONG | NOW (sharp convex edges) | bake-time edge distance mask; AO/cavity bakes still LONG |
+| Image layers / decals (§11) | LONG | PARTIAL | `layers:` triplanar or authored-UV images, sandboxed; no projected decals |
+| Texture inspection (albedo/roughness/metallic/texel/seam views) | — | NOW | render modes + `sw materials` |
+| PBR plausibility validation | — | NOW | `PBR_*` / `TEX_*` codes |
+| Normal-map / high-to-low baking | LONG | LONG | not needed for the low-poly style target |
 
 ---
 

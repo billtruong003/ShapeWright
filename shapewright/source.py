@@ -88,7 +88,8 @@ COMPONENT_KEYS = {
     "parts": "parts, as in assets; may reference only parts of the same component", "notes": "free text",
 }
 
-MATERIAL_KEYS = {"base_color", "metallic", "roughness", "emissive", "alpha", "alpha_mode", "double_sided", "doc"}
+MATERIAL_KEYS = {"base_color", "metallic", "roughness", "emissive", "alpha", "alpha_mode", "double_sided", "doc",
+                 "archetype", "use", "layers"}  # + the archetype's own parameters (see `sw caps`, `sw doc wood`)
 
 
 class Ctx:
@@ -364,7 +365,7 @@ def resolve_args(spec: OpSpec, raw: dict, env: dict, where: str, ctx: Ctx, extra
             if p.required:
                 ctx.error("SRC_SCHEMA", path, f"'{spec.name}' requires '{p.name}' ({p.doc})")
             else:
-                args[p.name] = copy.deepcopy(p.default)
+                args[p.name] = parse_color_value(p.default) if p.kind == "color" else copy.deepcopy(p.default)
             continue
         value = raw[p.name]
         if p.kind in ("num", "int"):
@@ -394,6 +395,11 @@ def resolve_args(spec: OpSpec, raw: dict, env: dict, where: str, ctx: Ctx, extra
             if p.choices and value not in p.choices:
                 ctx.error("SRC_SCHEMA", path, f"must be one of {', '.join(p.choices)}", suggest(value, p.choices).strip())
             args[p.name] = value
+        elif p.kind == "color":
+            c = parse_color_value(value)
+            if c is None:
+                ctx.error("SRC_SCHEMA", path, "colour must be '#rrggbb' or [r, g, b] in 0..1 (sRGB)")
+            args[p.name] = c
         elif p.kind == "bool":
             if not isinstance(value, bool):
                 ctx.error("SRC_SCHEMA", path, "expected true or false")
@@ -412,6 +418,19 @@ def resolve_args(spec: OpSpec, raw: dict, env: dict, where: str, ctx: Ctx, extra
 
 
 KIND_HINT = {"points2": "[[x, y], ...]", "points3": "[[x, y, z], ...]"}
+
+
+def parse_color_value(value) -> list[float] | None:
+    if value is None:
+        return None
+    if isinstance(value, str) and value.startswith("#") and len(value) in (7, 9):
+        try:
+            return [int(value[i:i + 2], 16) / 255 for i in range(1, len(value), 2)][:4]
+        except ValueError:
+            return None
+    if isinstance(value, list) and len(value) in (3, 4) and all(isinstance(v, (int, float)) for v in value):
+        return [float(v) for v in value]
+    return None
 
 
 def check_keys(raw: dict, allowed: dict | set, where: str, ctx: Ctx):

@@ -102,8 +102,20 @@ warnings. It never produces errors, because style is a judgement call.
 | `UV_UNLOCKED` | info | no lock; regions follow areas and may move (lock before texturing) |
 | `ATTR_INVALIDATED` | info / warning | a topology-changing op dropped attributes (warning if an imported part lost its authored UVs) |
 
+| `TEX_DENSITY_BELOW_TARGET` | warning | `texel_density` needs a larger atlas than `budget.texture_size` allows |
+| `TEX_IMAGE_INVALID` | error | a layer image is missing, outside the asset directory, not an image or too large |
+| `TEX_UV_SOURCE_MISSING` | warning | `projection: uv` on geometry without authored UVs; the layer was skipped |
+| `TEX_LIFECYCLE` | info / warning | a part's texels were regenerated (`REGION_KEPT`/`RELAYOUT`) or are `INVALID` |
+| `PBR_ALBEDO_RANGE` | warning | a non-metal's mean base colour is outside 30..240 sRGB luminance |
+| `PBR_METAL_TOO_DARK` | warning | a metal's base colour is darker than real metals |
+| `PBR_METALLIC_MIXED` | warning | a material mixes metallic and non-metallic texels over a large area (use 0 or 1) |
+
 Metrics: `uv_overlap`, `uv_utilization`, `texel_density_px_m` (median across
-parts at the profile's texture size).
+parts at the profile's texture size), `texture` (atlas resolution, target and
+achieved px/m, memory). Texture render modes (`sw render --mode`): `textured`,
+`albedo`, `roughness`, `metallic`, `texel` (checker at the target density),
+`seams`. `sw review` switches to a textured contact sheet when the asset has
+textured materials; `sw materials ASSET` renders each material in isolation.
 
 ### style (heuristic, warnings only)
 | Code | Meaning |

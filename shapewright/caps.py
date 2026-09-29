@@ -34,6 +34,7 @@ COMMANDS = {
     "uv ASSET lock|show": "lock UV regions (uv.lock.yaml) so edits never move other parts' UVs",
     "family ASSET": "validate a base asset and every variant that extends it",
     "pack ASSET... | --pack NAME | --tag TAG": "review assets as one set: common-scale sheet + material/param/density consistency report",
+    "materials ASSET": "material sheet: every material on reference shapes, textured + albedo (semantic material review)",
     "bench": "validate every asset under assets/ (CI)",
     "doctor": "check the environment and optional tools",
 }
@@ -65,6 +66,7 @@ def manifest() -> dict:
         "profiles": _named("profiles"),
         "components": _named("components"),
         "packs": _named("packs"),
+        "material_archetypes": {k: v.describe() for k, v in sorted(__import__("shapewright.materials", fromlist=["ARCHETYPES"]).ARCHETYPES.items())},
         "measure_queries": __import__("shapewright.spatial", fromlist=["QUERY_KINDS"]).QUERY_KINDS,
         "styles": _named("styles"),
         "exporters": {"glb": "binary glTF 2.0: named part nodes, hierarchy, materials, UV0, normals, sockets, collision, metadata extras"},
@@ -85,6 +87,7 @@ def summary_text() -> str:
               "PROFILES  " + " ".join(m["profiles"]), "STYLES    " + " ".join(m["styles"]),
               "COMPONENTS " + (" ".join(m["components"]) or "-") + "   (components/NAME.yaml; use with `component:` in a part)",
               "PACKS     " + (" ".join(m["packs"]) or "-") + "   (packs/NAME.yaml: shared params/materials; `pack: NAME` in an asset)",
+              "MATERIALS " + " ".join(m["material_archetypes"]) + "   (material `archetype:` + semantic params; `sw doc wood`; docs/SURFACES.md)",
               "MEASURE   " + " ".join(m["measure_queries"]) + "   (part-level `measure:` queries; docs/RELATIONSHIPS.md)",
               "EXPORT    glb",
               "", "* = required.  `sw doc NAME` for details, `sw caps --json` for everything."]
