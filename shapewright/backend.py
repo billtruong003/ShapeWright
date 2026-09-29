@@ -82,6 +82,37 @@ def _containing(src: Mesh, cand: np.ndarray, P: np.ndarray) -> np.ndarray:
     return cand[np.argmax(inside, axis=1)]
 
 
+def _collapse_needles(m: Mesh) -> Mesh:
+    """Booleans on dense meshes can leave needle triangles of ~zero area (Phase 10: 2-5 in a
+    50k-triangle subtract; Manifold's own simplify leaves some and creates others). Collapse the
+    shortest edge of each face below the validator's degenerate threshold, then weld. Meshes without
+    such faces are returned unchanged."""
+    if not len(m.F):
+        return m
+    size = float(np.linalg.norm(m.V.max(0) - m.V.min(0))) or 1.0
+    thr = (size * 1e-5) ** 2
+    for _ in range(4):
+        _, area = m.face_normals()
+        bad = np.flatnonzero(area < thr)
+        if not len(bad):
+            return m
+        V = m.V.copy()
+        va = {k: v.copy() for k, v in m.vattr.items()}
+        moved: set = set()
+        for f in bad:
+            t = m.F[f]
+            edges = ((t[1], t[2]), (t[2], t[0]), (t[0], t[1]))
+            a, b = min(edges, key=lambda e: float(np.linalg.norm(V[e[0]] - V[e[1]])))
+            if a in moved or b in moved:
+                continue
+            V[b] = V[a]
+            for k in va:
+                va[k][b] = va[k][a]
+            moved.add(b)
+        m = Mesh(V, m.F, va, dict(m.fattr), dict(m.cattr), dict(m.labels), set(m.invalidated)).merged()
+    return m
+
+
 def _from_manifold(result, sources: list[tuple[int, Mesh, np.ndarray]], vnames: list[str]) -> Mesh:
     """Rebuild a Mesh from a Manifold result, inheriting face attributes by provenance.
 
@@ -119,6 +150,7 @@ def _from_manifold(result, sources: list[tuple[int, Mesh, np.ndarray]], vnames: 
                 pick[sel] = _containing(m, cand, props[F[lo + sel], :3].mean(axis=1))
         face_src[lo:hi] = np.where(pick >= 0, offsets[oid] + pick, -1)
     res = source.remapped(props[:, :3], F, face_src, policy="rebuild")
+    res = _collapse_needles(res)
     col = 3
     for k in vnames:
         w = source.vattr[k].shape[1]
@@ -380,6 +412,9 @@ def connected_components(mesh: Mesh) -> list[np.ndarray]:
 # ---------------------------------------------------------------- UV
 
 
+DENSE_UNWRAP_TRIS = 4000
+
+
 def unwrap_charts(mesh: Mesh, resolution: int, padding: int) -> np.ndarray:
     """Chart + pack one mesh into its own [0,1] square. Returns (m, 3, 2) corner UVs.
     Deterministic: same mesh -> same UVs (tested)."""
@@ -392,6 +427,12 @@ def unwrap_charts(mesh: Mesh, resolution: int, padding: int) -> np.ndarray:
     pack.padding = padding
     pack.bilinear = True
     pack.rotate_charts = True
-    atlas.generate(xatlas.ChartOptions(), pack)
+    charts = xatlas.ChartOptions()
+    if len(mesh.F) > DENSE_UNWRAP_TRIS:
+        # xatlas grows very large charts on dense smooth surfaces and spends most of its time
+        # doing so (18 s for one 35k-triangle part). Capping chart area relative to the part
+        # keeps it at ~2 s with similar packing (docs/PERFORMANCE.md). Low-poly parts are unaffected.
+        charts.max_chart_area = float(mesh.area()) / 128
+    atlas.generate(charts, pack)
     _, idx, uvs = atlas[0]
     return np.asarray(uvs, dtype=np.float64)[idx]  # xatlas preserves face order

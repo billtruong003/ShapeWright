@@ -33,7 +33,7 @@ import yaml
 
 from . import source as S
 from . import spatial
-from .limits import LIMITS
+from .limits import LIMITS, LimitError
 from .mesh import Mesh, region_by_normal, rotation_matrix
 from .registry import SHAPES, load_builtin, suggest
 from .report import Issue, SourceError
@@ -229,8 +229,18 @@ def build_geometry(raw: Any, env: dict, ctx: S.Ctx, where: str, asset_dir: Path 
     if args is None:
         return None
     b = BuildCtx(env, ctx, where, asset_dir, materials)
+    depth = sum(where.count(k) for k in (".base", ".tools[", ".items[", ".shape"))
+    if depth > LIMITS.max_expr_depth:
+        ctx.error("SRC_LIMIT", where, f"geometry expressions nested deeper than {LIMITS.max_expr_depth}")
+        return None
     try:
         mesh = spec.fn(args, b)
+    except LimitError as e:
+        ctx.error("SRC_LIMIT", where, f"{spec.name}: {e}", "reduce counts/segments or split the geometry into several parts")
+        return None
+    except RecursionError:
+        ctx.error("SRC_LIMIT", where, "geometry nested too deeply")
+        return None
     except Exception as e:  # geometry libraries raise many types
         ctx.error("OP_FAILED", where, f"{spec.name} failed: {e}", "check the parameters of this geometry")
         return None
@@ -289,6 +299,9 @@ def apply_ops(mesh: Mesh, ops: Any, env: dict, ctx: S.Ctx, where: str, asset_dir
             return None
         try:
             mesh = spec.fn(mesh, args, BuildCtx(env, ctx, path, asset_dir, materials))
+        except LimitError as e:
+            ctx.error("SRC_LIMIT", path, f"{spec.name}: {e}", "reduce counts/iterations or split the geometry into several parts")
+            return None
         except Exception as e:
             ctx.error("OP_FAILED", path, f"{spec.name} failed: {e}")
             return None
@@ -1049,6 +1062,15 @@ def build(path: str | Path) -> Asset:
     profile = load_named("profiles", data.get("profile"), path.parent, ctx)
     style = load_named("styles", data.get("style"), path.parent, ctx)
     budget = {**(profile.get("budget") or {}), **(data.get("budget") or {})}
+    uv_raw = data.get("uv") or {}
+    for key, value, cap in (("budget.texture_size", budget.get("texture_size"), LIMITS.max_texture_size),
+                            ("uv.resolution", uv_raw.get("resolution") if isinstance(uv_raw, dict) else None, LIMITS.max_texture_size),
+                            ("uv.texel_density", uv_raw.get("texel_density") if isinstance(uv_raw, dict) else None, LIMITS.max_texel_density),
+                            ("budget.texel_density", budget.get("texel_density"), LIMITS.max_texel_density)):
+        if value is None:
+            continue
+        if not isinstance(value, (int, float)) or isinstance(value, bool) or not 16 <= value <= cap:
+            ctx.error("SRC_LIMIT", key, f"{value!r} must be a number in 16..{cap}", "textures above 4096 px are not supported")
 
     raw_parts = data.get("parts") or {}
     if not isinstance(raw_parts, dict) or not raw_parts:

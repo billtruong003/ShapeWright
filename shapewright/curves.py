@@ -49,6 +49,9 @@ def _arc(g: dict, n: int, S, env, where, ctx) -> list | None:
     if n == 2 and rise:
         ctx.error("SRC_SCHEMA", f"{where}.rise", "rise needs 3D points (tube paths)")
         return None
+    if seg < 1 or seg + 1 > LIMITS.max_points:
+        ctx.error("SRC_LIMIT", f"{where}.segments", f"{seg} segments: must be 1..{LIMITS.max_points - 1} points per list")
+        return None
     u, v, w = PLANES[plane] if n == 3 else (0, 1, None)
     out = []
     for k in range(seg + 1):
@@ -79,6 +82,10 @@ def _helix(g: dict, n: int, S, env, where, ctx) -> list | None:
     if turns is None or pitch is None or r is None:
         return None
     spt = int(S.num(g.get("segments_per_turn", 12), env, f"{where}.segments_per_turn", ctx, 12))
+    if turns <= 0 or spt < 3 or spt * turns + 1 > LIMITS.max_points:
+        ctx.error("SRC_LIMIT", where, f"helix of {turns:g} turns x {spt} segments: needs turns > 0, segments_per_turn >= 3 and "
+                  f"at most {LIMITS.max_points} points")
+        return None
     start = S.num(g.get("start", 0), env, f"{where}.start", ctx, 0.0)
     plane = {"y": "zx", "z": "xy", "x": "yz"}[axis]  # right-handed around the axis
     return _arc({"center": g.get("center", [0, 0, 0]), "radius": r, "radius_end": g.get("radius_end", r), "from": start,
@@ -92,6 +99,9 @@ def _line(g: dict, n: int, S, env, where, ctx) -> list | None:
     b = S.vec(g.get("to"), n, env, f"{where}.to", ctx)
     seg = int(S.num(g.get("segments", 1), env, f"{where}.segments", ctx, 1))
     if a is None or b is None:
+        return None
+    if seg < 1 or seg + 1 > LIMITS.max_points:
+        ctx.error("SRC_LIMIT", f"{where}.segments", f"{seg} segments: must be 1..{LIMITS.max_points - 1}")
         return None
     return [[a[i] + (b[i] - a[i]) * k / max(seg, 1) for i in range(n)] for k in range(seg + 1)]
 

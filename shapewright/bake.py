@@ -56,25 +56,26 @@ def _sharp_edges(mesh, angle_deg: float = 25.0):
     m = len(F)
     sharp = np.zeros((m, 3), dtype=bool)
     crease = np.zeros((m, 3), dtype=bool)
-    edge_map: dict = {}
-    for f in range(m):
-        for k in range(3):
-            a, b = F[f, (k + 1) % 3], F[f, (k + 2) % 3]
-            edge_map.setdefault((min(a, b), max(a, b)), []).append((f, k))
+    # edge opposite corner k of face f: (F[f, k+1], F[f, k+2]); group users by the undirected edge,
+    # in (f, k) order like the former dict-of-lists (vectorized in Phase 10)
+    a, b = F[:, [1, 2, 0]].reshape(-1), F[:, [2, 0, 1]].reshape(-1)
+    key = np.minimum(a, b) * (len(V) + 1) + np.maximum(a, b)
+    order = np.argsort(key, kind="stable")
+    ks = key[order]
+    starts = np.r_[0, np.flatnonzero(ks[1:] != ks[:-1]) + 1]
+    sizes = np.diff(np.r_[starts, len(ks)])
+    odd = np.repeat(sizes != 2, sizes)
+    sharp.reshape(-1)[order[odd]] = True  # boundary / non-manifold edges
+    pair = starts[sizes == 2]
+    u1, u2 = order[pair], order[pair + 1]
+    f1, f2 = u1 // 3, u2 // 3
     cos_lim = np.cos(np.radians(angle_deg))
-    for users in edge_map.values():
-        if len(users) != 2:
-            for f, k in users:
-                sharp[f, k] = True  # boundary
-            continue
-        (f1, k1), (f2, k2) = users
-        if fn[f1] @ fn[f2] > cos_lim:
-            continue
-        c2 = V[F[f2]].mean(0) - V[F[f1]].mean(0)
-        if fn[f1] @ c2 < 0:  # the neighbour bends away: convex
-            sharp[f1, k1] = sharp[f2, k2] = True
-        else:
-            crease[f1, k1] = crease[f2, k2] = True
+    bent = np.einsum("ij,ij->i", fn[f1], fn[f2]) <= cos_lim
+    cen = V[F].mean(1)
+    convex = np.einsum("ij,ij->i", fn[f1], cen[f2] - cen[f1]) < 0
+    for sel, arr in ((bent & convex, sharp), (bent & ~convex, crease)):
+        arr.reshape(-1)[u1[sel]] = True
+        arr.reshape(-1)[u2[sel]] = True
     T = V[F]
     alt = np.zeros((m, 3))
     for k in range(3):
@@ -94,47 +95,41 @@ def _principal_axis(V: np.ndarray) -> np.ndarray:
 
 
 def _rasterize_uv(uv_px: np.ndarray, res: int):
-    """(m,3,2) pixel-space triangles -> texel index, face index, barycentrics for covered texels."""
-    idx, fid, bary = [], [], []
-    for t in range(len(uv_px)):
-        (x0, y0), (x1, y1), (x2, y2) = uv_px[t]
-        area = (x1 - x0) * (y2 - y0) - (y1 - y0) * (x2 - x0)
-        if abs(area) < 1e-12:
-            continue
-        minx, maxx = max(int(np.floor(min(x0, x1, x2))), 0), min(int(np.ceil(max(x0, x1, x2))), res - 1)
-        miny, maxy = max(int(np.floor(min(y0, y1, y2))), 0), min(int(np.ceil(max(y0, y1, y2))), res - 1)
-        if minx > maxx or miny > maxy:
-            continue
-        px, py = np.meshgrid(np.arange(minx, maxx + 1) + 0.5, np.arange(miny, maxy + 1) + 0.5)
-        b0 = ((x1 - px) * (y2 - py) - (y1 - py) * (x2 - px)) / area
-        b1 = ((x2 - px) * (y0 - py) - (y2 - py) * (x0 - px)) / area
-        b2 = 1 - b0 - b1
-        inside = (b0 >= -1e-6) & (b1 >= -1e-6) & (b2 >= -1e-6)
-        if not inside.any():
-            continue
-        ys, xs = np.nonzero(inside)
-        idx.append((ys + miny) * res + (xs + minx))
-        fid.append(np.full(len(ys), t))
-        bary.append(np.stack([b0[inside], b1[inside], b2[inside]], 1))
-    if not idx:
-        return np.zeros(0, np.int64), np.zeros(0, np.int64), np.zeros((0, 3))
-    return np.concatenate(idx), np.concatenate(fid), np.clip(np.concatenate(bary), 0, 1)
+    """(m,3,2) pixel-space triangles -> texel index, face index, barycentrics for covered texels
+    (in triangle order: later triangles overwrite shared texels, as before vectorization)."""
+    from .render.raster import fragments
+
+    t, px, py, b0, b1, b2 = fragments(np.asarray(uv_px, dtype=np.float64), res, res, test="bake", order="triangle")
+    return py * res + px, t, np.clip(np.stack([b0, b1, b2], 1), 0, 1)
 
 
 def _dilate(img: np.ndarray, filled: np.ndarray, steps: int) -> np.ndarray:
-    img, filled = img.copy(), filled.copy()
+    """Grow texels outward `steps` times: each empty texel next to filled ones takes their mean
+    (4-neighbourhood, wrapping like np.roll). Only candidate texels are computed (Phase 10)."""
+    h, w = filled.shape
+    C = img.shape[-1]
+    flat = img.reshape(-1, C).copy()
+    f = filled.reshape(-1).copy()
+    yy, xx = np.divmod(np.arange(h * w), w)
+    dirs = ((0, 1), (0, -1), (1, 0), (-1, 0))
     for _ in range(steps):
-        acc = np.zeros_like(img)
-        cnt = np.zeros(filled.shape)
-        for dy, dx in ((0, 1), (0, -1), (1, 0), (-1, 0)):
-            sh_f = np.roll(filled, (dy, dx), (0, 1))
-            sh_i = np.roll(img, (dy, dx), (0, 1))
-            acc += sh_i * sh_f[..., None]
-            cnt += sh_f
-        grow = (~filled) & (cnt > 0)
-        img[grow] = acc[grow] / cnt[grow][:, None]
-        filled |= grow
-    return img
+        fm = f.reshape(h, w)
+        near = np.zeros((h, w), bool)
+        for dy, dx in dirs:
+            near |= np.roll(fm, (dy, dx), (0, 1))
+        cand = np.flatnonzero((~fm & near).reshape(-1))
+        if not len(cand):
+            break
+        acc = np.zeros((len(cand), C))
+        cnt = np.zeros(len(cand))
+        for dy, dx in dirs:  # same accumulation order as the former full-image version
+            src = ((yy[cand] - dy) % h) * w + (xx[cand] - dx) % w
+            sf = f[src]
+            acc += flat[src] * sf[:, None]
+            cnt += sf
+        flat[cand] = acc / cnt[:, None]
+        f[cand] = True
+    return flat.reshape(img.shape)
 
 
 # ------------------------------------------------------------------ images
@@ -296,8 +291,8 @@ def bake(asset: Asset, surface: Surface) -> Textures | None:
         tex.lifecycle.setdefault(p.name, "DERIVED")
     cov2 = covered.reshape(res, res)
     pad = int((asset.uv or {}).get("padding_px", (asset.profile.get("uv") or {}).get("padding_px", 4))) + 2
-    tex.base = _dilate(base.reshape(res, res, 3), cov2, pad)
-    tex.orm = _dilate(orm.reshape(res, res, 3), cov2, pad)
+    both = _dilate(np.concatenate([base.reshape(res, res, 3), orm.reshape(res, res, 3)], -1), cov2, pad)
+    tex.base, tex.orm = both[..., :3].copy(), both[..., 3:].copy()
     tex.covered = cov2
     edge = np.zeros_like(cov2)
     for dy, dx in ((0, 1), (0, -1), (1, 0), (-1, 0)):

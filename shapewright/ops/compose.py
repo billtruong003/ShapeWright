@@ -13,6 +13,7 @@ be mirrored, and so on.
 from __future__ import annotations
 
 from .. import backend
+from ..limits import LIMITS, check
 from ..mesh import concat
 from ..registry import Param, shape
 
@@ -39,4 +40,9 @@ def boolean(a, b):
        category="compose", topology="rebuild",
        example="{type: combine, items: [{type: box, size: [0.2, 0.2, 0.2]}, {type: sphere, radius: 0.1, translate: [0, 0.15, 0]}]}")
 def combine(a, b):
-    return concat([b.build_geometry(t, f"items[{i}]") for i, t in enumerate(a["items"])])
+    items, total = [], 0
+    for i, t in enumerate(a["items"]):
+        items.append(b.build_geometry(t, f"items[{i}]"))
+        total += items[-1].n_tris
+        check(total, LIMITS.max_triangles_per_part, "triangles in combine")
+    return concat(items)

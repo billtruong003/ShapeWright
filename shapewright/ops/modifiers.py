@@ -18,7 +18,7 @@ from __future__ import annotations
 import numpy as np
 
 from .. import backend
-from ..limits import LIMITS
+from ..limits import LIMITS, check
 from ..mesh import Mesh, concat, rotation_matrix, scale_matrix, translation_matrix
 from ..registry import Param, op
 
@@ -172,6 +172,7 @@ def smooth(m, a, b):
     [Param("iterations", "int", 1, "1..3", min=1, max=LIMITS.max_subdivide_iterations)], "refine",
     category="topology", example="{type: subdivide, iterations: 1}")
 def subdivide(m, a, b):
+    check(m.n_tris * 4 ** a["iterations"], LIMITS.max_triangles_per_part, "triangles after subdivide")
     for _ in range(a["iterations"]):
         m = backend.subdivide_midpoint(m)
     return m
@@ -261,6 +262,7 @@ def mirror(m, a, b):
 def repeat(m, a, b):
     copies = []
     n = a["count"]
+    check(m.n_tris * n, LIMITS.max_triangles_per_part, "triangles after repeat")
     for i in range(n):
         if a["radial"]:
             step = a["angle"] / n if abs(a["angle"] - 360) < 1e-9 else a["angle"] / max(n - 1, 1)

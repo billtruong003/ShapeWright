@@ -1,0 +1,152 @@
+[
+ {
+  "target": 1000,
+  "segments": 10,
+  "modules": 2,
+  "tris": 968,
+  "parts": 9,
+  "status": "PASS",
+  "seconds": {
+   "build": 0.418,
+   "uv": 0.338,
+   "validate": 0.912,
+   "bake_cached": 0.0,
+   "render_512": 0.961,
+   "render_textured_512": 0.556,
+   "sheet": 2.15,
+   "export": 0.082,
+   "khronos": 0.127,
+   "roundtrip": 0.003,
+   "import": 0.011,
+   "import_build": 0.043
+  },
+  "khronos": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  },
+  "peak_rss_mb": 270.0,
+  "glb_kb": 227.6
+ },
+ {
+  "target": 5000,
+  "segments": 16,
+  "modules": 6,
+  "tris": 4964,
+  "parts": 25,
+  "status": "PASS",
+  "seconds": {
+   "build": 0.472,
+   "uv": 0.914,
+   "validate": 4.136,
+   "bake_cached": 0.0,
+   "render_512": 0.644,
+   "render_textured_512": 0.808,
+   "sheet": 5.16,
+   "export": 0.249,
+   "khronos": 0.141,
+   "roundtrip": 0.009,
+   "import": 0.032,
+   "import_build": 0.207
+  },
+  "khronos": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  },
+  "peak_rss_mb": 315.2,
+  "glb_kb": 773.9
+ },
+ {
+  "target": 10000,
+  "segments": 44,
+  "modules": 2,
+  "tris": 10040,
+  "parts": 9,
+  "status": "PASS",
+  "seconds": {
+   "build": 0.526,
+   "uv": 0.901,
+   "validate": 2.688,
+   "bake_cached": 0.0,
+   "render_512": 1.556,
+   "render_textured_512": 1.279,
+   "sheet": 8.191,
+   "export": 0.073,
+   "khronos": 0.132,
+   "roundtrip": 0.005,
+   "import": 0.028,
+   "import_build": 0.073
+  },
+  "khronos": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  },
+  "peak_rss_mb": 282.7,
+  "glb_kb": 454.5
+ },
+ {
+  "target": 25000,
+  "segments": 34,
+  "modules": 8,
+  "tris": 25036,
+  "parts": 33,
+  "status": "PASS",
+  "seconds": {
+   "build": 0.462,
+   "uv": 2.128,
+   "validate": 7.964,
+   "bake_cached": 0.0,
+   "render_512": 2.313,
+   "render_textured_512": 2.391,
+   "sheet": 15.406,
+   "export": 0.277,
+   "khronos": 0.176,
+   "roundtrip": 0.013,
+   "import": 0.084,
+   "import_build": 0.464
+  },
+  "khronos": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  },
+  "peak_rss_mb": 323.6,
+  "glb_kb": 1512.0
+ },
+ {
+  "target": 50000,
+  "segments": 34,
+  "modules": 16,
+  "tris": 50028,
+  "parts": 65,
+  "status": "PASS",
+  "seconds": {
+   "build": 0.443,
+   "uv": 4.258,
+   "validate": 11.194,
+   "bake_cached": 0.0,
+   "render_512": 3.729,
+   "render_textured_512": 3.588,
+   "sheet": 28.007,
+   "export": 0.441,
+   "khronos": 0.201,
+   "roundtrip": 0.027,
+   "import": 0.196,
+   "import_build": 1.601
+  },
+  "khronos": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  },
+  "peak_rss_mb": 343.1,
+  "glb_kb": 2514.1
+ }
+]

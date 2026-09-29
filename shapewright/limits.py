@@ -29,6 +29,8 @@ class Limits:
     max_texture_size: int = 4096
     max_image_bytes: int = 32_000_000
     max_points: int = 2048  # per point list after generators expand
+    max_expr_depth: int = 24  # nesting of geometry expressions (boolean tools inside tools ...)
+    max_texel_density: int = 8192  # px per metre
 
 
 LIMITS = Limits()

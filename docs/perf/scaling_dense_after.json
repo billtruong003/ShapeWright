@@ -1,0 +1,152 @@
+[
+ {
+  "target": 1000,
+  "segments": 30,
+  "modules": 1,
+  "tris": 950,
+  "parts": 1,
+  "status": "PASS",
+  "seconds": {
+   "build": 0.058,
+   "uv": 0.165,
+   "validate": 0.574,
+   "bake_cached": 0.0,
+   "render_512": 0.54,
+   "render_textured_512": 0.519,
+   "sheet": 2.513,
+   "export": 0.121,
+   "khronos": 0.12,
+   "roundtrip": 0.425,
+   "import": 0.007,
+   "import_build": 0.011
+  },
+  "khronos": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  },
+  "peak_rss_mb": 276.1,
+  "glb_kb": 158.8
+ },
+ {
+  "target": 5000,
+  "segments": 78,
+  "modules": 1,
+  "tris": 4970,
+  "parts": 1,
+  "status": "PASS",
+  "seconds": {
+   "build": 0.25,
+   "uv": 0.37,
+   "validate": 0.58,
+   "bake_cached": 0.0,
+   "render_512": 0.709,
+   "render_textured_512": 0.55,
+   "sheet": 2.449,
+   "export": 0.074,
+   "khronos": 0.142,
+   "roundtrip": 0.406,
+   "import": 0.013,
+   "import_build": 0.021
+  },
+  "khronos": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  },
+  "peak_rss_mb": 262.1,
+  "glb_kb": 303.6
+ },
+ {
+  "target": 10000,
+  "segments": 114,
+  "modules": 1,
+  "tris": 10002,
+  "parts": 1,
+  "status": "PASS",
+  "seconds": {
+   "build": 0.425,
+   "uv": 0.532,
+   "validate": 0.849,
+   "bake_cached": 0.0,
+   "render_512": 0.857,
+   "render_textured_512": 0.527,
+   "sheet": 3.164,
+   "export": 0.106,
+   "khronos": 0.175,
+   "roundtrip": 0.418,
+   "import": 0.023,
+   "import_build": 0.026
+  },
+  "khronos": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  },
+  "peak_rss_mb": 282.7,
+  "glb_kb": 435.1
+ },
+ {
+  "target": 25000,
+  "segments": 184,
+  "modules": 1,
+  "tris": 25008,
+  "parts": 1,
+  "status": "PASS",
+  "seconds": {
+   "build": 1.578,
+   "uv": 1.548,
+   "validate": 1.194,
+   "bake_cached": 0.0,
+   "render_512": 0.874,
+   "render_textured_512": 0.644,
+   "sheet": 3.18,
+   "export": 0.081,
+   "khronos": 0.157,
+   "roundtrip": 0.358,
+   "import": 0.045,
+   "import_build": 0.067
+  },
+  "khronos": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  },
+  "peak_rss_mb": 312.3,
+  "glb_kb": 805.0
+ },
+ {
+  "target": 50000,
+  "segments": 256,
+  "modules": 1,
+  "tris": 47548,
+  "parts": 1,
+  "status": "PASS",
+  "seconds": {
+   "build": 3.306,
+   "uv": 3.267,
+   "validate": 1.385,
+   "bake_cached": 0.0,
+   "render_512": 1.016,
+   "render_textured_512": 0.693,
+   "sheet": 4.212,
+   "export": 0.107,
+   "khronos": 0.191,
+   "roundtrip": 0.476,
+   "import": 0.093,
+   "import_build": 0.134
+  },
+  "khronos": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  },
+  "peak_rss_mb": 350.0,
+  "glb_kb": 1344.2
+ }
+]

@@ -157,6 +157,7 @@ def torus(a, b):
         Param("segments", "int", 12, "divisions around Y", **SEG)],
        example="{type: lathe, profile: [[0.2, 0], [0.24, 0.3], [0.2, 0.6]], segments: 12}")
 def lathe(a, b):
+    check(2 * len(a["profile"]) * a["segments"], LIMITS.max_triangles_per_part, "triangles of this lathe")
     return lathe_mesh([tuple(p) for p in a["profile"]], a["segments"])
 
 
@@ -316,6 +317,7 @@ def tube(a, b):
     P = np.array(a["path"], dtype=np.float64)
     if a["corner_radius"] > 0 and len(P) > 2:
         P = _round_corners(P, a["corner_radius"], a["corner_segments"])
+    check(2 * len(P) * a["sides"], LIMITS.max_triangles_per_part, "triangles of this tube")
     n, s = len(P), a["sides"]
     r0 = a["radius"]
     r1 = r0 if a["radius_end"] is None else a["radius_end"]
@@ -383,6 +385,7 @@ def _revolve(polygon, segments: int) -> Mesh:
         Param("segments", "int", 12, "divisions around Y", **SEG)],
        example="{type: revolve, polygon: [[0.2, 0], [0.25, 0], [0.25, 0.05], [0.2, 0.05]], segments: 12}")
 def revolve(a, b):
+    check(2 * len(a["polygon"]) * a["segments"], LIMITS.max_triangles_per_part, "triangles of this revolve")
     if min(p[0] for p in a["polygon"]) < 0:
         raise ValueError("revolve radii must be >= 0")
     return _revolve(a["polygon"], a["segments"])

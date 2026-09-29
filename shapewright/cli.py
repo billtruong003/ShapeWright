@@ -11,6 +11,7 @@ import json
 import os
 import signal
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -590,8 +591,12 @@ def main(argv=None) -> int:
 
         signal.signal(signal.SIGALRM, _timeout)
         signal.alarm(LIMITS.build_timeout_s * (4 if args.cmd in ("bench", "variants", "compare") else 1))
+    t0 = time.perf_counter()
     try:
-        return args.fn(args)
+        rc = args.fn(args)
+        if not getattr(args, "json", False) and args.cmd not in ("caps", "doc"):
+            print(f"({args.cmd}: {time.perf_counter() - t0:.1f} s)", file=sys.stderr)
+        return rc
     except SourceError as e:
         return _print_source_error(e, getattr(args, "json", False))
     except (FileNotFoundError, FileExistsError, TimeoutError, ValueError) as e:
