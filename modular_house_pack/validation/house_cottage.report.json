@@ -1,0 +1,1467 @@
+{
+ "asset": "house_cottage",
+ "status": "PASS",
+ "source_hash": "8f848d6253a4",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 118
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 24476,
+  "parts": 370,
+  "sliver_triangles": 2502,
+  "size_m": [
+   7.36,
+   6.6222,
+   5.5456
+  ],
+  "contacts": 1088,
+  "triangles_by_part": {
+   "footing_fb_course_low": 792,
+   "footing_fb_course_high": 900,
+   "footing_side_course_low": 528,
+   "footing_side_course_high": 600,
+   "node_stone_course_low": 352,
+   "node_stone_course_high": 496,
+   "node_stone_side_course_low": 88,
+   "node_stone_side_course_high": 124,
+   "deck_plank": 1848,
+   "deck_joist": 528,
+   "post_fb_beam": 352,
+   "post_side_beam": 88,
+   "band_fb_beam": 264,
+   "band_side_beam": 176,
+   "wall_front_window_sill_plate": 88,
+   "wall_front_window_head_plate": 88,
+   "wall_front_window_infill": 64,
+   "wall_front_window_stud": 176,
+   "wall_front_window_head_rail": 88,
+   "wall_front_window_sill_rail": 88,
+   "wall_front_door_sill_plate": 44,
+   "wall_front_door_head_plate": 44,
+   "wall_front_door_infill": 28,
+   "wall_front_door_stud": 88,
+   "wall_front_door_head_rail": 44,
+   "wall_back_sill_plate": 132,
+   "wall_back_head_plate": 132,
+   "wall_back_infill": 96,
+   "wall_back_stud": 264,
+   "wall_back_head_rail": 132,
+   "wall_back_sill_rail": 132,
+   "wall_side_sill_plate": 176,
+   "wall_side_head_plate": 176,
+   "wall_side_infill_solid": 48,
+   "wall_side_brace_a": 176,
+   "wall_side_brace_b": 176,
+   "window_front_jamb": 176,
+   "window_front_head": 88,
+   "window_front_sill": 88,
+   "window_front_glass": 24,
+   "window_front_mullion_v": 88,
+   "window_front_mullion_h": 88,
+   "shutters_front_plank": 528,
+   "shutters_front_batten": 352,
+   "window_back_jamb": 264,
+   "window_back_head": 132,
+   "window_back_sill": 132,
+   "window_back_glass": 36,
+   "window_back_mullion_v": 132,
+   "window_back_mullion_h": 132,
+   "door_frame_jamb": 88,
+   "door_frame_head": 44,
+   "door_plank": 176,
+   "door_ledge": 88,
+   "door_brace": 44,
+   "door_strap": 24,
+   "door_pull": 100,
+   "roof_front_deck": 36,
+   "roof_front_shingles_even": 1656,
+   "roof_front_shingles_odd": 1800,
+   "roof_front_fascia_board": 132,
+   "roof_front_rafter_tail": 528,
+   "roof_back_deck": 36,
+   "roof_back_shingles_even": 1656,
+   "roof_back_shingles_odd": 1800,
+   "roof_back_fascia_board": 132,
+   "roof_back_rafter_tail": 528,
+   "verge_deck": 12,
+   "verge_shingles_even": 230,
+   "verge_shingles_odd": 240,
+   "verge_fascia_board": 44,
+   "verge_barge_right": 12,
+   "verge_back_deck": 12,
+   "verge_back_shingles_even": 230,
+   "verge_back_shingles_odd": 240,
+   "verge_back_fascia_board": 44,
+   "verge_back_barge_left": 12,
+   "verge_l_deck": 12,
+   "verge_l_shingles_even": 230,
+   "verge_l_shingles_odd": 240,
+   "verge_l_fascia_board": 44,
+   "verge_l_barge_left": 12,
+   "verge_l_back_deck": 12,
+   "verge_l_back_shingles_even": 230,
+   "verge_l_back_shingles_odd": 240,
+   "verge_l_back_fascia_board": 44,
+   "verge_l_back_barge_right": 12,
+   "gable_infill": 16,
+   "gable_rake_l": 88,
+   "gable_rake_r": 88,
+   "gable_tie": 88,
+   "gable_king_post": 88,
+   "gable_strut_l": 88,
+   "gable_strut_r": 88,
+   "ridge_roll": 60,
+   "ridge_collar": 196,
+   "chimney_base": 44,
+   "chimney_weathering": 44,
+   "chimney_stack": 44,
+   "chimney_course_band": 176,
+   "chimney_base_band": 220,
+   "chimney_cap": 44,
+   "chimney_pot": 120,
+   "steps_step": 88
+  },
+  "budget_triangles": 30000,
+  "materials": 7,
+  "draw_calls": 7,
+  "uv_utilization": 0.421,
+  "uv_overlap": 0.0,
+  "uv_owners": 370,
+  "texel_density_px_m": 49.6,
+  "texel_density_target": 48,
+  "texture": {
+   "resolution": 2048,
+   "target_px_m": 48.0,
+   "achieved_px_m": 49.6,
+   "memory_kb": 32768,
+   "lifecycle": {
+    "DERIVED": 370
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "footing_fb_0_0_course_high",
+   "msg": "part consists of 3 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 3
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "footing_fb_0_1_course_high",
+   "msg": "part consists of 3 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 3
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "footing_fb_1_0_course_high",
+   "msg": "part consists of 3 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 3
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "footing_fb_1_1_course_high",
+   "msg": "part consists of 3 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 3
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "footing_fb_2_0_course_high",
+   "msg": "part consists of 3 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 3
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "footing_fb_2_1_course_high",
+   "msg": "part consists of 3 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 3
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "footing_side_0_0_course_high",
+   "msg": "part consists of 3 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 3
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "footing_side_0_1_course_high",
+   "msg": "part consists of 3 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 3
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "footing_side_1_0_course_high",
+   "msg": "part consists of 3 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 3
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "footing_side_1_1_course_high",
+   "msg": "part consists of 3 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 3
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_back_0_shingles_even",
+   "msg": "part consists of 42 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 42
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_back_0_shingles_odd",
+   "msg": "part consists of 42 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 42
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_back_1_shingles_even",
+   "msg": "part consists of 42 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 42
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_back_1_shingles_odd",
+   "msg": "part consists of 42 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 42
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_back_2_shingles_even",
+   "msg": "part consists of 42 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 42
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_back_2_shingles_odd",
+   "msg": "part consists of 42 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 42
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_front_0_shingles_even",
+   "msg": "part consists of 42 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 42
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_front_0_shingles_odd",
+   "msg": "part consists of 42 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 42
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_front_1_shingles_even",
+   "msg": "part consists of 42 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 42
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_front_1_shingles_odd",
+   "msg": "part consists of 42 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 42
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_front_2_shingles_even",
+   "msg": "part consists of 42 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 42
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_front_2_shingles_odd",
+   "msg": "part consists of 42 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 42
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_back_shingles_even",
+   "msg": "part consists of 14 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 14
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_back_shingles_odd",
+   "msg": "part consists of 12 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 12
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_l_back_shingles_even",
+   "msg": "part consists of 14 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 14
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_l_back_shingles_odd",
+   "msg": "part consists of 12 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 12
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_l_shingles_even",
+   "msg": "part consists of 14 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 14
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_l_shingles_odd",
+   "msg": "part consists of 12 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 12
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_shingles_even",
+   "msg": "part consists of 14 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 14
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_shingles_odd",
+   "msg": "part consists of 12 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_0_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_0_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_0_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_0_plank_3",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_0_plank_4",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_0_plank_5",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_0_plank_6",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_1_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_1_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_1_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_1_plank_3",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_1_plank_4",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_1_plank_5",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_0_1_plank_6",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_0_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_0_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_0_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_0_plank_3",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_0_plank_4",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_0_plank_5",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_0_plank_6",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_1_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_1_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_1_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_1_plank_3",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_1_plank_4",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_1_plank_5",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_1_1_plank_6",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_0_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_0_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_0_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_0_plank_3",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_0_plank_4",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_0_plank_5",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_0_plank_6",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_1_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_1_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_1_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_1_plank_3",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_1_plank_4",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_1_plank_5",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "deck_2_1_plank_6",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_brace",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_plank_3",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_strap_0",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_strap_1",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "ridge_roll",
+   "msg": "16/60 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 16
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_back_0_deck",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_back_0_fascia_board",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_back_1_deck",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_back_1_fascia_board",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_back_2_deck",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_back_2_fascia_board",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_front_0_deck",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_front_0_fascia_board",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_front_1_deck",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_front_1_fascia_board",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_front_2_deck",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "roof_front_2_fascia_board",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutters_front_0_0_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutters_front_0_0_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutters_front_0_0_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutters_front_0_1_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutters_front_0_1_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutters_front_0_1_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutters_front_1_0_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutters_front_1_0_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutters_front_1_0_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutters_front_1_1_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutters_front_1_1_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutters_front_1_1_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_back_barge_left",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_back_deck",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_barge_right",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_deck",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_l_back_barge_right",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_l_back_deck",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_l_barge_left",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "verge_l_deck",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "window_back_0_glass",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "window_back_1_glass",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "window_back_2_glass",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "window_front_0_glass",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "window_front_1_glass",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv ASSET lock` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/house_cottage/export/house_cottage.glb",
+  "bytes": 4824516,
+  "nodes": 4,
+  "meshes": 2,
+  "materials": 7,
+  "target": "generic",
+  "merge": "by_material",
+  "lods": []
+ }
+}

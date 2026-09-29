@@ -1,0 +1,705 @@
+{
+ "experiment": "MODULAR_HOUSE_PACK_01",
+ "counts": {
+  "assets": 29,
+  "modules": 26,
+  "demo_houses": 3,
+  "kit_components": 12,
+  "reused_foreign_components": [
+   "plank_top"
+  ],
+  "pack_params": 34,
+  "pack_materials": 7
+ },
+ "component_reuse": {
+  "house_chimney": {
+   "instance_lines": 4,
+   "assets": 4
+  },
+  "house_door": {
+   "instance_lines": 6,
+   "assets": 5
+  },
+  "house_door_frame": {
+   "instance_lines": 6,
+   "assets": 5
+  },
+  "house_floor": {
+   "instance_lines": 7,
+   "assets": 5
+  },
+  "house_footing": {
+   "instance_lines": 14,
+   "assets": 5
+  },
+  "house_gable": {
+   "instance_lines": 5,
+   "assets": 4
+  },
+  "house_ridge": {
+   "instance_lines": 5,
+   "assets": 4
+  },
+  "house_roof": {
+   "instance_lines": 28,
+   "assets": 7
+  },
+  "house_steps": {
+   "instance_lines": 5,
+   "assets": 4
+  },
+  "house_timber": {
+   "instance_lines": 27,
+   "assets": 8
+  },
+  "house_wall": {
+   "instance_lines": 32,
+   "assets": 10
+  },
+  "house_window_frame": {
+   "instance_lines": 17,
+   "assets": 8
+  },
+  "plank_top": {
+   "instance_lines": 4,
+   "assets": 4
+  }
+ },
+ "duplicated_structural_definitions": {
+  "exact_duplicate_inline_parts_across_assets": 0,
+  "structural_duplicates_(same_shape+ops_in_3+_assets)": {}
+ },
+ "materials": {
+  "defined_once_in_pack": [
+   "glass",
+   "iron",
+   "planks",
+   "plaster",
+   "roof",
+   "stone",
+   "timber"
+  ],
+  "asset_level_material_definitions": {},
+  "material_drift": "0 by construction: pack materials are read-only in members (PACK_OVERRIDE)"
+ },
+ "detail_density_tris_per_m2": {
+  "modules": {
+   "house_beam": 26.2,
+   "house_beam_vertical": 19.0,
+   "house_brace": 18.4,
+   "house_chimney": 21.4,
+   "house_corner": 35.4,
+   "house_door": 106.9,
+   "house_door_frame": 32.0,
+   "house_floor": 32.8,
+   "house_floor_half": 42.7,
+   "house_footing": 63.4,
+   "house_gable": 12.4,
+   "house_post": 14.3,
+   "house_ridge": 75.8,
+   "house_roof_eave": 71.3,
+   "house_roof_end": 55.9,
+   "house_roof_section": 40.4,
+   "house_shutter": 201.2,
+   "house_steps": 18.7,
+   "house_wall_door": 36.6,
+   "house_wall_half": 18.9,
+   "house_wall_plain": 10.8,
+   "house_wall_shopfront": 30.2,
+   "house_wall_upper": 28.4,
+   "house_wall_window": 40.7,
+   "house_wall_window_offset": 34.4,
+   "house_window": 56.8
+  },
+  "spread_max_over_min": 18.63
+ },
+ "parameterization": {
+  "modules": {
+   "spatial_numbers": {
+    "literal": 39,
+    "zero": 103,
+    "constant_expr": 0,
+    "derived": 203,
+    "measured": 0
+   },
+   "parameterization_ratio": 0.839,
+   "parts": 36,
+   "escape_profile": {
+    "component": 36,
+    "measured": 0,
+    "attached": 0,
+    "parametric": 0,
+    "literal": 0,
+    "composed": 0,
+    "mesh_escape": 0
+   },
+   "abstraction_escape_rate": 0.0,
+   "measure_queries": 0,
+   "attach": 0
+  },
+  "demo_houses": {
+   "spatial_numbers": {
+    "literal": 139,
+    "zero": 433,
+    "constant_expr": 0,
+    "derived": 1123,
+    "measured": 0
+   },
+   "parameterization_ratio": 0.89,
+   "parts": 124,
+   "escape_profile": {
+    "component": 124,
+    "measured": 0,
+    "attached": 0,
+    "parametric": 0,
+    "literal": 0,
+    "composed": 0,
+    "mesh_escape": 0
+   },
+   "abstraction_escape_rate": 0.0,
+   "measure_queries": 0,
+   "attach": 0
+  },
+  "components": {
+   "spatial_numbers": {
+    "literal": 60,
+    "zero": 155,
+    "constant_expr": 0,
+    "derived": 314,
+    "measured": 0
+   },
+   "parameterization_ratio": 0.84,
+   "parts": 53,
+   "escape_profile": {
+    "component": 0,
+    "measured": 0,
+    "attached": 0,
+    "parametric": 23,
+    "literal": 30,
+    "composed": 3,
+    "mesh_escape": 0
+   },
+   "abstraction_escape_rate": 0.566,
+   "measure_queries": 0,
+   "attach": 0
+  },
+  "per_house": {
+   "house_cottage": {
+    "parameterization_ratio": 0.888,
+    "literal_numbers": 31,
+    "derived_numbers": 245,
+    "component_instances": 28,
+    "arrays": 18
+   },
+   "house_townhouse": {
+    "parameterization_ratio": 0.876,
+    "literal_numbers": 51,
+    "derived_numbers": 359,
+    "component_instances": 39,
+    "arrays": 26
+   },
+   "house_workshop": {
+    "parameterization_ratio": 0.901,
+    "literal_numbers": 57,
+    "derived_numbers": 519,
+    "component_instances": 57,
+    "arrays": 33
+   }
+  }
+ },
+ "runtime": {
+  "module_triangles": {
+   "min": 44,
+   "max": 1384,
+   "median": 272
+  },
+  "demo_house_triangles": {
+   "house_cottage": 24476,
+   "house_townhouse": 33042,
+   "house_workshop": 45080
+  },
+  "per_asset": {
+   "house_beam": {
+    "status": "PASS",
+    "triangles": 44,
+    "materials": 1,
+    "draw_calls": 1,
+    "parts": 1,
+    "texel_px_m": 647.1,
+    "warnings": 0,
+    "glb_bytes": 57388,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_beam_vertical": {
+    "status": "PASS",
+    "triangles": 44,
+    "materials": 1,
+    "draw_calls": 1,
+    "parts": 1,
+    "texel_px_m": 339.0,
+    "warnings": 0,
+    "glb_bytes": 65808,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_brace": {
+    "status": "PASS",
+    "triangles": 44,
+    "materials": 1,
+    "draw_calls": 1,
+    "parts": 1,
+    "texel_px_m": 548.3,
+    "warnings": 0,
+    "glb_bytes": 52576,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_chimney": {
+    "status": "PASS",
+    "triangles": 736,
+    "materials": 2,
+    "draw_calls": 2,
+    "parts": 16,
+    "texel_px_m": 127.5,
+    "warnings": 0,
+    "glb_bytes": 521216,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_corner": {
+    "status": "PASS",
+    "triangles": 150,
+    "materials": 2,
+    "draw_calls": 2,
+    "parts": 3,
+    "texel_px_m": 348.0,
+    "warnings": 0,
+    "glb_bytes": 128824,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_cottage": {
+    "status": "PASS",
+    "triangles": 24476,
+    "materials": 7,
+    "draw_calls": 7,
+    "parts": 370,
+    "texel_px_m": 49.6,
+    "warnings": 0,
+    "glb_bytes": 4824516,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_door": {
+    "status": "PASS",
+    "triangles": 432,
+    "materials": 3,
+    "draw_calls": 3,
+    "parts": 10,
+    "texel_px_m": 373.2,
+    "warnings": 0,
+    "glb_bytes": 187780,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_door_frame": {
+    "status": "PASS",
+    "triangles": 132,
+    "materials": 1,
+    "draw_calls": 1,
+    "parts": 3,
+    "texel_px_m": 329.8,
+    "warnings": 0,
+    "glb_bytes": 119948,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_floor": {
+    "status": "PASS",
+    "triangles": 396,
+    "materials": 2,
+    "draw_calls": 2,
+    "parts": 9,
+    "texel_px_m": 250.3,
+    "warnings": 0,
+    "glb_bytes": 245392,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_floor_half": {
+    "status": "PASS",
+    "triangles": 264,
+    "materials": 2,
+    "draw_calls": 2,
+    "parts": 6,
+    "texel_px_m": 286.7,
+    "warnings": 0,
+    "glb_bytes": 164088,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_footing": {
+    "status": "PASS",
+    "triangles": 282,
+    "materials": 1,
+    "draw_calls": 1,
+    "parts": 4,
+    "texel_px_m": 347.4,
+    "warnings": 0,
+    "glb_bytes": 182236,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_gable": {
+    "status": "PASS",
+    "triangles": 272,
+    "materials": 2,
+    "draw_calls": 2,
+    "parts": 7,
+    "texel_px_m": 137.0,
+    "warnings": 0,
+    "glb_bytes": 474924,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_post": {
+    "status": "PASS",
+    "triangles": 44,
+    "materials": 1,
+    "draw_calls": 1,
+    "parts": 1,
+    "texel_px_m": 524.3,
+    "warnings": 0,
+    "glb_bytes": 53432,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_ridge": {
+    "status": "PASS",
+    "triangles": 116,
+    "materials": 1,
+    "draw_calls": 1,
+    "parts": 3,
+    "texel_px_m": 598.3,
+    "warnings": 0,
+    "glb_bytes": 45480,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_roof_eave": {
+    "status": "PASS",
+    "triangles": 220,
+    "materials": 1,
+    "draw_calls": 1,
+    "parts": 5,
+    "texel_px_m": 415.3,
+    "warnings": 0,
+    "glb_bytes": 72632,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_roof_end": {
+    "status": "PASS",
+    "triangles": 538,
+    "materials": 2,
+    "draw_calls": 2,
+    "parts": 5,
+    "texel_px_m": 180.2,
+    "warnings": 0,
+    "glb_bytes": 304928,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_roof_section": {
+    "status": "PASS",
+    "triangles": 1384,
+    "materials": 2,
+    "draw_calls": 2,
+    "parts": 8,
+    "texel_px_m": 111.4,
+    "warnings": 0,
+    "glb_bytes": 533720,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_shutter": {
+    "status": "PASS",
+    "triangles": 220,
+    "materials": 2,
+    "draw_calls": 2,
+    "parts": 5,
+    "texel_px_m": 747.0,
+    "warnings": 0,
+    "glb_bytes": 69780,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_steps": {
+    "status": "PASS",
+    "triangles": 88,
+    "materials": 1,
+    "draw_calls": 1,
+    "parts": 2,
+    "texel_px_m": 282.9,
+    "warnings": 0,
+    "glb_bytes": 115440,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_townhouse": {
+    "status": "PASS",
+    "triangles": 33042,
+    "materials": 7,
+    "draw_calls": 7,
+    "parts": 571,
+    "texel_px_m": 41.9,
+    "warnings": 0,
+    "glb_bytes": 5852984,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_wall_door": {
+    "status": "PASS",
+    "triangles": 812,
+    "materials": 4,
+    "draw_calls": 4,
+    "parts": 19,
+    "texel_px_m": 136.0,
+    "warnings": 0,
+    "glb_bytes": 512300,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_wall_half": {
+    "status": "PASS",
+    "triangles": 188,
+    "materials": 2,
+    "draw_calls": 2,
+    "parts": 5,
+    "texel_px_m": 249.8,
+    "warnings": 0,
+    "glb_bytes": 179160,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_wall_plain": {
+    "status": "PASS",
+    "triangles": 188,
+    "materials": 2,
+    "draw_calls": 2,
+    "parts": 5,
+    "texel_px_m": 187.3,
+    "warnings": 0,
+    "glb_bytes": 487016,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_wall_shopfront": {
+    "status": "PASS",
+    "triangles": 842,
+    "materials": 3,
+    "draw_calls": 3,
+    "parts": 17,
+    "texel_px_m": 126.1,
+    "warnings": 0,
+    "glb_bytes": 554924,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_wall_upper": {
+    "status": "PASS",
+    "triangles": 660,
+    "materials": 3,
+    "draw_calls": 3,
+    "parts": 16,
+    "texel_px_m": 148.8,
+    "warnings": 0,
+    "glb_bytes": 543984,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_wall_window": {
+    "status": "PASS",
+    "triangles": 1012,
+    "materials": 4,
+    "draw_calls": 4,
+    "parts": 24,
+    "texel_px_m": 142.0,
+    "warnings": 0,
+    "glb_bytes": 587556,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_wall_window_offset": {
+    "status": "PASS",
+    "triangles": 836,
+    "materials": 4,
+    "draw_calls": 4,
+    "parts": 20,
+    "texel_px_m": 142.9,
+    "warnings": 0,
+    "glb_bytes": 556620,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_window": {
+    "status": "PASS",
+    "triangles": 276,
+    "materials": 2,
+    "draw_calls": 2,
+    "parts": 7,
+    "texel_px_m": 336.5,
+    "warnings": 0,
+    "glb_bytes": 146976,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   },
+   "house_workshop": {
+    "status": "PASS",
+    "triangles": 45080,
+    "materials": 7,
+    "draw_calls": 7,
+    "parts": 725,
+    "texel_px_m": 33.9,
+    "warnings": 0,
+    "glb_bytes": 6638912,
+    "khronos": {
+     "numErrors": 0,
+     "numWarnings": 0,
+     "numInfos": 0,
+     "numHints": 0
+    }
+   }
+  }
+ },
+ "framework_modifications": [
+  {
+   "change": "component instances accept `origin: keep` (the component's own origin is its pivot)",
+   "class": "ABSTRACTION GAP",
+   "why generic": "bounding-box anchoring moved roof pieces 2-10 cm with optional trim; affects every kit piece with optional or asymmetric sub-parts"
+  },
+  {
+   "change": "a malformed components/*.yaml no longer crashes `sw caps` / `sw doc`",
+   "class": "BUG",
+   "why generic": "any broken file broke every doc lookup"
+  },
+  {
+   "change": "per-part UV charting at the scale of the part's atlas region",
+   "class": "PERFORMANCE (CAPABILITY GAP)",
+   "why generic": "a 571-part house took 95 s to lay out (the CLI's 120 s limit killed `sw review`); every many-part assembly"
+  }
+ ]
+}

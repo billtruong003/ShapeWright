@@ -1,0 +1,86 @@
+{
+ "asset": "house_corner",
+ "status": "PASS",
+ "source_hash": "b70350bc5814",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 2
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 150,
+  "parts": 3,
+  "sliver_triangles": 13,
+  "size_m": [
+   0.3962,
+   3.4917,
+   0.4139
+  ],
+  "contacts": 2,
+  "triangles_by_part": {
+   "node_stone_course_low": 44,
+   "node_stone_course_high": 62,
+   "post_beam": 44
+  },
+  "budget_triangles": 3000,
+  "materials": 2,
+  "draw_calls": 2,
+  "uv_utilization": 0.489,
+  "uv_overlap": 0.0,
+  "uv_owners": 3,
+  "texel_density_px_m": 348.0,
+  "texel_density_target": 100,
+  "texture": {
+   "resolution": 512,
+   "target_px_m": 100.0,
+   "achieved_px_m": 174.0,
+   "memory_kb": 2048,
+   "lifecycle": {
+    "DERIVED": 3
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "MAT_UNUSED",
+   "severity": "info",
+   "layer": "budget",
+   "where": "materials",
+   "msg": "materials declared but unused: glass, iron, planks, plaster, roof"
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv ASSET lock` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/house_corner/export/house_corner.glb",
+  "bytes": 128824,
+  "nodes": 3,
+  "meshes": 2,
+  "materials": 2,
+  "target": "generic",
+  "merge": "by_material",
+  "lods": []
+ }
+}

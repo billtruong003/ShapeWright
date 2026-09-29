@@ -1,0 +1,20 @@
+# cozy_house kit module 17: gable end (half-timbered triangle)
+# Closes a house end under the roof; sized for a 2-bay-deep house (span = 2 bays + wall_t).
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_gable
+  kind: environment/modular/roof
+  description: Half-timbered gable triangle (cozy_house kit).
+  tags: [cozy_house, module, roof]
+  placement: floor
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  gable:
+    component: house_gable
+    with: {span: 2 * bay + wall_t, pitch: pitch, depth: wall_t, plaster: plaster_t, timber: timber, chamfer: chamfer, wear: wear}
+    materials: {timber: timber, plaster: plaster}
+    origin: keep
+    position: [0, 0, 0]

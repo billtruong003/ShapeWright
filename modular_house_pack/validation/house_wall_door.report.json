@@ -1,0 +1,172 @@
+{
+ "asset": "house_wall_door",
+ "status": "PASS",
+ "source_hash": "0d9f15364a77",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 9
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 812,
+  "parts": 19,
+  "sliver_triangles": 145,
+  "size_m": [
+   1.75,
+   2.78,
+   0.3169
+  ],
+  "contacts": 47,
+  "triangles_by_part": {
+   "wall_sill_plate": 44,
+   "wall_head_plate": 44,
+   "wall_infill": 28,
+   "wall_stud": 88,
+   "wall_head_rail": 44,
+   "door_frame_jamb": 88,
+   "door_frame_head": 44,
+   "door_plank": 176,
+   "door_ledge": 88,
+   "door_brace": 44,
+   "door_strap": 24,
+   "door_pull": 100
+  },
+  "budget_triangles": 3000,
+  "materials": 4,
+  "draw_calls": 4,
+  "uv_utilization": 0.392,
+  "uv_overlap": 0.0,
+  "uv_owners": 19,
+  "texel_density_px_m": 136.0,
+  "texel_density_target": 100,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 100.0,
+   "achieved_px_m": 136.0,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 19
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_brace",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_plank_3",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_strap_0",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "door_strap_1",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "MAT_UNUSED",
+   "severity": "info",
+   "layer": "budget",
+   "where": "materials",
+   "msg": "materials declared but unused: glass, roof, stone"
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv ASSET lock` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/house_wall_door/export/house_wall_door.glb",
+  "bytes": 512300,
+  "nodes": 3,
+  "meshes": 2,
+  "materials": 4,
+  "target": "generic",
+  "merge": "by_material",
+  "lods": []
+ }
+}

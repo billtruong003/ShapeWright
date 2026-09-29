@@ -1,0 +1,118 @@
+{
+ "asset": "house_shutter",
+ "status": "PASS",
+ "source_hash": "f762649545e4",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 5
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 220,
+  "parts": 5,
+  "sliver_triangles": 36,
+  "size_m": [
+   0.3979,
+   1.0069,
+   0.08
+  ],
+  "contacts": 6,
+  "triangles_by_part": {
+   "shutter_plank": 132,
+   "shutter_batten": 88
+  },
+  "budget_triangles": 3000,
+  "materials": 2,
+  "draw_calls": 2,
+  "uv_utilization": 0.582,
+  "uv_overlap": 0.0,
+  "uv_owners": 5,
+  "texel_density_px_m": 747.0,
+  "texel_density_target": 100,
+  "texture": {
+   "resolution": 256,
+   "target_px_m": 100.0,
+   "achieved_px_m": 186.8,
+   "memory_kb": 512,
+   "lifecycle": {
+    "DERIVED": 5
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutter_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutter_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutter_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "MAT_UNUSED",
+   "severity": "info",
+   "layer": "budget",
+   "where": "materials",
+   "msg": "materials declared but unused: glass, iron, plaster, roof, stone"
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv ASSET lock` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/house_shutter/export/house_shutter.glb",
+  "bytes": 69780,
+  "nodes": 3,
+  "meshes": 2,
+  "materials": 2,
+  "target": "generic",
+  "merge": "by_material",
+  "lods": []
+ }
+}

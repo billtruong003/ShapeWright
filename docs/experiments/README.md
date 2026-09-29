@@ -33,3 +33,9 @@ All runs used the same model family as the authors. FA-09 swapped in a much smal
 change an agent made was a genuine bug or false-positive fix with a regression test, and 0
 capability additions came from agents since Phase 6. Each finding was fixed at its own layer (discovery,
 ergonomics, abstraction, capability or architecture) and recorded in the experiment's table.
+
+## Acceptance tests (authors as real users)
+
+| record | question | result | framework changes |
+|---|---|---|---|
+| [MODULAR_HOUSE_PACK_01](MODULAR_HOUSE_PACK_01.md) | 26-module cozy half-timbered house kit + 3 demo houses, seam probe, 5-param stress test | **PARTIAL**: kit, seams, stress and exports OK; 3 framework changes; fresh-agent editability untested | 3 (bug, abstraction gap, performance) |

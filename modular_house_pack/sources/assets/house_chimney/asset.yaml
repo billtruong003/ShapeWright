@@ -1,0 +1,20 @@
+# cozy_house kit module 25: chimney stack (decor)
+# Stands outside a gable wall; stepped stone stack with cap and pots.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_chimney
+  kind: environment/modular/decor
+  description: Stepped stone chimney with cap and pots (cozy_house kit).
+  tags: [cozy_house, module, decor]
+  placement: floor
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  chimney:
+    component: house_chimney
+    with: {height: base_h + storey + 3.0, shoulder: base_h + storey - 0.3}
+    materials: {stone: stone, roof: roof}
+    origin: keep
+    position: [0, 0, 0]

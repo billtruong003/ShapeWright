@@ -1,0 +1,65 @@
+# Stone chimney stack (cozy_house kit): a wide base course up to `shoulder`, a narrower stack above
+# with a projecting cap and two pots. Bottom centre at the origin; the stack's back face is at
+# z = -d / 2 (against a gable wall when placed outside one).
+shapewright: 0.1
+component: house_chimney
+doc: Stepped dressed-stone chimney with cap and pots. Materials `stone`, `roof`.
+
+params:
+  height:   {value: 7.0, doc: top of the cap above the origin}
+  shoulder: {value: 3.0, doc: height where the wide base steps in}
+  w:        {value: 0.9, doc: base width}
+  d:        {value: 0.7, doc: base depth}
+  step:     {value: 0.14, doc: how much the stack steps in on each side}
+  wear:     {value: 0.012}
+
+private:
+  sw: w - 2 * step
+  sd: d - step
+
+parts:
+  base:
+    shape: {type: chamfer_box, size: [w, shoulder, d], chamfer: 0.035}
+    ops: [{type: jitter, amount: wear, seed: 101}]
+    anchor: bottom
+    position: [0, 0, 0]
+    material: stone
+  weathering:
+    doc: sloped shoulder where the base steps in
+    shape: {type: chamfer_box, size: [w, 0.14, d], chamfer: 0.03, ops: [{type: taper, axis: y, scale: 0.75}]}
+    anchor: bottom
+    position: [0, shoulder - 0.005, 0]
+    material: stone
+  stack:
+    shape: {type: chamfer_box, size: [sw, height - shoulder - 0.24, sd], chamfer: 0.03}   # ends inside the cap (never flush with its top)
+    ops: [{type: jitter, amount: wear, seed: 102}]
+    anchor: bottom_back
+    position: [0, shoulder + 0.12, -d / 2 + 0.02]
+    material: stone
+  course_band:
+    doc: slightly proud stone courses every ~0.5 m so the stack reads as coursed stone, not a smooth pillar
+    shape: {type: chamfer_box, size: [sw + 0.03, 0.09, sd + 0.03], chamfer: 0.02}
+    ops: [{type: jitter, amount: wear, seed: 104}]
+    anchor: bottom_back
+    position: [0, shoulder + 0.45, -d / 2 + 0.005]
+    array: {count: max(1, floor((height - shoulder - 0.8) / 0.5)), offset: [0, 0.5, 0]}
+    material: stone
+  base_band:
+    shape: {type: chamfer_box, size: [w + 0.03, 0.09, d + 0.03], chamfer: 0.02}
+    ops: [{type: jitter, amount: wear, seed: 105}]
+    anchor: bottom
+    position: [0, 0.45, 0]
+    array: {count: max(1, floor((shoulder - 0.6) / 0.5)), offset: [0, 0.5, 0]}
+    material: stone
+  cap:
+    shape: {type: chamfer_box, size: [sw + 0.14, 0.12, sd + 0.14], chamfer: 0.025}
+    ops: [{type: jitter, amount: wear * 0.5, seed: 103}]
+    anchor: top_back
+    position: [0, height - 0.08, -d / 2 + 0.02 - 0.07]
+    material: stone
+  pot:
+    shape: {type: cylinder, radius: 0.09, radius_top: 0.075, height: 0.24, segments: 8, chamfer: 0.012}
+    anchor: bottom
+    position: [-sw * 0.22, height - 0.085, -d / 2 + 0.02 + sd / 2]
+    array: {count: 2, offset: [sw * 0.44, 0, 0]}
+    material: roof

@@ -1,0 +1,69 @@
+# Window frame that fills a standard wall opening (cozy_house kit). Its outer size IS the opening
+# (w x h), so it drops into any house_wall opening at the opening's bottom-centre point. The frame
+# is deeper than the wall and the sill board projects equally inside and out, so the group is
+# symmetric in x and z: `anchor: bottom` at (opening centre x, opening bottom y, wall line z).
+shapewright: 0.1
+component: house_window_frame
+doc: Window frame with projecting sill board and a cross mullion. Materials `timber`, `glass`.
+
+params:
+  w:       {value: 0.8, doc: opening width}
+  h:       {value: 1.0, doc: opening height}
+  depth:   {value: 0.26, doc: wall depth}
+  frame:   {value: 0.09, doc: frame face width}
+  proud:   {value: 0.02, doc: frame stands proud of each wall face}
+  sill_out: {value: 0.07, doc: sill board projection beyond the frame (each face)}
+  mullion: {value: 1, doc: "1: cross mullion (4 panes); 0: open"}
+  glazed:  {value: 1, doc: "1: leaded glass; 0: open (shop counter, hatch)"}
+  chamfer: {value: 0.015}
+  wear:    {value: 0.004}
+
+private:
+  fd: depth + 2 * proud
+
+parts:
+  jamb:
+    shape: {type: chamfer_box, size: [frame, h - frame, fd], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: 31}]
+    anchor: bottom
+    position: [w / 2 - frame / 2, frame, 0]
+    mirror: x
+    material: timber
+
+  head:
+    shape: {type: chamfer_box, size: [w, frame, fd], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: 32}]
+    anchor: top
+    position: [0, h, 0]
+    material: timber
+
+  sill:
+    doc: sill board, wider than the opening and projecting out (drip) and in (window board)
+    shape: {type: chamfer_box, size: [w + 2 * frame, frame, fd + 2 * sill_out], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: 33}]
+    anchor: bottom
+    position: [0, 0, 0]
+    material: timber
+
+  glass:
+    enabled: glazed > 0
+    doc: dark leaded glass set in the middle of the frame depth
+    shape: {type: box, size: [w - 2 * frame + 0.02, h - 2 * frame + 0.02, 0.02]}
+    anchor: bottom
+    position: [0, frame - 0.01, 0]
+    tags: [thin_ok]
+    material: glass
+
+  mullion_v:
+    enabled: mullion > 0
+    shape: {type: chamfer_box, size: [frame * 0.6, h - 2 * frame, fd * 0.5], chamfer: 0.008}
+    anchor: bottom
+    position: [0, frame, 0]
+    material: timber
+
+  mullion_h:
+    enabled: mullion > 0
+    shape: {type: chamfer_box, size: [w - 2 * frame, frame * 0.6, fd * 0.5 - 0.004], chamfer: 0.008}
+    anchor: center
+    position: [0, frame + (h - 2 * frame) * 0.55, 0]
+    material: timber

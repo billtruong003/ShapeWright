@@ -1,0 +1,26 @@
+# cozy_house kit module 8: exterior corner (node stone + corner post)
+# Stands on a grid node: a squared footing stone to base_h - sink, then a one-storey post. Walls and footings butt its faces.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_corner
+  kind: environment/modular/corner
+  description: "Exterior corner: squared footing stone and a chunky corner post (cozy_house kit)."
+  tags: [cozy_house, module, corner]
+  placement: floor
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  node_stone:
+    component: house_footing
+    with: {length: footing_d, height: base_h - sink, depth: footing_d, blocks: 1}
+    materials: {stone: stone}
+    origin: keep
+    position: [0, 0, 0]
+  post:
+    component: house_timber
+    with: {length: storey, w: post, d: post, chamfer: chamfer, wear: wear}
+    materials: {timber: timber}
+    origin: keep
+    position: [0, base_h - sink, 0]

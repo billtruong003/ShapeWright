@@ -1,0 +1,20 @@
+# cozy_house kit module 23: plank door
+# Ledged-and-braced plank door leaf sized to the door frame's clear opening; hinge side -x.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_door
+  kind: environment/modular/opening
+  description: Plank door with iron strap hinges (cozy_house kit).
+  tags: [cozy_house, module, opening]
+  placement: floor
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  door:
+    component: house_door
+    with: {w: door_w - 2 * door_frame - 0.012, h: door_h + sink - timber - door_frame * 1.3 - 0.008}
+    materials: {planks: planks, timber: timber, iron: iron}
+    origin: keep
+    position: [0, 0, 0]

@@ -1,0 +1,63 @@
+# Gable triangle for a house end (cozy_house kit): recessed plaster infill with rake timbers,
+# a king post and two struts. It fills exactly the triangle under the roof deck: base width
+# `span` (outer wall face to outer wall face), apex height span/2 * tan(pitch), depth = wall depth.
+# Built facing x (it closes a house end at x = +-W/2); bottom centre at the origin.
+shapewright: 0.1
+component: house_gable
+doc: Half-timbered gable end. Materials `timber`, `plaster`.
+
+params:
+  span:    {value: 4.26, doc: outer width along z (house depth + wall depth)}
+  pitch:   {value: 45}
+  depth:   {value: 0.26}
+  plaster: {value: 0.16}
+  timber:  {value: 0.18}
+  chamfer: {value: 0.022}
+  wear:    {value: 0.006}
+
+private:
+  tn: tan(pitch)
+  h: span / 2 * tn
+  cz: timber / (2 * cos(pitch))          # vertical offset of a rake timber's centreline below the slope line
+  z0: span / 2 - (timber * 0.5 + cz) / tn  # where the rake centreline is timber/2 above the base
+
+parts:
+  infill:
+    doc: plaster triangle, 5 mm below the roof underside (never coplanar with the deck)
+    shape:
+      type: extrude
+      polygon: [[-span / 2 + 0.007, 0], [span / 2 - 0.007, 0], [0, h - 0.007]]
+      depth: plaster
+      rotate: [0, 90, 0]
+    origin: keep
+    material: plaster
+
+  rake_l:
+    shape: {type: strut, from: [0, timber * 0.5, -z0], to: [0, h - cz - 0.004, 0], size: [timber, depth - 0.006], depth_axis: x, chamfer: chamfer}
+    material: timber
+  rake_r:
+    doc: 6 mm shallower than rake_l, so the two never share a face where they meet at the apex
+    shape: {type: strut, from: [0, timber * 0.5, z0], to: [0, h - cz - 0.004, 0], size: [timber, depth - 0.012], depth_axis: x, chamfer: chamfer}
+    material: timber
+
+  tie:
+    doc: tie beam across the base (sits on the wall plates / band below)
+    shape: {type: chamfer_box, size: [depth, timber, span - 0.02], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: 91}]
+    anchor: bottom
+    position: [0, 0, 0]
+    material: timber
+
+  king_post:
+    shape: {type: chamfer_box, size: [depth - 0.012, h - timber - cz, timber], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: 92}]
+    anchor: bottom
+    position: [0, timber, 0]
+    material: timber
+
+  strut_l:
+    shape: {type: strut, from: [0, timber, -timber / 2], to: [0, h * 0.55, -(span / 2 - h * 0.55 / tn) * 0.55], size: [timber * 0.85, depth - 0.018], depth_axis: x, chamfer: chamfer}
+    material: timber
+  strut_r:
+    shape: {type: strut, from: [0, timber, timber / 2], to: [0, h * 0.55, (span / 2 - h * 0.55 / tn) * 0.55], size: [timber * 0.85, depth - 0.018], depth_axis: x, chamfer: chamfer}
+    material: timber

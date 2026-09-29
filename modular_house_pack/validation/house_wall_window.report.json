@@ -1,0 +1,174 @@
+{
+ "asset": "house_wall_window",
+ "status": "PASS",
+ "source_hash": "8a70d267c37d",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 9
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 1012,
+  "parts": 24,
+  "sliver_triangles": 166,
+  "size_m": [
+   1.8179,
+   2.78,
+   0.4448
+  ],
+  "contacts": 54,
+  "triangles_by_part": {
+   "wall_sill_plate": 44,
+   "wall_head_plate": 44,
+   "wall_infill": 32,
+   "wall_stud": 88,
+   "wall_head_rail": 44,
+   "wall_sill_rail": 44,
+   "window_jamb": 88,
+   "window_head": 44,
+   "window_sill": 44,
+   "window_glass": 12,
+   "window_mullion_v": 44,
+   "window_mullion_h": 44,
+   "shutter_plank": 264,
+   "shutter_batten": 176
+  },
+  "budget_triangles": 3000,
+  "materials": 4,
+  "draw_calls": 4,
+  "uv_utilization": 0.478,
+  "uv_overlap": 0.0,
+  "uv_owners": 24,
+  "texel_density_px_m": 142.0,
+  "texel_density_target": 100,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 100.0,
+   "achieved_px_m": 142.0,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 24
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutter_left_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutter_left_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutter_left_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutter_right_plank_0",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutter_right_plank_1",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "shutter_right_plank_2",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "window_glass",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "MAT_UNUSED",
+   "severity": "info",
+   "layer": "budget",
+   "where": "materials",
+   "msg": "materials declared but unused: iron, roof, stone"
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv ASSET lock` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/house_wall_window/export/house_wall_window.glb",
+  "bytes": 587556,
+  "nodes": 3,
+  "meshes": 2,
+  "materials": 4,
+  "target": "generic",
+  "merge": "by_material",
+  "lods": []
+ }
+}

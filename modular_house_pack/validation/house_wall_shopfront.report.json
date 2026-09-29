@@ -1,0 +1,131 @@
+{
+ "asset": "house_wall_shopfront",
+ "status": "PASS",
+ "source_hash": "9d4c58f2c854",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 5
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 842,
+  "parts": 17,
+  "sliver_triangles": 109,
+  "size_m": [
+   1.84,
+   2.78,
+   1.0804
+  ],
+  "contacts": 40,
+  "triangles_by_part": {
+   "wall_sill_plate": 44,
+   "wall_head_plate": 44,
+   "wall_infill": 32,
+   "wall_stud": 88,
+   "wall_head_rail": 44,
+   "wall_sill_rail": 44,
+   "window_jamb": 88,
+   "window_head": 44,
+   "window_sill": 44,
+   "awning_deck": 12,
+   "awning_shingles_even": 202,
+   "awning_shingles_odd": 88,
+   "awning_fascia_board": 44,
+   "awning_barge_left": 12,
+   "awning_barge_right": 12
+  },
+  "budget_triangles": 3000,
+  "materials": 3,
+  "draw_calls": 3,
+  "uv_utilization": 0.424,
+  "uv_overlap": 0.0,
+  "uv_owners": 17,
+  "texel_density_px_m": 126.1,
+  "texel_density_target": 100,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 100.0,
+   "achieved_px_m": 126.1,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 17
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "awning_shingles_even",
+   "msg": "part consists of 12 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 12
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "awning_shingles_odd",
+   "msg": "part consists of 6 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 6
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "awning_fascia_board",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "MAT_UNUSED",
+   "severity": "info",
+   "layer": "budget",
+   "where": "materials",
+   "msg": "materials declared but unused: glass, iron, planks, stone"
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv ASSET lock` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/house_wall_shopfront/export/house_wall_shopfront.glb",
+  "bytes": 554924,
+  "nodes": 3,
+  "meshes": 2,
+  "materials": 3,
+  "target": "generic",
+  "merge": "by_material",
+  "lods": []
+ }
+}

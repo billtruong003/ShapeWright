@@ -1,0 +1,36 @@
+# cozy_house kit module 2: wall bay with a centred window
+# Window frame drops into the opening; shutters open against the outer face.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_wall_window
+  kind: environment/modular/wall
+  description: Half-timbered wall bay with a centred window, frame and open shutters (cozy_house kit).
+  tags: [cozy_house, module, wall]
+  placement: floor
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  wall:
+    component: house_wall
+    with: {span: bay - post, height: panel_h, depth: wall_t, plaster: plaster_t, timber: timber, chamfer: chamfer, wear: wear,
+           opening: 1, op_w: win_w, op_h: win_h, op_sill: win_sill + sink}
+    materials: {timber: timber, plaster: plaster}
+    origin: keep
+    position: [0, 0, 0]
+  window:
+    component: house_window_frame
+    with: {w: win_w, h: win_h, depth: wall_t, frame: frame}
+    materials: {timber: timber, glass: glass}
+    origin: keep
+    position: [0, win_sill + sink, 0]
+  shutter:
+    doc: open shutter against the outer face (reuses the blacksmith kit's plank_top component)
+    component: plank_top
+    with: {length: win_h, width: win_w / 2, thickness: 0.045, planks: 3, gap: 0.008, wear: wear, batten_from_end: 0.15}
+    materials: {top: planks, under: timber}
+    rotate: [90, 0, 90]
+    anchor: center
+    mirror: x
+    position: [win_w / 2 + frame + win_w / 4 + 0.02, win_sill + sink + win_h / 2, wall_t / 2 + 0.024]   # battens 5 mm into the stud (hand-derived: instances cannot measure each other)

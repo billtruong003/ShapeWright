@@ -1,0 +1,90 @@
+{
+ "asset": "house_gable",
+ "status": "PASS",
+ "source_hash": "13f94dd4fd6a",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 2
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 272,
+  "parts": 7,
+  "sliver_triangles": 32,
+  "size_m": [
+   0.2664,
+   2.123,
+   4.2466
+  ],
+  "contacts": 16,
+  "triangles_by_part": {
+   "gable_infill": 8,
+   "gable_rake_l": 44,
+   "gable_rake_r": 44,
+   "gable_tie": 44,
+   "gable_king_post": 44,
+   "gable_strut_l": 44,
+   "gable_strut_r": 44
+  },
+  "budget_triangles": 3000,
+  "materials": 2,
+  "draw_calls": 2,
+  "uv_utilization": 0.393,
+  "uv_overlap": 0.0,
+  "uv_owners": 7,
+  "texel_density_px_m": 137.0,
+  "texel_density_target": 100,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 100.0,
+   "achieved_px_m": 137.0,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 7
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "MAT_UNUSED",
+   "severity": "info",
+   "layer": "budget",
+   "where": "materials",
+   "msg": "materials declared but unused: glass, iron, planks, roof, stone"
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv ASSET lock` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/house_gable/export/house_gable.glb",
+  "bytes": 474924,
+  "nodes": 3,
+  "meshes": 2,
+  "materials": 2,
+  "target": "generic",
+  "merge": "by_material",
+  "lods": []
+ }
+}

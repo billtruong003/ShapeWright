@@ -1,0 +1,96 @@
+{
+ "asset": "house_footing",
+ "status": "PASS",
+ "source_hash": "d1e5b89ba30e",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 3
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 282,
+  "parts": 4,
+  "sliver_triangles": 5,
+  "size_m": [
+   1.5962,
+   0.4918,
+   0.4224
+  ],
+  "contacts": 3,
+  "triangles_by_part": {
+   "footing_course_low": 132,
+   "footing_course_high": 150
+  },
+  "budget_triangles": 3000,
+  "materials": 1,
+  "draw_calls": 1,
+  "uv_utilization": 0.513,
+  "uv_overlap": 0.0,
+  "uv_owners": 4,
+  "texel_density_px_m": 347.4,
+  "texel_density_target": 100,
+  "texture": {
+   "resolution": 512,
+   "target_px_m": 100.0,
+   "achieved_px_m": 173.7,
+   "memory_kb": 2048,
+   "lifecycle": {
+    "DERIVED": 4
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "footing_course_high",
+   "msg": "part consists of 3 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 3
+   }
+  },
+  {
+   "code": "MAT_UNUSED",
+   "severity": "info",
+   "layer": "budget",
+   "where": "materials",
+   "msg": "materials declared but unused: glass, iron, planks, plaster, roof, timber"
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv ASSET lock` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/house_footing/export/house_footing.glb",
+  "bytes": 182236,
+  "nodes": 3,
+  "meshes": 2,
+  "materials": 1,
+  "target": "generic",
+  "merge": "by_material",
+  "lods": []
+ }
+}

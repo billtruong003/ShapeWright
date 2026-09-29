@@ -1,0 +1,31 @@
+# Door frame for a standard door opening (cozy_house kit): two jambs and a head, deeper than the
+# wall. No threshold: the wall's sill plate is the step. Symmetric in x and z; place with
+# `anchor: bottom` at (door centre x, top of the wall's sill plate, wall line z).
+shapewright: 0.1
+component: house_door_frame
+doc: Door jambs and head. Material `timber`.
+
+params:
+  w:       {value: 1.0, doc: opening width}
+  h:       {value: 1.87, doc: frame height (opening top minus the sill plate)}
+  depth:   {value: 0.26}
+  frame:   {value: 0.11}
+  proud:   {value: 0.025}
+  chamfer: {value: 0.018}
+  wear:    {value: 0.005}
+
+parts:
+  jamb:
+    shape: {type: chamfer_box, size: [frame, h, depth + 2 * proud], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: 41}]
+    anchor: bottom
+    position: [w / 2 - frame / 2, 0, 0]
+    mirror: x
+    material: timber
+  head:
+    doc: heavier head timber, wider than the opening (it reads as the lintel)
+    shape: {type: chamfer_box, size: [w + frame, frame * 1.3, depth + 2 * proud], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: 42}]
+    anchor: top
+    position: [0, h, 0]
+    material: timber

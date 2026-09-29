@@ -1,0 +1,35 @@
+# Floor deck tile for one grid cell (cozy_house kit): planks on two joists. Tiles meet edge to
+# edge on grid lines; under a wall the wall is embedded `sink` deep into the deck. Top centre at
+# the origin's top: the group spans y in [-t, 0] once placed with `anchor: top`.
+shapewright: 0.1
+component: house_floor
+doc: Plank deck on joists. Materials `planks`, `timber`.
+
+params:
+  w:       {value: 2.0, doc: size along x (planks run along x)}
+  d:       {value: 2.0, doc: size along z}
+  t:       {value: 0.24, doc: total deck depth}
+  planks:  {value: 7}
+  gap:     {value: 0.012}
+  board:   {value: 0.07, doc: plank thickness}
+  wear:    {value: 0.004}
+
+private:
+  pw: (d - (planks - 1) * gap) / planks          # edge planks reach the tile edge: neighbouring tiles butt, never float
+
+parts:
+  plank:
+    shape: {type: chamfer_box, size: [w, board, pw], chamfer: 0.012}
+    ops: [{type: jitter, amount: wear * 0.5, seed: 71}]
+    anchor: top_back
+    position: [0, 0, -d / 2]
+    array: {count: planks, offset: [0, 0, pw + gap]}
+    material: planks
+
+  joist:
+    doc: two joists across the planks at quarter points (every plank rests on both; never on a tile edge, so neighbouring tiles never double a joist)
+    shape: {type: chamfer_box, size: [0.16, t - board + 0.004, d], chamfer: 0.015}
+    anchor: top
+    position: [-w / 4, -board + 0.004, 0]
+    array: {count: 2, offset: [w / 2, 0, 0]}
+    material: timber

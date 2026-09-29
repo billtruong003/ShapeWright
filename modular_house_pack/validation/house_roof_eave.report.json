@@ -1,0 +1,96 @@
+{
+ "asset": "house_roof_eave",
+ "status": "PASS",
+ "source_hash": "b09b1b354fdc",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 3
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 220,
+  "parts": 5,
+  "sliver_triangles": 44,
+  "size_m": [
+   2.02,
+   0.7833,
+   0.8183
+  ],
+  "contacts": 4,
+  "triangles_by_part": {
+   "eave_trim_fascia_board": 44,
+   "eave_trim_rafter_tail": 176
+  },
+  "budget_triangles": 3000,
+  "materials": 1,
+  "draw_calls": 1,
+  "uv_utilization": 0.508,
+  "uv_overlap": 0.0,
+  "uv_owners": 5,
+  "texel_density_px_m": 415.3,
+  "texel_density_target": 100,
+  "texture": {
+   "resolution": 256,
+   "target_px_m": 100.0,
+   "achieved_px_m": 103.8,
+   "memory_kb": 512,
+   "lifecycle": {
+    "DERIVED": 5
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "eave_trim_fascia_board",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "MAT_UNUSED",
+   "severity": "info",
+   "layer": "budget",
+   "where": "materials",
+   "msg": "materials declared but unused: glass, iron, planks, plaster, roof, stone"
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv ASSET lock` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/house_roof_eave/export/house_roof_eave.glb",
+  "bytes": 72632,
+  "nodes": 3,
+  "meshes": 2,
+  "materials": 1,
+  "target": "generic",
+  "merge": "by_material",
+  "lods": []
+ }
+}

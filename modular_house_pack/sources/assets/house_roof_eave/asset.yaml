@@ -1,0 +1,20 @@
+# cozy_house kit module 19: eave trim (fascia + rafter tails)
+# The eave solution on its own (roof component with slope: 0), e.g. under a porch or where a roof is built another way.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_roof_eave
+  kind: environment/modular/roof
+  description: "Eave trim: fascia board and rafter tails (cozy_house kit)."
+  tags: [cozy_house, module, roof]
+  placement: free
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  eave_trim:
+    component: house_roof
+    with: {length: bay, run: bay + wall_t / 2 + eave, pitch: pitch, t: roof_t, st: shingle_t, course: course, tile: tile_w, eave: eave, slope: 0}
+    materials: {roof: roof, timber: timber}
+    origin: keep
+    position: [0, 0, 0]

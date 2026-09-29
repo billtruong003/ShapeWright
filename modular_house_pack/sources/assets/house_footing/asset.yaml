@@ -1,0 +1,20 @@
+# cozy_house kit module 15: stone footing course (raised foundation)
+# Between two node stones on a grid line; top stops `sink` below the ground deck top.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_footing
+  kind: environment/modular/foundation
+  description: Two-course stone footing between node stones (cozy_house kit).
+  tags: [cozy_house, module, foundation]
+  placement: floor
+export: {merge: by_material}
+collision: {mode: single_box}
+
+parts:
+  footing:
+    component: house_footing
+    with: {length: bay - footing_d, height: base_h - sink, depth: footing_d, blocks: 3}
+    materials: {stone: stone}
+    origin: keep
+    position: [0, 0, 0]
