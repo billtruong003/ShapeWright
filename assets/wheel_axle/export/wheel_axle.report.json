@@ -36,6 +36,8 @@
   },
   "budget_triangles": 1500,
   "materials": 3,
+  "draw_calls": 11,
+  "collision_proxies": 11,
   "checks": {
    "wheel_right.size.y": 0.474,
    "tyre_right.size.y": 0.6,
@@ -94,6 +96,9 @@
   "bytes": 463104,
   "nodes": 26,
   "meshes": 22,
-  "materials": 3
+  "materials": 3,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

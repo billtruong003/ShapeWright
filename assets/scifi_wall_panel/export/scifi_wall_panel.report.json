@@ -36,6 +36,7 @@
   },
   "budget_triangles": 1500,
   "materials": 3,
+  "draw_calls": 9,
   "checks": {
    "panel.size.x": 1.2,
    "hatch.max.z - panel.max.z": 0.045,
@@ -69,9 +70,12 @@
  ],
  "export": {
   "path": "assets/scifi_wall_panel/export/scifi_wall_panel.glb",
-  "bytes": 72896,
+  "bytes": 72900,
   "nodes": 12,
   "meshes": 10,
-  "materials": 3
+  "materials": 3,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

@@ -72,3 +72,21 @@ Unreal project. Every Godot export is checked in Godot.
 | E4 | A hinged or moving part keeps its own node and pivot (it is not merged) |
 | E5 | LOD files are produced for the Unreal set; the agent does not check their silhouettes unless the report surfaces it |
 | E6 | 0 framework changes |
+
+## Implementation status (before the gate)
+
+Implemented as designed. Verified in **Godot 4.3** on six assets exported with the `godot` target
+(chair, chest, fountain, rope bridge, and the imported loveseat and lantern):
+
+| | before (per-part export, UCX names) | after (`godot` target) |
+|---|---|---|
+| Surfaces (draw calls) | chair 22 · chest 46 · bridge 94 · fountain 806 | chair **2** · chest **5** (static 3 + hinged lid 2) · bridge **3** · fountain **4** |
+| Collision in Godot | visible grey meshes, 0 bodies | convex `StaticBody3D` shapes (`ConvexPolygonShape3D`), no visible proxies |
+| Hinged lid | separate node per part | one `lid_rim_back` node at the hinge (0, 0.4, −0.25) holding the lid group |
+| Normal maps | no tangents (Khronos warning) | `TANGENT` written; Godot shows normal maps on velvet and lantern |
+
+Unreal-target LOD files for the chest are Khronos-clean. LOD1 keeps 96% of the silhouette, and its
+textures sample within 0.02–0.04 of LOD0 (0.17–0.23 if v were flipped). Profiles: `godot`, `unity`
+and `unreal` (Unity and Unreal default to one LOD at 50%, since low-poly props lose silhouette at 25%).
+The generic target now names collision `COL_*` instead of Unreal's `UCX_*`, and the committed exports
+were re-exported: node names changed, binary data unchanged.

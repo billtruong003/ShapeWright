@@ -286,9 +286,24 @@ def cmd_export(a):
     info = write_glb(asset, surface, out, report["status"])
     issues, extra = khronos_validate(out)
     issues += roundtrip(asset, out)
+    from .export.targets import export_settings
+
+    settings = export_settings(asset)
+    lods = []
+    if settings["lods"] and settings["target"].lod_files:
+        from .export.lod import write_lods
+        from .report import Issue
+
+        lods = write_lods(asset, surface, out, settings["lods"], report["status"])
+        for lod in lods:
+            if lod["silhouette_iou"] < 0.9:
+                issues.append(Issue("LOD_SILHOUETTE", "warning", f"LOD{lod['lod']} ({lod['triangles']} tris) keeps only "
+                                    f"{lod['silhouette_iou']:.0%} of LOD0's silhouette in its worst view", f"export.lods[{lod['lod'] - 1}]",
+                                    "export", "use a milder ratio for this LOD"))
+            lod["path"] = _rel(Path(lod["path"]))
     final = make_report(asset, found, metrics, issues, exported=True)
     final["metrics"].update(extra)
-    final["export"] = {**info, "path": _rel(out)}
+    final["export"] = {**info, "path": _rel(out), "target": settings["target"].name, "merge": settings["merge"], "lods": lods}
     (out.with_suffix(".report.json")).write_text(dump(final))
     if a.json:
         print(dump(final))

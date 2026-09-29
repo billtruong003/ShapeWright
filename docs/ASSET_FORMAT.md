@@ -31,7 +31,8 @@ parts: {...}
 sockets: {...}
 checks: [...]
 uv: {method: regions, resolution: 512, padding_px: 4}   # regions (default) | atlas (v0.1) | none
-collision: {mode: none | single_box | box | hull}
+collision: {mode: none | single_box | single_hull | box | hull, parts: [seat, legs]}   # convex proxies
+export: {target: generic | godot | unity | unreal, merge: none | by_material, lods: [0.5]}
 interface: {params: [...]}       # optional: family contract for variants (docs/FAMILIES.md)
 pack: blacksmith                 # optional: member of packs/blacksmith.yaml (shared params/materials; read-only here)
 notes: free text

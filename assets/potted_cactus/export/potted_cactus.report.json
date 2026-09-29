@@ -37,6 +37,8 @@
   },
   "budget_triangles": 2000,
   "materials": 4,
+  "draw_calls": 12,
+  "collision_proxies": 12,
   "checks": {
    "asset.height": 0.6176,
    "asset.height / pot.height": 3.0878,
@@ -118,6 +120,9 @@
   "bytes": 436116,
   "nodes": 25,
   "meshes": 24,
-  "materials": 4
+  "materials": 4,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

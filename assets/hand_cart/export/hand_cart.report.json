@@ -42,6 +42,8 @@
   },
   "budget_triangles": 2500,
   "materials": 3,
+  "draw_calls": 31,
+  "collision_proxies": 29,
   "checks": {
    "plank.max.y": 0.591,
    "wheel_right.size.y": 0.84,
@@ -161,6 +163,9 @@
   "bytes": 750760,
   "nodes": 60,
   "meshes": 58,
-  "materials": 3
+  "materials": 3,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

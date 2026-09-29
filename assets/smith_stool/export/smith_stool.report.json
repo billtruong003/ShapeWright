@@ -38,6 +38,7 @@
   },
   "budget_triangles": 1200,
   "materials": 3,
+  "draw_calls": 17,
   "checks": {
    "seat.max.y": 0.5,
    "frame.size.x / seat.size.x": 0.8573
@@ -60,6 +61,9 @@
   "bytes": 66532,
   "nodes": 20,
   "meshes": 18,
-  "materials": 3
+  "materials": 3,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

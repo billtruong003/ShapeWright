@@ -46,6 +46,7 @@
   },
   "budget_triangles": 1200,
   "materials": 3,
+  "draw_calls": 24,
   "checks": {
    "asset.height - crate_h": 0.0813,
    "hammer_head.min.y > crate_h - 0.04": true,
@@ -69,6 +70,9 @@
   "bytes": 106048,
   "nodes": 29,
   "meshes": 25,
-  "materials": 3
+  "materials": 3,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

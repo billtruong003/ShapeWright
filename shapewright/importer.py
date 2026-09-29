@@ -59,7 +59,8 @@ def import_file(src: Path, asset_dir: Path, name: str, split: bool = False, scal
     parts, report, skipped = {}, [], []
     k = 0
     for node, mesh in nodes:
-        if re.match(r"^(UCX|UBX|UCP|USP)_", node) or node.endswith("-colonly") or node.endswith("-col"):
+        if (re.match(r"^(UCX|UBX|UCP|USP|COL)_", node) or re.search(r"-(conv)?col(only)?$", node)
+                or node.endswith("_collider")):
             skipped.append(node)  # engine collision proxies are not visible geometry
             continue
         pieces = backend.connected_components(mesh.merged()) if split else [None]

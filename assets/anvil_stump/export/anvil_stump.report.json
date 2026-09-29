@@ -42,6 +42,8 @@
   },
   "budget_triangles": 900,
   "materials": 3,
+  "draw_calls": 15,
+  "collision_proxies": 15,
   "checks": {
    "anvil_face.max.y": 0.8162,
    "asset.height": 0.8692,
@@ -66,6 +68,9 @@
   "bytes": 84792,
   "nodes": 31,
   "meshes": 30,
-  "materials": 3
+  "materials": 3,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

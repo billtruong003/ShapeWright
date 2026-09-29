@@ -41,6 +41,8 @@
   },
   "budget_triangles": 2000,
   "materials": 3,
+  "draw_calls": 23,
+  "collision_proxies": 23,
   "checks": {
    "drum.center.y": 1.08,
    "grip.center.y": 0.82,
@@ -104,6 +106,9 @@
   "bytes": 455548,
   "nodes": 47,
   "meshes": 46,
-  "materials": 3
+  "materials": 3,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

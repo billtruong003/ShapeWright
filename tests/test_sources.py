@@ -21,7 +21,7 @@ def test_export_import_roundtrip_keeps_names_geometry_and_uvs(tmp_path):
     glb = tmp_path / "chair.glb"
     write_glb(chair, build_surface(chair), glb)
     res = import_file(glb, tmp_path / "imp", "imp")
-    assert len(res["skipped_collision"]) == 0 or all(n.startswith("UCX_") for n in res["skipped_collision"])
+    assert len(res["skipped_collision"]) == 0 or all(n.startswith(("UCX_", "COL_")) for n in res["skipped_collision"])  # generic target: COL_ (Phase 12)
     a = build(tmp_path / "imp")
     assert {p.name for p in a.parts} == {p.name for p in chair.parts}
     assert a.n_tris == chair.n_tris

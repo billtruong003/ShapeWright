@@ -116,6 +116,11 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
 - `.build/` holds renders and reports. It is disposable and git-ignored, so
   don't commit it. Commit `asset.yaml`, `history/` and, for finished assets,
   `export/`.
+- **Shipping to an engine:** use `profile: godot | unity | unreal` (or `export: {target: ...}`). The target
+  names collision so the engine builds physics (`collision: {mode: single_hull}` for a simple prop),
+  merges static parts into one primitive per material (draw calls), keeps each part with a `pivot`
+  (hinged lid, wheel) as its own node with its children, and writes LOD files where the engine
+  needs them. docs/PRODUCTION.md.
 - If something you need is missing (a shape, op or validator), add it to the
   framework rather than hacking the asset. See `CONTRIBUTING.md`. One decorated
   function becomes available everywhere.

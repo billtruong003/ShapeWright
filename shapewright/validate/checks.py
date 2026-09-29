@@ -173,7 +173,7 @@ def assembly(asset: Asset, surface: Surface, metrics: dict):
 
 
 @validator("budget", "budget", "Profile budgets: triangle count, material slots; unassigned/unused materials.",
-           ("BUDGET_TRIANGLES", "BUDGET_MATERIALS", "MAT_UNASSIGNED", "MAT_UNUSED", "BUDGET_NEAR_LIMIT"))
+           ("BUDGET_TRIANGLES", "BUDGET_MATERIALS", "MAT_UNASSIGNED", "MAT_UNUSED", "BUDGET_NEAR_LIMIT", "BUDGET_DRAW_CALLS", "COLLISION_PROXIES"))
 def budget(asset: Asset, surface: Surface, metrics: dict):
     out = []
     tris = asset.n_tris
@@ -201,6 +201,26 @@ def budget(asset: Asset, surface: Surface, metrics: dict):
     for p in asset.parts:
         if not p.material:
             out.append(_issue("MAT_UNASSIGNED", "warning", "budget", "part has no material", p.name, "set material: <name>"))
+    from ..export.targets import draw_calls, export_settings
+
+    dc = draw_calls(asset, surface)
+    metrics["draw_calls"] = dc
+    dlimit = asset.budget.get("draw_calls")
+    if dlimit and dc > dlimit:
+        merge = export_settings(asset)["merge"]
+        out.append(_issue("BUDGET_DRAW_CALLS", "warning", "budget", f"{dc} draw calls in the exported file > budget {dlimit}", "",
+                          "set export: {merge: by_material} (or an engine profile: godot/unity/unreal) so static parts share one "
+                          "primitive per material" if merge != "by_material" else
+                          "fewer materials, or fewer separately moving parts (pivot/parent/`separate`)"))
+    col = asset.collision or {}
+    if col.get("mode") in ("box", "hull"):
+        only = set(col.get("parts") or [])
+        n = sum(1 for p in asset.parts if not only or p.base in only or p.name in only)
+        metrics["collision_proxies"] = n
+        if n > 32:
+            out.append(_issue("COLLISION_PROXIES", "warning", "budget", f"{n} collision proxies (one per part): engines create a "
+                              "body or shape for each", "collision", "use collision: {mode: single_hull} or list the parts that "
+                              "need their own shape in collision.parts"))
     unused = sorted(set(asset.materials) - set(used))
     if unused:
         out.append(_issue("MAT_UNUSED", "info", "budget", f"materials declared but unused: {', '.join(unused)}", "materials"))

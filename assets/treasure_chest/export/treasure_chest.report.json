@@ -48,6 +48,7 @@
   },
   "budget_triangles": 1500,
   "materials": 3,
+  "draw_calls": 45,
   "checks": {
    "asset.height": 0.6023,
    "lock_plate.size.x / asset.width": 0.1795
@@ -226,6 +227,9 @@
   "bytes": 803592,
   "nodes": 47,
   "meshes": 45,
-  "materials": 3
+  "materials": 3,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

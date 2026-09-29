@@ -39,6 +39,8 @@
   },
   "budget_triangles": 2000,
   "materials": 2,
+  "draw_calls": 22,
+  "collision_proxies": 22,
   "checks": {
    "wall.size.x": 2.0,
    "asset.width": 2.0,
@@ -94,6 +96,9 @@
   "bytes": 605260,
   "nodes": 48,
   "meshes": 44,
-  "materials": 2
+  "materials": 2,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

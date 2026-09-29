@@ -263,7 +263,8 @@ def _unwrap_atlas(asset: Asset, resolution: int, padding: int) -> dict[str, np.n
 # ------------------------------------------------------------------ build
 
 
-def build_surface(asset: Asset) -> Surface:
+def build_surface(asset: Asset, corner_uvs_given: dict | None = None) -> Surface:
+    """corner_uvs_given: part name -> (m,3,2) UVs to use instead of unwrapping (LODs keep LOD0's atlas)."""
     uv_cfg = asset.uv or {}
     method = uv_cfg.get("method", "regions")
     if method == "auto":
@@ -271,8 +272,10 @@ def build_surface(asset: Asset) -> Surface:
     resolution = int(uv_cfg.get("resolution", asset.budget.get("texture_size", 1024)))
     padding = int(uv_cfg.get("padding_px", (asset.profile.get("uv") or {}).get("padding_px", 4)))
     surface = Surface({}, method, resolution, padding)
-    corner_uvs: dict = {}
-    if method in ("regions", "atlas"):
+    corner_uvs: dict = dict(corner_uvs_given or {})
+    if corner_uvs_given is not None:
+        pass
+    elif method in ("regions", "atlas"):
         try:
             corner_uvs = (_unwrap_regions(asset, resolution, padding, surface) if method == "regions"
                           else _unwrap_atlas(asset, resolution, padding))

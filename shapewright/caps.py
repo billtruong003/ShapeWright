@@ -117,6 +117,7 @@ def summary_text() -> str:
               "MEASURE   " + " ".join(m["measure_queries"]) + "   (part-level `measure:` queries; docs/RELATIONSHIPS.md)",
               "POINTS    " + " ".join(m["point_generators"]) + "   (items inside any point list: polygon, holes, profile, path; `sw doc arc`)",
               "PARTS     " + " ".join(m["part_features"]) + "   (`sw doc array`: per-instance each/skip/start, nested arrays)",
-              "EXPORT    glb",
+              "EXPORT    glb; targets " + " ".join(__import__("shapewright.export.targets", fromlist=["TARGETS"]).TARGETS)
+              + "   (profiles godot / unity / unreal; asset `export: {target, merge, lods}`; docs/PRODUCTION.md)",
               "", "* = required.  `sw doc NAME` for details, `sw caps --json` for everything."]
     return "\n".join(lines)

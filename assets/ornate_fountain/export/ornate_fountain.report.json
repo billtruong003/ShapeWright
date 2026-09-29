@@ -1,17 +1,17 @@
 {
  "asset": "ornate_fountain",
- "status": "PASS",
+ "status": "WARN",
  "source_hash": "aef6f66ac2a1",
  "counts": {
   "error": 0,
-  "warning": 0,
+  "warning": 1,
   "info": 17
  },
  "layers": {
   "source": "PASS",
   "geometry": "PASS",
   "assembly": "PASS",
-  "budget": "PASS",
+  "budget": "WARN",
   "intent": "PASS",
   "surface": "PASS",
   "style": "PASS",
@@ -55,6 +55,8 @@
   },
   "budget_triangles": 45000,
   "materials": 4,
+  "draw_calls": 403,
+  "collision_proxies": 403,
   "checks": {
    "asset.triangles": 43928.0,
    "basin.max.y": 0.805,
@@ -85,6 +87,14 @@
   }
  },
  "issues": [
+  {
+   "code": "COLLISION_PROXIES",
+   "severity": "warning",
+   "layer": "budget",
+   "where": "collision",
+   "msg": "403 collision proxies (one per part): engines create a body or shape for each",
+   "hint": "use collision: {mode: single_hull} or list the parts that need their own shape in collision.parts"
+  },
   {
    "code": "GEO_PART_FRAGMENTED",
    "severity": "info",
@@ -273,6 +283,9 @@
   "bytes": 4900320,
   "nodes": 808,
   "meshes": 806,
-  "materials": 4
+  "materials": 4,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

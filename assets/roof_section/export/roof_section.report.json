@@ -1,17 +1,17 @@
 {
  "asset": "roof_section",
- "status": "PASS",
+ "status": "WARN",
  "source_hash": "8654795095f6",
  "counts": {
   "error": 0,
-  "warning": 0,
+  "warning": 1,
   "info": 26
  },
  "layers": {
   "source": "PASS",
   "geometry": "PASS",
   "assembly": "PASS",
-  "budget": "PASS",
+  "budget": "WARN",
   "intent": "PASS",
   "surface": "PASS",
   "style": "PASS",
@@ -40,6 +40,8 @@
   },
   "budget_triangles": 3000,
   "materials": 3,
+  "draw_calls": 50,
+  "collision_proxies": 50,
   "checks": {
    "asset.width": 1.998,
    "rafter.max.z - rafter.min.z": 2.0,
@@ -69,6 +71,14 @@
   }
  },
  "issues": [
+  {
+   "code": "COLLISION_PROXIES",
+   "severity": "warning",
+   "layer": "budget",
+   "where": "collision",
+   "msg": "50 collision proxies (one per part): engines create a body or shape for each",
+   "hint": "use collision: {mode: single_hull} or list the parts that need their own shape in collision.parts"
+  },
   {
    "code": "GEO_PART_FRAGMENTED",
    "severity": "info",
@@ -358,6 +368,9 @@
   "bytes": 819836,
   "nodes": 103,
   "meshes": 100,
-  "materials": 3
+  "materials": 3,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

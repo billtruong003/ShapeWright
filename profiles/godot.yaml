@@ -1,3 +1,3 @@
-doc: Godot-oriented export conventions (-colonly collision suffix) on top of desktop budgets.
-budget: {triangles: 5000, materials: 3, texture_size: 1024, texel_density: 512}
-export: {collision_naming: godot}
+doc: Godot 4 target. Convex collision via -convcolonly (StaticBody3D shapes), static parts merged per material (draw calls); Godot generates LODs at import. Verified with Godot 4.3's importer (tools/engine/godot_check.py).
+budget: {triangles: 5000, materials: 3, draw_calls: 6, texture_size: 1024, texel_density: 512}
+export: {target: godot}

@@ -46,6 +46,7 @@
   },
   "budget_triangles": 1200,
   "materials": 3,
+  "draw_calls": 25,
   "checks": {
    "spear_shaft.max.z < frame_long_rail_front.min.z": true,
    "top_board.max.y": 1.2,
@@ -113,9 +114,12 @@
  ],
  "export": {
   "path": "assets/smith_weapon_rack/export/smith_weapon_rack.glb",
-  "bytes": 105764,
+  "bytes": 105768,
   "nodes": 32,
   "meshes": 26,
-  "materials": 3
+  "materials": 3,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

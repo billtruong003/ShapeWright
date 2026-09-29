@@ -34,19 +34,29 @@ def khronos_validate(path: Path) -> tuple[list[Issue], dict]:
     return issues, {"gltf_validator": {k: data.get(k) for k in ("numErrors", "numWarnings", "numInfos", "numHints")}}
 
 
+def expected_nodes(asset: Asset) -> dict[str, list[str]]:
+    """Visual node name -> the parts it holds, under the asset's merge policy."""
+    from .gltf import merged_node_name
+    from .targets import STATIC, export_settings, rigid_groups
+
+    if export_settings(asset)["merge"] != "by_material":
+        return {p.name: [p.name] for p in asset.parts}
+    return {(merged_node_name(asset) if k == STATIC else k): [p.name for p in ps] for k, ps in rigid_groups(asset).items()}
+
+
 def roundtrip(asset: Asset, path: Path) -> list[Issue]:
     from .. import backend
 
     nodes = backend.load_scene_summary(path)
     issues = []
-    part_names = {p.name for p in asset.parts}
-    missing = [n for n in part_names if n not in nodes]
+    expect = expected_nodes(asset)
+    missing = [n for n in expect if n not in nodes]
     if missing:
-        issues.append(Issue("EXP_ROUNDTRIP_PARTS", "error", f"parts missing after re-import: {', '.join(sorted(missing)[:6])}", "", "export"))
-    tris = sum(t for n, (t, _) in nodes.items() if n in part_names)
+        issues.append(Issue("EXP_ROUNDTRIP_PARTS", "error", f"nodes missing after re-import: {', '.join(sorted(missing)[:6])}", "", "export"))
+    tris = sum(t for n, (t, _) in nodes.items() if n in expect)
     if tris != asset.n_tris:
         issues.append(Issue("EXP_ROUNDTRIP_TRIS", "error", f"re-imported {tris} triangles, expected {asset.n_tris}", "", "export"))
-    geo = [b for n, (_, b) in nodes.items() if n in part_names]
+    geo = [b for n, (_, b) in nodes.items() if n in expect]
     if geo:
         g = np.stack(geo)
         bb = np.stack([g[:, 0].min(0), g[:, 1].max(0)])

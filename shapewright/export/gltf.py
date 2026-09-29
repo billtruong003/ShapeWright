@@ -25,6 +25,7 @@ from .. import __version__
 from ..assemble import Asset
 from ..mesh import rotation_matrix
 from ..surface import Surface
+from .targets import export_settings
 
 FLOAT, UINT16, UINT32 = 5126, 5123, 5125
 ARRAY_BUFFER, ELEMENT_ARRAY_BUFFER = 34962, 34963
@@ -74,7 +75,7 @@ class _Builder:
         self.bin.extend(raw)
         return len(self.views) - 1
 
-    def mesh_primitive(self, positions, indices, normals=None, uvs=None, material=None, colors=None) -> dict:
+    def mesh_primitive(self, positions, indices, normals=None, uvs=None, material=None, colors=None, tangents: bool = False) -> dict:
         attrs = {"POSITION": self.add(positions.astype(np.float32), FLOAT, "VEC3", ARRAY_BUFFER, minmax=True)}
         if normals is not None:
             attrs["NORMAL"] = self.add(normals.astype(np.float32), FLOAT, "VEC3", ARRAY_BUFFER)
@@ -84,6 +85,8 @@ class _Builder:
             # (found in Phase 11; the Khronos validator and trimesh round-trips cannot see it).
             uv_file = np.stack([uvs[:, 0], 1.0 - uvs[:, 1]], 1)
             attrs["TEXCOORD_0"] = self.add(uv_file.astype(np.float32), FLOAT, "VEC2", ARRAY_BUFFER)
+            if tangents and normals is not None:  # normal-mapped materials (Phase 12): tangent space from the file's UVs
+                attrs["TANGENT"] = self.add(_tangents(positions, normals, uv_file, indices).astype(np.float32), FLOAT, "VEC4", ARRAY_BUFFER)
         if colors is not None:
             attrs["COLOR_0"] = self.add(colors.astype(np.float32), FLOAT, "VEC4", ARRAY_BUFFER)
         flat = indices.reshape(-1)
@@ -97,24 +100,56 @@ class _Builder:
         return prim
 
 
-def _collision_meshes(asset: Asset) -> list[tuple[str, np.ndarray, np.ndarray]]:
-    mode = (asset.collision or {}).get("mode", "none")
+def _tangents(P: np.ndarray, N: np.ndarray, UV: np.ndarray, F: np.ndarray) -> np.ndarray:
+    """Per-vertex tangents with handedness (Lengyel), in the glTF UV convention."""
+    P, N, UV = (np.asarray(x, dtype=np.float64) for x in (P, N, UV))
+    F = np.asarray(F, dtype=np.int64).reshape(-1, 3)
+    e1, e2 = P[F[:, 1]] - P[F[:, 0]], P[F[:, 2]] - P[F[:, 0]]
+    d1, d2 = UV[F[:, 1]] - UV[F[:, 0]], UV[F[:, 2]] - UV[F[:, 0]]
+    den = d1[:, 0] * d2[:, 1] - d2[:, 0] * d1[:, 1]
+    r = np.where(np.abs(den) < 1e-20, 0.0, 1.0 / np.where(np.abs(den) < 1e-20, 1.0, den))
+    sdir = (e1 * d2[:, 1:2] - e2 * d1[:, 1:2]) * r[:, None]
+    tdir = (e2 * d1[:, 0:1] - e1 * d2[:, 0:1]) * r[:, None]
+    S, T = np.zeros_like(P), np.zeros_like(P)
+    for k in range(3):
+        np.add.at(S, F[:, k], sdir)
+        np.add.at(T, F[:, k], tdir)
+    t = S - N * (N * S).sum(1, keepdims=True)
+    ln = np.linalg.norm(t, axis=1, keepdims=True)
+    fallback = np.cross(N, np.where(np.abs(N[:, :1]) < 0.9, [[1.0, 0, 0]], [[0, 1.0, 0]]))
+    t = np.where(ln > 1e-12, t / np.maximum(ln, 1e-12), fallback / np.maximum(np.linalg.norm(fallback, axis=1, keepdims=True), 1e-12))
+    w = np.where((np.cross(N, t) * T).sum(1) < 0, -1.0, 1.0)
+    return np.c_[t, w]
+
+
+def _collision_meshes(asset: Asset) -> list[tuple[int, np.ndarray, np.ndarray]]:
+    """Convex collision proxies: none | single_box | single_hull | box | hull (per part); `parts:` limits which parts."""
+    cfg = asset.collision or {}
+    mode = cfg.get("mode", "none")
     if mode == "none":
         return []
     from .. import backend
 
-    out = []
-    groups: dict[str, list] = {}
-    for p in asset.parts:
-        groups.setdefault(p.name if mode in ("box", "hull") else "all", []).append(p)
+    only = set(cfg.get("parts") or [])
+    parts = [p for p in asset.parts if not only or p.base in only or p.name in only]
+    if not parts:
+        return []
+    V_all = np.concatenate([p.mesh.V for p in parts])
     if mode == "single_box":
-        t = backend.box_bounds(asset.bounds())
-        return [("0", t.V, t.F)]
-    for i, (name, ps) in enumerate(groups.items()):
-        V = np.concatenate([p.mesh.V for p in ps])
+        t = backend.box_bounds(np.stack([V_all.min(0), V_all.max(0)]))
+        return [(0, t.V, t.F)]
+    if mode == "single_hull":
+        t = backend.convex_hull(V_all)
+        return [(0, t.V, t.F)]
+    out = []
+    for i, p in enumerate(parts):
+        V = p.mesh.V
         t = backend.box_bounds(np.stack([V.min(0), V.max(0)])) if mode == "box" else backend.convex_hull(V)
-        out.append((f"{i:02d}", t.V, t.F))
+        out.append((i, t.V, t.F))
     return out
+
+
+COLLISION_MODES = ("none", "single_box", "single_hull", "box", "hull")
 
 
 def _recipe(m: dict) -> dict:
@@ -126,13 +161,86 @@ def _recipe(m: dict) -> dict:
             **({"instance_of": m["instance_of"]} if m.get("instance_of") else {})}
 
 
-def _primitives(b: _Builder, sp, part, pivot, mat_index: dict) -> list[dict]:
+def _write_groups(b: _Builder, asset: Asset, surface, nodes: list, meshes: list, mat_index: dict, normal_mapped) -> None:
+    """Static parts -> `<asset>_static`; each moving group -> a node named after its head part, placed at
+    the head's pivot and parented to the group that holds the head's parent."""
+    from .targets import STATIC, rigid_groups
+
+    groups = rigid_groups(asset)
+    by_name = {p.name: p for p in asset.parts}
+    by_base: dict = {}
+    for p in asset.parts:
+        by_base.setdefault(p.base, p)
+    group_of = {p.name: k for k, ps in groups.items() for p in ps}
+    node_of: dict = {}
+    pivot_of = {k: (np.zeros(3) if k == STATIC else by_name[k].pivot if by_name[k].pivot is not None else np.zeros(3)) for k in groups}
+    for k, ps in groups.items():
+        name = merged_node_name(asset) if k == STATIC else k
+        prims, ranges = _merged_primitives(b, surface, ps, mat_index, normal_mapped, pivot_of[k])
+        meshes.append({"name": name, "primitives": prims})
+        node_of[k] = len(nodes)
+        nodes.append({"name": name, "mesh": len(meshes) - 1, "extras": {"merged_parts": ranges}})
+    for k in groups:
+        parent_group = STATIC
+        if k != STATIC:
+            head = by_name[k]
+            par = (by_name.get(head.parent) or by_base.get(head.parent)) if head.parent else None
+            parent_group = group_of.get(par.name) if par is not None else None
+        parent_idx = 0 if k == STATIC or parent_group in (None, STATIC) else node_of[parent_group]
+        rel = pivot_of[k] - (pivot_of[parent_group] if parent_idx else np.zeros(3))
+        if np.any(np.abs(rel) > 0):
+            nodes[node_of[k]]["translation"] = [float(v) for v in rel]
+        nodes[parent_idx].setdefault("children", []).append(node_of[k])
+
+
+def merged_node_name(asset: Asset) -> str:
+    return f"{asset.name}_static"
+
+
+def _merged_primitives(b: _Builder, surface, parts, mat_index: dict, normal_mapped=frozenset(), pivot=None):
+    """Concatenate static parts per effective material. Returns primitives and part ranges."""
+    groups: dict = {}
+    for p in parts:
+        sp = surface.parts[p.name]
+        eff = np.array([m if m else p.material for m in sp.face_material], dtype=object)
+        for g in dict.fromkeys(eff):
+            faces = sp.indices[eff == g]
+            used = np.unique(faces.reshape(-1))
+            remap = np.full(len(sp.positions), -1, dtype=np.int64)
+            remap[used] = np.arange(len(used))
+            groups.setdefault(g, []).append((p.name, sp, used, remap[faces]))
+    prims, ranges = [], []
+    for g, items in groups.items():
+        P, N, U, C, F = [], [], [], [], []
+        base, first = 0, 0
+        has_uv = all(sp.uvs is not None for _, sp, _, _ in items)
+        has_col = any(sp.colors is not None for _, sp, _, _ in items)
+        for name, sp, used, faces in items:
+            P.append(sp.positions[used] - (np.zeros(3, np.float32) if pivot is None else np.asarray(pivot, np.float32)))
+            N.append(sp.normals[used])
+            if has_uv:
+                U.append(sp.uvs[used])
+            if has_col:
+                C.append(sp.colors[used] if sp.colors is not None else np.ones((len(used), 4), np.float32))
+            F.append(faces + base)
+            ranges.append({"part": name, "material": g, "first_index": first * 3, "index_count": int(len(faces)) * 3})
+            base += len(used)
+            first += len(faces)
+        mi = mat_index.get(g)
+        prims.append(b.mesh_primitive(np.concatenate(P), np.concatenate(F).astype(np.uint32), np.concatenate(N),
+                                      np.concatenate(U) if has_uv else None, mi, np.concatenate(C) if has_col else None,
+                                      tangents=mi in normal_mapped))
+    return prims, ranges
+
+
+def _primitives(b: _Builder, sp, part, pivot, mat_index: dict, normal_mapped=frozenset()) -> list[dict]:
     """One primitive per effective material (face `material` attribute, else the part's)."""
     eff = np.array([m if m else part.material for m in sp.face_material], dtype=object)
     groups = list(dict.fromkeys(eff))
     pos = sp.positions - pivot.astype(np.float32)
     if len(groups) == 1:
-        return [b.mesh_primitive(pos, sp.indices, sp.normals, sp.uvs, mat_index.get(groups[0]), sp.colors)]
+        mi = mat_index.get(groups[0])
+        return [b.mesh_primitive(pos, sp.indices, sp.normals, sp.uvs, mi, sp.colors, tangents=mi in normal_mapped)]
     prims = []
     for g in groups:
         faces = sp.indices[eff == g]
@@ -141,15 +249,16 @@ def _primitives(b: _Builder, sp, part, pivot, mat_index: dict) -> list[dict]:
         remap[used] = np.arange(len(used))
         prims.append(b.mesh_primitive(pos[used], remap[faces].astype(np.uint32), sp.normals[used],
                                       None if sp.uvs is None else sp.uvs[used], mat_index.get(g),
-                                      None if sp.colors is None else sp.colors[used]))
+                                      None if sp.colors is None else sp.colors[used], tangents=mat_index.get(g) in normal_mapped))
     return prims
 
 
-def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str = "UNKNOWN") -> dict:
+def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str = "UNKNOWN", textures=None) -> dict:
+    """textures: a baked atlas to use instead of baking (LOD files share LOD0's atlas)."""
     from ..bake import textures_for, to_png_bytes
 
     b = _Builder()
-    tex = textures_for(asset, surface)
+    tex = textures if textures is not None else textures_for(asset, surface)
     images, textures, samplers = [], [], []
     if tex is not None:
         for label, arr in (("base_color", tex.base), ("orm", tex.orm)):
@@ -224,29 +333,34 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
     meshes = []
     node_of: dict[str, int] = {}
     pivots = {p.name: (p.pivot if p.pivot is not None else np.zeros(3)) for p in asset.parts}
-    for p in asset.parts:
-        sp = surface.parts[p.name]
-        piv = pivots[p.name]
-        meshes.append({"name": p.name, "primitives": _primitives(b, sp, p, piv, mat_index)})
-        extras = {"part": p.base, "tags": p.tags} if p.tags else {"part": p.base}
-        if p.component:
-            extras["component"] = p.component
-        if p.source != "native":
-            extras["geometry_source"] = p.source
-        if p.doc:
-            extras["doc"] = p.doc
-        if p.instance:
-            extras["instance"] = p.instance
-        node = {"name": p.name, "mesh": len(meshes) - 1, "extras": extras}
-        node_of[p.name] = len(nodes)
-        nodes.append(node)
-    for p in asset.parts:  # hierarchy + relative translations
-        idx = node_of[p.name]
-        parent = node_of.get(p.parent, 0) if p.parent else 0
-        rel = pivots[p.name] - (pivots[p.parent] if p.parent in pivots else np.zeros(3))
-        if np.any(np.abs(rel) > 0):
-            nodes[idx]["translation"] = [float(v) for v in rel]
-        nodes[parent].setdefault("children", []).append(idx)
+    settings = export_settings(asset)
+    normal_mapped = {mat_index[n] for n, m in asset.materials.items() if n in mat_index and "normal" in (m.get("textures") or {})}
+    if settings["merge"] == "by_material":  # rigid groups: one node per group, one primitive per material
+        _write_groups(b, asset, surface, nodes, meshes, mat_index, normal_mapped)
+    else:
+        for p in asset.parts:
+            sp = surface.parts[p.name]
+            piv = pivots[p.name]
+            meshes.append({"name": p.name, "primitives": _primitives(b, sp, p, piv, mat_index, normal_mapped)})
+            extras = {"part": p.base, "tags": p.tags} if p.tags else {"part": p.base}
+            if p.component:
+                extras["component"] = p.component
+            if p.source != "native":
+                extras["geometry_source"] = p.source
+            if p.doc:
+                extras["doc"] = p.doc
+            if p.instance:
+                extras["instance"] = p.instance
+            node = {"name": p.name, "mesh": len(meshes) - 1, "extras": extras}
+            node_of[p.name] = len(nodes)
+            nodes.append(node)
+        for p in asset.parts:  # hierarchy + relative translations
+            idx = node_of[p.name]
+            parent = node_of.get(p.parent, 0) if p.parent else 0
+            rel = pivots[p.name] - (pivots[p.parent] if p.parent in pivots else np.zeros(3))
+            if np.any(np.abs(rel) > 0):
+                nodes[idx]["translation"] = [float(v) for v in rel]
+            nodes[parent].setdefault("children", []).append(idx)
     for s in asset.sockets:
         node = {"name": f"SOCKET_{s.name}", "translation": [float(v) for v in s.position], "extras": {"socket": s.name}}
         if s.doc:
@@ -255,10 +369,9 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
             node["rotation"] = [float(v) for v in matrix_to_quat(rotation_matrix(s.rotation))]
         nodes.append(node)
         nodes[0]["children"].append(len(nodes) - 1)
-    naming = (asset.profile.get("export") or {}).get("collision_naming", "ucx")
-    for suffix, V, F in _collision_meshes(asset):
+    for idx, V, F in _collision_meshes(asset):
         prim = b.mesh_primitive(np.asarray(V, dtype=np.float32), np.asarray(F, dtype=np.uint32))
-        name = f"UCX_{asset.name}_{suffix}" if naming == "ucx" else f"{asset.name}_{suffix}-colonly"
+        name = settings["target"].collision_name(asset.name, idx, convex=True)
         meshes.append({"name": name, "primitives": [prim]})
         nodes.append({"name": name, "mesh": len(meshes) - 1, "extras": {"collision": True}})
         nodes[0]["children"].append(len(nodes) - 1)

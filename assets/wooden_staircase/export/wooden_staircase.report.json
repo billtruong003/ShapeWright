@@ -1,17 +1,17 @@
 {
  "asset": "wooden_staircase",
- "status": "PASS",
+ "status": "WARN",
  "source_hash": "7cc4cc7a257d",
  "counts": {
   "error": 0,
-  "warning": 0,
+  "warning": 1,
   "info": 2
  },
  "layers": {
   "source": "PASS",
   "geometry": "PASS",
   "assembly": "PASS",
-  "budget": "PASS",
+  "budget": "WARN",
   "intent": "PASS",
   "surface": "PASS",
   "style": "PASS",
@@ -41,6 +41,8 @@
   },
   "budget_triangles": 3000,
   "materials": 2,
+  "draw_calls": 44,
+  "collision_proxies": 44,
   "checks": {
    "tread.max.y - steps * rise": 0.0,
    "(handrail_right.size.y - rail_h) / (handrail_right.size.z - 2 * rail_chamfer) - rise / run": -0.0,
@@ -62,6 +64,14 @@
   }
  },
  "issues": [
+  {
+   "code": "COLLISION_PROXIES",
+   "severity": "warning",
+   "layer": "budget",
+   "where": "collision",
+   "msg": "44 collision proxies (one per part): engines create a body or shape for each",
+   "hint": "use collision: {mode: single_hull} or list the parts that need their own shape in collision.parts"
+  },
   {
    "code": "GEO_SLIVER_TRIS",
    "severity": "info",
@@ -90,6 +100,9 @@
   "bytes": 213352,
   "nodes": 91,
   "meshes": 88,
-  "materials": 2
+  "materials": 2,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

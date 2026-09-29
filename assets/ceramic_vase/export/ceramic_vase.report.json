@@ -33,6 +33,8 @@
   },
   "budget_triangles": 1200,
   "materials": 2,
+  "draw_calls": 3,
+  "collision_proxies": 3,
   "checks": {
    "asset.height": 0.38,
    "body.size.x / body.size.y": 0.7895,
@@ -74,6 +76,9 @@
   "bytes": 53196,
   "nodes": 7,
   "meshes": 6,
-  "materials": 2
+  "materials": 2,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }

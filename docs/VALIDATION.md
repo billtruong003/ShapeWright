@@ -103,6 +103,10 @@ warnings. It never produces errors, because style is a judgement call.
 | `UV_UNLOCKED` | info | no lock; regions follow areas and may move (lock before texturing) |
 | `ATTR_INVALIDATED` | info / warning | a topology-changing op dropped attributes (warning if an imported part lost its authored UVs) |
 
+| `BUDGET_DRAW_CALLS` | warning | primitives in the exported file exceed `budget.draw_calls` (see `export.merge`) |
+| `COLLISION_PROXIES` | warning | more than 32 per-part collision proxies; use `single_hull` or `collision.parts` |
+| `LOD_SILHOUETTE` | warning | an LOD file keeps < 90% of LOD0's silhouette in its worst view (export layer) |
+| `OP_DECIMATE_LIMITED` / `OP_DECIMATE_OPENED` | warning | decimate stalled above its target / opened a closed surface |
 | `TEX_AUTHORED_IMAGE_INVALID` | error | an authored (imported) texture is missing, outside the asset directory or too large |
 | `TEX_AUTHORED_UV_MISSING` | error | a part with an authored material lost its UVs (a boolean dropped them) |
 | `TEX_AUTHORED_SETS` | info | authored texture sets are exported next to the baked atlas (one material each) |

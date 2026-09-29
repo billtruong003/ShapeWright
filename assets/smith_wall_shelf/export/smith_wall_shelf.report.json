@@ -39,6 +39,7 @@
   },
   "budget_triangles": 1200,
   "materials": 3,
+  "draw_calls": 15,
   "checks": {
    "asset.min.z": 0.0,
    "shelf.max.y": 0.345,
@@ -82,9 +83,12 @@
  ],
  "export": {
   "path": "assets/smith_wall_shelf/export/smith_wall_shelf.glb",
-  "bytes": 62064,
+  "bytes": 62068,
   "nodes": 19,
   "meshes": 16,
-  "materials": 3
+  "materials": 3,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
  }
 }
