@@ -80,6 +80,19 @@ Two framework bugs were fixed. A held-out 5-class run adopted the additions in a
 validator fix. Record: [experiments/FRESH_AGENT_05.md](experiments/FRESH_AGENT_05.md). Next vocabulary
 candidate: curve sampling in `each:`.
 
+## Phase 10: 50k-triangle performance and resource safety ✅ (gate passed)
+Scaling benchmark over two families at 1k–50k triangles. One loop at 50k: 43.9 → 12.8 s. The main
+changes:
+- vectorized rasterizers, bit-identical to the old loops;
+- a dense-UV chart cap;
+- needle collapse after booleans;
+- resource limits checked before any heavy work;
+- elapsed time printed by every command.
+
+A fresh agent built a 44k-triangle, 403-part fountain. That exposed per-pair assembly cost and double
+validation in export; both are fixed. Records: [PERFORMANCE.md](PERFORMANCE.md) and
+[experiments/FRESH_AGENT_06.md](experiments/FRESH_AGENT_06.md).
+
 ## Stage 3: Prototype: a fresh agent succeeds unassisted
 - Run the README task ("tavern chair, < 700 tris, mobile") with a *fresh* agent
   that has only the repository. Record the transcript and friction points, and

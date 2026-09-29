@@ -61,7 +61,11 @@ See docs/HARDENING.md. Rows below keep their original text; these entries overri
 | Bevel on extrusions (§1) | NEAR | PARTIAL | `extrude.chamfer` for convex outlines; general bevel still LONG |
 | Sampling points/tangents on a curve (orient along a path) | — | NEAR | Phase 9 residual gap (3 assets) |
 | Loft, SDF / smooth blends, open surfaces | NEAR/LONG | unchanged | not observed in 22 benchmark classes |
-| Transparency in inspection renders | — | NEAR | Phase 9 finding (lantern) |
+| Transparency in inspection renders | — | NEAR | Phase 9 (lantern) and Phase 10 (fountain water) findings |
+| Mid-poly working range (≤ 50k tris) | — | NOW | Phase 10: 12–13 s per loop (synthetic), ~21 s review for a 403-part agent asset |
+| Export merging of static parts per material (draw calls) | — | Phase 12 | FA-06: 403 nodes / 806 meshes |
+| Per-part texel priority / texture budgets | — | Phase 12 | FA-06 |
+| Preview-resolution bake during iteration | — | NEAR | FA-06 caveat (2048 bake ~8 s per review) |
 
 ---
 

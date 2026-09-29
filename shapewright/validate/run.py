@@ -13,6 +13,12 @@ SEV_ORDER = {"error": 0, "warning": 1, "info": 2}
 
 
 def run_validation(asset: Asset, surface: Surface, extra: list[Issue] | None = None, exported: bool = False) -> dict:
+    issues, metrics = collect(asset, surface)
+    return make_report(asset, issues, metrics, extra, exported)
+
+
+def collect(asset: Asset, surface: Surface) -> tuple[list[Issue], dict]:
+    """Run every validator once; make_report can then be called again with export issues added."""
     load_builtin()
     issues: list[Issue] = list(asset.issues)
     metrics: dict = {"triangles": asset.n_tris, "parts": len(asset.parts)}
@@ -21,7 +27,12 @@ def run_validation(asset: Asset, surface: Surface, extra: list[Issue] | None = N
             issues.extend(v.fn(asset, surface, metrics))
         except Exception as e:  # a crashing validator must not hide the others
             issues.append(Issue("VALIDATOR_CRASHED", "error", f"{v.name}: {e}", "", v.layer))
-    issues.extend(extra or [])
+    return issues, metrics
+
+
+def make_report(asset: Asset, issues: list[Issue], metrics: dict, extra: list[Issue] | None = None, exported: bool = False) -> dict:
+    issues = list(issues) + list(extra or [])
+    metrics = dict(metrics)
     issues.sort(key=lambda i: (SEV_ORDER[i.severity], LAYERS.index(i.layer) if i.layer in LAYERS else 99, i.code, i.where))
     layers = {}
     for layer in LAYERS:

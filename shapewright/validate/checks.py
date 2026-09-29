@@ -122,15 +122,16 @@ def assembly(asset: Asset, surface: Surface, metrics: dict):
 
     parts = asset.parts
     n = len(parts)
-    closed = {i: backend.is_closed_manifold(parts[i].mesh) for i in range(n)}
+    solid = backend.solids([p.mesh for p in parts])  # converted once, reused by every pair (Phase 10)
+    closed = {i: solid[i] is not None for i in range(n)}
+    B = np.stack([p.bounds for p in parts]) if n else np.zeros((0, 2, 3))
 
     adj = {i: set() for i in range(n)}
     for i in range(n):
-        for j in range(i + 1, n):
-            if _bbox_gap(parts[i].bounds, parts[j].bounds) > TOL:
-                continue
+        d = np.maximum(0, np.maximum(B[i + 1:, 0] - B[i, 1], B[i, 0] - B[i + 1:, 1]))  # _bbox_gap to every later part
+        for j in (i + 1 + np.flatnonzero(np.linalg.norm(d, axis=1) <= TOL)).tolist():
             # open (e.g. imported) meshes cannot be measured exactly; bbox contact is the fallback
-            touching = True if not (closed[i] and closed[j]) else backend.min_gap(parts[i].mesh, parts[j].mesh, 2 * TOL) <= TOL
+            touching = True if not (closed[i] and closed[j]) else backend.solid_gap(solid[i], solid[j], 2 * TOL) <= TOL
             if touching:
                 adj[i].add(j)
                 adj[j].add(i)
@@ -159,7 +160,7 @@ def assembly(asset: Asset, surface: Surface, metrics: dict):
         near = [j for j in adj[i] if closed[j] and j not in see_through]
         if not near or not closed[i]:
             continue
-        vol, uncovered = backend.uncovered_volume(parts[i].mesh, [parts[j].mesh for j in near])
+        vol, uncovered = backend.solid_uncovered_volume(solid[i], [solid[j] for j in sorted(near)])
         if vol > 0 and uncovered < 0.02 * vol:
             hidden.append(parts[i].name)
     for h in hidden:

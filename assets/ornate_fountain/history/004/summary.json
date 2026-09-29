@@ -1,0 +1,60 @@
+{
+ "iteration": 4,
+ "note": "rev4: plinth, basin, bed, water discs and both bowls built as 8 identical jointed segments with shared UVs (niches offset so joints fall on piers); rim eggs 72->64 aligned to segments; trims to stay under 45k",
+ "critique": "PASS 43928/45000. Atlas utilisation was 0.29 (hollow round charts) -> sectors: texel 116 -> 319 px/m at the same 2048 atlas. Segment joints read as stone joints on the rim (good, realistic). bowl2 sector needed apex 1 mm past the axis (non-manifold pole edge) -> slivers hidden under the finial/stem. Streams still uniform tubes; accepted for mid-poly.",
+ "source_hash": "aef6f66ac2a1",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 18
+ },
+ "metrics": {
+  "triangles": 43928,
+  "parts": 403,
+  "size_m": [
+   5.054,
+   2.76,
+   5.0456
+  ],
+  "materials": 4,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.triangles": 43928.0,
+   "basin.max.y": 0.805,
+   "asset.height": 2.76,
+   "asset.width": 5.054,
+   "bowl1.size.x / basin.size.x": 0.5536,
+   "bowl2.size.x / bowl1.size.x": 0.5806
+  }
+ },
+ "errors": [],
+ "params": {
+  "seg": 96.0,
+  "seg_mid": 64.0,
+  "plinth_h": 0.14,
+  "plinth_r": 1.72,
+  "wall_r": 1.52,
+  "inner_r": 1.4,
+  "rim_r": 1.68,
+  "rim_top": 0.8,
+  "floor_y": 0.24,
+  "water_y": 0.68,
+  "n_niche": 16.0,
+  "niche_w": 0.2,
+  "niche_h": 0.26,
+  "niche_y0": 0.3,
+  "niche_d": 0.1,
+  "spout_y": 1.12,
+  "n_spout": 4.0,
+  "bowl1_y": 1.52,
+  "bowl1_r": 0.92,
+  "bowl2_y": 2.16,
+  "bowl2_r": 0.54,
+  "cob_in": 1.7,
+  "cob_out": 2.36,
+  "n_stone": 8.0,
+  "half": 22.5,
+  "basin_cy": 0.4675
+ }
+}

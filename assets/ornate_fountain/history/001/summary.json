@@ -1,0 +1,61 @@
+{
+ "iteration": 1,
+ "note": "first full pass: basin w/ niches, column, 2 bowls, lion spouts, streams, 3 cobble rows, curb",
+ "critique": "FAIL budget 55196/45000 (spout 10112, cobble_c 8704, rim_egg 7200; cobbles ~23k total). Texel 113 px/m vs 256: hidden faces (basin bottom disk, plinth bottom, water both sides) eat atlas. Top view: cobbles small with wide moss gaps -> bigger cobbles, fewer, points 14->10. rim_egg 72x100 tris -> lower sphere res. spout head icosphere sub3 -> decimate. Niches barely read in front view -> check close-up.",
+ "source_hash": "aa3f807b833e",
+ "status": "FAIL",
+ "counts": {
+  "error": 2,
+  "warning": 1,
+  "info": 5
+ },
+ "metrics": {
+  "triangles": 55196,
+  "parts": 325,
+  "size_m": [
+   5.054,
+   2.58,
+   5.0456
+  ],
+  "materials": 4,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.triangles": 55196.0,
+   "basin.max.y": 0.805,
+   "asset.height": 2.58,
+   "asset.width": 5.054,
+   "bowl1.size.x / basin.size.x": 0.5536,
+   "bowl2.size.x / bowl1.size.x": 0.5806
+  }
+ },
+ "errors": [
+  "BUDGET_TRIANGLES",
+  "CHECK_FAILED[checks[0]]"
+ ],
+ "params": {
+  "seg": 96.0,
+  "seg_mid": 64.0,
+  "plinth_h": 0.14,
+  "plinth_r": 1.72,
+  "wall_r": 1.52,
+  "inner_r": 1.4,
+  "rim_r": 1.68,
+  "rim_top": 0.8,
+  "floor_y": 0.24,
+  "water_y": 0.68,
+  "n_niche": 16.0,
+  "niche_w": 0.2,
+  "niche_h": 0.26,
+  "niche_y0": 0.3,
+  "niche_d": 0.1,
+  "spout_y": 0.98,
+  "n_spout": 4.0,
+  "bowl1_y": 1.36,
+  "bowl1_r": 0.92,
+  "bowl2_y": 1.98,
+  "bowl2_r": 0.54,
+  "cob_in": 1.7,
+  "cob_out": 2.36,
+  "basin_cy": 0.4675
+ }
+}

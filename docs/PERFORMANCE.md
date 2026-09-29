@@ -128,3 +128,14 @@ numbers. The renderer seam in docs/SURFACES.md stays available for a PBR preview
 - UV unwrap is ~3–4 s at 50k in both families, now the largest single stage in the loop.
 - Measurements come from one container type. Every `sw` command now prints its elapsed time, so
   agents see their own costs.
+
+## Gate evidence from a real agent loop (FRESH_AGENT_06)
+
+A fresh agent built a 43,928-triangle, 403-part fountain with a 2048² texture: 4 revisions, no limit
+errors, no framework changes. It exposed a cost the synthetic benchmark missed. Assembly validation
+scales with **part pairs**, and 403 parts took 7.1 s, now 2.0 s. It also found the double validation
+in export. After both fixes: review 24.3 → 20.8 s, export 26 → 20.5 s, with identical reports and
+GLBs. Record: [experiments/FRESH_AGENT_06.md](experiments/FRESH_AGENT_06.md).
+
+**Phase 10 gate: PASS**, with one caveat: at ~20 s per review, agents ration iterations on mid-poly
+assets. The remaining time is the 2048 bake, UV and the sheet.

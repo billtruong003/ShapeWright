@@ -195,6 +195,29 @@ def uncovered_volume(a: Mesh, others: list[Mesh]) -> tuple[float, float]:
     return ma.volume(), (ma - rest).volume() if rest is not None else ma.volume()
 
 
+def solids(meshes: list[Mesh]) -> list:
+    """Convert each mesh to a solid once (None if not a closed manifold), for repeated pairwise
+    queries (Phase 10: the assembly validator converted the same parts thousands of times)."""
+    out = []
+    for m in meshes:
+        try:
+            out.append(_to_manifold(m, []))
+        except ValueError:
+            out.append(None)
+    return out
+
+
+def solid_gap(a, b, search: float) -> float:
+    return float(a.min_gap(b, search))
+
+
+def solid_uncovered_volume(a, others: list) -> tuple[float, float]:
+    rest = None
+    for o in others:
+        rest = o if rest is None else rest + o
+    return a.volume(), (a - rest).volume() if rest is not None else a.volume()
+
+
 def is_closed_manifold(mesh: Mesh) -> bool:
     try:
         _to_manifold(mesh, [])

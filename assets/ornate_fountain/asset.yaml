@@ -1,0 +1,522 @@
+# Ornate stone fountain (mid-poly hero prop, desktop).
+# A round carved basin on a low plinth, with arched niches cut into its wall and a moulded
+# rim with an egg-and-bead frieze; a turned central column carrying a large lower bowl and
+# a small upper bowl topped by a bud finial; four sculpted lion-mask spouts on the column
+# pour arcs of water into the basin; the bowls overflow through lip spouts. A cobbled ring
+# with a curb surrounds it. Weathered stone with moss in the crevices comes from the stone
+# archetype (tonal variation, worn edges, green `grime` that gathers in concave creases).
+shapewright: 0.1
+asset:
+  name: ornate_fountain
+  kind: prop/architecture/fountain
+  description: Ornate weathered stone fountain with a carved round basin, stacked bowls on a central column, lion-mask water spouts and a cobbled base ring.
+  tags: [fountain, stone, hero, plaza, water]
+profile: desktop_indie
+style: realistic_clean
+budget: {triangles: 45000, materials: 4, texture_size: 2048}
+
+params:
+  seg:        {value: 96, doc: segments around Y for large turned forms}
+  seg_mid:    {value: 64, doc: segments for mid-size turned forms (column, bowls)}
+  # basin
+  plinth_h:   {value: 0.14, doc: height of the round plinth under the basin}
+  plinth_r:   {value: 1.72}
+  wall_r:     {value: 1.52, doc: outer radius of the basin wall (between foot and rim mouldings)}
+  inner_r:    {value: 1.40, doc: inner radius of the basin wall}
+  rim_r:      {value: 1.68, doc: outer radius of the rim roll}
+  rim_top:    {value: 0.80, min: 0.7, max: 0.9, doc: height of the basin rim top (sitting height)}
+  floor_y:    {value: 0.24, doc: basin floor height (inside)}
+  water_y:    {value: 0.68, doc: basin water surface}
+  n_niche:    {value: 16, doc: carved arched niches around the basin wall}
+  niche_w:    0.2
+  niche_h:    0.26
+  niche_y0:   {value: 0.30, doc: world height of the niche bottoms}
+  niche_d:    0.1
+  # column and bowls
+  spout_y:    {value: 1.12, doc: height of the lion-mask spouts on the column}
+  n_spout:    4
+  bowl1_y:    {value: 1.52, doc: underside of the lower bowl}
+  bowl1_r:    {value: 0.92, doc: lower bowl rim radius}
+  bowl2_y:    {value: 2.16, doc: underside of the upper bowl}
+  bowl2_r:    {value: 0.54}
+  # cobbles
+  cob_in:     {value: 1.70, doc: inner radius of the cobbled ring}
+  cob_out:    {value: 2.36, doc: outer radius of the cobbled ring (curb starts here)}
+  n_stone:    {value: 8, doc: the plinth, basin, bed and water discs are built from this many identical radial segments (real fountains are jointed; shared UVs)}
+  # derived
+  half:       180 / n_stone                              # half the angle of one segment
+  basin_cy:   (plinth_h - 0.01 + rim_top + 0.005) / 2         # centre height of the basin part (local space origin)
+
+materials:
+  carved:
+    archetype: stone
+    color: "#b3ab9b"
+    secondary_color: "#8f887a"
+    variation: 0.62
+    scale: 0.09
+    edge_wear: 0.5
+    edge_width: 0.026
+    grime: 0.85
+    grime_color: "#4a6a28"
+    grime_height: 0.17
+    roughness: 0.88
+    seed: 3
+    doc: weathered limestone of the basin, column and bowls; moss (green grime) in creases and low down
+  cobble:
+    archetype: stone
+    color: "#8c8579"
+    secondary_color: "#6c665c"
+    variation: 0.65
+    scale: 0.05
+    edge_wear: 0.3
+    grime: 0.4
+    grime_color: "#46562a"
+    grime_height: 0.05
+    roughness: 0.9
+    seed: 11
+    doc: worn granite cobbles and curb stones
+  moss:
+    archetype: stone
+    color: "#56663a"
+    secondary_color: "#3d4a26"
+    variation: 0.7
+    scale: 0.04
+    roughness: 0.95
+    seed: 7
+    doc: mossy earth bedding between the cobbles
+  water:
+    archetype: flat
+    color: "#9ccbd6"
+    roughness: 0.05
+    alpha_mode: BLEND
+    double_sided: true
+    doc: water surfaces and falling streams
+
+parts:
+  # ---------------------------------------------------------------- ground
+  bed:
+    doc: mossy earth bed the cobbles are laid in (one segment of the ring, repeated)
+    shape:
+      type: revolve
+      segments: seg
+      polygon: [[cob_in, 0], [cob_out + 0.02, 0], [cob_out + 0.02, 0.03], [cob_in, 0.03]]
+      ops:
+        - type: intersect
+          shape: &wedge {type: extrude, depth: 4, polygon: [[0, 0], {arc: {center: [0, 0], radius: 3.2, from: 90 - half, to: 90 + half, segments: 4}}], rotate: [90, 0, 0]}
+          position: [0, 0, 1.6]
+    origin: keep
+    array: {count: n_stone, radial: y, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    material: moss
+
+  cobble_a:
+    doc: inner row of worn setts (rounded, slightly domed granite blocks) laid in a fan ring
+    shape: {type: chamfer_box, size: [0.22, 0.09, 0.19], chamfer: 0.035, ops: [{type: taper, axis: y, scale: 0.85}, {type: jitter, amount: 0.008, seed: 1}]}
+    anchor: bottom
+    position: [0, 0, cob_in + 0.12]
+    array: {count: 50, radial: y, center: [0, 0, 0], each: {rotate: [0, "16 * (rand(i) - 0.5)", 0], scale: ["0.85 + 0.25 * rand(i, 3)", "0.8 + 0.4 * rand(i, 5)", "0.85 + 0.25 * rand(i, 7)"]}}
+    uv: {share_instances: true}
+    material: cobble
+
+  cobble_b:
+    doc: middle row of cobbles, offset half a stone
+    shape: {type: chamfer_box, size: [0.22, 0.09, 0.19], chamfer: 0.035, ops: [{type: taper, axis: y, scale: 0.85}, {type: jitter, amount: 0.008, seed: 2}]}
+    anchor: bottom
+    position: [0, 0, cob_in + 0.335]
+    array: {count: 56, radial: y, start: 3, center: [0, 0, 0], each: {rotate: [0, "16 * (rand(i, 2) - 0.5)", 0], scale: ["0.85 + 0.25 * rand(i, 4)", "0.8 + 0.4 * rand(i, 6)", "0.85 + 0.25 * rand(i, 8)"]}}
+    uv: {share_instances: true}
+    material: cobble
+
+  cobble_c:
+    doc: outer row of cobbles against the curb
+    shape: {type: chamfer_box, size: [0.22, 0.09, 0.19], chamfer: 0.035, ops: [{type: taper, axis: y, scale: 0.85}, {type: jitter, amount: 0.008, seed: 3}]}
+    anchor: bottom
+    position: [0, 0, cob_in + 0.55]
+    array: {count: 62, radial: y, start: 1, center: [0, 0, 0], each: {rotate: [0, "16 * (rand(i, 9) - 0.5)", 0], scale: ["0.85 + 0.25 * rand(i, 10)", "0.8 + 0.4 * rand(i, 11)", "0.85 + 0.25 * rand(i, 12)"]}}
+    uv: {share_instances: true}
+    material: cobble
+
+  curb:
+    doc: dressed curb stones closing the cobbled ring
+    shape: {type: chamfer_box, size: [0.33, 0.12, 0.16], chamfer: 0.02}
+    anchor: bottom
+    position: [0, 0, cob_out + 0.08]
+    array: {count: 46, radial: y, center: [0, 0, 0], each: {rotate: [0, "4 * (rand(i) - 0.5)", 0], scale: [1, "0.9 + 0.2 * rand(i, 2)", 1]}}
+    uv: {share_instances: true}
+    material: cobble
+
+  # ---------------------------------------------------------------- basin
+  plinth:
+    doc: low stepped round plinth the basin ring stands on; its raised centre is the basin floor. Built as n_stone pie segments
+    shape:
+      type: lathe
+      segments: seg
+      profile: [[0, 0], [plinth_r, 0], [plinth_r, 0.06], [plinth_r - 0.04, 0.09], [wall_r + 0.1, 0.09], [wall_r + 0.1, plinth_h], [inner_r + 0.02, plinth_h], [inner_r + 0.02, floor_y], [0, floor_y]]
+      ops:
+        - {type: intersect, shape: *wedge, position: [0, 0, 1.6]}
+    origin: keep
+    array: {count: n_stone, radial: y, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    material: carved
+
+  basin:
+    doc: >
+      turned basin ring (the plinth top is its floor): foot moulding, straight wall with arched niches
+      cut in, rim roll and flat rim top, inner wall with a cove at the floor. The niche cutter is one
+      arch, pushed out to the wall and repeated radially (offset half a step so the
+      joints between the n_stone segments fall on the piers between niches).
+    shape:
+      type: revolve
+      segments: seg
+      polygon:
+        - [inner_r - 0.05, plinth_h - 0.01]
+        - [wall_r + 0.06, plinth_h - 0.01]
+        - [wall_r + 0.06, plinth_h + 0.05]
+        - [wall_r + 0.02, plinth_h + 0.08]
+        - [wall_r + 0.03, plinth_h + 0.11]
+        - [wall_r, plinth_h + 0.12]
+        - [wall_r, rim_top - 0.2]
+        - [wall_r + 0.03, rim_top - 0.18]
+        - [wall_r + 0.03, rim_top - 0.15]
+        - [rim_r - 0.04, rim_top - 0.12]
+        - [rim_r, rim_top - 0.08]
+        - [rim_r, rim_top - 0.04]
+        - [rim_r - 0.03, rim_top]
+        - [inner_r + 0.05, rim_top + 0.005]
+        - [inner_r, rim_top - 0.03]
+        - [inner_r, floor_y + 0.04]
+        - [inner_r - 0.05, floor_y]
+      ops:
+        - type: subtract
+          shape:
+            type: extrude
+            depth: niche_d
+            polygon: [[-niche_w / 2, 0], [niche_w / 2, 0], {arc: {center: [0, niche_h - niche_w / 2], radius: niche_w / 2, from: 0, to: 180, segments: 10}}]
+            ops:
+              - {type: translate, offset: [0, 0, wall_r]}
+              - {type: repeat, count: n_niche, radial: y}
+              - {type: rotate, angles: [0, 180 / n_niche, 0]}
+          position: [0, niche_y0 + niche_h / 2 - basin_cy, 0]
+        - {type: intersect, shape: *wedge, position: [0, 0, 1.6]}
+    origin: keep
+    array: {count: n_stone, radial: y, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    shading: auto
+    smooth_angle: 35
+    material: carved
+
+  rim_egg:
+    doc: egg-and-bead frieze under the rim roll
+    shape: {type: sphere, radius: 0.035, segments: 8, rings: 5, ops: [{type: scale, factor: [0.8, 1.2, 0.6]}]}
+    anchor: center
+    position: [0, rim_top - 0.165, wall_r + 0.035]
+    array: {count: 64, radial: y, start: 2.8125, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    material: carved
+
+  # ---------------------------------------------------------------- column and bowls
+  column:
+    doc: turned pedestal and shaft from the basin floor to the lower bowl
+    shape:
+      type: lathe
+      segments: seg_mid
+      profile:
+        - [0, floor_y - 0.02]
+        - [0.44, floor_y - 0.02]
+        - [0.44, floor_y + 0.06]
+        - [0.40, floor_y + 0.09]
+        - [0.38, floor_y + 0.16]
+        - [0.32, floor_y + 0.2]
+        - [0.27, floor_y + 0.28]
+        - [0.24, floor_y + 0.34]
+        - [0.26, floor_y + 0.37]
+        - [0.22, floor_y + 0.4]
+        - [0.2, bowl1_y - 0.46]
+        - [0.19, bowl1_y - 0.26]
+        - [0.23, bowl1_y - 0.22]
+        - [0.23, bowl1_y - 0.18]
+        - [0.19, bowl1_y - 0.15]
+        - [0.2, bowl1_y - 0.1]
+        - [0.3, bowl1_y + 0.02]
+        - [0, bowl1_y + 0.02]
+    anchor: bottom
+    position: [0, floor_y - 0.02, 0]
+    shading: auto
+    smooth_angle: 35
+    material: carved
+
+  column_leaf:
+    doc: carved acanthus leaves collaring the column where it rises out of the water, curling outward at the tips
+    measure:
+      c: {section: column, axis: y, at: water_y + 0.05}
+    shape:
+      type: extrude
+      depth: 0.025
+      polygon: [[-0.07, 0], [-0.055, 0.1], [-0.075, 0.13], [-0.03, 0.16], [-0.04, 0.2], [0, 0.26], [0.04, 0.2], [0.03, 0.16], [0.075, 0.13], [0.055, 0.1], [0.07, 0]]
+      ops: [{type: subdivide, iterations: 1}, {type: bend, axis: y, toward: z, angle: 40}]
+    anchor: bottom_back
+    position: [0, water_y - 0.03, c.max.z - 0.03]
+    array: {count: 10, radial: y, start: 18, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    shading: auto
+    smooth_angle: 45
+    material: carved
+
+  bowl1:
+    doc: large lower bowl (hollow), rim roll at the top
+    shape:
+      type: lathe
+      segments: seg_mid
+      profile:
+        - [0, bowl1_y]
+        - [0.3, bowl1_y]
+        - [0.36, bowl1_y + 0.04]
+        - [0.62, bowl1_y + 0.12]
+        - [bowl1_r - 0.08, bowl1_y + 0.2]
+        - [bowl1_r, bowl1_y + 0.24]
+        - [bowl1_r + 0.01, bowl1_y + 0.28]
+        - [bowl1_r - 0.03, bowl1_y + 0.31]
+        - [bowl1_r - 0.08, bowl1_y + 0.29]
+        - [bowl1_r - 0.1, bowl1_y + 0.24]
+        - [0.55, bowl1_y + 0.17]
+        - [0, bowl1_y + 0.15]
+      ops:
+        - {type: intersect, shape: *wedge, position: [0, 0, 1.6]}
+    origin: keep
+    array: {count: n_stone, radial: y, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    shading: auto
+    smooth_angle: 35
+    material: carved
+
+  stem:
+    doc: short turned stem between the bowls
+    shape:
+      type: lathe
+      segments: seg_mid
+      profile:
+        - [0, bowl1_y + 0.14]
+        - [0.17, bowl1_y + 0.14]
+        - [0.17, bowl1_y + 0.2]
+        - [0.11, bowl1_y + 0.27]
+        - [0.09, bowl1_y + 0.38]
+        - [0.13, bowl1_y + 0.43]
+        - [0.13, bowl1_y + 0.47]
+        - [0.09, bowl1_y + 0.5]
+        - [0.08, bowl2_y - 0.04]
+        - [0.15, bowl2_y + 0.02]
+        - [0, bowl2_y + 0.02]
+    anchor: bottom
+    position: [0, bowl1_y + 0.14, 0]
+    shading: auto
+    smooth_angle: 35
+    material: carved
+
+  bowl2:
+    doc: small upper bowl (hollow)
+    shape:
+      type: lathe
+      segments: seg_mid
+      profile:
+        - [0, bowl2_y]
+        - [0.18, bowl2_y]
+        - [0.36, bowl2_y + 0.08]
+        - [bowl2_r - 0.03, bowl2_y + 0.15]
+        - [bowl2_r, bowl2_y + 0.19]
+        - [bowl2_r - 0.03, bowl2_y + 0.22]
+        - [bowl2_r - 0.07, bowl2_y + 0.19]
+        - [0.3, bowl2_y + 0.14]
+        - [0, bowl2_y + 0.12]
+      ops:
+        - {type: intersect, shape: *wedge, position: [0, 0, 1.599]}   # apex 1 mm past the axis: avoids a non-manifold pole edge
+    origin: keep
+    array: {count: n_stone, radial: y, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    shading: auto
+    smooth_angle: 35
+    material: carved
+
+  finial:
+    doc: urn-and-bud finial crowning the upper bowl
+    shape:
+      type: lathe
+      segments: seg_mid
+      profile:
+        - [0, bowl2_y + 0.1]
+        - [0.1, bowl2_y + 0.1]
+        - [0.1, bowl2_y + 0.15]
+        - [0.06, bowl2_y + 0.2]
+        - [0.05, bowl2_y + 0.26]
+        - [0.1, bowl2_y + 0.34]
+        - [0.11, bowl2_y + 0.4]
+        - [0.08, bowl2_y + 0.48]
+        - [0.035, bowl2_y + 0.56]
+        - [0, bowl2_y + 0.6]
+    anchor: bottom
+    position: [0, bowl2_y + 0.1, 0]
+    shading: auto
+    smooth_angle: 35
+    material: carved
+
+  spout:
+    doc: >
+      sculpted lion-mask spout: a ring of swept-back mane locks around a noisy mane ring, a broad
+      face with angled brows, cheeks and nose, and a short hollow pipe in the mouth. +Z faces out;
+      repeated around the column.
+    measure:
+      s: {section: column, axis: y, at: spout_y}
+    shape:
+      type: combine
+      items:
+        - {type: torus, radius: 0.088, tube: 0.04, segments: 20, sides: 8, rotate: [90, 0, 0], ops: [{type: noise, amount: 0.014, frequency: 20, seed: 4}], translate: [0, 0, 0.03]}
+        - {type: sphere, radius: 0.03, segments: 6, rings: 4, ops: [{type: scale, factor: [0.6, 1.5, 0.5]}, {type: rotate, angles: [-25, 0, 12]}, {type: translate, offset: [0, 0.112, 0]}, {type: repeat, count: 16, radial: z}], translate: [0, 0, 0.02]}
+        - {type: icosphere, radius: 0.078, subdivisions: 3, ops: [{type: scale, factor: [1, 1.05, 0.7]}, {type: noise, amount: 0.006, frequency: 18, seed: 5}, {type: decimate, ratio: 0.4}], translate: [0, 0, 0.065]}
+        - {type: icosphere, radius: 0.03, subdivisions: 1, ops: [{type: scale, factor: [1.1, 0.45, 0.7]}, {type: rotate, angles: [0, 0, -14]}, {type: mirror, axis: x, at: 0.03}], translate: [0, 0.035, 0.108]}
+        - {type: icosphere, radius: 0.032, subdivisions: 2, ops: [{type: scale, factor: [1, 0.85, 1]}, {type: mirror, axis: x, at: 0.026}], translate: [0, -0.022, 0.118]}
+        - {type: icosphere, radius: 0.018, subdivisions: 1, ops: [{type: scale, factor: [1.3, 0.9, 1]}], translate: [0, 0.008, 0.142]}
+        - {type: revolve, segments: 12, polygon: [[0.009, 0], [0.018, 0], [0.021, 0.06], [0.011, 0.06]], rotate: [90, 0, 0], translate: [0, -0.048, 0.15]}
+    anchor: back
+    position: [0, spout_y, s.max.z - 0.03]
+    array: {count: n_spout, radial: y, start: 45, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    shading: auto
+    smooth_angle: 50
+    material: carved
+
+  bowl1_lip:
+    doc: carved lip spouts on the lower bowl rim that let the overflow out
+    shape: {type: chamfer_box, size: [0.1, 0.06, 0.14], chamfer: 0.015, ops: [{type: taper, axis: z, scale: 0.7}]}
+    anchor: back
+    position: [0, bowl1_y + 0.27, bowl1_r - 0.05]
+    array: {count: n_spout, radial: y, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    material: carved
+
+  bowl1_gadroon:
+    doc: carved lobes (gadroons) radiating under the lower bowl, following its slope
+    shape: {type: icosphere, radius: 0.05, subdivisions: 1, ops: [{type: scale, factor: [0.8, 0.55, 4.6]}, {type: smooth, iterations: 1}]}
+    rotate: [-18, 0, 0]
+    anchor: center
+    position: [0, bowl1_y + 0.105, 0.6]
+    array: {count: 24, radial: y, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    shading: auto
+    smooth_angle: 60
+    material: carved
+
+  bowl2_lip:
+    doc: small lip spouts on the upper bowl, between the lower bowl's
+    shape: {type: chamfer_box, size: [0.07, 0.045, 0.1], chamfer: 0.012, ops: [{type: taper, axis: z, scale: 0.7}]}
+    anchor: back
+    position: [0, bowl2_y + 0.17, bowl2_r - 0.04]
+    array: {count: n_spout, radial: y, start: 45, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    material: carved
+
+  # ---------------------------------------------------------------- water
+  basin_water:
+    doc: water surface in the basin (touches the inner wall)
+    shape: {type: lathe, segments: seg, profile: [[0, water_y - 0.02], [inner_r + 0.01, water_y - 0.02], [inner_r + 0.01, water_y], [0, water_y]], ops: [{type: intersect, shape: *wedge, position: [0, 0, 1.6]}]}
+    origin: keep
+    array: {count: n_stone, radial: y, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    material: water
+    tags: [thin_ok]
+
+  bowl1_water:
+    doc: water surface in the lower bowl
+    shape: {type: lathe, segments: seg_mid, profile: [[0, bowl1_y + 0.25], [bowl1_r - 0.095, bowl1_y + 0.25], [bowl1_r - 0.095, bowl1_y + 0.26], [0, bowl1_y + 0.26]], ops: [{type: intersect, shape: *wedge, position: [0, 0, 1.6]}]}
+    origin: keep
+    array: {count: n_stone, radial: y, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    material: water
+    tags: [thin_ok]
+
+  bowl2_water:
+    doc: water surface in the upper bowl
+    shape: {type: lathe, segments: seg_mid, profile: [[0, bowl2_y + 0.17], [bowl2_r - 0.065, bowl2_y + 0.17], [bowl2_r - 0.065, bowl2_y + 0.18], [0, bowl2_y + 0.18]], ops: [{type: intersect, shape: *wedge, position: [0, 0, 1.6]}]}
+    origin: keep
+    array: {count: n_stone, radial: y, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    material: water
+    tags: [thin_ok]
+
+  spout_stream:
+    doc: arcs of water from the lion mouths into the basin
+    measure:
+      m: {bounds: spout}
+    shape:
+      type: tube
+      radius: 0.011
+      radius_end: 0.02
+      sides: 10
+      path:
+        - [0, spout_y - 0.048, m.max.z - 0.02]
+        - [0, spout_y - 0.06, m.max.z + 0.1]
+        - [0, spout_y - 0.11, m.max.z + 0.22]
+        - [0, spout_y - 0.2, m.max.z + 0.33]
+        - [0, spout_y - 0.33, m.max.z + 0.43]
+        - [0, water_y - 0.01, m.max.z + 0.55]
+    origin: keep
+    array: {count: n_spout, radial: y, start: 45, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    material: water
+    tags: [thin_ok]
+
+  bowl1_stream:
+    doc: overflow falling from the lower bowl lip spouts into the basin
+    measure:
+      l: {bounds: bowl1_lip}
+    shape:
+      type: tube
+      radius: 0.014
+      radius_end: 0.024
+      sides: 10
+      path:
+        - [0, l.max.y - 0.01, l.max.z - 0.03]
+        - [0, l.max.y - 0.03, l.max.z + 0.03]
+        - [0, l.max.y - 0.12, l.max.z + 0.07]
+        - [0, (l.max.y + water_y) / 2, l.max.z + 0.1]
+        - [0, water_y - 0.01, l.max.z + 0.12]
+    origin: keep
+    array: {count: n_spout, radial: y, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    material: water
+    tags: [thin_ok]
+
+  bowl2_stream:
+    doc: overflow from the upper bowl lips into the lower bowl
+    measure:
+      l: {bounds: bowl2_lip}
+    shape:
+      type: tube
+      radius: 0.014
+      radius_end: 0.022
+      sides: 8
+      path:
+        - [0, l.max.y - 0.008, l.max.z - 0.02]
+        - [0, l.max.y - 0.02, l.max.z + 0.03]
+        - [0, l.max.y - 0.12, l.max.z + 0.08]
+        - [0, (l.max.y + bowl1_y + 0.26) / 2, l.max.z + 0.12]
+        - [0, bowl1_y + 0.25, l.max.z + 0.15]
+    origin: keep
+    array: {count: n_spout, radial: y, start: 45, center: [0, 0, 0]}
+    uv: {share_instances: true}
+    material: water
+    tags: [thin_ok]
+
+collision: {mode: hull}
+
+uv: {texel_density: 300}
+
+sockets:
+  drink_point: {attach: {to: basin, at: top_front}, doc: where a character stands to drink or throw a coin}
+
+checks:
+  - {expr: asset.triangles, min: 25000, max: 45000, doc: mid-poly hero budget}
+  - {expr: basin.max.y, min: 0.7, max: 0.9, doc: rim at sitting height}
+  - {expr: asset.height, min: 2.3, max: 3.0, doc: column crowns well above head height}
+  - {expr: asset.width, min: 4.5, max: 5.3, doc: cobbled ring about 5 m across}
+  - {expr: bowl1.size.x / basin.size.x, min: 0.45, max: 0.65, doc: lower bowl about half the basin}
+  - {expr: bowl2.size.x / bowl1.size.x, min: 0.5, max: 0.7, doc: stacked bowls diminish upward}
+

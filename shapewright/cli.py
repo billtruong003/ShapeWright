@@ -273,10 +273,11 @@ def cmd_restore(a):
 def cmd_export(a):
     from .export.gltf import write_glb
     from .export.verify import khronos_validate, roundtrip
-    from .validate.run import dump, format_text, run_validation
+    from .validate.run import collect, dump, format_text, make_report
 
     asset, surface = _load(a.asset)
-    report = run_validation(asset, surface)
+    found, metrics = collect(asset, surface)  # validators run once (Phase 10: export used to run them twice)
+    report = make_report(asset, found, metrics)
     if report["status"] == "FAIL" and not a.force:
         print(format_text(report))
         print("\nexport refused: fix the errors above (or pass --force for a debug export)")
@@ -285,7 +286,7 @@ def cmd_export(a):
     info = write_glb(asset, surface, out, report["status"])
     issues, extra = khronos_validate(out)
     issues += roundtrip(asset, out)
-    final = run_validation(asset, surface, issues, exported=True)
+    final = make_report(asset, found, metrics, issues, exported=True)
     final["metrics"].update(extra)
     final["export"] = {**info, "path": _rel(out)}
     (out.with_suffix(".report.json")).write_text(dump(final))
