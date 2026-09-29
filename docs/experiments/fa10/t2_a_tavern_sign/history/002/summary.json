@@ -1,0 +1,59 @@
+{
+ "iteration": 2,
+ "note": "thicker arm (bar 0.036) and brace (0.026); larger scroll (scroll_r 0.11) filling the arm/brace corner; rings sit on the diamond-section arm ridge; pivot re-derived",
+ "critique": "bracket now reads chunky, scroll touches arm and brace; board face is a plain slab with a lone emblem -> add a painted border frame on both faces (paint, below the ring holes), re-centre emblem inside it",
+ "source_hash": "e2837e254460",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 3
+ },
+ "metrics": {
+  "triangles": 764,
+  "parts": 10,
+  "size_m": [
+   0.126,
+   0.8683,
+   0.9249
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "wall_plate.min.z": 0.0,
+   "board.max.y < arm.min.y - 0.02": true,
+   "board.min.z": 0.2081,
+   "arm.max.z > board.max.z + 0.03": true,
+   "rings.max.y > arm.min.y + bar": true,
+   "board.size.z": 0.5839
+  }
+ },
+ "errors": [],
+ "params": {
+  "plate_w": 0.09,
+  "plate_h": 0.52,
+  "plate_t": 0.02,
+  "bar": 0.036,
+  "arm_y": 0.12,
+  "reach": 0.86,
+  "curl_r": 0.045,
+  "brace_z": 0.55,
+  "scroll_r": 0.11,
+  "sign_w": 0.58,
+  "sign_h": 0.42,
+  "sign_t": 0.035,
+  "corner": 0.05,
+  "board_z": 0.5,
+  "ring_r": 0.055,
+  "ring_t": 0.008,
+  "ring_dz": 0.2,
+  "hole": 0.026,
+  "hole_margin": 0.022,
+  "arm_top": 0.1452,
+  "ring_cy": 0.0992,
+  "hole_top": 0.0512,
+  "board_top": 0.0732,
+  "board_cy": -0.1368,
+  "emb_t": 0.008
+ }
+}

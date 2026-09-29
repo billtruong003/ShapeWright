@@ -1,0 +1,58 @@
+{
+ "iteration": 1,
+ "note": "blockout: plate, arm with curl, brace, scroll, two rings, board with holes, tankard emblems",
+ "critique": "reads as a hanging sign; arm (3cm) and brace (2cm) look spindly for chunky style -> bar 0.036, brace 0.026; scroll is a small curl floating mid-triangle touching only the arm -> larger spiral filling the arm/brace corner; board plain slab, fine at thumbnail",
+ "source_hash": "9ccee25f8969",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 4
+ },
+ "metrics": {
+  "triangles": 748,
+  "parts": 10,
+  "size_m": [
+   0.126,
+   0.8785,
+   0.9204
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "wall_plate.min.z": 0.0,
+   "board.max.y < arm.min.y - 0.02": true,
+   "board.min.z": 0.2081,
+   "arm.max.z > board.max.z + 0.03": true,
+   "rings.max.y > arm.min.y + bar": true,
+   "board.size.z": 0.5839
+  }
+ },
+ "errors": [],
+ "params": {
+  "plate_w": 0.09,
+  "plate_h": 0.52,
+  "plate_t": 0.02,
+  "bar": 0.03,
+  "arm_y": 0.12,
+  "reach": 0.86,
+  "curl_r": 0.045,
+  "brace_z": 0.55,
+  "sign_w": 0.58,
+  "sign_h": 0.42,
+  "sign_t": 0.035,
+  "corner": 0.05,
+  "board_z": 0.5,
+  "ring_r": 0.055,
+  "ring_t": 0.008,
+  "ring_dz": 0.2,
+  "hole": 0.026,
+  "hole_margin": 0.022,
+  "arm_top": 0.135,
+  "ring_cy": 0.089,
+  "hole_top": 0.041,
+  "board_top": 0.063,
+  "board_cy": -0.147,
+  "emb_t": 0.008
+ }
+}

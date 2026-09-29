@@ -1,0 +1,390 @@
+shapewright: 0.1
+asset:
+  name: grindstone
+  kind: prop/crafting/grindstone
+  description: Chunky stylized sandstone grindstone on a splayed wooden trestle frame with an iron hand crank, for a blacksmith's
+    forge.
+  tags:
+  - blacksmith
+  - crafting
+  - stone
+  - wood
+  - medieval
+profile: mobile_mid
+style: stylized_lowpoly
+budget:
+  triangles: 900
+  materials: 3
+params:
+  wheel_r:
+    value: 0.3
+    min: 0.22
+    max: 0.38
+    doc: grinding wheel radius
+  wheel_w:
+    value: 0.11
+    doc: wheel thickness along the axle
+  wheel_seg:
+    value: 20
+    doc: wheel facets
+  axle_y:
+    value: 0.8
+    min: 0.7
+    max: 0.9
+    doc: axle height (wheel top lands around hip height)
+  axle_r:
+    value: 0.025
+  hub_r:
+    value: 0.075
+    doc: iron hub plate on each face of the wheel
+  rail_x:
+    value: 0.14
+    doc: side rail centre distance from the middle
+  rail_w:
+    value: 0.07
+  rail_h:
+    value: 0.09
+  rail_len:
+    value: 0.92
+    doc: side rail length along z
+  block_h:
+    value: 0.1
+    doc: bearing block height; the axle passes through its middle
+  leg:
+    value: 0.075
+    doc: leg section
+  leg_z:
+    value: 0.33
+    doc: leg top distance from the middle along z
+  splay_x:
+    value: 0.09
+    doc: how far the feet spread outward along x
+  splay_z:
+    value: 0.08
+    doc: how far the feet spread outward along z
+  stretch_y:
+    value: 0.2
+    doc: height of the low cross stretchers
+  trough_h:
+    value: 0.15
+  rail_y: axle_y - block_h / 2 - rail_h / 2
+  crank_arm:
+    value: 0.2
+    doc: crank throw (axle to grip)
+  grip_l:
+    value: 0.13
+  wear:
+    value: 0.004
+materials:
+  wood:
+    archetype: wood
+    color: '#8f5e37'
+    grain_strength: 0.4
+    grain_scale: 0.035
+    streaks: 0.5
+    knots: 0.2
+    edge_wear: 0.35
+    grime: 0.3
+    seed: 3
+  stone:
+    archetype: stone
+    color: '#b8a483'
+    variation: 0.45
+    scale: 0.08
+    edge_wear: 0.4
+    grime: 0.15
+    seed: 7
+  iron:
+    archetype: metal
+    color: '#5d6269'
+    roughness: 0.5
+    edge_wear: 0.55
+    rust: 0.25
+    seed: 2
+parts:
+  rail:
+    doc: long side rails along z carrying the bearing blocks
+    shape:
+      type: chamfer_box
+      size:
+      - rail_w
+      - rail_h
+      - rail_len
+      chamfer: 0.012
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 11
+    position:
+    - rail_x
+    - rail_y
+    - 0
+    mirror: x
+    uv:
+      share_instances: true
+    material: wood
+  leg:
+    doc: four splayed legs from under the rails to the ground
+    shape:
+      type: strut
+      from:
+      - rail_x
+      - rail_y
+      - leg_z
+      to:
+      - rail_x + splay_x
+      - -0.04
+      - leg_z + splay_z
+      size:
+      - leg
+      - leg
+      chamfer: 0.01
+    ops:
+    - type: flat_bottom
+      fraction: 0.059
+    mirror:
+    - x
+    - z
+    uv:
+      share_instances: true
+    material: wood
+  stretcher:
+    doc: low cross stretchers between left and right legs (front and back)
+    measure:
+      l:
+        section: leg_front_left
+        axis: y
+        at: stretch_y
+      r:
+        section: leg_front_right
+        axis: y
+        at: stretch_y
+    shape:
+      type: strut
+      from:
+      - l.center.x
+      - stretch_y
+      - l.center.z
+      to:
+      - r.center.x
+      - stretch_y
+      - r.center.z
+      size:
+      - 0.055
+      - 0.05
+      chamfer: 0.008
+    mirror: z
+    uv:
+      share_instances: true
+    material: wood
+  block:
+    doc: bearing blocks on the rails holding the axle
+    measure:
+      r:
+        bounds: rail_right
+    shape:
+      type: chamfer_box
+      size:
+      - rail_w + 0.01
+      - block_h
+      - 0.13
+      chamfer: 0.014
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 12
+    anchor: bottom
+    position:
+    - rail_x
+    - r.max.y - 0.005
+    - 0
+    mirror: x
+    uv:
+      share_instances: true
+    material: wood
+  wheel:
+    doc: sandstone grinding wheel, axis along x
+    shape:
+      type: cylinder
+      radius: wheel_r
+      height: wheel_w
+      segments: wheel_seg
+      chamfer: 0.02
+    ops:
+    - type: jitter
+      amount: 0.004
+      seed: 13
+    rotate:
+    - 0
+    - 0
+    - 90
+    position:
+    - 0
+    - axle_y
+    - 0
+    pivot: center
+    material: stone
+  hub:
+    doc: iron hub plates clamping the wheel to the axle
+    measure:
+      w:
+        bounds: wheel
+    shape:
+      type: cylinder
+      radius: hub_r
+      height: 0.03
+      segments: 8
+    rotate:
+    - 0
+    - 0
+    - 90
+    position:
+    - w.max.x + 0.005
+    - axle_y
+    - 0
+    mirror: x
+    parent: wheel
+    uv:
+      share_instances: true
+    material: iron
+  axle:
+    doc: iron axle through the wheel and both bearing blocks
+    measure:
+      b:
+        bounds: block_right
+    shape:
+      type: cylinder
+      radius: axle_r
+      height: 2 * b.max.x + 0.05
+      segments: 8
+    rotate:
+    - 0
+    - 0
+    - 90
+    position:
+    - 0
+    - axle_y
+    - 0
+    parent: wheel
+    material: iron
+  crank:
+    doc: bent iron crank on the right end of the axle
+    measure:
+      a:
+        bounds: axle
+    shape:
+      type: tube
+      radius: 0.018
+      sides: 6
+      path:
+      - - 0
+        - 0
+        - 0
+      - - 0.04
+        - 0
+        - 0
+      - - 0.04
+        - -crank_arm
+        - 0
+      - - 0.04 + grip_l
+        - -crank_arm
+        - 0
+      corner_radius: 0.03
+      corner_segments: 1
+    anchor: top_left
+    position:
+    - a.max.x - 0.025
+    - axle_y + 0.018
+    - 0
+    parent: wheel
+    material: iron
+  grip:
+    doc: wooden sleeve on the crank grip
+    measure:
+      c:
+        bounds: crank
+    shape:
+      type: cylinder
+      radius: 0.028
+      height: grip_l - 0.04
+      segments: 6
+    rotate:
+    - 0
+    - 0
+    - 90
+    anchor: right
+    position:
+    - c.max.x
+    - c.min.y + 0.018
+    - 0
+    parent: wheel
+    material: wood
+  tool_rest:
+    doc: angled plank in front of the wheel to steady a blade, spanning the rails
+    measure:
+      r:
+        bounds: rail_right
+    shape:
+      type: chamfer_box
+      size:
+      - 2 * rail_x + rail_w
+      - 0.035
+      - 0.1
+      chamfer: 0.008
+    rotate:
+    - -20
+    - 0
+    - 0
+    anchor: bottom
+    position:
+    - 0
+    - r.max.y - 0.01
+    - wheel_r + 0.07
+    material: wood
+  trough:
+    doc: water trough resting on the stretchers under the wheel
+    measure:
+      s:
+        bounds: stretcher_front
+    shape:
+      type: boolean
+      operation: difference
+      base:
+        type: chamfer_box
+        size:
+        - 2 * rail_x - rail_w - 0.03
+        - trough_h
+        - 2 * s.center.z + 0.04
+        chamfer: 0.012
+      tools:
+      - type: box
+        size:
+        - 2 * rail_x - rail_w - 0.08
+        - trough_h
+        - 2 * s.center.z - 0.02
+        translate:
+        - 0
+        - 0.03
+        - 0
+    anchor: bottom
+    position:
+    - 0
+    - s.max.y - 0.005
+    - 0
+    material: wood
+collision:
+  mode: hull
+uv:
+  texel_density: 220
+checks:
+- expr: wheel.max.y
+  min: 1.0
+  max: 1.2
+  doc: wheel top around hip height
+- expr: grip.center.y
+  min: 0.5
+  max: 0.75
+  doc: crank grip reachable at the bottom of its throw
+- expr: asset.size.x
+  max: 0.8
+  doc: compact footprint

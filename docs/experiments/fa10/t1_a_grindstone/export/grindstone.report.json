@@ -1,0 +1,83 @@
+{
+ "asset": "grindstone",
+ "status": "PASS",
+ "source_hash": "625500e9a0a3",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 0
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 840,
+  "parts": 18,
+  "sliver_triangles": 60,
+  "size_m": [
+   0.6247,
+   1.1014,
+   0.922
+  ],
+  "contacts": 23,
+  "triangles_by_part": {
+   "rail": 88,
+   "leg": 144,
+   "wheel": 156,
+   "stretcher": 88,
+   "block": 88,
+   "hub": 56,
+   "tool_rest": 44,
+   "axle": 28,
+   "trough": 60,
+   "crank": 68,
+   "grip": 20
+  },
+  "budget_triangles": 900,
+  "materials": 3,
+  "draw_calls": 4,
+  "checks": {
+   "wheel.max.y": 1.1007,
+   "grip.center.y": 0.6,
+   "asset.size.x": 0.6247
+  },
+  "uv_utilization": 0.519,
+  "uv_overlap": 0.0,
+  "uv_owners": 11,
+  "texel_density_px_m": 240.2,
+  "texel_density_target": 220,
+  "texture": {
+   "resolution": 512,
+   "target_px_m": 220.0,
+   "achieved_px_m": 240.2,
+   "memory_kb": 2048,
+   "lifecycle": {
+    "DERIVED": 11
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [],
+ "export": {
+  "path": "assets/grindstone/export/grindstone.glb",
+  "bytes": 255608,
+  "nodes": 5,
+  "meshes": 4,
+  "materials": 3,
+  "target": "generic",
+  "merge": "by_material",
+  "lods": []
+ }
+}

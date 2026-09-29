@@ -1,0 +1,205 @@
+# Hanging tavern sign for a mobile fantasy game (Godot 4). Wall prop: the wall is the plane z = 0,
+# the bracket sticks out along +Z, the origin is at the bottom-centre of the wall plate on the wall.
+# A forged wall plate with two bolts carries a square-bar arm that ends in a curl; a diagonal brace
+# runs from the top of the plate down onto the arm, with a decorative scroll in the triangle between
+# them. A wooden sign board (in the YZ plane, readable from both sides of the street, +-X) hangs
+# from two iron rings that loop over the arm and through two holes in the board's top edge. A
+# painted tankard emblem sits on each face.
+# Swinging: `rings` carries a pivot on the arm axis and is the parent of the board and emblems, so
+# the Godot export keeps them as one node whose origin lies on the arm axis; rotate it about its
+# local Z to swing the sign.
+shapewright: 0.1
+asset:
+  name: tavern_sign
+  kind: prop/decor/hanging_sign
+  description: Wrought-iron wall bracket with a wooden tavern sign board hanging from two rings (swings about the arm).
+  placement: wall
+profile: godot
+style: stylized_lowpoly
+budget: {triangles: 1200, materials: 3, texture_size: 512}   # mobile: 1.2k tris, one 512 atlas
+uv: {texel_density: 256}
+
+params:
+  # bracket
+  plate_w: {value: 0.09, min: 0.07, max: 0.14, doc: wall plate width}
+  plate_h: {value: 0.52, min: 0.35, max: 0.7, doc: wall plate height}
+  plate_t: {value: 0.02, doc: wall plate thickness}
+  bar: {value: 0.036, doc: square bar section of the arm}
+  arm_y: {value: 0.12, doc: arm centre height above the plate bottom}
+  reach: {value: 0.86, min: 0.6, max: 1.1, doc: where the straight arm ends and the curl starts}
+  curl_r: {value: 0.045, doc: tip curl radius}
+  brace_z: {value: 0.55, doc: where the brace lands on the arm}
+  scroll_r: {value: 0.11, doc: outer radius of the decorative spiral (fills the arm/brace corner)}
+  # sign board
+  sign_w: {value: 0.58, min: 0.4, max: 0.8, doc: board width (along the arm)}
+  sign_h: {value: 0.42, min: 0.3, max: 0.6, doc: board height}
+  sign_t: {value: 0.035, doc: board thickness}
+  corner: {value: 0.05, doc: cut corners of the board}
+  board_z: {value: 0.5, doc: board centre distance from the wall}
+  # rings and holes
+  ring_r: {value: 0.055, doc: ring radius to tube centre}
+  ring_t: {value: 0.008, doc: ring tube radius}
+  ring_dz: {value: 0.2, doc: ring distance from the board centre along the arm}
+  hole: {value: 0.026, doc: square hole the ring passes through}
+  hole_margin: {value: 0.022, doc: wood left above the holes}
+  # derived hanging chain: arm top -> ring (inner top on the arm) -> ring bottom -> hole top edge -> board top
+  arm_top: arm_y + bar * 0.7   # the 4-sided tube is a diamond section: its top ridge
+  ring_cy: arm_top + 0.001 - (ring_r - ring_t)
+  hole_top: ring_cy - ring_r + ring_t - 0.001
+  board_top: hole_top + hole_margin
+  board_cy: board_top - sign_h / 2
+  emb_t: {value: 0.008, doc: emblem relief thickness}
+
+interface:
+  params: [plate_h, reach, sign_w, sign_h, board_z, ring_dz]
+
+materials:
+  iron:
+    archetype: metal
+    color: "#4f535a"
+    roughness: 0.6
+    variation: 0.35
+    scale: 0.03
+    rust: 0.25
+    rust_color: "#6e4027"
+    edge_wear: 0.55
+    edge_color: "#a3a8ad"
+    edge_width: 0.005
+    grime: 0.15
+    seed: 71
+  wood:
+    archetype: wood
+    color: "#7a5230"
+    grain_strength: 0.5
+    grain_scale: 0.015
+    streaks: 0.6
+    knots: 0.3
+    edge_wear: 0.35
+    roughness: 0.85
+    grime: 0.2
+    seed: 72
+  paint:
+    archetype: painted
+    color: "#d9a93f"
+    under_color: "#7a5230"
+    chips: 0.35
+    edge_wear: 0.3
+    roughness: 0.7
+    seed: 73
+
+parts:
+  # ------------------------------------------------------------------ static bracket
+  wall_plate:
+    doc: forged plate against the wall, pointed at both ends
+    shape:
+      type: extrude
+      polygon: [[0, 0], [plate_w / 2, plate_h * 0.1], [plate_w / 2, plate_h * 0.9], [0, plate_h], [-plate_w / 2, plate_h * 0.9], [-plate_w / 2, plate_h * 0.1]]
+      depth: plate_t
+      chamfer: 0.004
+    anchor: bottom_back
+    position: [0, 0, 0]
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+  bolt:
+    doc: square-headed wall bolts below the arm and near the top
+    shape: {type: cylinder, radius: 0.013, height: 0.012, segments: 4, chamfer: 0.003, rotate: [90, 45, 0]}
+    anchor: back
+    position: [0, plate_h * 0.1 + 0.02, plate_t - 0.002]
+    array: {count: 2, offset: [0, plate_h * 0.72, 0]}
+    shading: flat
+    tags: [thin_ok]
+    uv: {share_instances: true}
+    material: iron
+
+  arm:
+    doc: square bar from the plate out along +Z, ending in an upward curl
+    shape:
+      type: tube
+      path:
+        - [0, arm_y, plate_t - 0.004]
+        - {arc: {center: [0, arm_y + curl_r, reach], radius: curl_r, from: 180, to: -150, radius_end: curl_r * 0.4, plane: yz, segments: 8}}
+      radius: bar * 0.7
+      sides: 4
+    origin: keep
+    shading: flat
+    material: iron
+
+  brace:
+    doc: diagonal brace from the top of the plate down onto the arm
+    shape: {type: strut, from: [0, plate_h * 0.86, plate_t - 0.004], to: [0, arm_top - 0.004, brace_z], size: [0.026, 0.026], chamfer: 0.004}
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+  scroll:
+    doc: decorative spiral in the triangle between arm and brace
+    shape:
+      type: tube
+      path: [{arc: {center: [0, arm_top + scroll_r - 0.002, 0.17], radius: scroll_r, from: 180, to: -200, radius_end: 0.025, plane: yz, segments: 14}}]
+      radius: 0.008
+      sides: 4
+    origin: keep
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+  # ------------------------------------------------------------------ swinging group
+  rings:
+    doc: two iron rings looped over the arm; pivot on the arm axis (root of the swinging group)
+    shape:
+      type: combine
+      items:
+        - {type: torus, radius: ring_r, tube: ring_t, segments: 10, sides: 4, rotate: [90, 0, 0], translate: [0, 0, -ring_dz]}
+        - {type: torus, radius: ring_r, tube: ring_t, segments: 10, sides: 4, rotate: [90, 0, 0], translate: [0, 0, ring_dz]}
+    position: [0, ring_cy, board_z]
+    pivot: [0, 0.35, 0]   # (arm_y - ring_cy) / half ring height = 0.0208 / 0.0599: the arm axis (re-derive if bar/ring_r change)
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+  board:
+    doc: wooden sign board with cut corners and two holes for the rings
+    shape:
+      type: extrude
+      polygon: [[-sign_w / 2 + corner, 0], [sign_w / 2 - corner, 0], [sign_w / 2, corner], [sign_w / 2, sign_h - corner * 0.8], [sign_w / 2 - corner * 0.8, sign_h], [-sign_w / 2 + corner * 0.8, sign_h], [-sign_w / 2, sign_h - corner * 0.8], [-sign_w / 2, corner]]
+      depth: sign_t
+      chamfer: 0.006
+    ops:
+      - {type: subtract, shape: {type: box, size: [hole, hole, sign_t * 3]}, position: [-ring_dz, sign_h / 2 - hole_margin - hole / 2, 0]}
+      - {type: subtract, shape: {type: box, size: [hole, hole, sign_t * 3]}, position: [ring_dz, sign_h / 2 - hole_margin - hole / 2, 0]}
+      - {type: jitter, amount: 0.002, seed: 74}
+    rotate: [0, 90, 0]
+    position: [0, board_cy, board_z]
+    parent: rings
+    material: wood
+
+  emblem:
+    doc: painted tankard relief on each face of the board
+    shape:
+      type: extrude
+      polygon: [[-0.08, -0.12], [0.06, -0.12], [0.06, -0.07], [0.11, -0.06], [0.125, -0.02], [0.125, 0.03], [0.11, 0.06], [0.06, 0.07], [0.06, 0.09], [0.07, 0.1], [0.065, 0.13], [0.03, 0.14], [0.0, 0.125], [-0.035, 0.14], [-0.07, 0.13], [-0.09, 0.1], [-0.08, 0.09]]
+      holes: [[[0.07, -0.035], [0.095, -0.025], [0.095, 0.025], [0.07, 0.035]]]
+      depth: emb_t
+    rotate: [0, 90, 0]
+    anchor: left
+    position: [sign_t / 2 - 0.002, board_cy - 0.01, board_z]
+    mirror: x
+    parent: rings
+    shading: flat
+    tags: [thin_ok]
+    material: paint
+
+sockets:
+  swing_axis: {attach: {to: origin, offset: [0, arm_y, board_z]}, doc: point on the arm axis the sign swings about (local Z)}
+
+collision: {mode: single_hull}
+
+checks:
+  - {expr: wall_plate.min.z, min: -0.001, max: 0.001, doc: plate flush on the wall plane z = 0}
+  - {expr: board.max.y < arm.min.y - 0.02, doc: board hangs clear below the arm}
+  - {expr: board.min.z, min: 0.15, doc: board swings clear of the wall}
+  - {expr: arm.max.z > board.max.z + 0.03, doc: arm reaches past the board}
+  - {expr: rings.max.y > arm.min.y + bar, doc: rings loop over the arm}
+  - {expr: board.size.z, min: 0.4, max: 0.8, doc: readable sign width}

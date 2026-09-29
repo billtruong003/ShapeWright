@@ -1,0 +1,107 @@
+{
+ "asset": "tavern_sign",
+ "status": "PASS",
+ "source_hash": "a6fc67f94ac7",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 2
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 892,
+  "parts": 12,
+  "sliver_triangles": 74,
+  "size_m": [
+   0.126,
+   0.8683,
+   0.9249
+  ],
+  "contacts": 14,
+  "triangles_by_part": {
+   "wall_plate": 44,
+   "bolt": 56,
+   "arm": 76,
+   "brace": 44,
+   "scroll": 116,
+   "rings": 160,
+   "board": 100,
+   "frame": 128,
+   "emblem": 168
+  },
+  "budget_triangles": 1200,
+  "materials": 3,
+  "draw_calls": 4,
+  "checks": {
+   "wall_plate.min.z": 0.0,
+   "board.max.y < arm.min.y - 0.02": true,
+   "board.min.z": 0.2081,
+   "arm.max.z > board.max.z + 0.03": true,
+   "rings.max.y > arm.min.y + bar": true,
+   "board.size.z": 0.5839
+  },
+  "uv_utilization": 0.315,
+  "uv_overlap": 0.0,
+  "uv_owners": 9,
+  "texel_density_px_m": 279.7,
+  "texel_density_target": 256,
+  "texture": {
+   "resolution": 512,
+   "target_px_m": 256.0,
+   "achieved_px_m": 279.7,
+   "memory_kb": 2048,
+   "lifecycle": {
+    "DERIVED": 9
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "rings",
+   "msg": "part consists of 2 disconnected pieces",
+   "hint": "expected for combine/repeat/multi-shell files; a cut that split a piece is reported as GEO_CUT_SPLIT",
+   "data": {
+    "pieces": 2
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "wall_plate",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  }
+ ],
+ "export": {
+  "path": "assets/tavern_sign/export/tavern_sign.glb",
+  "bytes": 273140,
+  "nodes": 6,
+  "meshes": 4,
+  "materials": 3,
+  "target": "godot",
+  "merge": "by_material",
+  "lods": []
+ }
+}

@@ -1,0 +1,52 @@
+{
+ "iteration": 3,
+ "note": "stronger stone/wood textures, chunkier crank and grip, leg tops below rail, trough raised under wheel; UVs locked",
+ "critique": "PASS 840/900. Wheel now shows darker blotches and a lighter worn rim; wood grain visible on rails and trough; crank reads at thumbnail size. Remaining minor: trough interior is empty (no water, would need a 4th material or geometry); stone face still fairly calm but reads as sandstone. No significant findings -> export.",
+ "source_hash": "57f70a267403",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 0
+ },
+ "metrics": {
+  "triangles": 840,
+  "parts": 18,
+  "size_m": [
+   0.6247,
+   1.1014,
+   0.922
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "wheel.max.y": 1.1007,
+   "grip.center.y": 0.6,
+   "asset.size.x": 0.6247
+  }
+ },
+ "errors": [],
+ "params": {
+  "wheel_r": 0.3,
+  "wheel_w": 0.11,
+  "wheel_seg": 20.0,
+  "axle_y": 0.8,
+  "axle_r": 0.025,
+  "hub_r": 0.075,
+  "rail_x": 0.14,
+  "rail_w": 0.07,
+  "rail_h": 0.09,
+  "rail_len": 0.92,
+  "block_h": 0.1,
+  "leg": 0.075,
+  "leg_z": 0.33,
+  "splay_x": 0.09,
+  "splay_z": 0.08,
+  "stretch_y": 0.27,
+  "trough_h": 0.15,
+  "rail_y": 0.705,
+  "crank_arm": 0.2,
+  "grip_l": 0.13,
+  "wear": 0.004
+ }
+}

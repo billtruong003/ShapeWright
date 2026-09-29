@@ -1,0 +1,52 @@
+{
+ "iteration": 2,
+ "note": "tris 840, grounded legs, tool rest moved in front of wheel, 20-facet wheel, cheaper hub/grip/crank",
+ "critique": "PASS all layers. Textured close-up: stone wheel reads as a flat beige disc (blotches too soft at phone scale) -> stone.variation 0.45->0.6, scale 0.08->0.05, darker secondary_color, edge_wear 0.4->0.6 so the rim chamfer catches light; wood frame is one flat dark brown and grain disappears at distance -> wood.color lighter #9a673c, grain_strength 0.4->0.5; crank arm (r 0.018) and grip (r 0.028) look spindly next to the chunky frame -> 0.022 / 0.032; leg tops poke above the rail -> leg from.y rail_y - 0.01; trough top 0.37 m sits far below the wheel bottom 0.5 m so the wheel cannot dip in the water -> stretch_y 0.2->0.27",
+ "source_hash": "a343e0c5adaf",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 840,
+  "parts": 18,
+  "size_m": [
+   0.6247,
+   1.1006,
+   0.922
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "wheel.max.y": 1.1007,
+   "grip.center.y": 0.6,
+   "asset.size.x": 0.6247
+  }
+ },
+ "errors": [],
+ "params": {
+  "wheel_r": 0.3,
+  "wheel_w": 0.11,
+  "wheel_seg": 20.0,
+  "axle_y": 0.8,
+  "axle_r": 0.025,
+  "hub_r": 0.075,
+  "rail_x": 0.14,
+  "rail_w": 0.07,
+  "rail_h": 0.09,
+  "rail_len": 0.92,
+  "block_h": 0.1,
+  "leg": 0.075,
+  "leg_z": 0.33,
+  "splay_x": 0.09,
+  "splay_z": 0.08,
+  "stretch_y": 0.2,
+  "trough_h": 0.15,
+  "rail_y": 0.705,
+  "crank_arm": 0.2,
+  "grip_l": 0.13,
+  "wear": 0.004
+ }
+}
