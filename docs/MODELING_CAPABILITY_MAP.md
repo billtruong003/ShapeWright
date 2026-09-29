@@ -82,6 +82,8 @@ See docs/HARDENING.md. Rows below keep their original text; these entries overri
 | Nested expressions in their drawn frame (`origin: keep`) | — | NOW | Phase 14 (FA-10 T3) |
 | Hull / loft between sections; one deformation across several parts | — | NEAR | FA-10 T3: boat hull built from lathe + 4 booleans |
 | Interpenetration ("passes through") validation | — | NEAR | FA-10 T1/T3: a tool rest and a seat through other parts, caught only by eye |
+| Keep parameter values without editing YAML (`sw set`) | — | NOW | Phase 15 |
+| Human workbench over the same commands (`sw workbench`) | — | NOW | Phase 15; live 3D viewport: LONG (images only by design) |
 
 ---
 

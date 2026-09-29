@@ -161,6 +161,17 @@ Next lever: capability gaps that force hand work (hull/loft shapes, shared defor
 repeated runs rather than one per cell. Records: [AGENT_COST.md](AGENT_COST.md),
 [experiments/FRESH_AGENT_10.md](experiments/FRESH_AGENT_10.md).
 
+## Phase 15: Human workbench ✅ (gate passed structurally; not yet tried by people)
+Built:
+- `sw set` (keep parameter values without hand-editing YAML; CLI first);
+- `sw workbench`: a local page with no dependencies. It covers assets, views × modes (the 8 named views are
+  the orbit), issues, parameter sliders (preview with `--set`, apply with `sw set`), snapshot, compare, UV
+  lock, export and a source editor.
+
+Every button runs and shows an `sw` command; the server imports only `cli`. A scripted Chromium session
+produced the same source, history and **byte-identical GLB** as the same steps typed as commands. Found and
+fixed a stale-alarm bug in `cli.main`. Record: [WORKBENCH.md](WORKBENCH.md).
+
 ## Stage 3: Prototype: a fresh agent succeeds unassisted
 - Run the README task ("tavern chair, < 700 tris, mobile") with a *fresh* agent
   that has only the repository. Record the transcript and friction points, and

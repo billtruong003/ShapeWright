@@ -44,11 +44,13 @@ and their critiques, and `docs/images/tavern_chair_compare_1_2.png` for the diff
 ```bash
 pip install -r requirements.txt   # pure-Python wheels; no GPU, no display, no Blender
 ./sw doctor                       # check the environment
+./sw brief "a hanging tavern sign" # closest example, profile, rules and vocabulary for a request
 ./sw caps                         # modelling vocabulary, views, validators, profiles
 ./sw review tavern_chair          # validate + contact sheet + critique checklist
 ./sw render tavern_chair --part back_slat --view front
 ./sw export tavern_chair          # -> assets/tavern_chair/export/tavern_chair.glb
 python3 -m pytest -q              # contracts, shapes, ops, validators, determinism, golden geometry
+./sw workbench --open             # for people: a local page where every button runs (and shows) an sw command
 ```
 
 Optional: `cd tools/gltf-validator && npm install` enables the Khronos glTF-Validator in `sw export`.
@@ -112,6 +114,8 @@ part names survive into the GLB as node names.
 | [docs/ROADMAP.md](docs/ROADMAP.md) | stages and success criteria |
 | [docs/MESH_MODEL.md](docs/MESH_MODEL.md), [BACKEND](docs/BACKEND.md), [RELATIONSHIPS](docs/RELATIONSHIPS.md), [UV](docs/UV.md), [FAMILIES](docs/FAMILIES.md) | the hardened foundations |
 | [docs/DESIGN_REVIEW.md](docs/DESIGN_REVIEW.md), [docs/HARDENING.md](docs/HARDENING.md) | the critique of v0.1 and what changed (and what did not) |
+| [docs/SURFACES.md](docs/SURFACES.md), [PERFORMANCE](docs/PERFORMANCE.md), [IMPORT](docs/IMPORT.md), [PRODUCTION](docs/PRODUCTION.md), [AGENT_COST](docs/AGENT_COST.md), [WORKBENCH](docs/WORKBENCH.md) | Phases 7–15: textures, 50k-tri performance, import/repair, engine delivery, agent cost, the human workbench |
+| [docs/experiments/](docs/experiments/README.md) | every fresh-agent experiment, with plans written before the runs |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | adding shapes, ops, validators, views, profiles, exporters |
 
 ## Licence

@@ -107,7 +107,8 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
 - Before any texturing work: `sw uv ASSET lock` and commit `uv.lock.yaml`.
 - To prove an asset stays correct when its params change, try values without
   editing the file: `sw validate ASSET --set steps=14,rise=0.2` (also works on
-  `review`, `render`, `stats`). Keep permanent variants as `extends` files and
+  `review`, `render`, `stats`). Keep a value with `sw set ASSET steps=14` (edits only that value;
+  comments stay; refuses values outside min/max). Keep permanent variants as `extends` files and
   check them with `sw family`.
 - `mirror: x` creates `<name>_left` / `<name>_right`. `array` creates `<name>_0..n`.
   Refer to instances by those names in `checks` and `--part`.
@@ -120,6 +121,8 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
   within a few cm of the asset still gets `ASM_FLOATING_TAGGED_NEAR`.
 - Every asset in `assets/` is a regression benchmark: a new asset needs its geometry hash recorded with
   `python3 tests/update_golden.py` before `pytest` passes.
+- People can work on the same assets with `sw workbench` (a local browser page). Every button runs an
+  `sw` command and shows it, so their changes are ordinary source edits and history entries you can read.
 - `.build/` holds renders and reports. It is disposable and git-ignored, so
   don't commit it. Commit `asset.yaml`, `history/` and, for finished assets,
   `export/`.

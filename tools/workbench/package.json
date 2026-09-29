@@ -1,0 +1,9 @@
+{
+  "name": "shapewright-workbench-e2e",
+  "private": true,
+  "description": "Optional: drives `sw workbench` in a real browser (Chromium) for the Phase 15 gate. npm install here to enable tests/test_workbench.py::test_browser_session.",
+  "type": "module",
+  "dependencies": {
+    "playwright-core": "1.56.1"
+  }
+}

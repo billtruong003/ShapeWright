@@ -4,5 +4,6 @@ __pycache__/
 *.pyc
 .pytest_cache/
 tools/gltf-validator/node_modules/
+tools/workbench/node_modules/
 tools/gltf-validator/package-lock.json
 *.egg-info/

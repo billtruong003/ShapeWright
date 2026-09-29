@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shapewright Workbench</title>
+<style>
+:root {
+  --bg: #f4f3ef; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6a66; --line: #dddbd4;
+  --accent: #2f6f5e; --accent-ink: #ffffff; --warn: #a86b00; --fail: #b23a2e; --pass: #2f7d3b;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #161615; --panel: #1f1f1d; --ink: #ecebe6; --muted: #9c9a93; --line: #34332f;
+          --accent: #5fb39a; --accent-ink: #0f1a16; --warn: #e0a640; --fail: #e8786c; --pass: #7cc98a; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+header { display: flex; gap: 12px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+header h1 { font-size: 15px; margin: 0; }
+header .note { color: var(--muted); font-size: 12px; }
+main { display: grid; grid-template-columns: 200px minmax(0, 1fr) 320px; gap: 12px; padding: 12px 16px; }
+@media (max-width: 1000px) { main { grid-template-columns: 1fr; } }
+section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-width: 0; }
+h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 4px 0 8px; }
+button, select, input, textarea { font: inherit; color: inherit; }
+button { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+button:disabled { opacity: .5; cursor: wait; }
+select, input[type=text], input[type=number], textarea { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; }
+#assets { list-style: none; margin: 0; padding: 0; max-height: 70vh; overflow: auto; }
+#assets li { padding: 4px 6px; border-radius: 5px; cursor: pointer; display: flex; justify-content: space-between; gap: 6px; }
+#assets li:hover, #assets li.on { background: var(--bg); }
+.st { font-size: 11px; font-weight: 600; }
+.PASS { color: var(--pass); } .WARN { color: var(--warn); } .FAIL { color: var(--fail); }
+.row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+#view { width: 100%; max-height: 62vh; object-fit: contain; background: var(--bg); border-radius: 6px; display: block; }
+#orbit { width: 100%; }
+.param { margin-bottom: 8px; }
+.param label { display: flex; justify-content: space-between; font-size: 12px; }
+.param label span { color: var(--muted); }
+.param input[type=range] { width: 100%; }
+.param.changed label b { color: var(--accent); }
+#issues { list-style: none; padding: 0; margin: 0; font-size: 12px; max-height: 24vh; overflow: auto; }
+#issues li { padding: 3px 0; border-bottom: 1px solid var(--line); }
+#history { font-size: 12px; max-height: 18vh; overflow: auto; }
+#console { font: 12px/1.4 var(--mono); white-space: pre-wrap; max-height: 30vh; overflow: auto; background: var(--bg); padding: 8px; border-radius: 6px; }
+#console .cmd { color: var(--accent); font-weight: 600; }
+#source { width: 100%; min-height: 260px; font: 12px/1.4 var(--mono); }
+.bottom { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 1000px) { .bottom { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Shapewright Workbench</h1>
+  <span class="note">Every button runs an <code>sw</code> command and shows it below. Nothing here can do what the command line cannot.</span>
+</header>
+<main>
+  <section>
+    <h2>Assets</h2>
+    <ul id="assets"></ul>
+  </section>
+
+  <section>
+    <div class="row">
+      <strong id="title">Pick an asset</strong>
+      <span id="status" class="st"></span>
+      <span style="flex:1"></span>
+      <button id="btn-review" disabled>Review</button>
+    </div>
+    <img id="view" alt="render of the selected asset">
+    <div class="row" style="margin-top:8px">
+      <label>Orbit <input id="orbit" type="range" min="0" max="7" step="1" value="1" style="width:160px"></label>
+      <select id="mode"></select>
+      <select id="extraview"><option value="">around</option><option>top</option><option>low_front</option><option>uv</option></select>
+      <button id="btn-render" class="ghost" disabled>Render</button>
+      <button id="btn-sheet" class="ghost" disabled>Sheet</button>
+    </div>
+    <h2>Issues</h2>
+    <ul id="issues"></ul>
+  </section>
+
+  <section>
+    <h2>Parameters</h2>
+    <div id="params"><span class="note">Parameters with min/max become sliders.</span></div>
+    <div class="row">
+      <button id="btn-preview" class="ghost" disabled title="sw review ASSET --set ... (the file is unchanged)">Preview</button>
+      <button id="btn-apply" disabled title="sw set ASSET ... then sw review">Apply</button>
+      <button id="btn-reset" class="ghost" disabled>Reset</button>
+    </div>
+    <h2>Record</h2>
+    <div class="row"><input id="msg" type="text" placeholder="what changed" style="flex:1"></div>
+    <div class="row"><input id="crit" type="text" placeholder="what you saw (critique)" style="flex:1"></div>
+    <div class="row">
+      <button id="btn-snap" disabled>Snapshot</button>
+      <button id="btn-compare" class="ghost" disabled>Compare first ↔ current</button>
+      <button id="btn-uv" class="ghost" disabled>Lock UVs</button>
+    </div>
+    <h2>Export</h2>
+    <div class="row">
+      <select id="target"><option value="">profile default</option><option>generic</option><option>godot</option><option>unity</option><option>unreal</option></select>
+      <button id="btn-export" disabled>Export GLB</button>
+    </div>
+    <h2>History</h2>
+    <div id="history"></div>
+  </section>
+
+  <div class="bottom">
+    <section>
+      <h2>Commands run</h2>
+      <div id="console"></div>
+    </section>
+    <section>
+      <div class="row"><h2 style="margin:0">asset.yaml</h2><span style="flex:1"></span><button id="btn-save" disabled>Save source</button></div>
+      <textarea id="source" spellcheck="false"></textarea>
+    </section>
+  </div>
+</main>
+<script>
+const AROUND = ["front", "front_right", "right", "back_right", "back", "back_left", "left", "front_left"];
+const MODES = ["clay", "textured", "parts", "material", "wire", "normals", "silhouette", "albedo", "roughness", "metallic", "texel", "seams"];
+let cur = null, info = null;
+const $ = (id) => document.getElementById(id);
+MODES.forEach(m => $("mode").append(new Option(m, m)));
+
+async function api(path, body) {
+  const r = await fetch(path, body ? {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)} : {});
+  return r.json();
+}
+function log(res) {
+  const c = $("console");
+  const cmd = document.createElement("div"); cmd.className = "cmd"; cmd.textContent = "$ " + (res.command || "(request)") + (res.rc ? `   [exit ${res.rc}]` : "");
+  const out = document.createElement("div"); out.textContent = (res.output || res.error || "").trim();
+  c.append(cmd, out); c.scrollTop = c.scrollHeight;
+}
+function busy(on) { document.querySelectorAll("button").forEach(b => b.disabled = on || !cur); }
+function show(path) { if (path) $("view").src = "/files?path=" + encodeURIComponent(path) + "&t=" + Date.now(); }
+
+async function run(req) {
+  busy(true);
+  try {
+    const res = await api("/api/run", {asset: cur, ...req});
+    log(res);
+    const sheet = (res.images || []).find(p => p.endsWith("/sheet.png"));
+    show(sheet || (res.images || [])[0]);
+    await refresh(false);
+    return res;
+  } finally { busy(false); }
+}
+async function loadAssets() {
+  const list = await api("/api/assets");
+  $("assets").innerHTML = "";
+  list.forEach(a => {
+    const li = document.createElement("li"); li.dataset.name = a.name;
+    li.innerHTML = `<span></span><span class="st ${a.status || ""}">${a.status || ""}</span>`;
+    li.firstChild.textContent = a.name;
+    li.onclick = () => select(a.name);
+    if (a.name === cur) li.classList.add("on");
+    $("assets").append(li);
+  });
+}
+async function select(name) {
+  cur = name; $("title").textContent = name;
+  document.querySelectorAll("#assets li").forEach(li => li.classList.toggle("on", li.dataset.name === name));
+  await refresh(true);
+  busy(false);
+  const sheet = (info.images || []).find(p => p.endsWith("/sheet.png"));
+  if (sheet) show(sheet); else await run({cmd: "review"});
+}
+async function refresh(resetParams) {
+  info = await api("/api/asset?name=" + encodeURIComponent(cur));
+  const st = info.report ? info.report.status : "";
+  $("status").textContent = st; $("status").className = "st " + st;
+  const iss = $("issues"); iss.innerHTML = "";
+  ((info.report && info.report.issues) || []).filter(i => i.severity !== "info").forEach(i => {
+    const li = document.createElement("li");
+    li.innerHTML = `<b class="${i.severity === "error" ? "FAIL" : "WARN"}"></b> <span></span>`;
+    li.firstChild.textContent = i.code; li.lastChild.textContent = ` ${i.where ? "[" + i.where + "] " : ""}${i.msg || i.message || ""}${i.hint ? " → " + i.hint : ""}`;
+    iss.append(li);
+  });
+  if (!iss.children.length) iss.innerHTML = "<li>No errors or warnings.</li>";
+  $("history").innerHTML = "";
+  info.history.slice().reverse().forEach(h => {
+    const d = document.createElement("div");
+    d.textContent = `#${h.iteration} ${h.status || ""}: ${h.note || ""}${h.critique ? " (" + h.critique + ")" : ""}`;
+    $("history").append(d);
+  });
+  if (resetParams) { $("source").value = info.source; renderParams(); }
+  loadAssets();
+}
+function renderParams() {
+  const box = $("params"); box.innerHTML = "";
+  info.params.forEach(p => {
+    if (typeof p.value !== "number") return;
+    const d = document.createElement("div"); d.className = "param"; d.dataset.name = p.name; d.dataset.orig = p.value;
+    const ranged = typeof p.min === "number" && typeof p.max === "number";
+    const step = ranged ? Math.max((p.max - p.min) / 100, 0.0001) : "any";
+    d.innerHTML = `<label><b></b><span></span></label>` +
+      (ranged ? `<input type="range" min="${p.min}" max="${p.max}" step="${step}" value="${p.value}">` : "") +
+      `<input type="number" step="${step}" value="${p.value}" style="width:100%">`;
+    d.querySelector("b").textContent = p.name; d.querySelector("span").textContent = p.doc || "";
+    const inputs = d.querySelectorAll("input");
+    inputs.forEach(inp => inp.oninput = () => {
+      inputs.forEach(o => { if (o !== inp) o.value = inp.value; });
+      d.classList.toggle("changed", Number(inp.value) !== Number(d.dataset.orig));
+    });
+    box.append(d);
+  });
+  if (!box.children.length) box.innerHTML = '<span class="note">No numeric parameters in this source.</span>';
+}
+function changedParams() {
+  const out = {};
+  document.querySelectorAll(".param.changed").forEach(d => out[d.dataset.name] = Number(d.querySelector("input[type=number]").value));
+  return out;
+}
+function viewName() { return $("extraview").value || AROUND[Number($("orbit").value)]; }
+
+$("btn-review").onclick = () => run({cmd: "review"});
+$("btn-sheet").onclick = () => run({cmd: "review", set: changedParams()});
+$("btn-render").onclick = () => run({cmd: "render", view: viewName(), mode: $("mode").value, set: changedParams()});
+$("orbit").onchange = () => { $("extraview").value = ""; run({cmd: "render", view: viewName(), mode: $("mode").value, set: changedParams()}); };
+$("btn-preview").onclick = () => run({cmd: "review", set: changedParams()});
+$("btn-apply").onclick = async () => {
+  const set = changedParams(); if (!Object.keys(set).length) return;
+  const res = await run({cmd: "set", set});
+  if (res.rc === 0) { await refresh(true); await run({cmd: "review"}); }
+};
+$("btn-reset").onclick = () => renderParams();
+$("btn-snap").onclick = () => run({cmd: "snapshot", message: $("msg").value || "workbench edit", critique: $("crit").value});
+$("btn-compare").onclick = () => run({cmd: "compare", a: "1", b: "current"});
+$("btn-uv").onclick = () => run({cmd: "uv_lock"});
+$("btn-export").onclick = () => run({cmd: "export", target: $("target").value || undefined});
+$("btn-save").onclick = async () => {
+  busy(true);
+  try { const res = await api("/api/source", {asset: cur, text: $("source").value}); log(res); await refresh(true); }
+  finally { busy(false); }
+};
+loadAssets();
+</script>
+</body>
+</html>

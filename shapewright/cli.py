@@ -91,6 +91,32 @@ def cmd_caps(a):
     return 0
 
 
+def cmd_set(a):
+    from .assemble import build, resolve_asset_path
+    from .source_edit import set_params
+
+    path = resolve_asset_path(a.asset)
+    before = path.read_text()
+    changes = set_params(path, _parse_sets(a.values))
+    try:
+        build(path)
+    except SourceError:
+        path.write_text(before)  # a value that breaks the build is not kept
+        print("the new values do not build; the source was restored")
+        raise
+    for c in changes:
+        print(f"set {c}")
+    print(f"wrote {_rel(path)} (comments and layout kept); `sw review {a.asset}` to look at it")
+    return 0
+
+
+def cmd_workbench(a):
+    from .workbench.server import serve
+
+    serve(a.port, a.open, a.assets)
+    return 0
+
+
 def cmd_brief(a):
     from .brief import brief
 
@@ -542,6 +568,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = add("brief", cmd_brief, "start here: closest example asset, profile, rules and vocabulary for a request", asset=False)
     p.add_argument("request", nargs="+", help="the request in words, e.g. \"a hanging tavern sign, mobile, under 1200 triangles\"")
+    p = add("set", cmd_set, "write param values into the source (keeps comments): sw set ASSET name=value[,name=value]")
+    p.add_argument("values", nargs="+", metavar="NAME=VALUE")
+    p = add("workbench", cmd_workbench, "local browser workbench for people: every button runs (and shows) an sw command", asset=False)
+    p.add_argument("--port", type=int, default=8765)
+    p.add_argument("--open", action="store_true", help="open it in the default browser")
+    p.add_argument("--assets", help="folder of assets to work on (default: assets/)")
     p = add("caps", cmd_caps, "capability manifest", asset=False)
     p.add_argument("--json", action="store_true")
     p = add("doc", cmd_doc, "details for a shape/op/view/mode/issue code", asset=False)
@@ -614,7 +646,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv=None) -> int:
     args = build_parser().parse_args(argv)
-    if hasattr(signal, "SIGALRM"):
+    if hasattr(signal, "SIGALRM") and args.cmd != "workbench":  # the server runs until stopped; each command it runs has its own
         def _timeout(*_):
             raise TimeoutError(f"command exceeded {LIMITS.build_timeout_s}s (see shapewright/limits.py)")
 
@@ -633,6 +665,9 @@ def main(argv=None) -> int:
         return 2
     except BrokenPipeError:  # output piped into head etc.
         return 0
+    finally:
+        if hasattr(signal, "SIGALRM"):
+            signal.alarm(0)  # a long-lived caller (sw workbench) must not get a stale alarm
 
 
 if __name__ == "__main__":

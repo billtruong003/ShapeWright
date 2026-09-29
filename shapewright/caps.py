@@ -18,9 +18,11 @@ from .validate import load_builtin as load_validators
 
 COMMANDS = {
     "brief REQUEST": "start here: closest example asset (with source), profile, rules and vocabulary for a request",
+    "workbench [--port N]": "local browser workbench for people over these same commands (127.0.0.1 only)",
     "caps": "list capabilities (this manifest); --json for everything",
     "doc NAME": "details and example for one shape, op, view, mode or issue code",
     "new NAME [--from ASSET]": "scaffold assets/NAME/asset.yaml (optionally as a variant of ASSET)",
+    "set ASSET NAME=VALUE": "write param values into the source file, keeping comments (what --set previews)",
     "stats ASSET": "per-part triangles, sizes, positions, materials; sockets; params",
     "validate ASSET": "layered deterministic validation (exit 1 on errors); --json",
     "render ASSET": "images: --view V --mode M --part P [--isolate] or --sheet",

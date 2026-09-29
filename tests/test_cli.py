@@ -85,3 +85,32 @@ def test_brief_ranks_examples_and_names_rules():
     assert "profile: godot" in text and "budget: {triangles: 1200}" in text
     assert "pivot:" in text and "placement: wall" in text
     assert "SOURCE OF THE CLOSEST EXAMPLE: assets/" in text
+
+
+SET_SRC = """# a comment that must survive
+shapewright: 0.1
+asset: {name: t}
+params:
+  w: 0.4   # width
+  h: {value: 0.45, min: 0.3, max: 0.6, doc: height}
+  d:
+    value: 0.2  # depth
+    min: 0.1
+materials: {wood: {base_color: "#8a5a36"}}
+parts:
+  top: {shape: {type: box, size: [w, 0.05, d]}, anchor: top, position: [0, h, 0], material: wood}
+"""
+
+
+def test_set_writes_param_values_and_keeps_everything_else(make_asset, capsys):
+    # Phase 15: keeping a tried value needed a hand edit; the workbench's "apply" is this command
+    path = make_asset(SET_SRC)
+    f = path / "asset.yaml" if path.is_dir() else path
+    assert main(["set", str(path), "w=0.5,h=0.5", "d=0.25"]) == 0
+    text = f.read_text()
+    assert "  w: 0.5   # width" in text and "{value: 0.5, min: 0.3" in text and "    value: 0.25  # depth" in text
+    assert text.replace("0.5   #", "0.4   #").replace("value: 0.5,", "value: 0.45,").replace("value: 0.25", "value: 0.2") == SET_SRC
+    assert main(["set", str(path), "h=0.9"]) == 2  # outside [0.3, 0.6]
+    assert main(["set", str(path), "nope=1"]) == 2
+    assert main(["set", str(path), "w=wdth * 2"]) != 0  # an unknown name does not build: restored
+    assert "  w: 0.5   # width" in f.read_text()

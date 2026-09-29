@@ -247,8 +247,8 @@ without adding findings at this asset scale.
 The default **contact sheet** (8 tiles, about 250 KB) is the single image an
 agent looks at per review, which keeps the context cost low.
 
-A browser workbench (three.js viewer of the exported GLB plus the report) is a
-*roadmap item for humans*. It will consume the same files and add no logic.
+The human workbench (`sw workbench`, Phase 15, docs/WORKBENCH.md) is a local page over the same
+commands: it renders nothing itself, imports only `cli`, and every button is an `sw` command line.
 
 ## 12. Iteration and reversibility
 
