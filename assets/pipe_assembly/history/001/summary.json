@@ -1,0 +1,47 @@
+{
+ "iteration": 1,
+ "note": "blockout: flanged floor bases with bolts, swept riser+elbow+run tube, couplings, lathe globe valves, bonnet/stem/handwheel, H-stand with clamps",
+ "critique": "reads as industrial pipework; first review: iron base colour too dark for a metal (PBR_METAL_TOO_DARK) -> #4e5259; stem 2.4 cm and stand foot 2.5 cm under style minimum -> 3.6 cm / 3 cm. Pipes read a little spindly for stylized low-poly next to the valves -> pipe_r 0.055 -> 0.065",
+ "source_hash": "fa0b27d706dd",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 2444,
+  "parts": 31,
+  "size_m": [
+   1.02,
+   1.5,
+   1.2934
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "pipe_right.max.y - pipe_r": 1.1973,
+   "pipe_right.center.x - pipe_left.center.x": 0.6,
+   "pipe_right.size.z": 0.9723,
+   "handwheel_right.min.y > valve_body_right.max.y": true,
+   "handwheel_right.min.x > handwheel_left.max.x": true,
+   "floor_flange.min.y": 0.0
+  }
+ },
+ "errors": [],
+ "params": {
+  "spacing": 0.6,
+  "pipe_r": 0.055,
+  "axis_h": 1.2,
+  "bend_r": 0.22,
+  "run": 0.7,
+  "riser_z": 0.45,
+  "sides": 10.0,
+  "base_h": 0.1,
+  "coupling_r": 0.073,
+  "wheel_r": 0.13,
+  "px": 0.3,
+  "y_bend": 0.98,
+  "z_bend": 0.23
+ }
+}

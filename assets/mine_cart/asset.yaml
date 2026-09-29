@@ -1,0 +1,188 @@
+# Stylized low-poly mine cart on a short rail segment: tapered wooden tub with two
+# riveted iron bands (iron_band component sized from the tub's real cross-section),
+# a wooden chassis on two iron axles, four flanged wheels (revolved profile) sitting
+# on two extruded I-profile rails laid on wooden sleepers.
+shapewright: 0.1
+asset:
+  name: mine_cart
+  kind: prop/vehicle/mine_cart
+  description: Iron-banded mine cart on a short rail segment with sleepers.
+  tags: [mine, vehicle, rail]
+profile: desktop_indie
+style: stylized_lowpoly
+budget: {triangles: 3000, materials: 3}
+
+params:
+  gauge:      {value: 0.6, doc: rail centre distance}
+  rail_len:   {value: 1.8, doc: length of the rail segment}
+  rail_h:     {value: 0.075, doc: rail height (foot to head)}
+  sleeper_w:  {value: 1.0, doc: sleeper length along x}
+  sleeper_h:  {value: 0.07}
+  sleeper_d:  {value: 0.16}
+  sleepers:   {value: 5}
+  wheel_r:    {value: 0.13, doc: tread radius}
+  flange:     {value: 0.025, doc: flange height above the tread}
+  tread_w:    {value: 0.05}
+  flange_w:   {value: 0.018}
+  wheelbase:  {value: 0.62}
+  axle_r:     {value: 0.025}
+  chassis_x:  {value: 0.2, doc: chassis beam centre distance from the middle}
+  tub_w:      {value: 0.62, doc: tub width at the bottom}
+  tub_l:      {value: 0.9, doc: tub length at the bottom}
+  tub_h:      {value: 0.46}
+  tub_flare:  {value: 1.22, doc: top/bottom size ratio (taper)}
+  wall:       {value: 0.045}
+  band_lo:    {value: 0.1, doc: band heights above the tub bottom}
+  band_hi:    {value: tub_h - 0.07}
+  wear:       {value: 0.004}
+  rail_top:   sleeper_h - 0.003 + rail_h
+
+materials:
+  wood:      {archetype: wood, color: "#9a6a40", grain_strength: 0.35, grain_scale: 0.035, edge_wear: 0.3, grime: 0.3, seed: 3}
+  wood_dark: {archetype: wood, color: "#5e3b22", grain_strength: 0.3, edge_wear: 0.2, grime: 0.4, seed: 4}
+  iron:      {archetype: metal, color: "#6a6e74", roughness: 0.55, edge_wear: 0.5, rust: 0.25}
+
+parts:
+  sleeper:
+    doc: wooden ties under the rails
+    shape: {type: chamfer_box, size: [sleeper_w, sleeper_h, sleeper_d], chamfer: 0.012}
+    ops: [{type: jitter, amount: wear * 1.5, seed: 21}]
+    anchor: bottom
+    position: [0, 0, -rail_len / 2 + 0.15]
+    array: {count: sleepers, offset: [0, 0, (rail_len - 0.3) / (sleepers - 1)]}
+    material: wood_dark
+
+  rail:
+    doc: I-profile rail (foot, web, head) extruded along z
+    shape:
+      type: extrude
+      depth: rail_len
+      polygon:
+        - [-0.035, 0]
+        - [0.035, 0]
+        - [0.035, 0.012]
+        - [0.009, 0.02]
+        - [0.009, rail_h - 0.022]
+        - [0.02, rail_h - 0.018]
+        - [0.02, rail_h]
+        - [-0.02, rail_h]
+        - [-0.02, rail_h - 0.018]
+        - [-0.009, rail_h - 0.022]
+        - [-0.009, 0.02]
+        - [-0.035, 0.012]
+    anchor: bottom
+    position: [gauge / 2, rail_top - rail_h, 0]
+    mirror: x
+    shading: flat
+    tags: [thin_ok]
+    material: iron
+
+  wheel:
+    doc: flanged iron wheel; flange runs on the inside of the rail head
+    shape:
+      type: revolve
+      segments: 16
+      polygon:
+        - [axle_r, 0]
+        - [wheel_r - 0.006, 0]
+        - [wheel_r, 0.006]
+        - [wheel_r, tread_w]
+        - [wheel_r + flange, tread_w + 0.006]
+        - [wheel_r + flange, tread_w + flange_w]
+        - [0.05, tread_w + flange_w + 0.01]
+        - [axle_r, tread_w + flange_w + 0.01]
+    measure:
+      r: {bounds: rail_right}
+    rotate: [0, 0, 90]
+    anchor: [1, 0, 0]
+    # anchor x = +1 is the outer tread face; the tread (0.05 wide) is centred on the rail head
+    position: [r.center.x + tread_w / 2, r.max.y + wheel_r - 0.003, wheelbase / 2]
+    mirror: [x, z]
+    shading: auto
+    material: iron
+
+  axle:
+    doc: iron axles joining each wheel pair
+    measure:
+      w: {bounds: wheel_front_right}
+    shape: {type: cylinder, radius: axle_r + 0.004, height: 2 * w.max.x, segments: 8}
+    rotate: [0, 0, 90]
+    position: [0, w.center.y, w.center.z]
+    mirror: z
+    material: iron
+
+  chassis:
+    doc: two wooden chassis beams resting on the axles
+    measure:
+      a: {bounds: axle_front}
+    shape: {type: chamfer_box, size: [0.09, 0.09, tub_l + 0.12], chamfer: 0.012}
+    ops: [{type: jitter, amount: wear, seed: 22}]
+    anchor: bottom
+    position: [chassis_x, a.max.y - 0.004, 0]
+    mirror: x
+    material: wood_dark
+
+  bearing:
+    doc: iron axle boxes clamping the chassis beams to the axles
+    measure:
+      a: {bounds: axle_front}
+      c: {bounds: chassis_right}
+    shape: {type: chamfer_box, size: [0.11, 0.1, 0.1], chamfer: 0.01}
+    anchor: top
+    position: [chassis_x, c.min.y + 0.03, a.center.z]
+    mirror: [x, z]
+    material: iron
+
+  bumper:
+    doc: cross beams across both chassis ends (buffers)
+    measure:
+      c: {bounds: chassis_right}
+    shape: {type: chamfer_box, size: [2 * chassis_x + 0.2, 0.1, 0.09], chamfer: 0.014}
+    ops: [{type: jitter, amount: wear, seed: 24}]
+    anchor: center
+    position: [0, c.center.y, c.max.z - 0.045]
+    mirror: z
+    material: wood_dark
+
+  tub:
+    doc: tapered wooden tub, flared toward the top, hollowed out
+    measure:
+      c: {bounds: chassis_right}
+    shape:
+      type: boolean
+      operation: difference
+      base: {type: chamfer_box, size: [tub_w, tub_h, tub_l], chamfer: 0.02, ops: [{type: taper, axis: y, scale: tub_flare}]}
+      tools:
+        - type: box
+          size: [tub_w - 2 * wall, tub_h, tub_l - 2 * wall]
+          ops: [{type: taper, axis: y, scale: tub_flare}]
+          translate: [0, wall, 0]
+    ops: [{type: jitter, amount: wear, seed: 23}]
+    anchor: bottom
+    position: [0, c.max.y - 0.004, 0]
+    shading: flat
+    material: wood
+
+  band_low:
+    doc: riveted iron band; component instances cannot `measure`, so the tapered tub's section at this height is derived from the taper (linear 1 -> tub_flare)
+    component: iron_band
+    with: {inner_x: tub_w * (1 + (tub_flare - 1) * band_lo / tub_h), inner_z: tub_l * (1 + (tub_flare - 1) * band_lo / tub_h), band_w: 0.045, band_t: 0.014, rivet_r: 0.012, rivets: 3, rivet_gap: tub_w * 0.4}
+    materials: {metal: iron}
+    anchor: center
+    attach: {to: tub, at: bottom, offset: [0, band_lo, 0]}
+
+  band_high:
+    doc: riveted iron band; component instances cannot `measure`, so the tapered tub's section at this height is derived from the taper (linear 1 -> tub_flare)
+    component: iron_band
+    with: {inner_x: tub_w * (1 + (tub_flare - 1) * band_hi / tub_h), inner_z: tub_l * (1 + (tub_flare - 1) * band_hi / tub_h), band_w: 0.045, band_t: 0.014, rivet_r: 0.012, rivets: 3, rivet_gap: tub_w * 0.4}
+    materials: {metal: iron}
+    anchor: center
+    attach: {to: tub, at: bottom, offset: [0, band_hi, 0]}
+
+uv: {texel_density: 200}
+collision: {mode: box}
+
+checks:
+  - {expr: wheel_front_right.min.y, min: rail_top - flange - 0.01, max: rail_top - flange + 0.005, doc: flange dips below the rail head}
+  - {expr: tub.max.y, min: 0.75, max: 1.1, doc: tub rim at a shovel-loading height}
+  - {expr: tub.size.x, max: sleeper_w, doc: cart fits on the sleepers}

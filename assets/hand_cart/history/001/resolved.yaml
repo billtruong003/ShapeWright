@@ -1,0 +1,406 @@
+shapewright: 0.1
+asset:
+  name: hand_cart
+  kind: prop/vehicle/cart
+  description: Wooden hand cart with a plank bed, side rails, two large spoked wheels, long handles and a resting leg.
+  tags:
+  - wood
+  - vehicle
+  - medieval
+profile: desktop_indie
+style: stylized_lowpoly
+budget:
+  triangles: 2500
+  materials: 3
+params:
+  wheel_r:
+    value: 0.42
+    min: 0.3
+    max: 0.55
+    doc: outer wheel radius
+  rim_t:
+    value: 0.055
+    doc: radial thickness of the wooden felloe
+  rim_w:
+    value: 0.06
+    doc: rim width along the axle
+  spoke_w:
+    value: 0.04
+    doc: spoke width in the wheel plane
+  spoke_t:
+    value: 0.035
+    doc: spoke thickness along the axle
+  hub_r:
+    value: 0.07
+  hub_l:
+    value: 0.16
+  wheel_seg:
+    value: 16
+    doc: rim facets
+  wheel_x:
+    value: 0.52
+    doc: wheel centre plane distance from the middle
+  axle_r:
+    value: 0.028
+  bed_w:
+    value: 0.8
+    min: 0.6
+    max: 1.0
+    doc: bed width (plank length along x)
+  bed_l:
+    value: 1.2
+    min: 0.9
+    max: 1.6
+    doc: bed length along z
+  planks:
+    value: 6
+  plank_t:
+    value: 0.04
+  plank_gap:
+    value: 0.012
+  beam_x:
+    value: 0.3
+    doc: beam/handle centre distance from the middle
+  beam_w:
+    value: 0.07
+  beam_h:
+    value: 0.08
+  handle_reach:
+    value: 0.95
+    doc: how far the handles run ahead of the bed
+  block_h:
+    value: 0.1
+    doc: axle block height (axle passes through its middle)
+  stake:
+    value: 0.05
+  rail_h:
+    value: 0.26
+    doc: side rail height above the bed
+  leg_z:
+    value: bed_l / 2 + 0.12
+    doc: resting leg / front bearer position
+  wear:
+    value: 0.004
+  plank_d: (bed_l - (planks - 1) * plank_gap) / planks
+  beam_len: bed_l + handle_reach + 0.05
+materials:
+  wood:
+    archetype: wood
+    color: '#a0703f'
+    grain_strength: 0.35
+    grain_scale: 0.035
+    edge_wear: 0.3
+    seed: 1
+  wood_dark:
+    archetype: wood
+    color: '#63412a'
+    grain_strength: 0.3
+    grain_scale: 0.03
+    edge_wear: 0.35
+    seed: 2
+  iron:
+    archetype: metal
+    color: '#6b6f75'
+    roughness: 0.55
+    edge_wear: 0.4
+    rust: 0.15
+parts:
+  wheel:
+    doc: felloe ring, hub and 8 spokes fused into one wheel; axis along x
+    shape:
+      type: boolean
+      operation: union
+      base:
+        type: ring
+        radius: wheel_r
+        thickness: rim_t
+        height: rim_w
+        segments: wheel_seg
+      tools:
+      - type: cylinder
+        radius: hub_r
+        height: hub_l
+        segments: 8
+        chamfer: 0.012
+      - type: box
+        size:
+        - 2 * (wheel_r - rim_t) + 0.02
+        - spoke_t
+        - spoke_w
+        ops:
+        - type: repeat
+          count: 4
+          radial: y
+          angle: 135
+    rotate:
+    - 0
+    - 0
+    - 90
+    anchor: bottom
+    position:
+    - wheel_x
+    - 0
+    - 0
+    mirror: x
+    shading: flat
+    material: wood_dark
+  axle:
+    doc: iron axle through both hubs
+    measure:
+      w:
+        bounds: wheel_right
+    shape:
+      type: cylinder
+      radius: axle_r
+      height: 2 * w.max.x + 0.03
+      segments: 8
+    rotate:
+    - 0
+    - 0
+    - 90
+    position:
+    - 0
+    - w.center.y
+    - w.center.z
+    material: iron
+  axle_block:
+    doc: blocks under the beams that the axle passes through
+    measure:
+      a:
+        bounds: axle
+    shape:
+      type: chamfer_box
+      size:
+      - beam_w
+      - block_h
+      - 0.16
+      chamfer: 0.01
+    position:
+    - beam_x
+    - a.center.y
+    - a.center.z
+    mirror: x
+    material: wood_dark
+  beam:
+    doc: long bed beams that run forward into the handles
+    measure:
+      b:
+        bounds: axle_block_right
+    shape:
+      type: chamfer_box
+      size:
+      - beam_w
+      - beam_h
+      - beam_len
+      chamfer: 0.012
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 11
+    anchor: bottom_back
+    position:
+    - beam_x
+    - b.max.y - 0.005
+    - -bed_l / 2 - 0.05
+    mirror: x
+    material: wood_dark
+  grip:
+    doc: rounded hand grips at the handle ends
+    measure:
+      h:
+        bounds: beam_right
+    shape:
+      type: cylinder
+      radius: 0.03
+      height: 0.22
+      segments: 8
+      chamfer: 0.01
+    rotate:
+    - 90
+    - 0
+    - 0
+    anchor: back
+    position:
+    - h.center.x
+    - h.center.y - 0.004
+    - h.max.z - 0.06
+    mirror: x
+    material: wood
+  plank:
+    doc: cross planks of the bed, lying on the beams
+    measure:
+      h:
+        bounds: beam_right
+    shape:
+      type: chamfer_box
+      size:
+      - bed_w
+      - plank_t
+      - plank_d
+      chamfer: 0.008
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 12
+    anchor: bottom_back
+    position:
+    - 0
+    - h.max.y - 0.004
+    - -bed_l / 2
+    array:
+      count: planks
+      offset:
+      - 0
+      - 0
+      - plank_d + plank_gap
+    material: wood
+  stake:
+    doc: upright stakes on the bed edge carrying the side rails
+    measure:
+      h:
+        bounds: beam_right
+    shape:
+      type: chamfer_box
+      size:
+      - stake
+      - rail_h + plank_t + 0.03
+      - stake
+      chamfer: 0.008
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 13
+    anchor: bottom
+    position:
+    - bed_w / 2 + stake / 2 - 0.004
+    - h.max.y - 0.03
+    - -bed_l / 2 + 0.06
+    array:
+      count: 3
+      offset:
+      - 0
+      - 0
+      - (bed_l - 0.12) / 2
+    mirror: x
+    material: wood_dark
+  rail:
+    doc: two horizontal side rails nailed to the stakes
+    measure:
+      s:
+        bounds: stake_0_right
+    shape:
+      type: chamfer_box
+      size:
+      - 0.04
+      - 0.07
+      - bed_l + 0.04
+      chamfer: 0.008
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 14
+    anchor: top_left
+    position:
+    - s.max.x - 0.004
+    - s.max.y - 0.01
+    - 0
+    array:
+      count: 2
+      offset:
+      - 0
+      - -0.13
+      - 0
+    mirror: x
+    material: wood
+  bearer:
+    doc: front cross bearer tying the handles together and carrying the leg
+    measure:
+      h:
+        section: beam_right
+        axis: z
+        at: leg_z
+    shape:
+      type: chamfer_box
+      size:
+      - 2 * beam_x + beam_w + 0.06
+      - 0.07
+      - 0.07
+      chamfer: 0.01
+    anchor: top
+    position:
+    - 0
+    - h.min.y + 0.005
+    - leg_z
+    material: wood_dark
+  leg:
+    doc: resting leg; with the wheels it keeps the bed level when parked
+    measure:
+      b:
+        bounds: bearer
+    shape:
+      type: chamfer_box
+      size:
+      - 0.07
+      - b.min.y + 0.01
+      - 0.07
+      chamfer: 0.01
+    ops:
+    - type: taper
+      axis: y
+      scale: 1.25
+    - type: jitter
+      amount: wear
+      seed: 15
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - leg_z
+    material: wood_dark
+  leg_brace:
+    doc: diagonal braces from the leg foot area up to the beams
+    measure:
+      b:
+        bounds: bearer
+    shape:
+      type: tube
+      radius: 0.02
+      sides: 4
+      path:
+      - - 0
+        - 0.14
+        - 0
+      - - beam_x - 0.02
+        - b.min.y - 0.12
+        - -0.25
+    anchor: center
+    position:
+    - (beam_x - 0.02) / 2 + 0.01
+    - (0.14 + b.min.y - 0.12) / 2
+    - leg_z - 0.125
+    mirror: x
+    material: wood_dark
+uv:
+  texel_density: 200
+collision:
+  mode: hull
+sockets:
+  handle_grip:
+    attach:
+      to: grip_right
+      at: front
+    doc: where a character's hands go
+checks:
+- expr: plank.max.y
+  min: 0.5
+  max: 0.7
+  doc: bed at a loading height
+- expr: wheel_right.size.y
+  min: 0.7
+  doc: large wheels (at least 70 cm across)
+- expr: beam_right.max.z - plank.max.z
+  min: 0.8
+  doc: long handles
+- expr: plank.size.y
+  max: 0.05
+  doc: bed is level (all planks at one height)

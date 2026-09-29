@@ -1,0 +1,58 @@
+{
+ "iteration": 2,
+ "note": "braces reach beams, iron tyre fused on wheel, beams/leg 7->8cm",
+ "critique": "reads clearly as hand cart in side and 3/4 views; iron tyre gives metal accent; remaining: wheel UV texel density 1.7x lower than planks (warning, ring charts pack loosely) accepted; no significant findings left",
+ "source_hash": "26c539a79b8b",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 8
+ },
+ "metrics": {
+  "triangles": 2220,
+  "parts": 29,
+  "size_m": [
+   1.23,
+   0.8521,
+   2.362
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "plank.max.y": 0.591,
+   "wheel_right.size.y": 0.84,
+   "beam_right.max.z - plank.max.z": 0.9496,
+   "plank.size.y": 0.0455
+  }
+ },
+ "errors": [],
+ "params": {
+  "wheel_r": 0.42,
+  "rim_t": 0.055,
+  "rim_w": 0.06,
+  "spoke_w": 0.04,
+  "spoke_t": 0.035,
+  "hub_r": 0.07,
+  "hub_l": 0.16,
+  "wheel_seg": 16.0,
+  "wheel_x": 0.52,
+  "axle_r": 0.028,
+  "bed_w": 0.8,
+  "bed_l": 1.2,
+  "planks": 6.0,
+  "plank_t": 0.04,
+  "plank_gap": 0.012,
+  "beam_x": 0.3,
+  "beam_w": 0.08,
+  "beam_h": 0.08,
+  "handle_reach": 0.95,
+  "block_h": 0.1,
+  "stake": 0.05,
+  "rail_h": 0.26,
+  "leg_z": 0.72,
+  "wear": 0.004,
+  "plank_d": 0.19,
+  "beam_len": 2.2
+ }
+}

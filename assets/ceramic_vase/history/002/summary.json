@@ -1,0 +1,44 @@
+{
+ "iteration": 2,
+ "note": "thicker handles (1.5cm), softer smoothing, dropped jitter, lower edge wear",
+ "critique": "jitter 2mm broke the foot ring and lifted it off the ground -> removed (clean glaze reads better); edge_wear 0.25 drew tile-like lines on facets -> 0.08; handles now chunky; no significant findings left",
+ "source_hash": "1f38650f24ca",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 708,
+  "parts": 3,
+  "size_m": [
+   0.3,
+   0.38,
+   0.2925
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.38,
+   "body.size.x / body.size.y": 0.7895,
+   "handle_right.max.x - body.max.x": -0.0322
+  }
+ },
+ "errors": [],
+ "params": {
+  "vase_h": 0.38,
+  "belly_r": 0.15,
+  "belly_y": 0.13,
+  "foot_r": 0.085,
+  "shoulder_y": 0.24,
+  "neck_r": 0.045,
+  "neck_y": 0.29,
+  "lip_r": 0.085,
+  "wall": 0.012,
+  "sides": 14.0,
+  "handle_y": 0.265,
+  "handle_r": 0.032,
+  "handle_t": 0.015
+ }
+}

@@ -1,0 +1,116 @@
+{
+ "asset": "timber_wall",
+ "status": "PASS",
+ "source_hash": "704eb6f262bb",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 3
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 646,
+  "parts": 18,
+  "sliver_triangles": 85,
+  "size_m": [
+   2.0,
+   3.0,
+   0.2886
+  ],
+  "contacts": 51,
+  "triangles_by_part": {
+   "plaster": 32,
+   "sole_plate": 44,
+   "top_plate": 44,
+   "corner_post": 88,
+   "stud": 88,
+   "sill_rail": 44,
+   "header": 44,
+   "bay_rail": 88,
+   "brace_low": 24,
+   "brace_high": 24,
+   "window_frame": 32,
+   "sill": 44,
+   "mullion": 50
+  },
+  "budget_triangles": 1500,
+  "materials": 3,
+  "checks": {
+   "asset.width": 2.0,
+   "sole_plate.size.x": 2.0,
+   "corner_post_right.max.x": 1.0,
+   "corner_post_right.size.x * 2": 0.2,
+   "asset.height": 3.0,
+   "window_frame.size.x": 0.8026,
+   "sill.size.x > window_frame.size.x and sill.max.z > top_plate.max.z": true
+  },
+  "uv_utilization": 0.478,
+  "uv_overlap": 0.0,
+  "uv_owners": 18,
+  "texel_density_px_m": 133.9,
+  "texel_density_target": 120,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 120.0,
+   "achieved_px_m": 134.1,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 18
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "corner_post_left",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "corner_post_right",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv lock ASSET` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/timber_wall/export/timber_wall.glb",
+  "bytes": 635672,
+  "nodes": 40,
+  "meshes": 36,
+  "materials": 3
+ }
+}

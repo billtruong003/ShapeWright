@@ -1,0 +1,46 @@
+{
+ "iteration": 1,
+ "note": "first pass: sills, tapered posts, braces, iron axle, drum, 9 rope coils, bent tube crank + grip, rope, J hook",
+ "critique": "brace.rotate sign wrong: braces splay outward in a V instead of leaning into the post -> negate the atan2 angle; rope below 3 cm min feature -> tag thin_ok (rope is thin by nature); crank/hook shapes read well",
+ "source_hash": "81b932fab2d0",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 2,
+  "info": 3
+ },
+ "metrics": {
+  "triangles": 1392,
+  "parts": 23,
+  "size_m": [
+   1.4845,
+   1.377,
+   0.6244
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "drum.center.y": 1.08,
+   "grip.center.y": 0.82,
+   "hook.max.y": 0.37
+  }
+ },
+ "errors": [],
+ "params": {
+  "post_x": 0.55,
+  "post": 0.12,
+  "post_h": 1.3,
+  "drum_y": 1.08,
+  "drum_r": 0.1,
+  "axle_r": 0.028,
+  "rope_r": 0.016,
+  "coils": 9.0,
+  "crank_arm": 0.26,
+  "grip_l": 0.16,
+  "rope_low": 0.35,
+  "sill_l": 0.62,
+  "brace_lo": 0.24,
+  "brace_hi": 0.4,
+  "wear": 0.004
+ }
+}

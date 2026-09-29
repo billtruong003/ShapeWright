@@ -1,0 +1,99 @@
+{
+ "asset": "stone_doorway",
+ "status": "PASS",
+ "source_hash": "b5c3b4b5afc5",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 2
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 696,
+  "parts": 22,
+  "sliver_triangles": 20,
+  "size_m": [
+   2.0,
+   3.0,
+   0.5315
+  ],
+  "contacts": 26,
+  "triangles_by_part": {
+   "wall": 60,
+   "jamb_long": 176,
+   "jamb_short": 176,
+   "voussoir": 96,
+   "keystone": 12,
+   "plinth": 88,
+   "coping": 44,
+   "threshold": 44
+  },
+  "budget_triangles": 2000,
+  "materials": 2,
+  "checks": {
+   "wall.size.x": 2.0,
+   "asset.width": 2.0,
+   "keystone.max.y": 2.4543,
+   "voussoir.count": 8.0,
+   "2 * r_in": 1.2,
+   "spring_y + r_in": 2.05
+  },
+  "uv_utilization": 0.477,
+  "uv_overlap": 0.0,
+  "uv_owners": 22,
+  "texel_density_px_m": 132.1,
+  "texel_density_target": 120,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 120.0,
+   "achieved_px_m": 130.2,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 22
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "threshold",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv lock ASSET` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/stone_doorway/export/stone_doorway.glb",
+  "bytes": 607640,
+  "nodes": 48,
+  "meshes": 44,
+  "materials": 2
+ }
+}

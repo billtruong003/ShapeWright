@@ -1,0 +1,189 @@
+# Small industrial gearbox. Chamfered cast housing on a footed base, a bolted
+# inspection cover on top, the input shaft leaving the left (-X) side through a
+# bearing boss, and an exposed spur-gear pair on the right (+X) side: a pinion
+# on the input shaft axis meshing with a larger gear (teeth interleave: the big
+# gear presents a tooth toward the pinion, the pinion a gap).
+# Gears: root disk + radially repeated tapered teeth, boolean-unioned, then
+# rotated so the axle runs along X (local +x of a tooth -> world +Y).
+shapewright: 0.1
+asset:
+  name: gearbox
+  kind: prop/industrial/gearbox
+  description: Small stylized industrial gearbox with bolted cover, input shaft and an exposed meshing spur-gear pair.
+profile: desktop_indie
+style: stylized_lowpoly
+budget: {triangles: 2500, materials: 3}
+
+params:
+  hw:        {value: 0.34, min: 0.25, max: 0.5, doc: housing width (x)}
+  hh:        {value: 0.28, min: 0.2, max: 0.4, doc: housing height above the base}
+  hd:        {value: 0.42, min: 0.3, max: 0.55, doc: housing depth (z)}
+  base_t:    {value: 0.04, doc: base plate thickness}
+  base_over: {value: 0.05, doc: base plate overhang past the housing}
+  cover_t:   {value: 0.03}
+  cover_in:  {value: 0.025, doc: cover inset from the housing edge}
+  bolt_r:    {value: 0.012}
+  bolt_h:    {value: 0.014}
+  module:    {value: 0.012, doc: gear module (tooth size); pitch radius = module * teeth / 2}
+  n_big:     {value: 16}
+  n_small:   {value: 10}
+  gear_t:    {value: 0.035, doc: gear face width (x)}
+  r_big:     module * n_big / 2
+  r_small:   module * n_small / 2
+  centre_d:  {value: r_big + r_small, doc: centre distance of the meshing pair}
+  tooth_len: {value: module * 2.1 + 0.01, doc: tooth height plus 1 cm buried in the disk}
+  gear_y:    {value: base_t + hh * 0.5, doc: axle height}
+  small_z:   {value: centre_d / 2 + 0.01, doc: pinion (input axis) z}
+  big_z:     small_z - centre_d
+  shaft_r:   {value: 0.022}
+  shaft_len: {value: 0.16, doc: input shaft protrusion from the left boss}
+
+materials:
+  cast:  {base_color: "#3f5f3a", roughness: 0.7, doc: painted cast housing}
+  steel: {base_color: "#9aa1a8", metallic: 0.85, roughness: 0.4}
+  dark:  {base_color: "#2f3236", metallic: 0.6, roughness: 0.55, doc: "bolts, base, cover"}
+
+parts:
+  base:
+    doc: footed base plate with bolt-down lugs
+    shape: {type: chamfer_box, size: [hw + 2 * base_over, base_t, hd + 2 * base_over * 0.4], chamfer: 0.008}
+    anchor: bottom
+    position: [0, 0, 0]
+    material: dark
+
+  housing:
+    shape: {type: chamfer_box, size: [hw, hh, hd], chamfer: 0.02}
+    ops: [{type: taper, axis: y, scale: [0.94, 1, 0.96]}]
+    anchor: bottom
+    attach: {to: base, at: top, offset: [0, -0.005, 0]}
+    material: cast
+
+  cover:
+    doc: bolted inspection cover on top
+    shape: {type: chamfer_box, size: [hw * 0.94 - 2 * cover_in, cover_t, hd * 0.96 - 2 * cover_in], chamfer: 0.006}
+    anchor: bottom
+    attach: {to: housing, at: top, offset: [0, -0.004, 0]}
+    material: dark
+
+  cover_bolt:
+    doc: hex bolt heads around the cover rim (3 per long side)
+    measure: {cv: {bounds: cover}}
+    shape: {type: cylinder, radius: bolt_r, height: bolt_h, segments: 6}
+    anchor: bottom
+    attach: {to: cover, at: top_back_right, offset: [-0.025, -0.003, 0.03]}
+    array: {count: 3, offset: [0, 0, (cv.size.z - 0.06) / 2]}
+    mirror: x
+    tags: [thin_ok]
+    material: steel
+
+  filler_plug:
+    doc: oil filler plug on the cover
+    shape: {type: cylinder, radius: 0.028, height: 0.03, segments: 8, chamfer: 0.006}
+    anchor: bottom
+    attach: {to: cover, at: top, offset: [-0.03, -0.004, -0.04]}
+    material: steel
+
+  rib:
+    doc: cast stiffening ribs on the front and back faces
+    shape: {type: chamfer_box, size: [0.036, hh * 0.8, 0.045], chamfer: 0.008}
+    ops: [{type: taper, axis: y, scale: [0.7, 1, 0.5]}]
+    anchor: bottom_back
+    attach: {to: housing, at: bottom_front, offset: [-hw * 0.22, 0, -0.025]}
+    mirror: [x, z]
+    material: cast
+
+  foot_bolt:
+    shape: {type: cylinder, radius: bolt_r, height: bolt_h, segments: 6}
+    anchor: bottom
+    attach: {to: base, at: top_front_right, offset: [-base_over / 2, -0.003, -0.035]}
+    mirror: [x, z]
+    tags: [thin_ok]
+    material: steel
+
+  boss_left:
+    doc: bearing boss where the input shaft leaves the housing
+    shape: {type: cylinder, radius: shaft_r * 2.3, height: 0.04, segments: 8, chamfer: 0.006}
+    rotate: [0, 0, 90]
+    anchor: right
+    position: [-hw * 0.47 + 0.012, gear_y, small_z]
+    material: cast
+
+  input_shaft:
+    doc: input shaft with a keyway flat, left side
+    shape: {type: cylinder, radius: shaft_r, height: shaft_len + 0.06, segments: 8}
+    ops: [{type: subtract, shape: {type: box, size: [0.02, shaft_len * 0.7, 0.02]}, position: [shaft_r + 0.004, (shaft_len + 0.06) / 2 - shaft_len * 0.35, 0]}]
+    rotate: [0, 0, 90]
+    anchor: right
+    attach: {to: boss_left, at: right, offset: [-0.01, 0, 0]}
+    material: steel
+
+  boss_right:
+    doc: bearing bosses on the gear side, one per axle
+    shape: {type: cylinder, radius: shaft_r * 2.0, height: 0.03, segments: 8, chamfer: 0.005}
+    rotate: [0, 0, 90]
+    anchor: left
+    position: [hw * 0.47 - 0.012, gear_y, small_z]
+    array: {count: 2, offset: [0, 0, -centre_d]}
+    material: cast
+
+  pinion:
+    doc: small gear on the input axis
+    shape:
+      type: boolean
+      operation: union
+      base: {type: cylinder, radius: r_small - module * 1.25, height: gear_t, segments: n_small}
+      tools:
+        - {type: box, size: [tooth_len, gear_t, module * 2.0],
+           ops: [{type: taper, axis: x, scale: [1, 1, 0.55]}, {type: translate, offset: [r_small + module - tooth_len / 2, 0, 0]},
+                 {type: repeat, count: n_small, radial: y}]}
+        - {type: cylinder, radius: shaft_r * 1.6, height: gear_t + 0.03, segments: 8, translate: [0, 0.015, 0]}
+    rotate: [0, 0, 90]
+    anchor: center
+    position: [hw * 0.47 + 0.018 + gear_t / 2 + 0.015, gear_y, small_z]
+    shading: flat
+    material: steel
+
+  big_gear:
+    doc: large gear with four lightening holes
+    shape:
+      type: boolean
+      operation: union
+      base:
+        type: cylinder
+        radius: r_big - module * 1.25
+        height: gear_t
+        segments: n_big
+        ops: [{type: subtract, shape: {type: cylinder, radius: 0.016, height: gear_t * 3, segments: 6,
+               ops: [{type: translate, offset: [r_big * 0.56, 0, 0]}, {type: repeat, count: 4, radial: y}]}}]
+      tools:
+        - {type: box, size: [tooth_len, gear_t, module * 2.0],
+           ops: [{type: taper, axis: x, scale: [1, 1, 0.55]}, {type: translate, offset: [r_big + module - tooth_len / 2, 0, 0]},
+                 {type: repeat, count: n_big, radial: y}]}
+        - {type: cylinder, radius: shaft_r * 1.6, height: gear_t + 0.03, segments: 8, translate: [0, 0.015, 0]}
+    rotate: [0, 0, 90]
+    anchor: center
+    position: [hw * 0.47 + 0.018 + gear_t / 2 + 0.015, gear_y, big_z]
+    shading: flat
+    material: steel
+
+  axle_nut:
+    doc: hex nuts holding the gears
+    shape: {type: cylinder, radius: shaft_r * 1.3, height: 0.018, segments: 6, chamfer: 0.003}
+    rotate: [0, 0, 90]
+    anchor: left
+    attach: {to: pinion, at: left, offset: [0.03 + gear_t - 0.004, 0, 0]}
+    array: {count: 2, offset: [0, 0, -centre_d]}
+    tags: [thin_ok]
+    material: dark
+
+sockets:
+  input: {attach: {to: input_shaft, at: left}, doc: input coupling point}
+
+collision: {mode: box}
+
+checks:
+  - {expr: asset.height, min: 0.3, max: 0.45}
+  - {expr: big_gear.size.y, min: 2 * r_big, max: 2 * r_big + 3 * module, doc: tip diameter of the big gear}
+  - {expr: pinion.max.z < big_gear.max.z + centre_d, doc: pinion sits beside the big gear}
+  - {expr: big_gear.min.z > housing.min.z - 0.02, doc: gears stay within the side face}
+  - {expr: big_gear.min.y > base.max.y, doc: big gear clears the base}

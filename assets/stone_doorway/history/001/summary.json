@@ -1,0 +1,53 @@
+{
+ "iteration": 1,
+ "note": "blockout: rubble wall with arched cut, alternating quoins, 8 voussoirs + keystone, threshold",
+ "critique": "reads as an arched doorway; voussoir radial joints correct. wall: flat slab with no base/top articulation -> add plinth + coping courses (full width so they tile); uv: TEX_DENSITY_BELOW_TARGET 512 px/m unattainable at 1024 -> texel_density 160; keystone only 0.1 m above ring -> ok, keep",
+ "source_hash": "4fa87bf80e85",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 564,
+  "parts": 19,
+  "size_m": [
+   2.0,
+   3.0,
+   0.5315
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "wall.size.x": 2.0,
+   "asset.width": 2.0,
+   "keystone.max.y": 2.4543,
+   "voussoir.count": 8.0,
+   "2 * r_in": 1.2,
+   "spring_y + r_in": 2.05
+  }
+ },
+ "errors": [],
+ "params": {
+  "module_w": 2.0,
+  "wall_h": 3.0,
+  "wall_t": 0.4,
+  "r_in": 0.6,
+  "spring_y": 1.45,
+  "ring": 0.32,
+  "n_side": 4.0,
+  "wear": 0.006,
+  "stone_proud": 0.035,
+  "cut_clear": 0.03,
+  "mortar": 1.6,
+  "jamb_h_gap": 0.012,
+  "courses": 4.0,
+  "r_out": 0.92,
+  "step": 20.0,
+  "arc": 18.4,
+  "stone_d": 0.47,
+  "course_h": 0.3625,
+  "key_half": 10.4
+ }
+}

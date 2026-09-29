@@ -1,0 +1,37 @@
+{
+ "iteration": 1,
+ "note": "component-based cluster: 3 fantasy_mushroom instances, spots as flattened spheres in a combine, domed caps",
+ "critique": "first pass spots were thin discs tilted/sunk into the dome and read as chevrons (also found boolean material-provenance bug: fixed in backend); now flattened spheres pushed out 0.3r read as spots; caps domed (h/r 0.8); red cap undersides look unfinished -> add cream gill cone under each cap; stems fine",
+ "source_hash": "dc5b1bf061d5",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 3,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 1120,
+  "parts": 7,
+  "size_m": [
+   0.4706,
+   0.4351,
+   0.4747
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.4351,
+   "big.height > mid.height and mid.height > small.height": true,
+   "small.height / big.height": 0.4107
+  }
+ },
+ "errors": [],
+ "params": {
+  "mound_r": 0.24,
+  "mound_h": 0.05,
+  "big_h": 0.3,
+  "mid_h": 0.19,
+  "small_h": 0.11,
+  "sink": 0.02
+ }
+}

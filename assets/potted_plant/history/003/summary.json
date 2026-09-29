@@ -1,0 +1,42 @@
+{
+ "iteration": 3,
+ "note": "longer low leaves (0.38) tilted 62 with less bend; wider blades",
+ "critique": "tier check caught low leaves rising to mid height after lengthening -> tilt 52->62, bend 40->30; now 3 clear tiers; front low leaf foreshortened in 3/4 view but reads from front/top; GEO_PART_FRAGMENTED on leaf tiers intended (separate blades); stopping: no significant findings",
+ "source_hash": "76709874b096",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 3,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 816,
+  "parts": 5,
+  "size_m": [
+   0.3379,
+   0.4639,
+   0.5355
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "pot.max.y": 0.22,
+   "asset.height / pot.height": 2.1085,
+   "leaves_upright.max.y > leaves_mid.max.y and leaves_mid.max.y > leaves_low.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "pot_h": 0.22,
+  "pot_top": 0.12,
+  "pot_bot": 0.085,
+  "rim_h": 0.045,
+  "rim_out": 0.016,
+  "wall": 0.014,
+  "pot_sides": 14.0,
+  "soil_d": 0.025,
+  "leaf_w": 0.085,
+  "leaf_t": 0.014,
+  "sink": 0.03
+ }
+}

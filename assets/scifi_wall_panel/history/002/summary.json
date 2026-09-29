@@ -1,0 +1,49 @@
+{
+ "iteration": 2,
+ "note": "split lines fixed, vertical panel lines, wider grooves, bigger corner bolts",
+ "critique": "3/4 now reads as a sci-fi cargo panel: layered panel lines frame the raised accent hatch, vents read at thumbnail, corner bolts enlarged (0.026->0.034) so they register. No significant findings -> export",
+ "source_hash": "cc2c3d3edf9f",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 972,
+  "parts": 9,
+  "size_m": [
+   1.2,
+   1.8,
+   0.1901
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "panel.size.x": 1.2,
+   "hatch.max.z - panel.max.z": 0.045,
+   "vent_left.max.y < hatch.min.y - 0.05": true,
+   "bolt_top_right.max.y < panel.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "pw": 1.2,
+  "ph": 1.8,
+  "pt": 0.08,
+  "groove_w": 0.022,
+  "groove_d": 0.012,
+  "border": 0.09,
+  "hatch_w": 0.52,
+  "hatch_h": 0.62,
+  "hatch_t": 0.045,
+  "hatch_y": 1.008,
+  "seam": 0.04,
+  "vent_w": 0.34,
+  "vent_h": 0.2,
+  "vent_y": 0.36,
+  "slots": 5.0,
+  "bolt_r": 0.034,
+  "bolt_in": 0.052
+ }
+}

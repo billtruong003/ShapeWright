@@ -1,0 +1,52 @@
+{
+ "iteration": 1,
+ "note": "frame, plaster with window cut, braces, window frame/sill/cross mullion; seam-safe jitter; braces sized perpendicular; chunkier sill",
+ "critique": "first review: jitter on plates/corner posts pushed the module to 2.0075 m (CHECK_FAILED on tiling width) -> X jitter removed on seam parts; braces read spindly (vertical width 0.14 on a steep brace = 5 cm true width) -> width measured perpendicular 0.11; sill too thin -> 0.065 x 0.17. No significant findings left.",
+ "source_hash": "704eb6f262bb",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 3
+ },
+ "metrics": {
+  "triangles": 646,
+  "parts": 18,
+  "size_m": [
+   2.0,
+   3.0,
+   0.2886
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.width": 2.0,
+   "sole_plate.size.x": 2.0,
+   "corner_post_right.max.x": 1.0,
+   "corner_post_right.size.x * 2": 0.2,
+   "asset.height": 3.0,
+   "window_frame.size.x": 0.8026,
+   "sill.size.x > window_frame.size.x and sill.max.z > top_plate.max.z": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "module_w": 2.0,
+  "wall_h": 3.0,
+  "win_w": 0.8,
+  "sill_y": 1.0,
+  "win_h": 1.0,
+  "wear": 0.004,
+  "tim_d": 0.18,
+  "pla_d": 0.12,
+  "plate_h": 0.2,
+  "post_w": 0.2,
+  "stud_w": 0.16,
+  "rail_h": 0.15,
+  "brace_w": 0.11,
+  "frame_w": 0.07,
+  "frame_d": 0.15,
+  "mull_w": 0.05,
+  "ch": 0.015
+ }
+}

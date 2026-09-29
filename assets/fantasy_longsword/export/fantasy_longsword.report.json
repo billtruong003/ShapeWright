@@ -1,0 +1,78 @@
+{
+ "asset": "fantasy_longsword",
+ "status": "PASS",
+ "source_hash": "e293a3b822de",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 588,
+  "parts": 12,
+  "sliver_triangles": 40,
+  "size_m": [
+   0.26,
+   1.1398,
+   0.084
+  ],
+  "contacts": 14,
+  "triangles_by_part": {
+   "pommel": 64,
+   "grip": 28,
+   "wrap": 336,
+   "guard": 36,
+   "guard_boss": 44,
+   "blade": 80
+  },
+  "budget_triangles": 800,
+  "materials": 3,
+  "checks": {
+   "asset.height": 1.1398,
+   "blade.size.y / asset.height": 0.7194,
+   "guard.size.x / blade.size.x": 3.4211,
+   "wrap.last.max.y < guard.min.y": true
+  },
+  "uv_utilization": 0.491,
+  "uv_overlap": 0.0,
+  "uv_owners": 12,
+  "texel_density_px_m": 1287.2,
+  "texel_density_target": 512,
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "blade",
+   "msg": "40/80 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 40
+   }
+  }
+ ],
+ "export": {
+  "path": "assets/fantasy_longsword/export/fantasy_longsword.glb",
+  "bytes": 61540,
+  "nodes": 27,
+  "meshes": 24,
+  "materials": 3
+ }
+}

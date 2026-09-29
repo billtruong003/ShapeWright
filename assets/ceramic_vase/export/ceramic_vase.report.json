@@ -1,0 +1,79 @@
+{
+ "asset": "ceramic_vase",
+ "status": "PASS",
+ "source_hash": "1f38650f24ca",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 708,
+  "parts": 3,
+  "sliver_triangles": 0,
+  "size_m": [
+   0.3,
+   0.38,
+   0.2925
+  ],
+  "contacts": 2,
+  "triangles_by_part": {
+   "body": 420,
+   "handle": 288
+  },
+  "budget_triangles": 1200,
+  "materials": 2,
+  "checks": {
+   "asset.height": 0.38,
+   "body.size.x / body.size.y": 0.7895,
+   "handle_right.max.x - body.max.x": -0.0322
+  },
+  "uv_utilization": 0.404,
+  "uv_overlap": 0.0,
+  "uv_owners": 2,
+  "texel_density_px_m": 478.4,
+  "texel_density_target": 256,
+  "texture": {
+   "resolution": 256,
+   "target_px_m": 256.0,
+   "achieved_px_m": 274.7,
+   "memory_kb": 512,
+   "lifecycle": {
+    "DERIVED": 2
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv lock ASSET` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/ceramic_vase/export/ceramic_vase.glb",
+  "bytes": 54332,
+  "nodes": 7,
+  "meshes": 6,
+  "materials": 2
+ }
+}

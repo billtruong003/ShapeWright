@@ -1,0 +1,42 @@
+{
+ "iteration": 1,
+ "note": "blockout: swept tapering horn, measured rim band, tip cap+loop, 6-point strap",
+ "critique": "reads as a drinking horn; strap.strap_r 7mm square reads as wire and its 6-point path is angular and towers 10cm over the mouth -> strap_r 0.01, strap_sag 0.1->0.06, 9 path points; horn mid-section looks thin vs mouth -> mouth_r 0.05->0.055, tip_r 0.01->0.012; tip_loop tiny -> radius 0.014->0.017",
+ "source_hash": "5df1dcc1bd9c",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 468,
+  "parts": 5,
+  "size_m": [
+   0.4299,
+   0.4859,
+   0.1021
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.4859,
+   "horn.size.x": 0.3982,
+   "rim_band.max.y - horn.max.y": 0.012
+  }
+ },
+ "errors": [],
+ "params": {
+  "mouth_r": 0.05,
+  "tip_r": 0.01,
+  "horn_sides": 10.0,
+  "span": 0.34,
+  "rise": 0.36,
+  "tip_rise": 0.2,
+  "band_h": 0.035,
+  "band_t": 0.008,
+  "lip": 0.012,
+  "strap_r": 0.007,
+  "strap_sag": 0.1
+ }
+}

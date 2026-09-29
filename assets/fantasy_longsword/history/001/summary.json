@@ -1,0 +1,49 @@
+{
+ "iteration": 1,
+ "note": "blockout: extruded blade x diamond prism, fullers, winged guard, wrap bands, lathe pommel",
+ "critique": "wrap_4 overlaps guard (absolute position hand-computed) -> attach wraps to grip bottom; blade reads slender for stylized -> blade_w 0.066->0.076; fuller barely visible in front ortho -> fuller_w 0.016->0.02, fuller_d 0.003->0.004; guard thin vs blade -> guard_h 0.045->0.055, guard_t 0.04->0.05; pommel small next to guard -> pommel_r 0.035->0.042",
+ "source_hash": "4ec88d0532f7",
+ "status": "FAIL",
+ "counts": {
+  "error": 1,
+  "warning": 0,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 524,
+  "parts": 9,
+  "size_m": [
+   0.26,
+   1.1137,
+   0.07
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 1.1137,
+   "blade.size.y / asset.height": 0.7363,
+   "guard.size.x / blade.size.x": 3.9394,
+   "wrap.last.max.y < guard.min.y": false
+  }
+ },
+ "errors": [
+  "CHECK_FAILED[checks[3]]"
+ ],
+ "params": {
+  "blade_len": 0.82,
+  "blade_w": 0.066,
+  "blade_t": 0.016,
+  "tip_len": 0.13,
+  "bevel_k": 2.2,
+  "fuller_w": 0.016,
+  "fuller_d": 0.003,
+  "fuller_len": 0.5084,
+  "guard_w": 0.26,
+  "guard_h": 0.045,
+  "guard_t": 0.04,
+  "grip_len": 0.21,
+  "grip_r": 0.017,
+  "wraps": 5.0,
+  "pommel_r": 0.035
+ }
+}

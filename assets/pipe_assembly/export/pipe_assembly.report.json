@@ -1,0 +1,93 @@
+{
+ "asset": "pipe_assembly",
+ "status": "PASS",
+ "source_hash": "404152a4a8e5",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 2444,
+  "parts": 31,
+  "sliver_triangles": 64,
+  "size_m": [
+   1.02,
+   1.513,
+   1.3058
+  ],
+  "contacts": 30,
+  "triangles_by_part": {
+   "floor_flange": 240,
+   "flange_bolt": 160,
+   "pipe": 272,
+   "coupling_low": 152,
+   "coupling_high": 152,
+   "valve_body": 384,
+   "bonnet": 120,
+   "stand_beam": 44,
+   "stem": 40,
+   "stand_post": 88,
+   "clamp": 160,
+   "handwheel": 544,
+   "stand_foot": 88
+  },
+  "budget_triangles": 3000,
+  "materials": 3,
+  "checks": {
+   "pipe_right.max.y - pipe_r": 1.1968,
+   "pipe_right.center.x - pipe_left.center.x": 0.6,
+   "pipe_right.size.z": 0.9818,
+   "handwheel_right.min.y > valve_body_right.max.y": true,
+   "handwheel_right.min.x > handwheel_left.max.x": true,
+   "floor_flange.min.y": 0.0
+  },
+  "uv_utilization": 0.404,
+  "uv_overlap": 0.0,
+  "uv_owners": 31,
+  "texel_density_px_m": 316.7,
+  "texel_density_target": 256,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 256.0,
+   "achieved_px_m": 309.0,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 31
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv lock ASSET` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/pipe_assembly/export/pipe_assembly.glb",
+  "bytes": 1020684,
+  "nodes": 65,
+  "meshes": 62,
+  "materials": 3
+ }
+}

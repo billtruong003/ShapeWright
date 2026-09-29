@@ -1,0 +1,121 @@
+# Drinking horn: a tapering tube swept along a curling path (mouth up on the left, curling
+# down through the belly and up again to a capped tip on the right), a metal rim band sized
+# from the mouth's real cross-section, a metal tip cap with a small loop, and a leather
+# carrying strap slung between the rim band and the tip loop.
+shapewright: 0.1
+asset:
+  name: drinking_horn
+  kind: prop/tableware/drinking_horn
+  description: Stylized low-poly curled animal-horn drinking horn with a metal rim band, metal tip cap and a leather carrying strap.
+profile: mobile_mid
+style: stylized_lowpoly
+budget: {triangles: 1000, materials: 3}   # horn / metal / leather: the strap must read as a different material
+
+params:
+  mouth_r:   {value: 0.05, min: 0.035, max: 0.07, doc: outer radius of the horn at the mouth}
+  tip_r:     {value: 0.01, doc: radius at the tip}
+  horn_sides: {value: 10, doc: facets around the horn}
+  span:      {value: 0.34, doc: horizontal distance mouth -> tip}
+  rise:      {value: 0.36, doc: height of the mouth above the belly}
+  tip_rise:  {value: 0.2, doc: height of the tip above the belly}
+  band_h:    {value: 0.035, doc: rim band height}
+  band_t:    {value: 0.008, doc: rim band radial thickness}
+  lip:       {value: 0.012, doc: how far the band stands proud of the horn's mouth (reads as the opening)}
+  strap_r:   {value: 0.007, doc: strap half-thickness}
+  strap_sag: {value: 0.1, doc: how far the strap arcs above the mouth}
+
+materials:
+  horn:    {archetype: flat, color: "#d9c39a", roughness: 0.45, edge_wear: 0.15, edge_color: "#f2e6c8", doc: polished pale horn}
+  metal:   {archetype: metal, color: "#b08a4a", roughness: 0.35, edge_wear: 0.5, doc: brass fittings}
+  leather: {archetype: flat, color: "#6b3f24", roughness: 0.8, doc: carrying strap}
+
+parts:
+  horn:
+    doc: tapering, curling horn; path points are fractions of span/rise so the curl scales with the params
+    shape:
+      type: tube
+      sides: horn_sides
+      radius: mouth_r
+      radius_end: tip_r
+      path:
+        - [0, rise, 0]
+        - [0.0, rise * 0.8, 0]
+        - [span * 0.03, rise * 0.55, 0]
+        - [span * 0.1, rise * 0.33, 0]
+        - [span * 0.22, rise * 0.15, 0]
+        - [span * 0.38, rise * 0.06, 0.005]
+        - [span * 0.55, rise * 0.05, 0.01]
+        - [span * 0.7, rise * 0.1, 0.005]
+        - [span * 0.82, tip_rise * 0.55, -0.005]
+        - [span * 0.92, tip_rise * 0.8, -0.015]
+        - [span, tip_rise, -0.03]
+    shading: auto
+    smooth_angle: 50
+    anchor: bottom
+    position: [0, 0, 0]
+    material: horn
+
+  rim_band:
+    doc: metal band around the mouth, standing proud of it so the opening reads
+    measure:
+      hb: {bounds: horn}
+      mouth: {section: horn, axis: y, at: hb.max.y - band_h / 2 + lip}
+    shape: {type: ring, radius: mouth.size.x / 2 + band_t / 2, thickness: band_t * 2, height: band_h, segments: horn_sides}
+    anchor: top
+    position: [mouth.center.x, hb.max.y + lip, mouth.center.z]
+    shading: flat
+    tags: [thin_ok]
+    material: metal
+
+  tip_cap:
+    doc: metal cap on the tip (cut by a vertical plane just inside the tip end)
+    measure:
+      hb: {bounds: horn}
+      tip: {section: horn, axis: x, at: hb.max.x - 0.012}
+    shape: {type: sphere, radius: tip_r * 1.8, segments: 8, rings: 5}
+    anchor: center
+    position: [hb.max.x - 0.008, tip.center.y, tip.center.z]
+    shading: auto
+    material: metal
+
+  tip_loop:
+    doc: small ring on the tip cap that the strap hangs from
+    shape: {type: torus, radius: 0.014, tube: 0.004, segments: 8, sides: 4}
+    rotate: [90, 0, 0]
+    anchor: bottom
+    attach: {to: tip_cap, at: top, offset: [0, -0.006, 0]}
+    tags: [thin_ok]
+    material: metal
+
+  strap:
+    doc: leather carrying strap from the outer side of the rim band, arching over, down into the tip loop
+    measure:
+      band: {bounds: rim_band}
+      loop: {bounds: tip_loop}
+    shape:
+      type: tube
+      sides: 4
+      radius: strap_r
+      path:
+        - [band.min.x + 0.004, band.center.y, 0]
+        - [band.min.x - 0.01, band.max.y + strap_sag * 0.5, 0]
+        - [band.center.x + 0.04, band.max.y + strap_sag, 0]
+        - [(band.center.x + loop.center.x) / 2 + 0.05, band.max.y + strap_sag * 0.85, 0]
+        - [loop.center.x, loop.max.y + 0.03, 0]
+        - [loop.center.x, loop.center.y + 0.004, 0]
+    anchor: bottom_right
+    position: [loop.center.x + strap_r, loop.center.y + 0.004 - strap_r * 0, loop.center.z]
+    shading: flat
+    tags: [thin_ok]
+    material: leather
+
+sockets:
+  grip: {attach: {to: horn, at: center}, doc: hand hold}
+  hang: {attach: {to: strap, at: top}, doc: carry / hang point}
+
+collision: {mode: hull}
+
+checks:
+  - {expr: asset.height, min: 0.35, max: 0.55}
+  - {expr: horn.size.x, min: 0.3, max: 0.45, doc: horn spans roughly a forearm}
+  - {expr: rim_band.max.y - horn.max.y, min: 0.005, max: 0.02, doc: band stands proud of the mouth}

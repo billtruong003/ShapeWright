@@ -1,0 +1,42 @@
+{
+ "iteration": 2,
+ "note": "low leaves arch instead of hang, twist on all leaves",
+ "critique": "twist gives life; low leaves still rest on the front rim -> tilt 58->52; crown a bit sparse vs the pot -> leaf_w 0.075->0.085",
+ "source_hash": "7dec1214dff2",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 3,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 816,
+  "parts": 5,
+  "size_m": [
+   0.3124,
+   0.4639,
+   0.4386
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "pot.max.y": 0.22,
+   "asset.height / pot.height": 2.1085,
+   "leaves_upright.max.y > leaves_mid.max.y and leaves_mid.max.y > leaves_low.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "pot_h": 0.22,
+  "pot_top": 0.12,
+  "pot_bot": 0.085,
+  "rim_h": 0.045,
+  "rim_out": 0.016,
+  "wall": 0.014,
+  "pot_sides": 14.0,
+  "soil_d": 0.025,
+  "leaf_w": 0.075,
+  "leaf_t": 0.014,
+  "sink": 0.03
+ }
+}

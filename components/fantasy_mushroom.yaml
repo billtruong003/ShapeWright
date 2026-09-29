@@ -1,0 +1,83 @@
+# Reusable stylized mushroom: a tapering stem swept along a curve (leaning toward +X),
+# a domed cap seated on the stem tip (found by a section query) and tilted with the
+# stem, and flattened spots on the dome (a ring of 6 via a radial repeat + one near the
+# apex). Rotate the instance about Y to choose which way it curves.
+shapewright: 0.1
+component: fantasy_mushroom
+doc: Curved-stem mushroom with a domed, spotted cap and pale gills. Materials `stem`, `cap`, `spots`, `gills`.
+
+params:
+  stem_h:   {value: 0.25, min: 0.05, max: 1.0, doc: stem height}
+  stem_r:   {value: 0.03, doc: stem radius at the foot}
+  curve:    {value: 0.06, doc: horizontal offset of the stem tip toward +X (the curve)}
+  cap_r:    {value: 0.12, doc: cap radius}
+  cap_h:    {value: 0.09, doc: cap dome height}
+  tilt:     {value: 12, doc: cap tilt toward +X in degrees (follow the stem)}
+  segs:     {value: 12, doc: facets around the cap}
+
+private:
+  spot_r:   cap_r * 0.17
+  ring_x:   cap_r * 0.8                  # spot ring sits on the dome profile between [0.92R, 0.45H] and [0.68R, 0.8H]
+  ring_y:   cap_h * 0.625 - cap_h / 2    # ...relative to the dome's bbox centre
+  spot_tilt: atan2(0.35 * cap_h, 0.24 * cap_r)   # surface normal of that profile segment, from vertical
+  spot_out: spot_r * 0.3                        # push spots out along the normal so they sit proud of the facets
+
+parts:
+  stem:
+    doc: tapering stem swept along a gentle curve; the foot flares a little
+    shape:
+      type: tube
+      sides: 7
+      radius: stem_r
+      radius_end: stem_r * 0.8
+      path:
+        - [0, 0, 0]
+        - [curve * 0.08, stem_h * 0.35, 0]
+        - [curve * 0.4, stem_h * 0.7, 0]
+        - [curve, stem_h, 0]
+    anchor: bottom
+    position: [0, 0, 0]
+    shading: auto
+    material: stem
+
+  cap:
+    doc: domed cap with its spots (one part, two materials); tilted to follow the stem
+    measure:
+      sb: {bounds: stem}
+      tip: {section: stem, axis: y, at: sb.max.y - 0.004}
+    shape:
+      type: combine        # spots are separate shells sunk into the dome (a boolean union costs ~40% more triangles)
+      items:
+        - type: lathe
+          segments: segs
+          material: cap
+          profile:
+            - [0, cap_h * 0.18]
+            - [cap_r * 0.95, 0]
+            - [cap_r, cap_h * 0.12]
+            - [cap_r * 0.92, cap_h * 0.45]
+            - [cap_r * 0.68, cap_h * 0.8]
+            - [cap_r * 0.35, cap_h * 0.98]
+            - [0, cap_h]
+        - type: lathe            # pale gill cone just under the red underside
+          segments: segs
+          material: gills
+          translate: [0, -cap_h / 2 + cap_h * 0.09 - 0.003, 0]
+          profile:
+            - [0, cap_h * 0.14]
+            - [cap_r * 0.9, 0]
+            - [cap_r * 0.86, cap_h * 0.03]
+            - [0, cap_h * 0.2]
+        - type: combine
+          material: spots
+          ops: [{type: repeat, count: 3, radial: y}]
+          translate: [0, ring_y + spot_out * cos(spot_tilt), 0]
+          items:
+            - {type: sphere, radius: spot_r, segments: 7, rings: 3, ops: [{type: scale, factor: [1, 0.5, 1]}], rotate: [0, 0, -spot_tilt], translate: [ring_x + spot_out * sin(spot_tilt), 0, 0]}
+            - {type: sphere, radius: spot_r, segments: 7, rings: 3, ops: [{type: scale, factor: [1, 0.5, 1]}], rotate: [0, 0, spot_tilt], translate: [-ring_x - spot_out * sin(spot_tilt), 0, 0]}
+        - {type: sphere, radius: spot_r * 0.9, segments: 7, rings: 3, material: spots, ops: [{type: scale, factor: [1, 0.5, 1]}], rotate: [-15, 0, 0], translate: [0, cap_h / 2 - 0.002, cap_r * 0.22]}
+    rotate: [0, 0, -tilt]
+    anchor: bottom
+    position: [tip.center.x, sb.max.y - cap_h * 0.3 - cap_r * sin(tilt), tip.center.z]   # tilted: bbox bottom is the low rim
+    shading: auto
+    material: cap

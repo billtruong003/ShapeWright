@@ -1,0 +1,46 @@
+{
+ "iteration": 3,
+ "note": "bark lumps + lean, texel density 200, growth rings split into ring_outer/ring_inner/heart parts",
+ "critique": "lean and lumps give a hand-made trunk; fragmentation warning gone; UV_TEXEL_DENSITY on thin ring ridges accepted (flat dark material, density irrelevant); no significant findings",
+ "source_hash": "1c3700bb0aeb",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 910,
+  "parts": 10,
+  "size_m": [
+   0.8047,
+   0.5176,
+   0.9027
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.5176,
+   "asset.width / (2 * stump_r)": 1.8288,
+   "cut_top.max.y >= trunk.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "stump_r": 0.22,
+  "stump_h": 0.48,
+  "sides": 13.0,
+  "bark_lumps": 0.03,
+  "root_in": 0.099,
+  "root_len": 0.46,
+  "root_h": 0.27,
+  "root_r0": 0.1,
+  "root_r1": 0.018,
+  "short_len": 0.34,
+  "short_h": 0.21,
+  "short_r0": 0.08,
+  "short_dir": 60.0,
+  "root_sides": 8.0,
+  "ring_w": 0.009
+ }
+}

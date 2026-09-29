@@ -1,0 +1,44 @@
+{
+ "iteration": 1,
+ "note": "blockout: lathed hollow body + 2 torus loop handles from measured shoulder section",
+ "critique": "reads as vase instantly; handle.handle_t 1.1cm looks thin vs style's chunky forms -> 0.015; body shows a hard horizontal band at the lower belly (flat-shaded crease) -> smooth_angle 50->65; perfectly machined -> jitter 0.002",
+ "source_hash": "fe5d236f9bc0",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 708,
+  "parts": 3,
+  "size_m": [
+   0.3,
+   0.38,
+   0.2925
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.38,
+   "body.size.x / body.size.y": 0.7895,
+   "handle_right.max.x - body.max.x": -0.0362
+  }
+ },
+ "errors": [],
+ "params": {
+  "vase_h": 0.38,
+  "belly_r": 0.15,
+  "belly_y": 0.13,
+  "foot_r": 0.085,
+  "shoulder_y": 0.24,
+  "neck_r": 0.045,
+  "neck_y": 0.29,
+  "lip_r": 0.085,
+  "wall": 0.012,
+  "sides": 14.0,
+  "handle_y": 0.265,
+  "handle_r": 0.032,
+  "handle_t": 0.011
+ }
+}

@@ -1,0 +1,158 @@
+shapewright: 0.1
+asset:
+  name: ceramic_vase
+  kind: prop/decor/vase
+  description: Stylized low-poly glazed ceramic vase with a bulbous body, narrow neck, flared lip and two loop handles.
+profile: mobile_mid
+style: stylized_lowpoly
+budget:
+  triangles: 1200
+  materials: 2
+params:
+  vase_h:
+    value: 0.38
+    min: 0.3
+    max: 0.45
+    doc: overall height to the lip
+  belly_r:
+    value: 0.15
+    doc: widest radius of the body
+  belly_y:
+    value: 0.13
+    doc: height of the widest point
+  foot_r:
+    value: 0.085
+    doc: radius of the foot ring
+  shoulder_y:
+    value: 0.24
+    doc: where the body turns in toward the neck
+  neck_r:
+    value: 0.045
+    doc: narrowest radius of the neck
+  neck_y:
+    value: 0.29
+  lip_r:
+    value: 0.085
+    doc: outer radius of the flared lip
+  wall:
+    value: 0.012
+    doc: wall thickness seen at the lip
+  sides:
+    value: 14
+    doc: facets around (low-poly faceting)
+  handle_y:
+    value: 0.265
+    doc: centre height of the loop handles (between shoulder and neck)
+  handle_r:
+    value: 0.032
+    doc: loop radius
+  handle_t:
+    value: 0.011
+    doc: loop thickness
+materials:
+  glaze:
+    archetype: flat
+    color: '#3f6f8a'
+    roughness: 0.35
+    edge_wear: 0.25
+    edge_color: '#8fb8c8'
+    doc: glossy blue glaze
+  glaze_rim:
+    archetype: flat
+    color: '#d8c49a'
+    roughness: 0.5
+    doc: pale glaze on handles
+parts:
+  body:
+    doc: hollow lathed body; the profile goes up the outside and back down the inside of the neck
+    shape:
+      type: lathe
+      segments: sides
+      profile:
+      - - 0
+        - 0
+      - - foot_r
+        - 0
+      - - foot_r + 0.006
+        - 0.018
+      - - foot_r + 0.004
+        - 0.028
+      - - belly_r * 0.85
+        - belly_y * 0.5
+      - - belly_r
+        - belly_y
+      - - belly_r * 0.93
+        - (belly_y + shoulder_y) / 2
+      - - belly_r * 0.66
+        - shoulder_y
+      - - neck_r * 1.15
+        - neck_y - 0.02
+      - - neck_r
+        - neck_y
+      - - neck_r * 1.1
+        - vase_h - 0.04
+      - - lip_r * 0.8
+        - vase_h - 0.012
+      - - lip_r
+        - vase_h
+      - - lip_r - wall
+        - vase_h
+      - - lip_r * 0.8 - wall
+        - vase_h - 0.018
+      - - neck_r - wall
+        - vase_h - 0.05
+      - - 0
+        - vase_h - 0.07
+    shading: auto
+    smooth_angle: 50
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    material: glaze
+  handle:
+    doc: small vertical loop, half sunk into the shoulder so it reads as applied clay
+    measure:
+      s:
+        section: body
+        axis: y
+        at: handle_y
+    shape:
+      type: torus
+      radius: handle_r
+      tube: handle_t
+      segments: 12
+      sides: 6
+    rotate:
+    - 90
+    - 0
+    - 0
+    anchor: center
+    position:
+    - s.max.x + handle_r * 0.35
+    - handle_y
+    - 0
+    mirror: x
+    uv:
+      share_instances: true
+    shading: auto
+    tags:
+    - thin_ok
+    material: glaze_rim
+collision:
+  mode: hull
+checks:
+- expr: asset.height
+  min: 0.3
+  max: 0.46
+  doc: tabletop vase height
+- expr: body.size.x / body.size.y
+  min: 0.6
+  max: 0.95
+  doc: bulbous but taller than wide
+- expr: handle_right.max.x - body.max.x
+  min: -0.04
+  max: 0.06
+  doc: handles stay small
+  close to the silhouette: null

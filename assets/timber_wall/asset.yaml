@@ -1,0 +1,201 @@
+# Modular timber-framed (half-timbered) wall, 2 m wide x 3 m tall. Plaster infill panel with a
+# rectangular window; oak frame of sole plate, top plate, half-width corner posts at the module
+# seams (two neighbours form one full post), window studs, rails, a header and diagonal braces.
+# The window has a painted frame, a projecting sill and a cross-shaped mullion.
+# Every part stays inside x = -1..+1 m, and the plates and plaster run to the seams, so copies
+# placed side by side at 2 m spacing form a continuous wall.
+shapewright: 0.1
+asset:
+  name: timber_wall
+  kind: prop/architecture/wall_module
+  description: Tileable 2 x 3 m timber-framed plaster wall module with a window, frame, sill and cross mullion.
+  tags: [architecture, modular, timber_frame, plaster, window]
+profile: desktop_indie
+style: stylized_lowpoly
+budget: {triangles: 1500}
+
+params:
+  module_w:  {value: 2.0, min: 2.0, max: 2.0, doc: module width (tiling grid)}
+  wall_h:    {value: 3.0, min: 2.6, max: 3.4, doc: module height}
+  win_w:     {value: 0.8, min: 0.6, max: 1.0, doc: clear window width between the studs}
+  sill_y:    {value: 1.0, min: 0.8, max: 1.2, doc: height of the window's bottom edge}
+  win_h:     {value: 1.0, min: 0.8, max: 1.3, doc: window opening height}
+  wear:      0.004
+  # timber and plaster sections
+  tim_d:     0.18              # timber depth (Z); proud of the plaster on both faces
+  pla_d:     0.12              # plaster panel depth
+  plate_h:   0.2               # sole and top plate height
+  post_w:    0.2               # full post width (corner posts are half of this)
+  stud_w:    0.16
+  rail_h:    0.15
+  brace_w:   0.11              # brace width measured perpendicular to its axis
+  frame_w:   0.07              # window frame member width
+  frame_d:   0.15
+  mull_w:    0.05
+  ch:        0.015             # chamfer on timbers
+
+materials:
+  oak:     {archetype: wood, color: "#4e3322", grain_strength: 0.35, grain_scale: 0.04, edge_wear: 0.3, grime: 0.25, grime_height: 0.35, doc: dark structural timbers}
+  plaster: {archetype: painted, color: "#e6dcc4", under_color: "#b8a88a", chips: 0.25, variation: 0.35, grime: 0.3, grime_height: 0.5, roughness: 0.95, doc: lime-washed infill}
+  trim:    {archetype: painted, color: "#3f6b6a", under_color: "#6b4a30", chips: 0.4, edge_wear: 0.4, doc: painted window frame and mullion}
+
+parts:
+  plaster:
+    doc: infill panel, window opening cut through (ends tucked 1 cm inside the corner posts)
+    shape:
+      type: boolean
+      operation: difference
+      base: {type: box, size: [module_w - 0.02, wall_h - 0.02, pla_d]}
+      tools:
+        - {type: box, size: [win_w, win_h, 1], translate: [0, "sill_y + win_h / 2 - wall_h / 2", 0]}
+    anchor: center
+    position: [0, wall_h / 2, 0]
+    shading: flat
+    material: plaster
+
+  sole_plate:
+    shape: {type: chamfer_box, size: [module_w, plate_h, tim_d], chamfer: ch}
+    ops: [{type: jitter, amount: [0, wear, wear], seed: 1}]   # no X jitter: seam faces stay flat
+    anchor: bottom
+    position: [0, 0, 0]
+    material: oak
+
+  top_plate:
+    shape: {type: chamfer_box, size: [module_w, plate_h, tim_d], chamfer: ch}
+    ops: [{type: jitter, amount: [0, wear, wear], seed: 2}]
+    anchor: top
+    position: [0, wall_h, 0]
+    material: oak
+
+  corner_post:
+    doc: half post at each seam; a neighbouring module supplies the other half
+    shape: {type: chamfer_box, size: [post_w / 2, wall_h - 2 * plate_h, tim_d], chamfer: ch}
+    ops: [{type: jitter, amount: [0, 0, wear], seed: 3}]
+    anchor: bottom_right
+    position: [module_w / 2, plate_h, 0]
+    mirror: x
+    material: oak
+
+  stud:
+    doc: window posts, full height between the plates
+    shape: {type: chamfer_box, size: [stud_w, wall_h - 2 * plate_h, tim_d], chamfer: ch}
+    ops: [{type: jitter, amount: [wear, 0, wear], seed: 4}]
+    anchor: bottom_left
+    position: [win_w / 2, plate_h, 0]
+    mirror: x
+    material: oak
+
+  sill_rail:
+    doc: rail under the window between the studs
+    measure:
+      span: {gap: [stud_left, stud_right], axis: x, section: {axis: y, at: sill_y}}
+    shape: {type: chamfer_box, size: [span.length, rail_h, tim_d], chamfer: ch}
+    anchor: top
+    position: [span.center, sill_y, 0]
+    material: oak
+
+  header:
+    doc: lintel over the window between the studs
+    measure:
+      span: {gap: [stud_left, stud_right], axis: x, section: {axis: y, at: sill_y}}
+    shape: {type: chamfer_box, size: [span.length, rail_h, tim_d], chamfer: ch}
+    anchor: bottom
+    position: [span.center, sill_y + win_h, 0]
+    material: oak
+
+  bay_rail:
+    doc: rail in each outer bay, level with the sill rail
+    measure:
+      bay: {gap: [stud_right, corner_post_right], axis: x, section: {axis: y, at: sill_y}}
+    shape: {type: chamfer_box, size: [bay.length, rail_h, tim_d], chamfer: ch}
+    anchor: top
+    position: [bay.center, sill_y, 0]
+    mirror: x
+    material: oak
+
+  brace_low:
+    doc: diagonal brace in the lower outer bay, from the post foot up to the stud under the rail
+    measure:
+      bay: {gap: [stud_right, corner_post_right], axis: x, section: {axis: y, at: sill_y}}
+      rail: {bounds: bay_rail_right}
+    shape:
+      type: extrude
+      depth: tim_d - 0.01
+      # vertical cut length at each end = brace_w / cos(slope angle)
+      polygon: [[bay.end, plate_h], [bay.end, "plate_h + brace_w * sqrt(bay.length ** 2 + (rail.min.y - plate_h) ** 2) / bay.length"],
+                [bay.start, rail.min.y], [bay.start, "rail.min.y - brace_w * sqrt(bay.length ** 2 + (rail.min.y - plate_h) ** 2) / bay.length"]]
+    anchor: bottom_left
+    position: [bay.start, plate_h, 0]
+    mirror: x
+    material: oak
+
+  brace_high:
+    doc: diagonal brace in the upper outer bay, from the rail at the post up to the stud head
+    measure:
+      bay: {gap: [stud_right, corner_post_right], axis: x, section: {axis: y, at: sill_y}}
+      rail: {bounds: bay_rail_right}
+    shape:
+      type: extrude
+      depth: tim_d - 0.01
+      polygon: [[bay.end, rail.max.y], [bay.end, "rail.max.y + brace_w * sqrt(bay.length ** 2 + (wall_h - plate_h - rail.max.y) ** 2) / bay.length"],
+                [bay.start, wall_h - plate_h], [bay.start, "wall_h - plate_h - brace_w * sqrt(bay.length ** 2 + (wall_h - plate_h - rail.max.y) ** 2) / bay.length"]]
+    anchor: bottom_left
+    position: [bay.start, rail.max.y, 0]
+    mirror: x
+    material: oak
+
+  window_frame:
+    doc: painted casing lining the opening (outer edge = opening, one piece with a hole)
+    measure:
+      span: {gap: [stud_left, stud_right], axis: x, section: {axis: y, at: sill_y + 0.1}}
+      low: {bounds: sill_rail}
+      high: {bounds: header}
+    shape:
+      type: extrude
+      depth: frame_d
+      polygon: [[0, 0], [span.length, 0], [span.length, high.min.y - low.max.y], [0, high.min.y - low.max.y]]
+      holes: [[[frame_w, frame_w], [span.length - frame_w, frame_w], [span.length - frame_w, high.min.y - low.max.y - frame_w], [frame_w, high.min.y - low.max.y - frame_w]]]
+    anchor: bottom
+    position: [span.center, low.max.y, 0]
+    material: trim
+
+  mullion:
+    doc: cross-shaped mullion and transom dividing the light into four panes
+    measure:
+      f: {bounds: window_frame}
+    shape:
+      type: boolean
+      operation: union
+      base: {type: box, size: [mull_w, f.size.y - frame_w, frame_d * 0.6]}
+      tools:
+        - {type: box, size: [f.size.x - frame_w, mull_w, frame_d * 0.6], translate: [0, 0.06, 0]}
+    anchor: center
+    position: [f.center.x, f.center.y, 0]
+    material: trim
+
+  sill:
+    doc: projecting window sill on the rail, wider than the opening, standing proud of the wall face
+    measure:
+      low: {bounds: sill_rail}
+    shape: {type: chamfer_box, size: [win_w + 0.2, 0.065, 0.17], chamfer: 0.012}
+    ops: [{type: jitter, amount: wear, seed: 9}]
+    anchor: bottom_back
+    position: [0, low.max.y, 0.02]
+    material: trim
+
+sockets:
+  snap_left:  {position: [-module_w / 2, 0, 0], doc: left module seam}
+  snap_right: {position: [module_w / 2, 0, 0], doc: right module seam}
+  window_light: {position: [0, "sill_y + win_h / 2", 0], doc: interior light / glass placement}
+
+uv: {texel_density: 120}
+collision: {mode: box}
+
+checks:
+  - {expr: asset.width, min: module_w - 0.001, max: module_w + 0.001, doc: exactly one 2 m module so copies tile}
+  - {expr: sole_plate.size.x, min: module_w - 0.001, doc: plates run seam to seam}
+  - {expr: corner_post_right.max.x, min: module_w / 2 - 0.001, max: module_w / 2 + 0.001, doc: half post flush with the seam}
+  - {expr: corner_post_right.size.x * 2, min: stud.first.size.x, doc: two half posts form a post at least as wide as a stud}
+  - {expr: asset.height, min: wall_h - 0.001, max: wall_h + 0.001}
+  - {expr: window_frame.size.x, min: win_w - 0.01, max: win_w + 0.01, doc: frame fills the opening}
+  - {expr: sill.size.x > window_frame.size.x and sill.max.z > top_plate.max.z, doc: sill is wider than the window and projects from the wall}

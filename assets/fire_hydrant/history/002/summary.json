@@ -1,0 +1,46 @@
+{
+ "iteration": 2,
+ "note": "cartoon proportions: squatter bulging barrel, bigger dome, chunkier outlet caps and top nut",
+ "critique": "compare 1->current: body y -14%, dome y +25%, caps +20%; 3/4 material view now reads cartoonish and chunky at thumbnail, yellow caps/nut pop against red. No significant findings -> export",
+ "source_hash": "6b373b328606",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 894,
+  "parts": 17,
+  "size_m": [
+   0.568,
+   0.6355,
+   0.4
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.6355,
+   "flange.size.x / body.size.x": 1.2821,
+   "outlet_cap_right.min.x > body.max.x": true,
+   "top_nut.max.y > dome.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "seg": 12.0,
+  "body_r": 0.13,
+  "bulge": 1.2,
+  "body_h": 0.36,
+  "flange_r": 0.2,
+  "flange_h": 0.05,
+  "bolts": 8.0,
+  "bolt_r": 0.017,
+  "collar_h": 0.045,
+  "dome_h": 0.15,
+  "nut_r": 0.052,
+  "outlet_r": 0.06,
+  "outlet_len": 0.07,
+  "outlet_y": 0.2948
+ }
+}

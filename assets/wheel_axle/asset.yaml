@@ -1,0 +1,115 @@
+# Vehicle-kit wheel-and-axle assembly: two iron wheels (rim, hub and 8 spokes fused
+# into one part) with rubber tyres, an iron axle running through both hubs and two
+# pillow-block bearings with bolted mounting feet. Sockets mark the mounting points.
+shapewright: 0.1
+asset:
+  name: wheel_axle
+  kind: prop/vehicle_kit/wheel_axle
+  description: Wheel-and-axle assembly with two 8-spoke wheels, tyres, an axle and two bearing blocks.
+  tags: [vehicle_kit, wheel, axle]
+profile: desktop_indie
+style: stylized_lowpoly
+budget: {triangles: 1500, materials: 3}
+
+params:
+  tyre_r:    {value: 0.3, min: 0.2, max: 0.45, doc: outer radius of the tyre}
+  tyre_t:    {value: 0.045, doc: tyre tube radius}
+  rim_t:     {value: 0.03, doc: radial thickness of the rim}
+  rim_w:     {value: 0.07, doc: rim width along the axle}
+  hub_r:     {value: 0.06}
+  hub_l:     {value: 0.12}
+  spoke_w:   {value: 0.042}
+  spoke_t:   {value: 0.03}
+  seg:       {value: 14, doc: facets around wheel and tyre}
+  track:     {value: 0.9, doc: distance between the wheel centre planes}
+  axle_r:    {value: 0.032}
+  bearing_in: {value: 0.14, doc: bearing distance inboard of the wheel centre plane}
+  # derived
+  rim_r:     tyre_r - tyre_t * 1.4
+
+materials:
+  iron:   {archetype: metal, color: "#7a7f86", roughness: 0.45, edge_wear: 0.4, rust: 0.05}
+  rubber: {base_color: "#2e2b29", roughness: 0.95}
+  paint:  {archetype: painted, color: "#8a3a2a", chips: 0.3}
+
+parts:
+  wheel:
+    doc: rim, hub and 8 spokes as one iron casting; axis along x
+    shape:
+      type: boolean
+      operation: union
+      base: {type: ring, radius: rim_r, thickness: rim_t, height: rim_w, segments: seg}
+      tools:
+        - {type: cylinder, radius: hub_r, height: hub_l, segments: 8, chamfer: 0.01}
+        - type: box
+          size: [2 * (rim_r - rim_t) + 0.02, spoke_t, spoke_w]
+          ops: [{type: repeat, count: 4, radial: y, angle: 135}]
+    rotate: [0, 0, 90]
+    anchor: center
+    position: [track / 2, tyre_r, 0]
+    mirror: x
+    shading: flat
+    material: iron
+
+  tyre:
+    doc: rubber tyre seated on the rim
+    shape: {type: torus, radius: tyre_r - tyre_t, tube: tyre_t, segments: seg, sides: 6}
+    ops: [{type: scale, factor: [1, 1.2, 1]}]
+    rotate: [0, 0, 90]
+    anchor: center
+    attach: {to: wheel, at: center}
+    mirror: x
+    shading: smooth
+    material: rubber
+
+  axle:
+    doc: axle through both hubs
+    measure:
+      w: {bounds: wheel_right}
+    shape: {type: cylinder, radius: axle_r, height: 2 * w.max.x + 0.02, segments: 8, chamfer: 0.006}
+    rotate: [0, 0, 90]
+    position: [0, w.center.y, w.center.z]
+    material: iron
+
+  bearing:
+    doc: pillow block - round housing on a mounting foot, the axle runs through it
+    measure:
+      a: {bounds: axle}
+    shape:
+      type: boolean
+      operation: union
+      base: {type: cylinder, radius: axle_r * 2.4, height: 0.07, segments: 8, chamfer: 0.008, rotate: [0, 0, 90]}
+      tools:
+        - {type: box, size: [0.07, axle_r * 2.4, axle_r * 4.8], translate: [0, axle_r * 1.2, 0]}
+        - {type: chamfer_box, size: [0.09, 0.025, 0.24], chamfer: 0.006, translate: [0, axle_r * 2.4 + 0.0125, 0]}
+    anchor: [0, -1, 0]
+    # anchor y=-1: bottom of the bbox would be the housing; place the housing centre on the axle instead
+    position: [track / 2 - bearing_in, a.center.y - axle_r * 2.4, a.center.z]
+    mirror: x
+    shading: flat
+    material: paint
+
+  bolt:
+    doc: hex bolt heads on the mounting feet
+    measure:
+      b: {bounds: bearing_right}
+    shape: {type: cylinder, radius: 0.014, height: 0.02, segments: 6}
+    anchor: bottom
+    position: [b.center.x, b.max.y - 0.004, b.center.z - 0.085]
+    array: {count: 2, offset: [0, 0, 0.17]}
+    mirror: x
+    tags: [thin_ok]
+    material: iron
+
+sockets:
+  mount_left:  {attach: {to: bearing_left, at: top}, doc: chassis mounting face of the left bearing}
+  mount_right: {attach: {to: bearing_right, at: top}, doc: chassis mounting face of the right bearing}
+  axle_center: {attach: {to: axle, at: center}, doc: rotation axis centre}
+
+uv: {texel_density: 320}
+collision: {mode: hull}
+
+checks:
+  - {expr: wheel_right.size.y, min: 2 * rim_r - 0.01, doc: wheel spans the rim}
+  - {expr: tyre_right.size.y, min: 2 * tyre_r - 0.01, max: 2 * tyre_r + 0.02}
+  - {expr: bearing_right.max.x, max: wheel_right.min.x - 0.01, doc: bearings clear the hubs}

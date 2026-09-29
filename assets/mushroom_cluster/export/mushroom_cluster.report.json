@@ -1,0 +1,108 @@
+{
+ "asset": "mushroom_cluster",
+ "status": "WARN",
+ "source_hash": "39620ce0e68c",
+ "counts": {
+  "error": 0,
+  "warning": 3,
+  "info": 1
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "WARN",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 1244,
+  "parts": 7,
+  "sliver_triangles": 0,
+  "size_m": [
+   0.4706,
+   0.4374,
+   0.4747
+  ],
+  "contacts": 8,
+  "triangles_by_part": {
+   "mound": 66,
+   "big_stem": 52,
+   "big_cap": 364,
+   "mid_stem": 52,
+   "mid_cap": 336,
+   "small_stem": 52,
+   "small_cap": 322
+  },
+  "budget_triangles": 1500,
+  "materials": 3,
+  "checks": {
+   "asset.height": 0.4374,
+   "big.height > mid.height and mid.height > small.height": true,
+   "small.height / big.height": 0.4137
+  },
+  "uv_utilization": 0.409,
+  "uv_overlap": 0.0,
+  "uv_owners": 7,
+  "texel_density_px_m": 308.9,
+  "texel_density_target": 256,
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "big_cap",
+   "msg": "part consists of 9 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 9
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "mid_cap",
+   "msg": "part consists of 9 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 9
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "small_cap",
+   "msg": "part consists of 9 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 9
+   }
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv lock ASSET` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/mushroom_cluster/export/mushroom_cluster.glb",
+  "bytes": 85688,
+  "nodes": 15,
+  "meshes": 14,
+  "materials": 3
+ }
+}

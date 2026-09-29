@@ -1,0 +1,55 @@
+{
+ "iteration": 1,
+ "note": "blockout: sleepers, extruded I rails, revolved flanged wheels, axles, chassis, bearings, tapered hollow tub, 2 iron_band components",
+ "critique": "wheel.wheel_r 0.10 reads tiny under a 0.76 m tub -> 0.13; wheelbase 0.56 -> 0.6 to follow; chassis beams hidden under tub, no front/back read -> add end bumper beams across chassis ends; flange correctly inside rail head (front closeup)",
+ "source_hash": "3eae308547c1",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 4
+ },
+ "metrics": {
+  "triangles": 1664,
+  "parts": 22,
+  "size_m": [
+   1.0069,
+   0.8256,
+   1.8
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "wheel_front_right.min.y": 0.121,
+   "tub.max.y": 0.8256,
+   "tub.size.x": 0.7556
+  }
+ },
+ "errors": [],
+ "params": {
+  "gauge": 0.6,
+  "rail_len": 1.8,
+  "rail_h": 0.075,
+  "sleeper_w": 1.0,
+  "sleeper_h": 0.07,
+  "sleeper_d": 0.16,
+  "sleepers": 5.0,
+  "wheel_r": 0.1,
+  "flange": 0.022,
+  "tread_w": 0.05,
+  "flange_w": 0.018,
+  "wheelbase": 0.56,
+  "axle_r": 0.025,
+  "chassis_x": 0.2,
+  "tub_w": 0.62,
+  "tub_l": 0.9,
+  "tub_h": 0.46,
+  "tub_flare": 1.22,
+  "wall": 0.045,
+  "band_lo": 0.1,
+  "band_hi": 0.39,
+  "wear": 0.004,
+  "rail_top": 0.145,
+  "wheel_y": 0.245
+ }
+}

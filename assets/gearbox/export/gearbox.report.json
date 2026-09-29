@@ -1,0 +1,94 @@
+{
+ "asset": "gearbox",
+ "status": "WARN",
+ "source_hash": "bbb389fe00f5",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 1
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "WARN",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 1762,
+  "parts": 26,
+  "sliver_triangles": 59,
+  "size_m": [
+   0.6346,
+   0.367,
+   0.46
+  ],
+  "contacts": 31,
+  "triangles_by_part": {
+   "base": 44,
+   "boss_left": 60,
+   "boss_right": 120,
+   "pinion": 318,
+   "big_gear": 564,
+   "housing": 44,
+   "foot_bolt": 80,
+   "input_shaft": 44,
+   "axle_nut": 88,
+   "cover": 44,
+   "rib": 176,
+   "cover_bolt": 120,
+   "filler_plug": 60
+  },
+  "budget_triangles": 2500,
+  "materials": 3,
+  "checks": {
+   "asset.height": 0.367,
+   "big_gear.size.y": 0.252,
+   "pinion.max.z < big_gear.max.z + centre_d": true,
+   "big_gear.min.z > housing.min.z - 0.02": true,
+   "big_gear.min.y > base.max.y": true
+  },
+  "uv_utilization": 0.498,
+  "uv_overlap": 0.0,
+  "uv_owners": 26,
+  "texel_density_px_m": 475.6,
+  "texel_density_target": 512,
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "UV_TEXEL_DENSITY",
+   "severity": "warning",
+   "layer": "surface",
+   "where": "foot_bolt",
+   "msg": "texel density varies 1.71x (foot_bolt: 344 px/m, base: 590 px/m)",
+   "hint": "each part gets a UV rectangle sized by its area; thin or oddly shaped parts pack their charts loosely into it. Try uv: {seams: regions} on that part, change its proportions/segments, or accept it (warning only). With a lock, re-lock after big size changes"
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "base",
+   "msg": "16/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 16
+   }
+  }
+ ],
+ "export": {
+  "path": "assets/gearbox/export/gearbox.glb",
+  "bytes": 139676,
+  "nodes": 54,
+  "meshes": 52,
+  "materials": 3
+ }
+}

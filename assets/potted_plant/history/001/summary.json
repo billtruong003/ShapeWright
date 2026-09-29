@@ -1,0 +1,42 @@
+{
+ "iteration": 1,
+ "note": "blockout: lathed pot, measured soil, 3 leaf tiers (4+4+2) as radially repeated symmetric pairs",
+ "critique": "reads as a potted plant; leaves_low: bend 70 + tilt 62 makes the tips hang straight down the pot wall -> bend 40, tilt 58, translate 0.1->0.11 so they arch out over the rim; leaves are flat identical diamonds -> add 25 deg twist for life",
+ "source_hash": "0bb036fff08b",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 3,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 816,
+  "parts": 5,
+  "size_m": [
+   0.342,
+   0.4627,
+   0.3929
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "pot.max.y": 0.22,
+   "asset.height / pot.height": 2.1031,
+   "leaves_upright.max.y > leaves_mid.max.y and leaves_mid.max.y > leaves_low.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "pot_h": 0.22,
+  "pot_top": 0.12,
+  "pot_bot": 0.085,
+  "rim_h": 0.045,
+  "rim_out": 0.016,
+  "wall": 0.014,
+  "pot_sides": 14.0,
+  "soil_d": 0.025,
+  "leaf_w": 0.075,
+  "leaf_t": 0.014,
+  "sink": 0.03
+ }
+}

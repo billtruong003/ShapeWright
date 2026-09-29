@@ -1,0 +1,276 @@
+shapewright: 0.1
+asset:
+  name: fantasy_longsword
+  kind: prop/weapon/sword
+  description: Stylized low-poly fantasy longsword with fullered blade, winged crossguard, wrapped grip and faceted pommel.
+  placement: free
+profile: desktop_indie
+style: stylized_lowpoly
+budget:
+  triangles: 800
+  materials: 3
+params:
+  blade_len:
+    value: 0.82
+    min: 0.7
+    max: 1.0
+    doc: guard top to tip
+  blade_w:
+    value: 0.066
+    min: 0.045
+    max: 0.09
+    doc: blade width at the base
+  blade_t:
+    value: 0.016
+    doc: flat-to-flat thickness of the blade
+  tip_len:
+    value: 0.13
+    doc: length of the pointed tip
+  bevel_k:
+    value: 2.2
+    doc: diamond thickness / blade thickness (bigger = narrower bevels)
+  fuller_w:
+    value: 0.016
+    doc: fuller groove width
+  fuller_d:
+    value: 0.003
+    doc: fuller depth on each face
+  fuller_len:
+    value: blade_len * 0.62
+  guard_w:
+    value: 0.26
+    min: 0.18
+    max: 0.34
+    doc: crossguard span
+  guard_h:
+    value: 0.045
+  guard_t:
+    value: 0.04
+    doc: crossguard depth (z)
+  grip_len:
+    value: 0.21
+    min: 0.16
+    max: 0.28
+  grip_r:
+    value: 0.017
+  wraps:
+    value: 5
+    doc: leather wrap bands
+  pommel_r:
+    value: 0.035
+materials:
+  steel:
+    base_color: '#b9c2cc'
+    metallic: 0.85
+    roughness: 0.35
+  gold:
+    base_color: '#c9a15a'
+    metallic: 0.9
+    roughness: 0.4
+  leather:
+    base_color: '#5e3b22'
+    roughness: 0.9
+parts:
+  pommel:
+    doc: faceted pommel (octagonal lathe, gem-like)
+    shape:
+      type: lathe
+      segments: 8
+      profile:
+      - - 0
+        - 0
+      - - pommel_r * 0.55
+        - 0
+      - - pommel_r
+        - pommel_r * 0.7
+      - - pommel_r
+        - pommel_r * 1.1
+      - - pommel_r * 0.55
+        - pommel_r * 1.8
+      - - 0
+        - pommel_r * 1.8
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    shading: flat
+    material: gold
+  grip:
+    doc: leather-covered grip core, slightly swelling toward the guard
+    shape:
+      type: cylinder
+      radius: grip_r
+      radius_top: grip_r * 1.1
+      height: grip_len
+      segments: 8
+    anchor: bottom
+    attach:
+      to: pommel
+      at: top
+      offset:
+      - 0
+      - -0.01
+      - 0
+    material: leather
+  wrap:
+    doc: tilted leather wrap bands (read as a spiral wrap)
+    shape:
+      type: torus
+      radius: grip_r * 1.05
+      tube: 0.0055
+      segments: 8
+      sides: 4
+    rotate:
+    - 12
+    - 0
+    - 0
+    anchor: center
+    position:
+    - 0
+    - pommel_r * 1.8 + 0.02
+    - 0
+    array:
+      count: wraps
+      offset:
+      - 0
+      - (grip_len - 0.04) / (wraps - 1)
+      - 0
+    tags:
+    - thin_ok
+    material: leather
+  guard:
+    doc: winged crossguard; tips sweep up toward the blade
+    shape:
+      type: extrude
+      depth: guard_t
+      polygon:
+      - - -guard_w * 0.5
+        - guard_h * 1.35
+      - - -guard_w * 0.42
+        - guard_h * 0.25
+      - - -guard_w * 0.12
+        - 0
+      - - guard_w * 0.12
+        - 0
+      - - guard_w * 0.42
+        - guard_h * 0.25
+      - - guard_w * 0.5
+        - guard_h * 1.35
+      - - guard_w * 0.36
+        - guard_h * 1.0
+      - - guard_w * 0.1
+        - guard_h
+      - - -guard_w * 0.1
+        - guard_h
+      - - -guard_w * 0.36
+        - guard_h * 1.0
+    anchor: bottom
+    attach:
+      to: grip
+      at: top
+      offset:
+      - 0
+      - -0.01
+      - 0
+    shading: flat
+    material: gold
+  blade:
+    doc: pointed blade, hexagonal cross-section, fullers on both faces
+    shape:
+      type: boolean
+      operation: intersection
+      base:
+        type: extrude
+        depth: blade_t
+        polygon:
+        - - -blade_w / 2
+          - 0
+        - - blade_w / 2
+          - 0
+        - - blade_w * 0.46
+          - blade_len - tip_len
+        - - 0
+          - blade_len
+        - - -blade_w * 0.46
+          - blade_len - tip_len
+      tools:
+      - type: box
+        size:
+        - blade_w / sqrt(2)
+        - blade_len * 3
+        - blade_w / sqrt(2)
+        ops:
+        - type: rotate
+          angles:
+          - 0
+          - 45
+          - 0
+        - type: scale
+          factor:
+          - 1
+          - 1
+          - blade_t * bevel_k / blade_w
+    ops:
+    - type: subtract
+      shape:
+        type: capsule
+        radius: fuller_w / 2
+        height: fuller_len
+        segments: 6
+        cap_rings: 1
+      position:
+      - 0
+      - -blade_len / 2 + 0.03 + fuller_len / 2
+      - blade_t / 2 + fuller_w / 2 - fuller_d
+    - type: subtract
+      shape:
+        type: capsule
+        radius: fuller_w / 2
+        height: fuller_len
+        segments: 6
+        cap_rings: 1
+      position:
+      - 0
+      - -blade_len / 2 + 0.03 + fuller_len / 2
+      - -(blade_t / 2 + fuller_w / 2 - fuller_d)
+    anchor: bottom
+    attach:
+      to: guard
+      at: top
+      offset:
+      - 0
+      - -0.02
+      - 0
+    shading: flat
+    tags:
+    - thin_ok
+    material: steel
+sockets:
+  grip:
+    attach:
+      to: grip
+      at: center
+    doc: hand attachment point
+  tip:
+    attach:
+      to: blade
+      at: top
+    doc: blade tip (trails / hit detection)
+collision:
+  mode: box
+checks:
+- expr: asset.height
+  min: 1.0
+  max: 1.3
+  doc: longsword overall length
+- expr: blade.size.y / asset.height
+  min: 0.65
+  max: 0.8
+  doc: blade dominates
+- expr: guard.size.x / blade.size.x
+  min: 3.0
+  max: 5.0
+  doc: guard reads as a cross
+- expr: wrap.last.max.y < guard.min.y
+  doc: wraps stay on the grip

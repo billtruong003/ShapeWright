@@ -1,0 +1,48 @@
+{
+ "iteration": 2,
+ "note": "pipe_r 0.065; valve profile follows pipe_r; wheel_r 0.14",
+ "critique": "pipes now chunky relative to fittings; valve body neck no longer thinner-looking than the pipe; elbows, couplings, wheels read at thumbnail size. No significant findings left.",
+ "source_hash": "404152a4a8e5",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 2444,
+  "parts": 31,
+  "size_m": [
+   1.02,
+   1.513,
+   1.3058
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "pipe_right.max.y - pipe_r": 1.1968,
+   "pipe_right.center.x - pipe_left.center.x": 0.6,
+   "pipe_right.size.z": 0.9818,
+   "handwheel_right.min.y > valve_body_right.max.y": true,
+   "handwheel_right.min.x > handwheel_left.max.x": true,
+   "floor_flange.min.y": 0.0
+  }
+ },
+ "errors": [],
+ "params": {
+  "spacing": 0.6,
+  "pipe_r": 0.065,
+  "axis_h": 1.2,
+  "bend_r": 0.22,
+  "run": 0.7,
+  "riser_z": 0.45,
+  "sides": 10.0,
+  "base_h": 0.1,
+  "coupling_r": 0.083,
+  "wheel_r": 0.14,
+  "vf": 0.113,
+  "px": 0.3,
+  "y_bend": 0.98,
+  "z_bend": 0.23
+ }
+}

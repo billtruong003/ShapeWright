@@ -1,0 +1,46 @@
+{
+ "iteration": 2,
+ "note": "chunkier roots rising higher, less base flare, taller trunk",
+ "critique": "roots now read as gnarled roots gripping the ground; trunk still a clean prism: bark noise 0.022->0.03 and add a 3cm lean (shear) for a hand-made feel; TEX_DENSITY_BELOW_TARGET -> uv texel_density 200 so the 512 atlas suffices on mobile; growth_ring fragmented warning is intended (combine of two ridges + heart)",
+ "source_hash": "495ab439db66",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 3,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 910,
+  "parts": 8,
+  "size_m": [
+   0.8047,
+   0.5105,
+   0.9027
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.5105,
+   "asset.width / (2 * stump_r)": 1.8288,
+   "cut_top.max.y >= trunk.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "stump_r": 0.22,
+  "stump_h": 0.48,
+  "sides": 13.0,
+  "bark_lumps": 0.022,
+  "root_in": 0.099,
+  "root_len": 0.46,
+  "root_h": 0.27,
+  "root_r0": 0.1,
+  "root_r1": 0.018,
+  "short_len": 0.34,
+  "short_h": 0.21,
+  "short_r0": 0.08,
+  "short_dir": 60.0,
+  "root_sides": 8.0,
+  "ring_w": 0.009
+ }
+}

@@ -1,0 +1,363 @@
+shapewright: 0.1
+asset:
+  name: potted_plant
+  kind: prop/decor/potted_plant
+  description: Stylized low-poly terracotta pot with soil and a ten-leaf plant radiating upward and outward.
+profile: mobile_mid
+style: stylized_lowpoly
+budget:
+  triangles: 2000
+  materials: 3
+params:
+  pot_h:
+    value: 0.22
+    min: 0.15
+    max: 0.35
+    doc: pot height including the rim
+  pot_top:
+    value: 0.12
+    doc: outer radius under the rim
+  pot_bot:
+    value: 0.085
+    doc: outer radius at the foot
+  rim_h:
+    value: 0.045
+    doc: rolled rim height
+  rim_out:
+    value: 0.016
+    doc: how far the rim stands out
+  wall:
+    value: 0.014
+  pot_sides:
+    value: 14
+  soil_d:
+    value: 0.025
+    doc: soil surface below the rim top
+  leaf_w:
+    value: 0.085
+    doc: blade width
+  leaf_t:
+    value: 0.014
+    doc: blade thickness at the midrib
+  sink:
+    value: 0.03
+    doc: leaf bases sink this far into the soil
+materials:
+  terracotta:
+    archetype: flat
+    color: '#b8643a'
+    roughness: 0.9
+    edge_wear: 0.3
+    edge_color: '#d88a5c'
+    doc: fired clay pot
+  soil:
+    archetype: flat
+    color: '#4a3222'
+    roughness: 1.0
+  leaf:
+    archetype: flat
+    color: '#4f8a3a'
+    roughness: 0.6
+    edge_wear: 0.2
+    edge_color: '#8cc060'
+    doc: glossy leaves
+parts:
+  pot:
+    doc: hollow tapered pot with a rolled rim and a foot bevel
+    shape:
+      type: lathe
+      segments: pot_sides
+      profile:
+      - - 0
+        - 0
+      - - pot_bot - 0.008
+        - 0
+      - - pot_bot
+        - 0.008
+      - - pot_top
+        - pot_h - rim_h
+      - - pot_top + rim_out
+        - pot_h - rim_h + 0.006
+      - - pot_top + rim_out
+        - pot_h - 0.006
+      - - pot_top + rim_out - 0.006
+        - pot_h
+      - - pot_top - wall
+        - pot_h
+      - - pot_top - wall - 0.004
+        - pot_h - rim_h
+      - - pot_bot - wall
+        - 0.03
+      - - 0
+        - 0.03
+    shading: auto
+    smooth_angle: 35
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    material: terracotta
+  soil:
+    doc: lumpy soil filling the pot to just under the rim
+    measure:
+      s:
+        section: pot
+        axis: y
+        at: pot_h - soil_d
+    shape:
+      type: lathe
+      segments: pot_sides
+      profile:
+      - - 0
+        - 0
+      - - s.size.x / 2 - 0.004
+        - 0
+      - - s.size.x / 2 - 0.004
+        - 0.03
+      - - s.size.x / 2 * 0.6
+        - 0.036
+      - - 0
+        - 0.042
+    ops:
+    - type: noise
+      amount: 0.004
+      frequency: 30
+      seed: 5
+    anchor: bottom
+    position:
+    - 0
+    - pot_h - soil_d - 0.03
+    - 0
+    shading: flat
+    material: soil
+  leaves_upright:
+    doc: 4 tall, nearly upright leaves (pair x2)
+    shape:
+      type: combine
+      items:
+      - type: sphere
+        radius: 0.5
+        segments: 4
+        rings: 7
+        ops:
+        - type: scale
+          factor:
+          - leaf_t
+          - 0.34
+          - leaf_w
+        - type: bend
+          axis: y
+          toward: x
+          angle: 35
+        - type: twist
+          axis: y
+          angle: 25
+        rotate:
+        - 0
+        - 0
+        - -14
+        translate:
+        - 0.035
+        - 0
+        - 0
+      - type: sphere
+        radius: 0.5
+        segments: 4
+        rings: 7
+        ops:
+        - type: scale
+          factor:
+          - leaf_t
+          - 0.34
+          - leaf_w
+        - type: bend
+          axis: y
+          toward: x
+          angle: -35
+        - type: twist
+          axis: y
+          angle: 25
+        rotate:
+        - 0
+        - 0
+        - 14
+        translate:
+        - -0.035
+        - 0
+        - 0
+    ops:
+    - type: repeat
+      count: 2
+      radial: y
+      angle: 90
+    rotate:
+    - 0
+    - 10
+    - 0
+    anchor: bottom
+    attach:
+      to: soil
+      at: top
+      offset:
+      - 0
+      - -sink
+      - 0
+    shading: auto
+    material: leaf
+  leaves_mid:
+    doc: 4 leaves spreading at ~45 deg, yawed between the upright ones
+    shape:
+      type: combine
+      items:
+      - type: sphere
+        radius: 0.5
+        segments: 4
+        rings: 7
+        ops:
+        - type: scale
+          factor:
+          - leaf_t
+          - 0.3
+          - leaf_w
+        - type: bend
+          axis: y
+          toward: x
+          angle: 50
+        - type: twist
+          axis: y
+          angle: 25
+        rotate:
+        - 0
+        - 0
+        - -42
+        translate:
+        - 0.075
+        - 0
+        - 0
+      - type: sphere
+        radius: 0.5
+        segments: 4
+        rings: 7
+        ops:
+        - type: scale
+          factor:
+          - leaf_t
+          - 0.3
+          - leaf_w
+        - type: bend
+          axis: y
+          toward: x
+          angle: -50
+        - type: twist
+          axis: y
+          angle: 25
+        rotate:
+        - 0
+        - 0
+        - 42
+        translate:
+        - -0.075
+        - 0
+        - 0
+    ops:
+    - type: repeat
+      count: 2
+      radial: y
+      angle: 90
+    rotate:
+    - 0
+    - 55
+    - 0
+    anchor: bottom
+    attach:
+      to: soil
+      at: top
+      offset:
+      - 0
+      - -sink
+      - 0
+    shading: auto
+    material: leaf
+  leaves_low:
+    doc: 2 long leaves arching out over the rim
+    shape:
+      type: combine
+      items:
+      - type: sphere
+        radius: 0.5
+        segments: 4
+        rings: 7
+        ops:
+        - type: scale
+          factor:
+          - leaf_t
+          - 0.38
+          - leaf_w * 0.9
+        - type: bend
+          axis: y
+          toward: x
+          angle: 30
+        - type: twist
+          axis: y
+          angle: 20
+        rotate:
+        - 0
+        - 0
+        - -62
+        translate:
+        - 0.13
+        - 0
+        - 0
+      - type: sphere
+        radius: 0.5
+        segments: 4
+        rings: 7
+        ops:
+        - type: scale
+          factor:
+          - leaf_t
+          - 0.38
+          - leaf_w * 0.9
+        - type: bend
+          axis: y
+          toward: x
+          angle: -30
+        - type: twist
+          axis: y
+          angle: 20
+        rotate:
+        - 0
+        - 0
+        - 62
+        translate:
+        - -0.13
+        - 0
+        - 0
+    rotate:
+    - 0
+    - 125
+    - 0
+    anchor: bottom
+    attach:
+      to: soil
+      at: top
+      offset:
+      - 0
+      - -sink
+      - 0
+    shading: auto
+    material: leaf
+collision:
+  mode: hull
+checks:
+- expr: pot.max.y
+  min: 0.18
+  max: 0.3
+  doc: small table/floor pot
+- expr: asset.height / pot.height
+  min: 1.8
+  max: 3.2
+  doc: plant clearly taller than its pot
+- expr: leaves_upright.max.y > leaves_mid.max.y and leaves_mid.max.y > leaves_low.max.y
+  doc: tiers radiate upward -> outward

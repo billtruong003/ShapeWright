@@ -1,0 +1,92 @@
+{
+ "asset": "tree_stump",
+ "status": "WARN",
+ "source_hash": "1c3700bb0aeb",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 1
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "WARN",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 910,
+  "parts": 10,
+  "sliver_triangles": 0,
+  "size_m": [
+   0.8047,
+   0.5176,
+   0.9027
+  ],
+  "contacts": 16,
+  "triangles_by_part": {
+   "trunk": 182,
+   "root": 324,
+   "short_root": 152,
+   "cut_top": 48,
+   "ring_outer": 104,
+   "ring_inner": 80,
+   "heart": 20
+  },
+  "budget_triangles": 2000,
+  "materials": 2,
+  "checks": {
+   "asset.height": 0.5176,
+   "asset.width / (2 * stump_r)": 1.8288,
+   "cut_top.max.y >= trunk.max.y": true
+  },
+  "uv_utilization": 0.439,
+  "uv_overlap": 0.0,
+  "uv_owners": 7,
+  "texel_density_px_m": 226.9,
+  "texel_density_target": 200,
+  "texture": {
+   "resolution": 512,
+   "target_px_m": 200.0,
+   "achieved_px_m": 258.3,
+   "memory_kb": 2048,
+   "lifecycle": {
+    "DERIVED": 7
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "UV_TEXEL_DENSITY",
+   "severity": "warning",
+   "layer": "surface",
+   "where": "ring_outer",
+   "msg": "texel density varies 2.14x (ring_outer: 126 px/m, cut_top: 270 px/m)",
+   "hint": "each part gets a UV rectangle sized by its area; thin or oddly shaped parts pack their charts loosely into it. Try uv: {seams: regions} on that part, change its proportions/segments, or accept it (warning only). With a lock, re-lock after big size changes"
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv lock ASSET` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/tree_stump/export/tree_stump.glb",
+  "bytes": 143320,
+  "nodes": 21,
+  "meshes": 20,
+  "materials": 2
+ }
+}

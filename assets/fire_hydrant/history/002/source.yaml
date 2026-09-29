@@ -1,0 +1,129 @@
+# Cartoonish street fire hydrant. Lathe-turned bulging barrel on a flanged
+# base ring held by a radial array of hex bolts, a bonnet collar, a squashed
+# dome with a pentagonal operating nut, and two side outlets (stub + chunky cap
+# with a pentagonal nut) mirrored left/right.
+shapewright: 0.1
+asset:
+  name: fire_hydrant
+  kind: prop/street/fire_hydrant
+  description: Chunky cartoon street fire hydrant with domed top and nut, two side outlet caps and a bolted flanged base.
+profile: desktop_indie
+style: stylized_lowpoly
+budget: {triangles: 1200, materials: 3}
+
+params:
+  seg:       {value: 12, doc: radial segments of the turned parts}
+  body_r:    {value: 0.13, min: 0.1, max: 0.18, doc: barrel radius at the waist}
+  bulge:     {value: 1.2, doc: barrel belly radius / waist radius}
+  body_h:    {value: 0.36}
+  flange_r:  {value: 0.2}
+  flange_h:  {value: 0.05}
+  bolts:     {value: 8}
+  bolt_r:    {value: 0.017}
+  collar_h:  {value: 0.045}
+  dome_h:    {value: 0.15}
+  nut_r:     {value: 0.052}
+  outlet_r:  {value: 0.06}
+  outlet_len: {value: 0.07}
+  outlet_y:  {value: flange_h + body_h * 0.68, doc: side outlet height}
+
+materials:
+  red:    {base_color: "#c0392b", roughness: 0.6, doc: glossy hydrant paint}
+  yellow: {base_color: "#e8b93a", roughness: 0.55, doc: caps and nut}
+  iron:   {base_color: "#3a3d42", metallic: 0.6, roughness: 0.55, doc: base bolts}
+
+parts:
+  flange:
+    doc: "flanged base: wide foot ring with a raised lip"
+    shape:
+      type: lathe
+      segments: seg
+      profile: [[0, 0], [flange_r, 0], [flange_r, flange_h * 0.7], [flange_r * 0.86, flange_h], [0, flange_h]]
+    anchor: bottom
+    position: [0, 0, 0]
+    material: red
+
+  base_bolt:
+    doc: hex bolts around the flange
+    shape: {type: cylinder, radius: bolt_r, height: 0.03, segments: 6}
+    anchor: bottom
+    position: [flange_r * 0.8, flange_h * 0.75, 0]
+    array: {count: bolts, radial: y, angle: 360, center: [0, 0, 0]}
+    tags: [thin_ok]
+    material: iron
+
+  body:
+    doc: bulging barrel
+    shape:
+      type: lathe
+      segments: seg
+      profile: [[0, 0], [body_r * 1.08, 0], [body_r * bulge, body_h * 0.35], [body_r * bulge * 0.98, body_h * 0.7], [body_r, body_h], [0, body_h]]
+    anchor: bottom
+    attach: {to: flange, at: top, offset: [0, -0.01, 0]}
+    material: red
+
+  collar:
+    doc: bonnet flange ring under the dome
+    shape: {type: cylinder, radius: body_r * 1.22, height: collar_h, segments: seg, chamfer: 0.01}
+    anchor: bottom
+    attach: {to: body, at: top, offset: [0, -0.012, 0]}
+    material: red
+
+  dome:
+    doc: squashed dome bonnet
+    shape:
+      type: lathe
+      segments: seg
+      profile: [[0, 0], [body_r * 1.08, 0], [body_r * 1.02, dome_h * 0.45], [body_r * 0.8, dome_h * 0.8], [body_r * 0.42, dome_h], [0, dome_h]]
+    anchor: bottom
+    attach: {to: collar, at: top, offset: [0, -0.008, 0]}
+    material: red
+
+  top_nut:
+    doc: pentagonal operating nut on a short stem
+    shape:
+      type: boolean
+      operation: union
+      base: {type: cylinder, radius: nut_r * 0.8, height: 0.03, segments: 8, translate: [0, -0.02, 0]}
+      tools:
+        - {type: cylinder, radius: nut_r, height: 0.045, segments: 5, chamfer: 0.006, translate: [0, 0.015, 0]}
+    anchor: bottom
+    attach: {to: dome, at: top, offset: [0, -0.012, 0]}
+    shading: flat
+    material: yellow
+
+  outlet:
+    doc: side outlet stub
+    shape: {type: cylinder, radius: outlet_r, height: outlet_len + 0.04, segments: 10}
+    rotate: [0, 0, 90]
+    anchor: left
+    position: [body_r * bulge - 0.045, outlet_y, 0]
+    mirror: x
+    material: red
+
+  outlet_cap:
+    doc: chunky outlet cap with a pentagonal nut
+    shape:
+      type: boolean
+      operation: union
+      base: {type: cylinder, radius: outlet_r * 1.3, height: 0.045, segments: 10, chamfer: 0.008}
+      tools:
+        - {type: cylinder, radius: outlet_r * 0.7, height: 0.035, segments: 5, chamfer: 0.005, translate: [0, 0.035, 0]}
+    rotate: [0, 0, -90]
+    anchor: left
+    attach: {to: outlet_right, at: right, offset: [-0.012, 0, 0]}
+    mirror: x
+    shading: flat
+    material: yellow
+
+sockets:
+  hose_right: {attach: {to: outlet_cap_right, at: right}, doc: hose connection}
+  hose_left:  {attach: {to: outlet_cap_left, at: left}}
+
+collision: {mode: hull}
+
+checks:
+  - {expr: asset.height, min: 0.55, max: 0.8, doc: cartoon hydrant knee-to-waist height}
+  - {expr: flange.size.x / body.size.x, min: 1.2, max: 1.8, doc: base visibly wider than the barrel}
+  - {expr: outlet_cap_right.min.x > body.max.x, doc: caps stand clear of the barrel}
+  - {expr: top_nut.max.y > dome.max.y, doc: nut crowns the dome}

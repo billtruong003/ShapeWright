@@ -1,0 +1,44 @@
+{
+ "iteration": 2,
+ "note": "axle r 0.032, spokes 4.2x3 cm",
+ "critique": "axle and spokes now read at thumbnail size; wheels, tyres, bearings clear; 1444/1500 tris leaves no room for more rim segments; no significant findings",
+ "source_hash": "9dd52ceae6b8",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 3
+ },
+ "metrics": {
+  "triangles": 1444,
+  "parts": 11,
+  "size_m": [
+   1.04,
+   0.6,
+   0.585
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "wheel_right.size.y": 0.474,
+   "tyre_right.size.y": 0.6,
+   "bearing_right.max.x": 0.355
+  }
+ },
+ "errors": [],
+ "params": {
+  "tyre_r": 0.3,
+  "tyre_t": 0.045,
+  "rim_t": 0.03,
+  "rim_w": 0.07,
+  "hub_r": 0.06,
+  "hub_l": 0.12,
+  "spoke_w": 0.042,
+  "spoke_t": 0.03,
+  "seg": 14.0,
+  "track": 0.9,
+  "axle_r": 0.032,
+  "bearing_in": 0.14,
+  "rim_r": 0.237
+ }
+}

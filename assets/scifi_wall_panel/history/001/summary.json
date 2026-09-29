@@ -1,0 +1,49 @@
+{
+ "iteration": 1,
+ "note": "blockout: grooved slab, raised hatch + tube handle, two slotted vents, corner bolts",
+ "critique": "split lines landed at mid-hatch and above the vents: subtract.position is the tool's bbox centre after its mirror op -> position at hatch centre; panel lines faint in front ortho -> groove_w 0.018->0.022; mid-band plain -> add vertical panel lines at +/-(hatch_w/2+seam+0.12) between the split lines",
+ "source_hash": "a42d9275f1ae",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 948,
+  "parts": 9,
+  "size_m": [
+   1.2,
+   1.8,
+   0.1901
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "panel.size.x": 1.2,
+   "hatch.max.z - panel.max.z": 0.045,
+   "vent_left.max.y < hatch.min.y - 0.05": true,
+   "bolt_top_right.max.y < panel.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "pw": 1.2,
+  "ph": 1.8,
+  "pt": 0.08,
+  "groove_w": 0.018,
+  "groove_d": 0.012,
+  "border": 0.09,
+  "hatch_w": 0.52,
+  "hatch_h": 0.62,
+  "hatch_t": 0.045,
+  "hatch_y": 1.008,
+  "seam": 0.04,
+  "vent_w": 0.34,
+  "vent_h": 0.2,
+  "vent_y": 0.36,
+  "slots": 5.0,
+  "bolt_r": 0.026,
+  "bolt_in": 0.05
+ }
+}

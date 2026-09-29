@@ -1,0 +1,422 @@
+shapewright: 0.1
+asset:
+  name: pipe_assembly
+  kind: prop/industrial/pipes
+  description: Two parallel floor-mounted pipes with 90 degree elbows, horizontal runs and handwheel valves.
+  tags:
+  - industrial
+  - pipes
+  - valve
+  - metal
+profile: desktop_indie
+style: stylized_lowpoly
+budget:
+  triangles: 3000
+params:
+  spacing:
+    value: 0.6
+    min: 0.45
+    max: 0.9
+    doc: distance between the two pipe centrelines (X)
+  pipe_r:
+    value: 0.055
+    min: 0.04
+    max: 0.08
+    doc: pipe outer radius
+  axis_h:
+    value: 1.2
+    min: 0.8
+    max: 1.6
+    doc: height of the horizontal run's centreline
+  bend_r:
+    value: 0.22
+    min: 0.15
+    max: 0.35
+    doc: elbow centreline radius
+  run:
+    value: 0.7
+    min: 0.4
+    max: 1.2
+    doc: straight horizontal length after the elbow
+  riser_z:
+    value: 0.45
+    doc: Z of the risers (front)
+  sides: 10
+  base_h: 0.1
+  coupling_r: pipe_r + 0.018
+  wheel_r: 0.13
+  px: spacing / 2
+  y_bend: axis_h - bend_r
+  z_bend: riser_z - bend_r
+materials:
+  pipe:
+    archetype: metal
+    color: '#5d7263'
+    roughness: 0.55
+    edge_wear: 0.35
+    rust: 0.15
+    grime: 0.3
+    grime_height: 0.3
+    doc: painted steel pipe
+  iron:
+    archetype: metal
+    color: '#4e5259'
+    roughness: 0.5
+    edge_wear: 0.5
+    rust: 0.25
+    doc: flanges, bolts, valve bodies, stand
+  wheel:
+    archetype: painted
+    color: '#b0302a'
+    under_color: '#3a3d42'
+    chips: 0.35
+    edge_wear: 0.3
+    doc: red handwheels
+parts:
+  floor_flange:
+    doc: bolted floor flange with a raised hub (lathe profile)
+    shape:
+      type: lathe
+      segments: 12
+      profile:
+      - - 0
+        - 0
+      - - 0.15
+        - 0
+      - - 0.15
+        - 0.035
+      - - 0.1
+        - 0.045
+      - - coupling_r
+        - 0.07
+      - - coupling_r
+        - base_h
+      - - 0
+        - base_h
+    anchor: bottom
+    position:
+    - px
+    - 0
+    - riser_z
+    mirror: x
+    material: iron
+  flange_bolt:
+    shape:
+      type: cylinder
+      radius: 0.018
+      height: 0.03
+      segments: 6
+    anchor: bottom
+    position:
+    - px + 0.118
+    - 0.03
+    - riser_z
+    array:
+      count: 4
+      radial: y
+      angle: 360
+      center:
+      - px
+      - 0
+      - riser_z
+    rotate:
+    - 0
+    - 45
+    - 0
+    mirror: x
+    material: iron
+  pipe:
+    doc: riser, 90 degree elbow (4 arc segments) and horizontal run, one swept tube
+    shape:
+      type: tube
+      radius: pipe_r
+      sides: sides
+      path:
+      - - 0
+        - base_h - 0.03
+        - riser_z
+      - - 0
+        - y_bend
+        - riser_z
+      - - 0
+        - y_bend + bend_r * sin(22.5)
+        - z_bend + bend_r * cos(22.5)
+      - - 0
+        - y_bend + bend_r * sin(45)
+        - z_bend + bend_r * cos(45)
+      - - 0
+        - y_bend + bend_r * sin(67.5)
+        - z_bend + bend_r * cos(67.5)
+      - - 0
+        - axis_h
+        - z_bend
+      - - 0
+        - axis_h
+        - z_bend - run
+    anchor: bottom_front
+    position:
+    - px
+    - base_h - 0.03
+    - riser_z + pipe_r
+    mirror: x
+    material: pipe
+  coupling_low:
+    doc: coupling collar where the riser meets the elbow
+    shape:
+      type: cylinder
+      radius: coupling_r
+      height: 0.08
+      segments: sides
+      chamfer: 0.008
+    anchor: center
+    position:
+    - px
+    - y_bend - 0.04
+    - riser_z
+    mirror: x
+    material: iron
+  coupling_high:
+    doc: coupling collar where the elbow meets the horizontal run
+    shape:
+      type: cylinder
+      radius: coupling_r
+      height: 0.08
+      segments: sides
+      chamfer: 0.008
+    rotate:
+    - 90
+    - 0
+    - 0
+    anchor: center
+    position:
+    - px
+    - axis_h
+    - z_bend - 0.04
+    mirror: x
+    material: iron
+  valve_body:
+    doc: flanged globe valve on the end of the run (inlet flange, bulbous body, blind outlet flange)
+    measure:
+      p:
+        bounds: pipe_right
+    shape:
+      type: lathe
+      segments: 12
+      profile:
+      - - 0
+        - 0
+      - - 0.1
+        - 0
+      - - 0.1
+        - 0.028
+      - - 0.068
+        - 0.036
+      - - 0.095
+        - 0.075
+      - - 0.095
+        - 0.145
+      - - 0.068
+        - 0.184
+      - - 0.1
+        - 0.192
+      - - 0.1
+        - 0.22
+      - - 0
+        - 0.22
+    rotate:
+    - 90
+    - 0
+    - 0
+    anchor: front
+    position:
+    - p.center.x
+    - axis_h
+    - p.min.z + 0.03
+    mirror: x
+    material: iron
+  bonnet:
+    doc: valve bonnet with packing nut on top of the body
+    measure:
+      vb:
+        bounds: valve_body_right
+    shape:
+      type: cylinder
+      radius: 0.05
+      radius_top: 0.038
+      height: 0.12
+      segments: 8
+      chamfer: 0.006
+    anchor: bottom
+    position:
+    - vb.center.x
+    - vb.max.y - 0.015
+    - vb.center.z
+    mirror: x
+    material: iron
+  stem:
+    shape:
+      type: cylinder
+      radius: 0.018
+      height: 0.1
+      segments: 6
+    anchor: bottom
+    attach:
+      to: bonnet
+      at: top
+      offset:
+      - 0
+      - -0.01
+      - 0
+    mirror: x
+    material: iron
+  handwheel:
+    doc: rim + four spokes + hub, fused into one piece
+    shape:
+      type: boolean
+      operation: union
+      base:
+        type: torus
+        radius: wheel_r
+        tube: 0.017
+        segments: 14
+        sides: 5
+      tools:
+      - type: box
+        size:
+        - 2 * wheel_r
+        - 0.018
+        - 0.022
+      - type: box
+        size:
+        - 0.022
+        - 0.018
+        - 2 * wheel_r
+      - type: cylinder
+        radius: 0.03
+        height: 0.04
+        segments: 8
+    rotate:
+    - 0
+    - 45
+    - 0
+    anchor: center
+    attach:
+      to: stem
+      at: top
+      offset:
+      - 0
+      - -0.015
+      - 0
+    mirror: x
+    material: wheel
+  stand_beam:
+    doc: cross beam under both runs, just ahead of the valves
+    measure:
+      vb:
+        bounds: valve_body_right
+    shape:
+      type: chamfer_box
+      size:
+      - spacing + 0.34
+      - 0.07
+      - 0.09
+      chamfer: 0.01
+    anchor: top
+    position:
+    - 0
+    - axis_h - pipe_r
+    - vb.max.z + 0.1
+    material: iron
+  stand_post:
+    measure:
+      b:
+        bounds: stand_beam
+    shape:
+      type: chamfer_box
+      size:
+      - 0.08
+      - b.min.y
+      - 0.08
+      chamfer: 0.01
+    anchor: bottom
+    position:
+    - b.max.x - 0.05
+    - 0
+    - b.center.z
+    mirror: x
+    material: iron
+  stand_foot:
+    measure:
+      post:
+        bounds: stand_post_right
+    shape:
+      type: chamfer_box
+      size:
+      - 0.18
+      - 0.03
+      - 0.18
+      chamfer: 0.006
+    anchor: bottom
+    position:
+    - post.center.x
+    - 0
+    - post.center.z
+    mirror: x
+    material: iron
+  clamp:
+    doc: U-strap holding each pipe down on the beam
+    measure:
+      b:
+        bounds: stand_beam
+    shape:
+      type: ring
+      radius: pipe_r + 0.012
+      thickness: 0.012
+      height: 0.05
+      segments: sides
+    rotate:
+    - 90
+    - 0
+    - 0
+    anchor: center
+    position:
+    - px
+    - axis_h
+    - b.center.z
+    mirror: x
+    material: iron
+sockets:
+  valve_left:
+    attach:
+      to: handwheel_left
+      at: top
+    doc: interaction point (turn valve)
+  valve_right:
+    attach:
+      to: handwheel_right
+      at: top
+    doc: interaction point (turn valve)
+uv:
+  texel_density: 256
+collision:
+  mode: box
+checks:
+- expr: pipe_right.max.y - pipe_r
+  min: axis_h - 0.005
+  max: axis_h + 0.005
+  doc: horizontal run at the design height
+- expr: pipe_right.center.x - pipe_left.center.x
+  min: spacing - 0.001
+  max: spacing + 0.001
+  doc: parallel pipes at the design spacing
+- expr: pipe_right.size.z
+  min: bend_r + run + pipe_r - 0.01
+  doc: riser + elbow + run
+- expr: handwheel_right.min.y > valve_body_right.max.y
+  doc: handwheel clears the valve body
+- expr: handwheel_right.min.x > handwheel_left.max.x
+  doc: the two handwheels do not collide
+- expr: floor_flange.min.y
+  min: 0
+  max: 0.001
+  doc: flanges on the floor

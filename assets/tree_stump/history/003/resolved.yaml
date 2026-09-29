@@ -1,0 +1,306 @@
+shapewright: 0.1
+asset:
+  name: tree_stump
+  kind: prop/nature/stump
+  description: Stylized low-poly tree stump with five gnarled roots spreading into the ground and a cut top showing growth
+    rings.
+profile: mobile_mid
+style: stylized_lowpoly
+budget:
+  triangles: 2000
+  materials: 2
+uv:
+  texel_density: 200
+params:
+  stump_r:
+    value: 0.22
+    min: 0.18
+    max: 0.32
+    doc: trunk radius just below the cut
+  stump_h:
+    value: 0.48
+    min: 0.3
+    max: 0.6
+    doc: height of the cut
+  sides:
+    value: 13
+    doc: facets around the trunk
+  bark_lumps:
+    value: 0.03
+    doc: noise displacement of the bark
+  root_in:
+    value: stump_r * 0.45
+    doc: roots start this far from the axis (buried in the trunk)
+  root_len:
+    value: 0.46
+    doc: horizontal reach of a long root beyond root_in
+  root_h:
+    value: 0.27
+    doc: height where a long root leaves the trunk
+  root_r0:
+    value: 0.1
+    doc: root radius at the trunk
+  root_r1:
+    value: 0.018
+    doc: root radius at its tip
+  short_len:
+    value: 0.34
+  short_h:
+    value: 0.21
+  short_r0:
+    value: 0.08
+  short_dir:
+    value: 60
+    doc: direction of the first short root (degrees about Y)
+  root_sides:
+    value: 8
+  ring_w:
+    value: 0.009
+    doc: width of a growth-ring ridge
+materials:
+  bark:
+    archetype: flat
+    color: '#5e3b22'
+    roughness: 0.95
+    grime: 0.3
+    grime_height: 0.08
+    doc: dark bark, roots and growth-ring ridges
+  end_grain:
+    archetype: flat
+    color: '#d2a36a'
+    roughness: 0.85
+    doc: freshly cut wood
+parts:
+  trunk:
+    doc: flared trunk; noise gives the gnarled bark lumps
+    shape:
+      type: lathe
+      segments: sides
+      profile:
+      - - 0
+        - 0
+      - - stump_r * 1.12
+        - 0
+      - - stump_r * 1.08
+        - 0.05
+      - - stump_r * 1.04
+        - 0.13
+      - - stump_r * 1.02
+        - stump_h * 0.5
+      - - stump_r * 1.03
+        - stump_h * 0.8
+      - - stump_r
+        - stump_h - 0.01
+      - - stump_r - 0.02
+        - stump_h
+      - - 0
+        - stump_h
+    ops:
+    - type: noise
+      amount: bark_lumps
+      frequency: 4
+      seed: 3
+    - type: shear
+      axis: y
+      toward: x
+      amount: -0.03
+    shading: flat
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    material: bark
+  root:
+    doc: long root; arches out of the trunk and tapers down into the ground
+    shape:
+      type: tube
+      sides: root_sides
+      radius: root_r0
+      radius_end: root_r1
+      path:
+      - - 0
+        - root_h
+        - 0
+      - - root_len * 0.22
+        - root_h * 0.75
+        - 0.012
+      - - root_len * 0.4
+        - root_h * 0.42
+        - -0.018
+      - - root_len * 0.56
+        - root_h * 0.24
+        - 0.01
+      - - root_len * 0.72
+        - root_h * 0.14
+        - 0.024
+      - - root_len * 0.87
+        - root_h * 0.08
+        - 0.004
+      - - root_len
+        - root_h * 0.03
+        - -0.022
+    ops:
+    - type: noise
+      amount: 0.012
+      frequency: 9
+      seed: 11
+    anchor: bottom_left
+    position:
+    - root_in - root_r0
+    - 0
+    - 0
+    array:
+      count: 3
+      radial: y
+      angle: 360
+      center:
+      - 0
+      - 0
+      - 0
+    uv:
+      share_instances: true
+    shading: flat
+    material: bark
+  short_root:
+    doc: shorter root authored along short_dir; centre of its bbox is the midpoint of its run
+    shape:
+      type: tube
+      sides: root_sides
+      radius: short_r0
+      radius_end: root_r1
+      path:
+      - - 0
+        - short_h
+        - 0
+      - - short_len * 0.3 * cos(short_dir)
+        - short_h * 0.7
+        - -short_len * 0.3 * sin(short_dir)
+      - - short_len * 0.55 * cos(short_dir) + 0.015
+        - short_h * 0.35
+        - -short_len * 0.55 * sin(short_dir)
+      - - short_len * 0.8 * cos(short_dir)
+        - short_h * 0.15
+        - -short_len * 0.8 * sin(short_dir) - 0.01
+      - - short_len * cos(short_dir)
+        - short_h * 0.05
+        - -short_len * sin(short_dir)
+    ops:
+    - type: noise
+      amount: 0.01
+      frequency: 9
+      seed: 17
+    anchor: bottom
+    position:
+    - (root_in + short_len / 2) * cos(short_dir)
+    - 0
+    - -(root_in + short_len / 2) * sin(short_dir)
+    array:
+      count: 2
+      radial: y
+      angle: 240
+      center:
+      - 0
+      - 0
+      - 0
+    uv:
+      share_instances: true
+    shading: flat
+    material: bark
+  cut_top:
+    doc: pale cut face, sized from the trunk's real section just below the cut
+    measure:
+      tb:
+        bounds: trunk
+      s:
+        section: trunk
+        axis: y
+        at: stump_h - 0.03
+    shape:
+      type: cylinder
+      radius: min(s.size.x, s.size.z) / 2 - 0.018
+      height: 0.03
+      segments: sides
+    ops:
+    - type: jitter
+      amount: 0.002
+      seed: 5
+    anchor: top
+    position:
+    - s.center.x
+    - tb.max.y + 0.006
+    - s.center.z
+    shading: flat
+    material: end_grain
+  ring_outer:
+    doc: outer growth-ring ridge on the cut face
+    measure:
+      top:
+        bounds: cut_top
+    shape:
+      type: ring
+      radius: top.size.x * 0.34
+      thickness: ring_w
+      height: 0.01
+      segments: sides
+    anchor: center
+    position:
+    - top.center.x - 0.004
+    - top.max.y
+    - top.center.z + 0.004
+    shading: flat
+    tags:
+    - thin_ok
+    material: bark
+  ring_inner:
+    doc: inner growth ring, off-centre like real wood
+    measure:
+      top:
+        bounds: cut_top
+    shape:
+      type: ring
+      radius: top.size.x * 0.2
+      thickness: ring_w
+      height: 0.01
+      segments: sides - 3
+    anchor: center
+    position:
+    - top.center.x + 0.008
+    - top.max.y
+    - top.center.z - 0.004
+    shading: flat
+    tags:
+    - thin_ok
+    material: bark
+  heart:
+    doc: dark pith dot inside the inner ring
+    measure:
+      ring:
+        bounds: ring_inner
+    shape:
+      type: cylinder
+      radius: 0.018
+      height: 0.01
+      segments: 6
+    anchor: center
+    position:
+    - ring.center.x + 0.004
+    - ring.center.y
+    - ring.center.z - 0.004
+    shading: flat
+    tags:
+    - thin_ok
+    material: bark
+collision:
+  mode: hull
+checks:
+- expr: asset.height
+  min: 0.3
+  max: 0.65
+  doc: knee-high stump
+- expr: asset.width / (2 * stump_r)
+  min: 1.8
+  max: 3.5
+  doc: roots spread well beyond the trunk
+- expr: cut_top.max.y >= trunk.max.y
+  doc: cut face is visible on top

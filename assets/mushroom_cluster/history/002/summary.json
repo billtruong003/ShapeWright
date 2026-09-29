@@ -1,0 +1,37 @@
+{
+ "iteration": 2,
+ "note": "pale gill cones under caps",
+ "critique": "undersides now read as gills from the low view; spots readable on caps; GEO_PART_FRAGMENTED on caps is intended (combine shells: dome + gills + spots); no significant findings",
+ "source_hash": "39620ce0e68c",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 3,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 1244,
+  "parts": 7,
+  "size_m": [
+   0.4706,
+   0.4374,
+   0.4747
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.4374,
+   "big.height > mid.height and mid.height > small.height": true,
+   "small.height / big.height": 0.4137
+  }
+ },
+ "errors": [],
+ "params": {
+  "mound_r": 0.24,
+  "mound_h": 0.05,
+  "big_h": 0.3,
+  "mid_h": 0.19,
+  "small_h": 0.11,
+  "sink": 0.02
+ }
+}

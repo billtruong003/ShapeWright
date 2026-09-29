@@ -1,0 +1,55 @@
+{
+ "iteration": 2,
+ "note": "module 0.012 -> 0.014: bigger exposed gears",
+ "critique": "gears now read as the hero feature at 3/4, teeth still interleave, clear base and housing top; ribs + plug break up the housing. Remaining warning UV_TEXEL_DENSITY on tiny bolts accepted. No significant findings -> export",
+ "source_hash": "bbb389fe00f5",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 1762,
+  "parts": 26,
+  "size_m": [
+   0.6346,
+   0.367,
+   0.46
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.367,
+   "big_gear.size.y": 0.252,
+   "pinion.max.z < big_gear.max.z + centre_d": true,
+   "big_gear.min.z > housing.min.z - 0.02": true,
+   "big_gear.min.y > base.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "hw": 0.34,
+  "hh": 0.28,
+  "hd": 0.42,
+  "base_t": 0.04,
+  "base_over": 0.05,
+  "cover_t": 0.03,
+  "cover_in": 0.025,
+  "bolt_r": 0.012,
+  "bolt_h": 0.014,
+  "module": 0.014,
+  "n_big": 16.0,
+  "n_small": 10.0,
+  "gear_t": 0.035,
+  "r_big": 0.112,
+  "r_small": 0.07,
+  "centre_d": 0.182,
+  "tooth_len": 0.0394,
+  "gear_y": 0.18,
+  "small_z": 0.101,
+  "big_z": -0.081,
+  "shaft_r": 0.022,
+  "shaft_len": 0.16
+ }
+}

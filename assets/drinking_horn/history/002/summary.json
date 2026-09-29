@@ -1,0 +1,42 @@
+{
+ "iteration": 2,
+ "note": "flattened strap (scale z 2.2), smoother strap path rising straight from the band, thicker horn",
+ "critique": "strap now reads as a flat leather band in the right view and hangs into the tip loop; horn curl reads clearly; minor facet kink at the lower-right bend acceptable for low-poly; no significant findings",
+ "source_hash": "68b2ca7d93ff",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "metrics": {
+  "triangles": 484,
+  "parts": 5,
+  "size_m": [
+   0.4317,
+   0.4493,
+   0.1116
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.4493,
+   "horn.size.x": 0.4049,
+   "rim_band.max.y - horn.max.y": 0.012
+  }
+ },
+ "errors": [],
+ "params": {
+  "mouth_r": 0.055,
+  "tip_r": 0.012,
+  "horn_sides": 10.0,
+  "span": 0.34,
+  "rise": 0.36,
+  "tip_rise": 0.2,
+  "band_h": 0.035,
+  "band_t": 0.008,
+  "lip": 0.012,
+  "strap_r": 0.0065,
+  "strap_sag": 0.06
+ }
+}

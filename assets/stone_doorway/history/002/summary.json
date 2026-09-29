@@ -1,0 +1,55 @@
+{
+ "iteration": 2,
+ "note": "plinth base course (jambs stand on it), coping cap, wall body tucked into coping, rubble texture stronger, texel density 120",
+ "critique": "top-view z-fighting at wall top fixed by tucking the wall into the coping; plinth/coping 1 mm shy of the seam avoid coplanar faces when tiled; silhouette now has base+cap; no significant findings left. Param sweep n_side=5,r_in=0.7 validates.",
+ "source_hash": "fa8668f18e10",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 696,
+  "parts": 22,
+  "size_m": [
+   2.0,
+   3.0,
+   0.5315
+  ],
+  "materials": 2,
+  "uv_overlap": 0.0,
+  "checks": {
+   "wall.size.x": 2.0,
+   "asset.width": 2.0,
+   "keystone.max.y": 2.4543,
+   "voussoir.count": 8.0,
+   "2 * r_in": 1.2,
+   "spring_y + r_in": 2.05
+  }
+ },
+ "errors": [],
+ "params": {
+  "module_w": 2.0,
+  "wall_h": 3.0,
+  "wall_t": 0.4,
+  "r_in": 0.6,
+  "spring_y": 1.45,
+  "ring": 0.32,
+  "n_side": 4.0,
+  "wear": 0.006,
+  "stone_proud": 0.035,
+  "cut_clear": 0.03,
+  "mortar": 1.6,
+  "jamb_h_gap": 0.012,
+  "courses": 4.0,
+  "plinth_h": 0.26,
+  "coping_h": 0.16,
+  "r_out": 0.92,
+  "step": 20.0,
+  "arc": 18.4,
+  "stone_d": 0.47,
+  "course_h": 0.2975,
+  "key_half": 10.4
+ }
+}

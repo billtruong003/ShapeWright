@@ -1,0 +1,316 @@
+shapewright: 0.1
+asset:
+  name: scifi_wall_panel
+  kind: prop/scifi/wall_panel
+  description: Stylized low-poly sci-fi cargo bay wall panel with panel lines, raised hatch and handle, vents and corner bolts.
+  placement: wall
+profile: desktop_indie
+style: stylized_lowpoly
+budget:
+  triangles: 1500
+  materials: 3
+params:
+  pw:
+    value: 1.2
+    min: 0.8
+    max: 2.0
+    doc: panel width
+  ph:
+    value: 1.8
+    min: 1.2
+    max: 2.4
+    doc: panel height
+  pt:
+    value: 0.08
+    doc: panel thickness
+  groove_w:
+    value: 0.018
+    doc: panel line width
+  groove_d:
+    value: 0.012
+    doc: panel line depth
+  border:
+    value: 0.09
+    doc: inset of the border groove
+  hatch_w:
+    value: 0.52
+  hatch_h:
+    value: 0.62
+  hatch_t:
+    value: 0.045
+    doc: how far the hatch stands proud
+  hatch_y:
+    value: ph * 0.56
+    doc: hatch centre height
+  seam:
+    value: 0.04
+    doc: gap between the hatch and its surrounding seam groove
+  vent_w:
+    value: 0.34
+  vent_h:
+    value: 0.2
+  vent_y:
+    value: ph * 0.2
+  slots:
+    value: 5
+  bolt_r:
+    value: 0.026
+  bolt_in:
+    value: 0.05
+    doc: bolt centre inset from the panel corners
+materials:
+  hull:
+    base_color: '#6b6f73'
+    metallic: 0.6
+    roughness: 0.5
+  accent:
+    base_color: '#c9a15a'
+    metallic: 0.3
+    roughness: 0.45
+    doc: hatch paint
+  dark:
+    base_color: '#2f3236'
+    metallic: 0.7
+    roughness: 0.45
+    doc: vents, bolts, handle
+parts:
+  panel:
+    doc: main slab with recessed panel lines on the front face
+    shape:
+      type: chamfer_box
+      size:
+      - pw
+      - ph
+      - pt
+      chamfer: 0.02
+    ops:
+    - type: subtract
+      doc: border groove
+      shape:
+        type: boolean
+        operation: difference
+        base:
+          type: box
+          size:
+          - pw - 2 * border + groove_w
+          - ph - 2 * border + groove_w
+          - groove_d * 2
+        tools:
+        - type: box
+          size:
+          - pw - 2 * border - groove_w
+          - ph - 2 * border - groove_w
+          - groove_d * 4
+      position:
+      - 0
+      - 0
+      - pt / 2
+    - type: subtract
+      doc: seam around the hatch
+      shape:
+        type: boolean
+        operation: difference
+        base:
+          type: box
+          size:
+          - hatch_w + 2 * seam + groove_w
+          - hatch_h + 2 * seam + groove_w
+          - groove_d * 2
+        tools:
+        - type: box
+          size:
+          - hatch_w + 2 * seam - groove_w
+          - hatch_h + 2 * seam - groove_w
+          - groove_d * 4
+      position:
+      - 0
+      - hatch_y - ph / 2
+      - pt / 2
+    - type: subtract
+      doc: horizontal split lines above and below the hatch
+      shape:
+        type: box
+        size:
+        - pw - 2 * border
+        - groove_w
+        - groove_d * 2
+        ops:
+        - type: mirror
+          axis: y
+          at: -(hatch_h / 2 + seam + 0.1)
+      position:
+      - 0
+      - hatch_y - ph / 2 + hatch_h / 2 + seam + 0.1 + 0.001
+      - pt / 2
+    anchor: bottom_back
+    position:
+    - 0
+    - 0
+    - 0
+    shading: flat
+    material: hull
+  hatch:
+    doc: raised bevelled hatch
+    shape:
+      type: chamfer_box
+      size:
+      - hatch_w
+      - hatch_h
+      - hatch_t + 0.01
+      chamfer: 0.012
+    ops:
+    - type: taper
+      axis: z
+      scale:
+      - 0.93
+      - 0.95
+      - 1
+    - type: subtract
+      doc: a horizontal seam across the hatch
+      shape:
+        type: box
+        size:
+        - hatch_w * 1.2
+        - groove_w * 0.8
+        - groove_d * 2
+      position:
+      - 0
+      - -hatch_h * 0.18
+      - (hatch_t + 0.01) / 2
+    anchor: back
+    attach:
+      to: panel
+      at: front
+      offset:
+      - 0
+      - hatch_y - ph / 2
+      - -0.01
+    shading: flat
+    material: accent
+  handle:
+    doc: grab handle on the hatch
+    shape:
+      type: tube
+      radius: 0.014
+      sides: 6
+      path:
+      - - -0.11
+        - 0
+        - -0.01
+      - - -0.11
+        - 0
+        - 0.035
+      - - -0.085
+        - 0
+        - 0.055
+      - - 0.085
+        - 0
+        - 0.055
+      - - 0.11
+        - 0
+        - 0.035
+      - - 0.11
+        - 0
+        - -0.01
+    anchor: back
+    attach:
+      to: hatch
+      at: front
+      offset:
+      - 0
+      - hatch_h * 0.12
+      - -0.012
+    tags:
+    - thin_ok
+    material: dark
+  vent:
+    doc: slotted vent plates, left and right
+    shape:
+      type: chamfer_box
+      size:
+      - vent_w
+      - vent_h
+      - 0.03
+      chamfer: 0.008
+    ops:
+    - type: subtract
+      shape:
+        type: chamfer_box
+        size:
+        - vent_w * 0.8
+        - vent_h * 0.09
+        - 0.06
+        chamfer: 0.004
+        ops:
+        - type: repeat
+          count: slots
+          offset:
+          - 0
+          - vent_h * 0.75 / (slots - 1)
+          - 0
+      position:
+      - 0
+      - 0
+      - 0.02
+    anchor: back
+    attach:
+      to: panel
+      at: front
+      offset:
+      - pw * 0.2
+      - vent_y - ph / 2
+      - -0.012
+    mirror: x
+    shading: flat
+    material: dark
+  bolt:
+    doc: corner bolts
+    shape:
+      type: cylinder
+      radius: bolt_r
+      height: 0.024
+      segments: 6
+      chamfer: 0.005
+    rotate:
+    - 90
+    - 0
+    - 0
+    anchor: back
+    attach:
+      to: panel
+      at: front_top_right
+      offset:
+      - -bolt_in
+      - -bolt_in
+      - -0.006
+    mirror:
+    - x
+    - axis: y
+      at: ph / 2
+    tags:
+    - thin_ok
+    material: dark
+sockets:
+  hatch_use:
+    attach:
+      to: handle
+      at: front
+      offset:
+      - 0
+      - 0
+      - 0.1
+    doc: interaction point
+collision:
+  mode: single_box
+checks:
+- expr: panel.size.x
+  min: pw - 0.001
+  max: pw + 0.001
+- expr: hatch.max.z - panel.max.z
+  min: 0.03
+  max: 0.06
+  doc: hatch stands proud
+- expr: vent_left.max.y < hatch.min.y - 0.05
+  doc: vents below the hatch
+- expr: bolt_top_right.max.y < panel.max.y
+  doc: bolts stay on the panel

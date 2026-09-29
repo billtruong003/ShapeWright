@@ -1,0 +1,341 @@
+shapewright: 0.1
+asset:
+  name: well_winch
+  kind: prop/structure/well_winch
+  description: Crank winch for a well with two posts, a rope drum, a bent crank handle and a hanging rope with a bucket hook.
+  tags:
+  - well
+  - winch
+  - medieval
+  - wood
+profile: desktop_indie
+style: stylized_lowpoly
+budget:
+  triangles: 2000
+  materials: 3
+params:
+  post_x:
+    value: 0.55
+    doc: post centre distance from the middle
+  post:
+    value: 0.12
+    doc: post cross-section
+  post_h:
+    value: 1.3
+  drum_y:
+    value: 1.08
+    doc: drum axis height
+  drum_r:
+    value: 0.1
+  axle_r:
+    value: 0.028
+  rope_r:
+    value: 0.016
+  coils:
+    value: 9
+  crank_arm:
+    value: 0.26
+    doc: crank throw (axle to grip)
+  grip_l:
+    value: 0.16
+  rope_low:
+    value: 0.35
+    doc: height of the rope end (hook eye)
+  sill_l:
+    value: 0.62
+  brace_lo:
+    value: 0.24
+    doc: brace foot distance from the post centre along z
+  brace_hi:
+    value: 0.4
+    doc: brace top height on the post
+  wear:
+    value: 0.004
+materials:
+  wood:
+    archetype: wood
+    color: '#8a5a36'
+    grain_strength: 0.35
+    grain_scale: 0.035
+    edge_wear: 0.3
+    grime: 0.25
+    seed: 5
+  iron:
+    archetype: metal
+    color: '#62666c'
+    roughness: 0.5
+    edge_wear: 0.5
+    rust: 0.2
+  rope:
+    base_color: '#c9a86a'
+    roughness: 0.95
+    doc: hemp rope
+parts:
+  sill:
+    doc: ground beams under each post (stability)
+    shape:
+      type: chamfer_box
+      size:
+      - post + 0.02
+      - 0.1
+      - sill_l
+      chamfer: 0.014
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 31
+    anchor: bottom
+    position:
+    - post_x
+    - 0
+    - 0
+    mirror: x
+    material: wood
+  post:
+    doc: upright posts carrying the drum axle
+    measure:
+      s:
+        bounds: sill_right
+    shape:
+      type: chamfer_box
+      size:
+      - post
+      - post_h
+      - post
+      chamfer: 0.016
+    ops:
+    - type: taper
+      axis: y
+      scale: 0.88
+    - type: jitter
+      amount: wear
+      seed: 32
+    anchor: bottom
+    position:
+    - post_x
+    - s.max.y - 0.03
+    - 0
+    mirror: x
+    material: wood
+  brace:
+    doc: diagonal braces from the sill ends up to the posts
+    measure:
+      s:
+        bounds: sill_right
+    shape:
+      type: chamfer_box
+      size:
+      - 0.06
+      - sqrt((brace_lo - post / 2) ** 2 + (brace_hi - s.max.y) ** 2) + 0.06
+      - 0.06
+      chamfer: 0.01
+    rotate:
+    - atan2(brace_lo - post / 2, brace_hi - s.max.y)
+    - 0
+    - 0
+    anchor: center
+    position:
+    - post_x
+    - (brace_hi + s.max.y) / 2
+    - (brace_lo + post / 2) / 2
+    mirror:
+    - x
+    - z
+    material: wood
+  axle:
+    doc: iron axle through both post tops
+    measure:
+      p:
+        bounds: post_right
+    shape:
+      type: cylinder
+      radius: axle_r
+      height: 2 * p.max.x + 0.06
+      segments: 8
+    rotate:
+    - 0
+    - 0
+    - 90
+    position:
+    - 0
+    - drum_y
+    - 0
+    material: iron
+  drum:
+    doc: wooden rope drum between the posts
+    measure:
+      g:
+        gap:
+        - post_left
+        - post_right
+        axis: x
+        section:
+          axis: y
+          at: drum_y
+    shape:
+      type: cylinder
+      radius: drum_r
+      height: g.length + 0.01
+      segments: 10
+      chamfer: 0.012
+    rotate:
+    - 0
+    - 0
+    - 90
+    position:
+    - 0
+    - drum_y
+    - 0
+    material: wood
+  coil:
+    doc: turns of rope wound on the drum
+    measure:
+      d:
+        bounds: drum
+    shape:
+      type: torus
+      radius: drum_r + rope_r * 0.6
+      tube: rope_r * 1.2
+      segments: 10
+      sides: 4
+    rotate:
+    - 0
+    - 0
+    - 90
+    anchor: center
+    position:
+    - -(coils - 1) * rope_r * 1.1
+    - drum_y
+    - 0
+    array:
+      count: coils
+      offset:
+      - rope_r * 2.2
+      - 0
+      - 0
+    material: rope
+  crank:
+    doc: bent iron crank - out along the axle, down the throw, then the grip
+    measure:
+      a:
+        bounds: axle
+    shape:
+      type: tube
+      radius: 0.02
+      sides: 6
+      path:
+      - - 0
+        - 0
+        - 0
+      - - 0.05
+        - 0
+        - 0
+      - - 0.07
+        - -0.03
+        - 0
+      - - 0.07
+        - -crank_arm + 0.03
+        - 0
+      - - 0.1
+        - -crank_arm
+        - 0
+      - - 0.07 + grip_l
+        - -crank_arm
+        - 0
+    anchor: top_left
+    position:
+    - a.max.x - 0.03
+    - drum_y + 0.02
+    - 0
+    shading: flat
+    material: iron
+  grip:
+    doc: wooden sleeve on the crank grip
+    measure:
+      c:
+        bounds: crank
+    shape:
+      type: cylinder
+      radius: 0.03
+      height: grip_l - 0.05
+      segments: 8
+      chamfer: 0.008
+    rotate:
+    - 0
+    - 0
+    - 90
+    anchor: right
+    position:
+    - c.max.x
+    - c.min.y + 0.02
+    - 0
+    material: wood
+  rope:
+    doc: rope leaving the front of the drum and hanging down
+    measure:
+      d:
+        bounds: drum
+    shape:
+      type: cylinder
+      radius: rope_r
+      height: drum_y - rope_low
+      segments: 6
+    anchor: top
+    position:
+    - 0.05
+    - drum_y
+    - drum_r + rope_r * 0.5
+    material: rope
+  hook:
+    doc: iron bucket hook with an eye, hanging from the rope end
+    measure:
+      r:
+        bounds: rope
+    shape:
+      type: tube
+      radius: 0.012
+      sides: 6
+      path:
+      - - 0
+        - 0
+        - 0
+      - - 0
+        - -0.1
+        - 0
+      - - 0.015
+        - -0.145
+        - 0
+      - - 0.05
+        - -0.155
+        - 0
+      - - 0.075
+        - -0.13
+        - 0
+      - - 0.075
+        - -0.1
+        - 0
+    anchor: top_left
+    position:
+    - r.center.x - 0.012
+    - r.min.y + 0.02
+    - r.center.z
+    shading: flat
+    tags:
+    - thin_ok
+    material: iron
+collision:
+  mode: box
+uv:
+  texel_density: 256
+checks:
+- expr: drum.center.y
+  min: 0.95
+  max: 1.2
+  doc: drum at a comfortable cranking height
+- expr: grip.center.y
+  min: 0.7
+  max: 1.0
+  doc: crank grip at hand height
+- expr: hook.max.y
+  max: rope.min.y + 0.03
+  doc: hook hangs from the rope end

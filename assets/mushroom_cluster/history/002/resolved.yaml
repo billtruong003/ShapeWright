@@ -1,0 +1,155 @@
+shapewright: 0.1
+asset:
+  name: mushroom_cluster
+  kind: prop/nature/mushrooms
+  description: Stylized low-poly cluster of three spotted fantasy mushrooms of different sizes with curved stems, on a small
+    mossy mound.
+profile: mobile_mid
+style: stylized_lowpoly
+budget:
+  triangles: 1500
+  materials: 3
+params:
+  mound_r:
+    value: 0.24
+    doc: radius of the mossy mound
+  mound_h:
+    value: 0.05
+  big_h:
+    value: 0.3
+    doc: stem height of the large mushroom
+  mid_h:
+    value: 0.19
+  small_h:
+    value: 0.11
+  sink:
+    value: 0.02
+    doc: stems start this far below the mound surface
+materials:
+  cap:
+    archetype: flat
+    color: '#b8322a'
+    roughness: 0.55
+    doc: glossy red cap
+  cream:
+    archetype: flat
+    color: '#efe3c4'
+    roughness: 0.7
+    doc: stems and spots
+  moss:
+    archetype: flat
+    color: '#4f6b35'
+    roughness: 0.95
+    doc: mossy mound
+parts:
+  mound:
+    doc: low lumpy mound of moss and earth that holds the cluster together
+    shape:
+      type: lathe
+      segments: 11
+      profile:
+      - - 0
+        - 0
+      - - mound_r
+        - 0
+      - - mound_r * 0.85
+        - mound_h * 0.6
+      - - mound_r * 0.5
+        - mound_h
+      - - 0
+        - mound_h * 1.1
+    ops:
+    - type: noise
+      amount: 0.008
+      frequency: 8
+      seed: 2
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    shading: flat
+    material: moss
+  big:
+    component: fantasy_mushroom
+    with:
+      stem_h: big_h
+      stem_r: 0.045
+      curve: 0.07
+      cap_r: 0.15
+      cap_h: 0.12
+      tilt: 14
+    materials:
+      stem: cream
+      cap: cap
+      spots: cream
+      gills: cream
+    rotate:
+    - 0
+    - 150
+    - 0
+    anchor: bottom
+    position:
+    - -0.03
+    - mound_h - sink
+    - -0.04
+  mid:
+    component: fantasy_mushroom
+    with:
+      stem_h: mid_h
+      stem_r: 0.034
+      curve: 0.07
+      cap_r: 0.1
+      cap_h: 0.08
+      tilt: 20
+      segs: 10
+    materials:
+      stem: cream
+      cap: cap
+      spots: cream
+      gills: cream
+    rotate:
+    - 0
+    - 10
+    - 0
+    anchor: bottom
+    position:
+    - 0.1
+    - mound_h * 0.6 - sink
+    - 0.02
+  small:
+    component: fantasy_mushroom
+    with:
+      stem_h: small_h
+      stem_r: 0.025
+      curve: 0.045
+      cap_r: 0.065
+      cap_h: 0.055
+      tilt: 22
+      segs: 9
+    materials:
+      stem: cream
+      cap: cap
+      spots: cream
+      gills: cream
+    rotate:
+    - 0
+    - -110
+    - 0
+    anchor: bottom
+    position:
+    - -0.04
+    - mound_h * 0.7 - sink
+    - 0.12
+collision:
+  mode: hull
+checks:
+- expr: asset.height
+  min: 0.3
+  max: 0.5
+  doc: ankle-to-knee high cluster
+- expr: big.height > mid.height and mid.height > small.height
+  doc: three distinct sizes
+- expr: small.height / big.height
+  min: 0.25
+  max: 0.6

@@ -1,0 +1,180 @@
+# Modular pitched roof section, 2 m (along the ridge, X) x 2 m (eave to eave, Z).
+# Structure: wall plates at the eaves, a ridge board, paired rafters, horizontal battens,
+# six overlapping courses of wooden shingles per slope (alternate courses offset by half a
+# shingle, with half shingles at the module seams so copies tile along X) and a ridge cap.
+#
+# Frame used by the derived params: s = distance down the front slope from the ridge line,
+# P(s) = (0, H - s*sin(pitch), s*cos(pitch)) is the top plane of the rafters, n = (0, cos, sin)
+# its outward normal. Each shingle is tilted `eps` shallower than the roof so its butt rests on
+# the course below (e * tan(eps) = t) while its head rests on a batten.
+shapewright: 0.1
+asset:
+  name: roof_section
+  kind: prop/architecture/roof_module
+  description: Modular 2 x 2 m pitched roof section with rafters, battens, overlapping offset wooden shingle courses and a ridge cap.
+  tags: [architecture, modular, roof, wood, shingles]
+profile: desktop_indie
+style: stylized_lowpoly
+budget: {triangles: 3000}
+
+params:
+  module_w:  {value: 2.0, min: 2.0, max: 2.0, doc: length along the ridge (tiling grid, X)}
+  depth:     {value: 2.0, min: 2.0, max: 2.0, doc: eave to eave (Z)}
+  pitch:     {value: 35, min: 25, max: 45, doc: roof pitch in degrees}
+  courses:   {value: 6, min: 4, max: 8, doc: shingle courses per slope (even; alternate courses offset)}
+  shingle_w: {value: 0.25, doc: shingle pitch across the slope (module_w must be a multiple)}
+  t:         {value: 0.028, doc: shingle thickness}
+  wear:      0.004
+  # timber
+  rafter_w:  0.07
+  rafter_h:  0.14
+  rafter_n:  4                     # rafters per slope in one module (spacing module_w / rafter_n)
+  ridge_t:   0.05                  # ridge board thickness
+  plate_w:   0.16
+  plate_h:   0.12
+  batten_t:  0.03
+  batten_w:  0.06
+  gap:       0.012                 # joint between neighbouring shingles
+  cap_w:     0.2                   # ridge cap reach down each slope (horizontal)
+  cap_t:     0.035
+  # derived
+  half:      depth / 2
+  L:         half / cos(pitch)                         # rafter top length along the slope
+  H:         plate_h - 0.02 + half * tan(pitch) + rafter_h / cos(pitch)   # ridge height of the rafter top plane
+  e:         (L - ridge_t / 2) / (courses + 1)         # exposure of one course
+  Ls:        2 * e                                     # shingle length (double coverage)
+  eps:       atan2(t, e)                               # extra tilt so each butt rests on the course below
+  q:         pitch - eps                               # shallower than the roof: head on the batten, butt lifted
+  s_head0:   L - Ls * cos(eps)                         # head (upper end) of the eave course
+  # centre of an eave-course shingle: P(s_head0) + n*batten_t + d_q*Ls/2 + n_q*t/2
+  sh_y:      H - s_head0 * sin(pitch) + batten_t * cos(pitch) - Ls / 2 * sin(q) + t / 2 * cos(q) - 0.002
+  sh_z:      s_head0 * cos(pitch) + batten_t * sin(pitch) + Ls / 2 * cos(q) + t / 2 * sin(q)
+  up_y:      e * sin(pitch)                            # one course up the slope
+  up_z:      -e * cos(pitch)
+
+materials:
+  timber:   {archetype: wood, color: "#6b4a30", grain_strength: 0.35, grain_scale: 0.04, edge_wear: 0.25, doc: "rafters, battens, plates, ridge board"}
+  shingle:  {archetype: wood, color: "#9a7a58", grain_strength: 0.2, streaks: 0.6, grain_scale: 0.05, edge_wear: 0.35, grime: 0.15, doc: weathered cedar shingles}
+  capwood:  {archetype: wood, color: "#5a4030", grain_strength: 0.3, edge_wear: 0.4, doc: ridge cap boards}
+
+parts:
+  wall_plate:
+    doc: beam along each eave that the rafters bear on (the roof's contact with the wall tops, y = 0)
+    shape: {type: chamfer_box, size: [module_w - 0.002, plate_h, plate_w], chamfer: 0.012}
+    anchor: bottom_front
+    position: [0, 0, half]
+    mirror: z
+    material: timber
+
+  ridge_board:
+    doc: board along the ridge between the rafter heads
+    shape: {type: chamfer_box, size: [module_w - 0.002, rafter_h + 0.1, ridge_t], chamfer: 0.008}
+    anchor: top
+    position: [0, H, 0]
+    material: timber
+
+  rafter:
+    doc: sloped rafter with plumb cuts at the ridge and the eave; profile (u = distance from the ridge, y)
+    shape:
+      type: extrude
+      depth: rafter_w
+      polygon:
+        - [ridge_t / 2, "H - ridge_t / 2 * tan(pitch)"]
+        - [half, "H - half * tan(pitch)"]
+        - [half, "H - half * tan(pitch) - rafter_h / cos(pitch)"]
+        - [ridge_t / 2, "H - ridge_t / 2 * tan(pitch) - rafter_h / cos(pitch)"]
+    rotate: [0, 90, 0]                     # u -> -Z (back slope), extrusion -> X
+    anchor: top_front
+    position: [-module_w / 2 + module_w / rafter_n / 2, "H - ridge_t / 2 * tan(pitch)", -ridge_t / 2]
+    array: {count: rafter_n, offset: [module_w / rafter_n, 0, 0]}
+    mirror: z
+    material: timber
+
+  batten:
+    doc: horizontal lath under the head of every shingle course
+    shape: {type: box, size: [module_w - 0.002, batten_t, batten_w]}
+    rotate: [pitch, 0, 0]
+    anchor: center
+    position: [0, "H - (s_head0 + batten_w / 2) * sin(pitch) + batten_t / 2 * cos(pitch)", "(s_head0 + batten_w / 2) * cos(pitch) + batten_t / 2 * sin(pitch)"]
+    array: {count: courses, offset: [0, up_y, up_z]}
+    mirror: z
+    material: timber
+
+  eave_board:
+    doc: thick starter board at the eave that lifts the butts of the first course
+    shape: {type: box, size: [module_w - 0.002, batten_t + 2 * t - 0.012, 0.12]}
+    rotate: [pitch, 0, 0]
+    anchor: center
+    position: [0, "H - (L - 0.06) * sin(pitch) + (batten_t + 2 * t - 0.012) / 2 * cos(pitch)", "(L - 0.06) * cos(pitch) + (batten_t + 2 * t - 0.012) / 2 * sin(pitch)"]
+    mirror: z
+    material: timber
+
+  shingle_row_full:
+    doc: courses 1, 3, 5 (from the eave) - whole shingles across the module
+    shape: {type: box, size: [shingle_w - gap, t, Ls]}
+    ops:
+      - {type: repeat, count: module_w / shingle_w, offset: [shingle_w, 0, 0]}
+      - {type: jitter, amount: wear, seed: 11}
+    rotate: [q, 0, 0]
+    anchor: center
+    position: [0, sh_y, sh_z]
+    array: {count: courses / 2, offset: [0, 2 * up_y, 2 * up_z]}
+    mirror: z
+    material: shingle
+
+  shingle_row_offset:
+    doc: courses 2, 4, 6 - shifted by half a shingle (whole shingles; half shingles close the seams)
+    shape: {type: box, size: [shingle_w - gap, t, Ls]}
+    ops:
+      - {type: repeat, count: module_w / shingle_w - 1, offset: [shingle_w, 0, 0]}
+      - {type: jitter, amount: wear, seed: 12}
+    rotate: [q, 0, 0]
+    anchor: center
+    position: [0, sh_y + up_y, sh_z + up_z]
+    array: {count: courses / 2, offset: [0, 2 * up_y, 2 * up_z]}
+    mirror: z
+    material: shingle
+
+  shingle_half:
+    doc: half shingle at each module seam of the offset courses (two halves make a whole across tiled modules)
+    shape: {type: box, size: [shingle_w / 2 - gap, t, Ls]}
+    ops: [{type: jitter, amount: wear, seed: 13}]
+    rotate: [q, 0, 0]
+    anchor: center
+    position: [module_w / 2 - shingle_w / 4, sh_y + up_y, sh_z + up_z]
+    array: {count: courses / 2, offset: [0, 2 * up_y, 2 * up_z]}
+    mirror: [x, z]
+    material: shingle
+
+  ridge_cap:
+    doc: inverted-V capping boards over the top course heads
+    shape:
+      type: extrude
+      depth: module_w - 0.002
+      polygon:
+        - [-cap_w, "-cap_w * tan(pitch)"]
+        - [0, 0]
+        - [cap_w, "-cap_w * tan(pitch)"]
+        - [cap_w, "-cap_w * tan(pitch) + cap_t / cos(pitch)"]
+        - [0, cap_t / cos(pitch)]
+        - [-cap_w, "-cap_w * tan(pitch) + cap_t / cos(pitch)"]
+    measure:
+      rest: {ray: shingle_row_offset_2_front, from: [0, 5, cap_w - 0.01], dir: [0, -1, 0]}   # top course under the cap's lower edge
+    rotate: [0, 90, 0]
+    anchor: top
+    position: [0, "rest.y + (cap_w - 0.01) * tan(pitch) + cap_t / cos(pitch) - 0.003", 0]
+    material: capwood
+
+sockets:
+  snap_left:  {position: [-module_w / 2, 0, 0], doc: left module seam (next roof section)}
+  snap_right: {position: [module_w / 2, 0, 0], doc: right module seam}
+
+uv: {texel_density: 110}
+collision: {mode: hull}
+
+checks:
+  - {expr: asset.width, min: module_w - 0.003, max: module_w + 0.001, doc: stays inside the 2 m tiling module along the ridge}
+  - {expr: rafter.max.z - rafter.min.z, min: depth - 0.001, max: depth + 0.001, doc: 2 m eave to eave}
+  - {expr: shingle_row_full.count + shingle_row_offset.count, min: 2 * courses, max: 2 * courses, doc: all courses on both slopes}
+  - {expr: shingle_row_offset_0_front.max.y > shingle_row_full_0_front.max.y, doc: each course lies above the one below}
+  - {expr: ridge_cap.max.y > shingle_row_offset.max.y, doc: ridge cap covers the top course heads}

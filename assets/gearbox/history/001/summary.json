@@ -1,0 +1,55 @@
+{
+ "iteration": 1,
+ "note": "blockout + first pass: housing/base/cover/bolts, input shaft, meshing gear pair (union of disk + radial teeth), ribs, filler plug",
+ "critique": "teeth interleave correctly (isolated right view); first pass had spiky teeth -> tooth width 1.7->2.0 module, taper 0.5->0.55; 690 tris in big gear -> disk segments 2N->N; chamfered bolts 44 tris each -> plain hex 20; housing too plain -> ribs + filler plug. Now: gears small next to housing (hero feature) -> module 0.012->0.014",
+ "source_hash": "5aaadae99fc4",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 1770,
+  "parts": 26,
+  "size_m": [
+   0.6346,
+   0.367,
+   0.46
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 0.367,
+   "big_gear.size.y": 0.216,
+   "pinion.max.z < big_gear.max.z + centre_d": true,
+   "big_gear.min.z > housing.min.z - 0.02": true,
+   "big_gear.min.y > base.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "hw": 0.34,
+  "hh": 0.28,
+  "hd": 0.42,
+  "base_t": 0.04,
+  "base_over": 0.05,
+  "cover_t": 0.03,
+  "cover_in": 0.025,
+  "bolt_r": 0.012,
+  "bolt_h": 0.014,
+  "module": 0.012,
+  "n_big": 16.0,
+  "n_small": 10.0,
+  "gear_t": 0.035,
+  "r_big": 0.096,
+  "r_small": 0.06,
+  "centre_d": 0.156,
+  "tooth_len": 0.0352,
+  "gear_y": 0.18,
+  "small_z": 0.088,
+  "big_z": -0.068,
+  "shaft_r": 0.022,
+  "shaft_len": 0.16
+ }
+}

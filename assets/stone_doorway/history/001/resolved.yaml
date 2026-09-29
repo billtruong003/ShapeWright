@@ -1,0 +1,296 @@
+shapewright: 0.1
+asset:
+  name: stone_doorway
+  kind: prop/architecture/wall_module
+  description: Modular 2 m stone wall module with a round-arched doorway, voussoir stones and a keystone.
+  tags:
+  - architecture
+  - modular
+  - stone
+  - doorway
+  - arch
+profile: desktop_indie
+style: stylized_lowpoly
+budget:
+  triangles: 2000
+params:
+  module_w:
+    value: 2.0
+    doc: wall module width (tiling grid)
+    min: 2.0
+    max: 2.0
+  wall_h:
+    value: 3.0
+    min: 2.6
+    max: 3.6
+    doc: wall module height
+  wall_t:
+    value: 0.4
+    min: 0.3
+    max: 0.6
+    doc: wall thickness
+  r_in:
+    value: 0.6
+    min: 0.45
+    max: 0.75
+    doc: arch intrados radius (half the clear opening width)
+  spring_y:
+    value: 1.45
+    min: 1.2
+    max: 1.8
+    doc: springline height (top of the jambs)
+  ring:
+    value: 0.32
+    doc: radial depth of the voussoir ring
+  n_side:
+    value: 4
+    min: 3
+    max: 6
+    doc: voussoirs per side (keystone extra)
+  wear: 0.006
+  stone_proud: 0.035
+  cut_clear: 0.03
+  mortar: 1.6
+  jamb_h_gap: 0.012
+  courses: 4
+  r_out: r_in + ring
+  step: 180 / (2 * n_side + 1)
+  arc: step - mortar
+  stone_d: wall_t + 2 * stone_proud
+  course_h: spring_y / courses
+  key_half: step / 2 - mortar / 2 + 1.2
+materials:
+  rubble:
+    archetype: stone
+    color: '#8d8577'
+    variation: 0.45
+    scale: 0.22
+    secondary_color: '#6f685d'
+    grime: 0.35
+    grime_height: 0.4
+    roughness: 0.92
+    doc: coursed rubble wall body
+  dressed:
+    archetype: stone
+    color: '#b9b2a2'
+    variation: 0.25
+    scale: 0.12
+    edge_wear: 0.45
+    grime: 0.2
+    roughness: 0.85
+    doc: dressed ashlar (jambs, voussoirs, keystone, threshold)
+parts:
+  wall:
+    doc: wall body with the arched opening cut through it (box below the springline + cylinder above)
+    shape:
+      type: boolean
+      operation: difference
+      base:
+        type: box
+        size:
+        - module_w
+        - wall_h
+        - wall_t
+      tools:
+      - type: box
+        size:
+        - 2 * (r_in + cut_clear)
+        - 2 * spring_y
+        - wall_t + 0.4
+        translate:
+        - 0
+        - -wall_h / 2
+        - 0
+      - type: cylinder
+        radius: r_in + cut_clear
+        height: wall_t + 0.4
+        segments: 18
+        rotate:
+        - 90
+        - 0
+        - 0
+        translate:
+        - 0
+        - spring_y - wall_h / 2
+        - 0
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    shading: flat
+    material: rubble
+  jamb_long:
+    doc: long quoin courses (1st and 3rd) lining the opening, stepping into the wall
+    shape:
+      type: chamfer_box
+      size:
+      - 0.36
+      - course_h - jamb_h_gap
+      - stone_d
+      chamfer: 0.02
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 3
+    anchor: bottom_left
+    position:
+    - r_in
+    - 0
+    - 0
+    array:
+      count: courses / 2
+      offset:
+      - 0
+      - 2 * course_h
+      - 0
+    mirror: x
+    material: dressed
+  jamb_short:
+    doc: short quoin courses (2nd and 4th) alternating with the long ones
+    shape:
+      type: chamfer_box
+      size:
+      - 0.24
+      - course_h - jamb_h_gap
+      - stone_d
+      chamfer: 0.02
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 5
+    anchor: bottom_left
+    position:
+    - r_in
+    - course_h
+    - 0
+    array:
+      count: courses / 2
+      offset:
+      - 0
+      - 2 * course_h
+      - 0
+    mirror: x
+    material: dressed
+  voussoir:
+    doc: 'wedge stone of the arch ring, radial joints pointing at the arch centre. The first one sits on the springline (flat
+      bed on the top jamb course); the radial array walks up toward the crown.
+
+      '
+    shape:
+      type: extrude
+      depth: stone_d
+      polygon:
+      - - r_in
+        - 0
+      - - r_out
+        - 0
+      - - r_out * cos(arc)
+        - r_out * sin(arc)
+      - - r_in * cos(arc)
+        - r_in * sin(arc)
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 7
+    anchor: bottom_left
+    position:
+    - r_in * cos(arc)
+    - spring_y
+    - 0
+    array:
+      count: n_side
+      radial: z
+      angle: step * (n_side - 1)
+      center:
+      - 0
+      - spring_y
+      - 0
+    mirror: x
+    material: dressed
+  keystone:
+    doc: crown stone, taller and prouder than the voussoirs
+    shape:
+      type: extrude
+      depth: stone_d + 0.05
+      polygon:
+      - - r_in * cos(90 - key_half)
+        - r_in * sin(90 - key_half)
+      - - (r_out + 0.1) * cos(90 - key_half - 2)
+        - (r_out + 0.1) * sin(90 - key_half - 2)
+      - - (r_out + 0.1) * cos(90 + key_half + 2)
+        - (r_out + 0.1) * sin(90 + key_half + 2)
+      - - r_in * cos(90 + key_half)
+        - r_in * sin(90 + key_half)
+    ops:
+    - type: jitter
+      amount: wear
+      seed: 9
+    anchor: bottom
+    position:
+    - 0
+    - spring_y + r_in * cos(key_half)
+    - 0
+    material: dressed
+  threshold:
+    doc: worn sill slab across the opening at floor level
+    shape:
+      type: chamfer_box
+      size:
+      - 2 * r_in
+      - 0.05
+      - stone_d + 0.06
+      chamfer: 0.012
+    anchor: bottom
+    position:
+    - 0
+    - 0
+    - 0
+    material: dressed
+sockets:
+  pass_through:
+    position:
+    - 0
+    - 0
+    - 0
+    doc: centre of the doorway on the floor (navigation link)
+  snap_left:
+    position:
+    - -module_w / 2
+    - 0
+    - 0
+    doc: left module seam
+  snap_right:
+    position:
+    - module_w / 2
+    - 0
+    - 0
+    doc: right module seam
+collision:
+  mode: hull
+checks:
+- expr: wall.size.x
+  min: module_w - 0.001
+  max: module_w + 0.001
+  doc: exact 2 m module so copies tile
+- expr: asset.width
+  min: module_w - 0.001
+  max: module_w + 0.001
+  doc: nothing sticks out past the module seams
+- expr: keystone.max.y
+  min: spring_y + r_out
+  max: wall_h - 0.1
+  doc: keystone crowns the arch
+  below the wall top: null
+- expr: voussoir.count
+  min: 2 * n_side
+  max: 2 * n_side
+  doc: individual voussoir stones
+- expr: 2 * r_in
+  min: 0.9
+  max: 1.5
+  doc: walkable clear width
+- expr: spring_y + r_in
+  min: 1.95
+  max: 2.4
+  doc: clear height at the crown

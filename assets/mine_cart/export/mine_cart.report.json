@@ -1,0 +1,128 @@
+{
+ "asset": "mine_cart",
+ "status": "WARN",
+ "source_hash": "8f77d374bfd0",
+ "counts": {
+  "error": 0,
+  "warning": 1,
+  "info": 4
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "WARN",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 2008,
+  "parts": 24,
+  "sliver_triangles": 160,
+  "size_m": [
+   1.0069,
+   0.8516,
+   1.8
+  ],
+  "contacts": 52,
+  "triangles_by_part": {
+   "sleeper": 220,
+   "rail": 88,
+   "wheel": 1024,
+   "axle": 56,
+   "chassis": 88,
+   "bearing": 176,
+   "bumper": 88,
+   "tub": 60,
+   "band_low_band": 104,
+   "band_high_band": 104
+  },
+  "budget_triangles": 3000,
+  "materials": 3,
+  "checks": {
+   "wheel_front_right.min.y": 0.114,
+   "tub.max.y": 0.8516,
+   "tub.size.x": 0.7556
+  },
+  "uv_utilization": 0.419,
+  "uv_overlap": 0.0,
+  "uv_owners": 24,
+  "texel_density_px_m": 202.5,
+  "texel_density_target": 200,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 200.0,
+   "achieved_px_m": 204.6,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 24
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "UV_TEXEL_DENSITY",
+   "severity": "warning",
+   "layer": "surface",
+   "where": "band_high_band",
+   "msg": "texel density varies 2.05x (band_high_band: 111 px/m, chassis: 227 px/m)",
+   "hint": "each part gets a UV rectangle sized by its area; thin or oddly shaped parts pack their charts loosely into it. Try uv: {seams: regions} on that part, change its proportions/segments, or accept it (warning only). With a lock, re-lock after big size changes"
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "band_high_band",
+   "msg": "31/104 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 31
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "rail_left",
+   "msg": "22/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 22
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "rail_right",
+   "msg": "22/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 22
+   }
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv lock ASSET` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/mine_cart/export/mine_cart.glb",
+  "bytes": 790384,
+  "nodes": 49,
+  "meshes": 48,
+  "materials": 3
+ }
+}

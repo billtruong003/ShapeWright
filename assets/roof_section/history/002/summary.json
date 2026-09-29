@@ -1,0 +1,63 @@
+{
+ "iteration": 2,
+ "note": "shingle jitter 0.007",
+ "critique": "courses now read hand-split; stepped overlap and half-offset clear in textured 3/4; no significant findings left (remaining WARN = GEO_PART_FRAGMENTED from the intentional repeat op)",
+ "source_hash": "b6825fc1ac8b",
+ "status": "WARN",
+ "counts": {
+  "error": 0,
+  "warning": 12,
+  "info": 14
+ },
+ "metrics": {
+  "triangles": 1640,
+  "parts": 50,
+  "size_m": [
+   1.998,
+   1.1041,
+   2.1326
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.width": 1.998,
+   "rafter.max.z - rafter.min.z": 2.0,
+   "shingle_row_full.count + shingle_row_offset.count": 12.0,
+   "shingle_row_offset_0_front.max.y > shingle_row_full_0_front.max.y": true,
+   "ridge_cap.max.y > shingle_row_offset.max.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "module_w": 2.0,
+  "depth": 2.0,
+  "pitch": 35.0,
+  "courses": 6.0,
+  "shingle_w": 0.25,
+  "t": 0.028,
+  "wear": 0.007,
+  "rafter_w": 0.07,
+  "rafter_h": 0.14,
+  "rafter_n": 4.0,
+  "ridge_t": 0.05,
+  "plate_w": 0.16,
+  "plate_h": 0.12,
+  "batten_t": 0.03,
+  "batten_w": 0.06,
+  "gap": 0.012,
+  "cap_w": 0.2,
+  "cap_t": 0.035,
+  "half": 1.0,
+  "L": 1.22077,
+  "H": 0.97112,
+  "e": 0.17082,
+  "Ls": 0.34165,
+  "eps": 9.3086,
+  "q": 25.6914,
+  "s_head0": 0.88362,
+  "sh_y": 0.42542,
+  "sh_z": 0.90104,
+  "up_y": 0.09798,
+  "up_z": -0.13993
+ }
+}

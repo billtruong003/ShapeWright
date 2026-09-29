@@ -1,0 +1,363 @@
+{
+ "asset": "roof_section",
+ "status": "WARN",
+ "source_hash": "8654795095f6",
+ "counts": {
+  "error": 0,
+  "warning": 12,
+  "info": 14
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "WARN",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 1640,
+  "parts": 50,
+  "sliver_triangles": 80,
+  "size_m": [
+   1.998,
+   1.1041,
+   2.1326
+  ],
+  "contacts": 132,
+  "triangles_by_part": {
+   "wall_plate": 88,
+   "ridge_board": 44,
+   "rafter": 96,
+   "batten": 144,
+   "eave_board": 24,
+   "shingle_row_full": 576,
+   "shingle_row_offset": 504,
+   "shingle_half": 144,
+   "ridge_cap": 20
+  },
+  "budget_triangles": 3000,
+  "materials": 3,
+  "checks": {
+   "asset.width": 1.998,
+   "rafter.max.z - rafter.min.z": 2.0,
+   "shingle_row_full.count + shingle_row_offset.count": 12.0,
+   "shingle_row_offset_0_front.max.y > shingle_row_full_0_front.max.y": true,
+   "ridge_cap.max.y > shingle_row_offset.max.y": true
+  },
+  "uv_utilization": 0.492,
+  "uv_overlap": 0.0,
+  "uv_owners": 50,
+  "texel_density_px_m": 123.6,
+  "texel_density_target": 110,
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 110.0,
+   "achieved_px_m": 122.7,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 50
+   }
+  },
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "shingle_row_full_0_back",
+   "msg": "part consists of 8 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 8
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "shingle_row_full_0_front",
+   "msg": "part consists of 8 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 8
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "shingle_row_full_1_back",
+   "msg": "part consists of 8 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 8
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "shingle_row_full_1_front",
+   "msg": "part consists of 8 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 8
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "shingle_row_full_2_back",
+   "msg": "part consists of 8 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 8
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "shingle_row_full_2_front",
+   "msg": "part consists of 8 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 8
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "shingle_row_offset_0_back",
+   "msg": "part consists of 7 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 7
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "shingle_row_offset_0_front",
+   "msg": "part consists of 7 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 7
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "shingle_row_offset_1_back",
+   "msg": "part consists of 7 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 7
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "shingle_row_offset_1_front",
+   "msg": "part consists of 7 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 7
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "shingle_row_offset_2_back",
+   "msg": "part consists of 7 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 7
+   }
+  },
+  {
+   "code": "GEO_PART_FRAGMENTED",
+   "severity": "warning",
+   "layer": "geometry",
+   "where": "shingle_row_offset_2_front",
+   "msg": "part consists of 7 disconnected pieces",
+   "hint": "a boolean may have split the part; split it into separate named parts or adjust the cut",
+   "data": {
+    "pieces": 7
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "batten_0_back",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "batten_0_front",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "batten_1_back",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "batten_1_front",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "batten_2_back",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "batten_2_front",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "batten_3_back",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "batten_3_front",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "batten_4_back",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "batten_4_front",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "batten_5_back",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "batten_5_front",
+   "msg": "4/12 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 4
+   }
+  },
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "ridge_board",
+   "msg": "12/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 12
+   }
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv lock ASSET` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/roof_section/export/roof_section.glb",
+  "bytes": 816124,
+  "nodes": 103,
+  "meshes": 100,
+  "materials": 3
+ }
+}

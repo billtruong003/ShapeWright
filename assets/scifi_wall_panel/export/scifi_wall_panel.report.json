@@ -1,0 +1,77 @@
+{
+ "asset": "scifi_wall_panel",
+ "status": "PASS",
+ "source_hash": "cc2c3d3edf9f",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 972,
+  "parts": 9,
+  "sliver_triangles": 165,
+  "size_m": [
+   1.2,
+   1.8,
+   0.1901
+  ],
+  "contacts": 8,
+  "triangles_by_part": {
+   "panel": 180,
+   "hatch": 60,
+   "vent": 488,
+   "bolt": 176,
+   "handle": 68
+  },
+  "budget_triangles": 1500,
+  "materials": 3,
+  "checks": {
+   "panel.size.x": 1.2,
+   "hatch.max.z - panel.max.z": 0.045,
+   "vent_left.max.y < hatch.min.y - 0.05": true,
+   "bolt_top_right.max.y < panel.max.y": true
+  },
+  "uv_utilization": 0.344,
+  "uv_overlap": 0.0,
+  "uv_owners": 9,
+  "texel_density_px_m": 238.3,
+  "texel_density_target": 512,
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "panel",
+   "msg": "102/180 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 102
+   }
+  }
+ ],
+ "export": {
+  "path": "assets/scifi_wall_panel/export/scifi_wall_panel.glb",
+  "bytes": 72896,
+  "nodes": 12,
+  "meshes": 10,
+  "materials": 3
+ }
+}

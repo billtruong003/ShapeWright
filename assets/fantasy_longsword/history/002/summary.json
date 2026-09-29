@@ -1,0 +1,47 @@
+{
+ "iteration": 2,
+ "note": "wraps attached to grip (7 bands, 6 seg), wider blade, deeper fuller, thicker guard, chamfered guard_boss langet, bigger pommel",
+ "critique": "reads as a fantasy longsword at thumbnail; fuller visible in front and 3/4; hilt no longer a flat slab thanks to guard_boss; wraps read as a spiral wrap; 588/800 tris. Remaining minor: guard slab edges unchamfered (acceptable, flat-shaded stylized). No significant findings -> export",
+ "source_hash": "e293a3b822de",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 2
+ },
+ "metrics": {
+  "triangles": 588,
+  "parts": 12,
+  "size_m": [
+   0.26,
+   1.1398,
+   0.084
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "asset.height": 1.1398,
+   "blade.size.y / asset.height": 0.7194,
+   "guard.size.x / blade.size.x": 3.4211,
+   "wrap.last.max.y < guard.min.y": true
+  }
+ },
+ "errors": [],
+ "params": {
+  "blade_len": 0.82,
+  "blade_w": 0.076,
+  "blade_t": 0.016,
+  "tip_len": 0.13,
+  "bevel_k": 2.2,
+  "fuller_w": 0.02,
+  "fuller_d": 0.004,
+  "fuller_len": 0.5084,
+  "guard_w": 0.26,
+  "guard_h": 0.055,
+  "guard_t": 0.05,
+  "grip_len": 0.21,
+  "grip_r": 0.017,
+  "wraps": 7.0,
+  "pommel_r": 0.042
+ }
+}

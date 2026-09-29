@@ -1,0 +1,44 @@
+{
+ "iteration": 1,
+ "note": "first pass: fused rim/hub/8-spoke wheels, torus tyres, axle, hanger-style pillow bearings with bolts; seg 16->14 and plain pedestal box to fit budget",
+ "critique": "axle.axle_r 0.025 reads spindly next to 0.6 m wheels -> 0.032; wheel.spoke_w 0.032 -> 0.04 (spokes thin at thumbnail); bearing foot on top reads as chassis mount (intended, sockets there)",
+ "source_hash": "d11d8f15fed6",
+ "status": "PASS",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 3
+ },
+ "metrics": {
+  "triangles": 1444,
+  "parts": 11,
+  "size_m": [
+   1.04,
+   0.6,
+   0.585
+  ],
+  "materials": 3,
+  "uv_overlap": 0.0,
+  "checks": {
+   "wheel_right.size.y": 0.474,
+   "tyre_right.size.y": 0.6,
+   "bearing_right.max.x": 0.355
+  }
+ },
+ "errors": [],
+ "params": {
+  "tyre_r": 0.3,
+  "tyre_t": 0.045,
+  "rim_t": 0.03,
+  "rim_w": 0.07,
+  "hub_r": 0.06,
+  "hub_l": 0.12,
+  "spoke_w": 0.032,
+  "spoke_t": 0.026,
+  "seg": 14.0,
+  "track": 0.9,
+  "axle_r": 0.025,
+  "bearing_in": 0.14,
+  "rim_r": 0.237
+ }
+}
