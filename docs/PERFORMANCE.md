@@ -101,7 +101,7 @@ phase, several cases did the heavy work first and only then failed:
 - subdivide/repeat/combine explosions computed millions of triangles (up to 1 GB) and were then rejected;
 - `budget.texture_size: 100000` was accepted, ran into the 120 s timeout and used 4.9 GB.
 
-Now every case is rejected with `SRC_LIMIT` **before** the work, in < 0.5 s and < 100 MB:
+Now every case is rejected with `SRC_LIMIT` **before** the work, in < 1 s and < 100 MB:
 
 | Guard | Where |
 |---|---|
