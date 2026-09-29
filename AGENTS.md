@@ -70,6 +70,18 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
 - Anchors are compositional names: `top`, `bottom_front_left`, `right`, ...
   `attach: {to: seat, at: bottom_front_right, offset: [...]}` places this part's
   `anchor:` point on the other part's anchor.
+- **Don't re-derive another part's geometry with arithmetic.** Use `measure:`
+  queries on parts built earlier (`section` of a leaning post at a height,
+  `gap` between two legs, `ray` onto a surface). See docs/RELATIONSHIPS.md.
+  If a relationship would need hand-maths, that is a sign to measure instead.
+- Geometry expressions nest: a boolean tool can have its own `ops`, `rotate`,
+  `translate` and `material`. See `sw doc boolean`.
+- Reuse beats copying: `components/` holds sub-assemblies (listed by `sw caps`). `enabled: expr` makes parts optional.
+  Variants of a base with an `interface:` may only set its public params.
+- Geometry that primitives can't express: produce a mesh file by any means,
+  put it in the asset directory and use `{type: mesh_file, path: ...}`, or
+  `sw import FILE NAME`. It is validated, rendered and exported like the rest.
+- Before any texturing work: `sw uv ASSET lock` and commit `uv.lock.yaml`.
 - `mirror: x` creates `<name>_left` / `<name>_right`. `array` creates `<name>_0..n`.
   Refer to instances by those names in `checks` and `--part`.
 - Numbers can be expressions: `seat_height - seat_thickness / 2`. Only
@@ -99,11 +111,14 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
 | Path | What |
 |---|---|
 | `assets/` | benchmark assets. Read `tavern_chair` first; its `history/` shows a real critique loop |
-| `shapewright/ops/` | shapes and modifiers (the vocabulary) |
+| `shapewright/ops/` | shapes, modifiers, composition (`boolean`, `combine`), `mesh_file` |
+| `components/` | reusable sub-assemblies with public params |
+| `shapewright/backend.py` | the only module that touches geometry libraries |
+| `shapewright/spatial.py` | `measure` queries |
 | `shapewright/assemble.py` | parts, anchors, attach, mirror/array, sockets: source → semantic scene |
 | `shapewright/surface.py` | normals, UVs (xatlas), vertex buffers |
 | `shapewright/validate/` | layered validators |
 | `shapewright/render/` | deterministic CPU renderer, views, contact sheets |
 | `shapewright/export/` | GLB writer and export verification |
 | `profiles/`, `styles/` | production budgets and art-direction profiles |
-| `docs/` | vision, research, architecture, capability map, validation, format, workflow, roadmap |
+| `docs/` | vision, research, architecture, capability map, validation, format, workflow, roadmap; MESH_MODEL, BACKEND, RELATIONSHIPS, UV, FAMILIES; DESIGN_REVIEW and HARDENING (history) |

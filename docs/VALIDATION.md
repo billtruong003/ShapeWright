@@ -46,11 +46,15 @@ warnings. It never produces errors, because style is a judgement call.
 | `GEO_EMPTY` / `GEO_NONFINITE` | an op produced no or invalid geometry | revise the op |
 | `ASM_MIRROR_ON_PLANE` | a mirrored part sits on the mirror plane | offset it or remove the mirror |
 | `PARAM_OUT_OF_RANGE` (warning) | param outside its declared min/max | intended? widen the range |
+| `MEASURE_FAILED` | a `measure` query has no answer (plane/ray misses, parts overlap for `gap`) | check the query against `sw stats` |
+| `COMPONENT_PRIVATE` | `with:` sets a param the component does not expose | use a public param (listed in the hint) |
+| `FAMILY_PRIVATE` | a variant overrides something outside the base's `interface` | ask the base to expose it (public param / `enabled:` switch) |
+| `FAMILY_NO_INTERFACE` (info) | the base declares no interface; the variant depends on internals | add `interface:` to the base |
 
 ### geometry (per part)
 | Code | Sev | Meaning |
 |---|---|---|
-| `GEO_OPEN_EDGES` | error | boundary edges; the surface has holes |
+| `GEO_OPEN_EDGES` | error (warning with tag `open_ok`) | boundary edges; the surface has holes |
 | `GEO_NONMANIFOLD_EDGES` | error | an edge is shared by more than two faces |
 | `GEO_WINDING_INCONSISTENT` | error | neighbouring faces disagree on orientation |
 | `GEO_INVERTED` | error | closed surface with inward normals |
@@ -92,6 +96,10 @@ warnings. It never produces errors, because style is a judgement call.
 | `UV_OVERLAP` | error | more than 0.2% of used UV area covered twice (rasterized at up to 1024²) |
 | `UV_TEXEL_DENSITY` | warning | texel density differs by more than 1.5x between parts |
 | `NRM_FLIPPED` | error | vertex normals oppose their face |
+| `UV_LOCK_STALE` | warning | `uv.lock.yaml` does not match the parts; regions recomputed (re-lock) |
+| `UV_REGION_REGENERATED` | info | these parts changed since the lock; their charts were regenerated inside their fixed regions |
+| `UV_UNLOCKED` | info | no lock; regions follow areas and may move (lock before texturing) |
+| `ATTR_INVALIDATED` | info / warning | a topology-changing op dropped attributes (warning if an imported part lost its authored UVs) |
 
 Metrics: `uv_overlap`, `uv_utilization`, `texel_density_px_m` (median across
 parts at the profile's texture size).

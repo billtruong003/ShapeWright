@@ -318,6 +318,75 @@ def cmd_variants(a):
     return 0
 
 
+def cmd_import(a):
+    from .assemble import ROOT
+    from .importer import import_file
+
+    base = Path(a.dir) if a.dir else (Path.cwd() / "assets" if (Path.cwd() / "assets").exists() else ROOT / "assets")
+    res = import_file(Path(a.file), base / a.name, a.name, split=a.split, scale=a.scale, z_up=a.z_up)
+    print(f"created {_rel(Path(res['asset']))} with {len(res['parts'])} part(s):")
+    for r in res["parts"][:40]:
+        print(f"  {r['part']:24} tris {r['triangles']:6}  {'closed' if r['closed'] else 'OPEN (tagged open_ok)'}  node '{r['node']}'")
+    if res["skipped_collision"]:
+        print(f"skipped {len(res['skipped_collision'])} collision proxy node(s) (UCX_/-colonly); set `collision:` to regenerate them")
+    print(f"next: sw render {a.name} --mode parts --view front_right, then rename parts in asset.yaml")
+    return 0
+
+
+def cmd_uv(a):
+    from .assemble import build, resolve_asset_path
+    from .surface import build_surface, write_lock
+
+    asset = build(resolve_asset_path(a.asset))
+    if a.action == "lock":
+        p = write_lock(asset)
+        print(f"wrote {_rel(p)} ({len(build_surface(asset).regions)} UV regions); commit it")
+    else:
+        s = build_surface(asset)
+        print(f"method {s.uv_method}  lock {s.lock}  owners {len(s.regions)}")
+        for o, r in sorted(s.regions.items()):
+            print(f"  {o:28} [{r[0]:.3f}, {r[1]:.3f}] - [{r[2]:.3f}, {r[3]:.3f}]")
+        if s.lock_notes:
+            print("  changed since lock / mismatched: " + ", ".join(s.lock_notes))
+    return 0
+
+
+def cmd_family(a):
+    """Validate a base asset and every asset that extends it (directly or transitively)."""
+    from .assemble import build, resolve_asset_path
+    from .source import read_yaml
+    from .surface import build_surface
+    from .validate.run import run_validation
+
+    base = resolve_asset_path(a.asset).resolve()
+    members = [base]
+    changed = True
+    while changed:
+        changed = False
+        for p in sorted(base.parent.parent.glob("*/asset.yaml")):
+            p = p.resolve()
+            if p in members:
+                continue
+            ext = read_yaml(p).get("extends")
+            if ext and ((p.parent / ext).resolve() / "asset.yaml" in members or (p.parent / ext).resolve() in members):
+                members.append(p)
+                changed = True
+    worst = 0
+    for p in members:
+        try:
+            asset = build(p)
+            r = run_validation(asset, build_surface(asset))
+            errs = [i["code"] for i in r["issues"] if i["severity"] == "error"]
+            print(f"{r['status']:4} {asset.name:28} tris {asset.n_tris:5}  {' '.join(errs)}")
+            worst = max(worst, 1 if r["status"] == "FAIL" else 0)
+        except SourceError as e:
+            print(f"FAIL {p.parent.name:28} {e.issues[0].code}: {e.issues[0].message}")
+            worst = 2
+    iface = read_yaml(base).get("interface")
+    print(f"{len(members)} member(s); interface: {', '.join((iface or {}).get('params', [])) or 'NONE (variants depend on internals)'}")
+    return worst
+
+
 def cmd_bench(a):
     from .assemble import ROOT, build
     from .surface import build_surface
@@ -415,6 +484,17 @@ def build_parser() -> argparse.ArgumentParser:
     p = add("variants", cmd_variants, "seeded variants")
     p.add_argument("--count", type=int, default=3)
     p.add_argument("--seed", type=int, default=0)
+    p = sub.add_parser("import", help="create an asset from a GLB/OBJ/STL/PLY file")
+    p.add_argument("file")
+    p.add_argument("name")
+    p.add_argument("--split", action="store_true", help="one part per connected piece")
+    p.add_argument("--scale", type=float, default=1.0, help="unit conversion (0.01 for cm files)")
+    p.add_argument("--z-up", action="store_true", help="file is Z-up")
+    p.add_argument("--dir", help="parent directory (default: ./assets)")
+    p.set_defaults(fn=cmd_import)
+    p = add("uv", cmd_uv, "UV regions: `sw uv ASSET lock` writes uv.lock.yaml; `show` lists regions")
+    p.add_argument("action", choices=("lock", "show"))
+    p = add("family", cmd_family, "validate a base asset and all its variants")
     p = add("bench", cmd_bench, "validate all assets", asset=False)
     p.add_argument("--dir")
     add("doctor", cmd_doctor, "environment check", asset=False)
@@ -433,7 +513,7 @@ def main(argv=None) -> int:
         return args.fn(args)
     except SourceError as e:
         return _print_source_error(e, getattr(args, "json", False))
-    except (FileNotFoundError, TimeoutError) as e:
+    except (FileNotFoundError, FileExistsError, TimeoutError, ValueError) as e:
         print(f"error: {e}")
         return 2
     except BrokenPipeError:  # output piped into head etc.

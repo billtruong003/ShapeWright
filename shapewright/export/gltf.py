@@ -23,10 +23,22 @@ import numpy as np
 
 from .. import __version__
 from ..assemble import Asset
+from ..mesh import rotation_matrix
 from ..surface import Surface
 
 FLOAT, UINT16, UINT32 = 5126, 5123, 5125
 ARRAY_BUFFER, ELEMENT_ARRAY_BUFFER = 34962, 34963
+
+
+def matrix_to_quat(M) -> np.ndarray:
+    """Rotation matrix -> glTF quaternion [x, y, z, w]."""
+    R = np.asarray(M)[:3, :3]
+    w = np.sqrt(max(0.0, 1 + R[0, 0] + R[1, 1] + R[2, 2])) / 2
+    x = np.copysign(np.sqrt(max(0.0, 1 + R[0, 0] - R[1, 1] - R[2, 2])) / 2, R[2, 1] - R[1, 2])
+    y = np.copysign(np.sqrt(max(0.0, 1 - R[0, 0] + R[1, 1] - R[2, 2])) / 2, R[0, 2] - R[2, 0])
+    z = np.copysign(np.sqrt(max(0.0, 1 - R[0, 0] - R[1, 1] + R[2, 2])) / 2, R[1, 0] - R[0, 1])
+    q = np.array([x, y, z, w])
+    return q / np.linalg.norm(q)
 
 
 def srgb_to_linear(c):
@@ -55,12 +67,14 @@ class _Builder:
         self.accessors.append(acc)
         return len(self.accessors) - 1
 
-    def mesh_primitive(self, positions, indices, normals=None, uvs=None, material=None) -> dict:
+    def mesh_primitive(self, positions, indices, normals=None, uvs=None, material=None, colors=None) -> dict:
         attrs = {"POSITION": self.add(positions.astype(np.float32), FLOAT, "VEC3", ARRAY_BUFFER, minmax=True)}
         if normals is not None:
             attrs["NORMAL"] = self.add(normals.astype(np.float32), FLOAT, "VEC3", ARRAY_BUFFER)
         if uvs is not None:
             attrs["TEXCOORD_0"] = self.add(uvs.astype(np.float32), FLOAT, "VEC2", ARRAY_BUFFER)
+        if colors is not None:
+            attrs["COLOR_0"] = self.add(colors.astype(np.float32), FLOAT, "VEC4", ARRAY_BUFFER)
         flat = indices.reshape(-1)
         if len(positions) < 65536:
             idx = self.add(flat.astype(np.uint16), UINT16, "SCALAR", ELEMENT_ARRAY_BUFFER)
@@ -76,31 +90,47 @@ def _collision_meshes(asset: Asset) -> list[tuple[str, np.ndarray, np.ndarray]]:
     mode = (asset.collision or {}).get("mode", "none")
     if mode == "none":
         return []
-    import trimesh
+    from .. import backend
 
     out = []
     groups: dict[str, list] = {}
     for p in asset.parts:
         groups.setdefault(p.name if mode in ("box", "hull") else "all", []).append(p)
     if mode == "single_box":
-        b = asset.bounds()
-        t = trimesh.creation.box(bounds=b)
-        return [("0", t.vertices, t.faces)]
+        t = backend.box_bounds(asset.bounds())
+        return [("0", t.V, t.F)]
     for i, (name, ps) in enumerate(groups.items()):
         V = np.concatenate([p.mesh.V for p in ps])
-        if mode == "box":
-            t = trimesh.creation.box(bounds=np.stack([V.min(0), V.max(0)]))
-        else:
-            t = trimesh.convex.convex_hull(V)
-        out.append((f"{i:02d}", t.vertices, t.faces))
+        t = backend.box_bounds(np.stack([V.min(0), V.max(0)])) if mode == "box" else backend.convex_hull(V)
+        out.append((f"{i:02d}", t.V, t.F))
     return out
+
+
+def _primitives(b: _Builder, sp, part, pivot, mat_index: dict) -> list[dict]:
+    """One primitive per effective material (face `material` attribute, else the part's)."""
+    eff = np.array([m if m else part.material for m in sp.face_material], dtype=object)
+    groups = list(dict.fromkeys(eff))
+    pos = sp.positions - pivot.astype(np.float32)
+    if len(groups) == 1:
+        return [b.mesh_primitive(pos, sp.indices, sp.normals, sp.uvs, mat_index.get(groups[0]), sp.colors)]
+    prims = []
+    for g in groups:
+        faces = sp.indices[eff == g]
+        used = np.unique(faces.reshape(-1))
+        remap = np.full(len(pos), -1, dtype=np.int64)
+        remap[used] = np.arange(len(used))
+        prims.append(b.mesh_primitive(pos[used], remap[faces].astype(np.uint32), sp.normals[used],
+                                      None if sp.uvs is None else sp.uvs[used], mat_index.get(g),
+                                      None if sp.colors is None else sp.colors[used]))
+    return prims
 
 
 def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str = "UNKNOWN") -> dict:
     b = _Builder()
     materials, mat_index = [], {}
+    used = {p.material for p in asset.parts} | {m for sp in surface.parts.values() for m in sp.face_material if m}
     for name, m in asset.materials.items():
-        if not any(p.material == name for p in asset.parts):
+        if name not in used:
             continue
         base = list(srgb_to_linear(m["base_color"][:3])) + [m["base_color"][3] if len(m["base_color"]) > 3 else 1.0]
         mat = {"name": name, "pbrMetallicRoughness": {"baseColorFactor": [round(float(v), 6) for v in base],
@@ -121,9 +151,12 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
     for p in asset.parts:
         sp = surface.parts[p.name]
         piv = pivots[p.name]
-        prim = b.mesh_primitive(sp.positions - piv.astype(np.float32), sp.indices, sp.normals, sp.uvs, mat_index.get(p.material))
-        meshes.append({"name": p.name, "primitives": [prim]})
+        meshes.append({"name": p.name, "primitives": _primitives(b, sp, p, piv, mat_index)})
         extras = {"part": p.base, "tags": p.tags} if p.tags else {"part": p.base}
+        if p.component:
+            extras["component"] = p.component
+        if p.source != "native":
+            extras["geometry_source"] = p.source
         if p.doc:
             extras["doc"] = p.doc
         if p.instance:
@@ -143,10 +176,7 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
         if s.doc:
             node["extras"]["doc"] = s.doc
         if any(s.rotation):
-            from scipy.spatial.transform import Rotation
-
-            q = Rotation.from_euler("xyz", s.rotation, degrees=True).as_quat()
-            node["rotation"] = [float(v) for v in q]
+            node["rotation"] = [float(v) for v in matrix_to_quat(rotation_matrix(s.rotation))]
         nodes.append(node)
         nodes[0]["children"].append(len(nodes) - 1)
     naming = (asset.profile.get("export") or {}).get("collision_naming", "ucx")
@@ -161,6 +191,7 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
         "version": __version__, "source_hash": asset.source_hash, "units": "m", "up": "+Y", "front": "+Z",
         "kind": asset.meta.get("kind", ""), "params": {k: round(v, 6) for k, v in asset.env.items()},
         "profile": asset.profile.get("name", ""), "style": asset.style.get("name", ""), "validation": validation_status,
+        "uv": {"method": surface.uv_method, "lock": surface.lock},
     }}
     if not nodes[0]["children"]:
         nodes[0].pop("children")

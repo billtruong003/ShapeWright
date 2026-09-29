@@ -30,6 +30,9 @@ COMMANDS = {
     "restore ASSET N": "put iteration N's source back (current source is backed up)",
     "export ASSET": "validate, write GLB, verify with Khronos validator + re-import",
     "variants ASSET --count N": "derive seeded variants from params that declare `vary`",
+    "import FILE NAME [--split]": "create an asset from GLB/OBJ/STL/PLY (parts per node/piece; geometry stays in the file)",
+    "uv ASSET lock|show": "lock UV regions (uv.lock.yaml) so edits never move other parts' UVs",
+    "family ASSET": "validate a base asset and every variant that extends it",
     "bench": "validate every asset under assets/ (CI)",
     "doctor": "check the environment and optional tools",
 }
@@ -59,6 +62,8 @@ def manifest() -> dict:
         "modes": MODES,
         "validators": [{"name": v.name, "layer": v.layer, "doc": v.doc, "codes": list(v.codes)} for v in VALIDATORS],
         "profiles": _named("profiles"),
+        "components": _named("components"),
+        "measure_queries": __import__("shapewright.spatial", fromlist=["QUERY_KINDS"]).QUERY_KINDS,
         "styles": _named("styles"),
         "exporters": {"glb": "binary glTF 2.0: named part nodes, hierarchy, materials, UV0, normals, sockets, collision, metadata extras"},
     }
@@ -75,6 +80,9 @@ def summary_text() -> str:
             lines.append(f"  {name:13} ({params})  {d['doc'][:90]}")
     lines += ["", "VIEWS  " + " ".join(m["views"]), "MODES  " + " ".join(m["modes"]), "",
               "VALIDATION LAYERS  " + " ".join(dict.fromkeys(v["layer"] for v in m["validators"])) + " export",
-              "PROFILES  " + " ".join(m["profiles"]), "STYLES    " + " ".join(m["styles"]), "EXPORT    glb",
+              "PROFILES  " + " ".join(m["profiles"]), "STYLES    " + " ".join(m["styles"]),
+              "COMPONENTS " + (" ".join(m["components"]) or "-") + "   (components/NAME.yaml; use with `component:` in a part)",
+              "MEASURE   " + " ".join(m["measure_queries"]) + "   (part-level `measure:` queries; docs/RELATIONSHIPS.md)",
+              "EXPORT    glb",
               "", "* = required.  `sw doc NAME` for details, `sw caps --json` for everything."]
     return "\n".join(lines)

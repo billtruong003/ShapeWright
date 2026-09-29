@@ -1,4 +1,4 @@
-# Asset source format (`asset.yaml`, format 0.1)
+# Asset source format (`asset.yaml`, format 0.1 + hardening additions)
 
 An asset is a directory with one `asset.yaml`. The file is YAML (comments
 welcome), parsed with `safe_load`. Unknown keys are errors with "did you mean"
@@ -29,8 +29,9 @@ materials: {...}
 parts: {...}
 sockets: {...}
 checks: [...]
-uv: {method: auto, resolution: 512, padding_px: 4}
+uv: {method: regions, resolution: 512, padding_px: 4}   # regions (default) | atlas (v0.1) | none
 collision: {mode: none | single_box | box | hull}
+interface: {params: [...]}       # optional: family contract for variants (docs/FAMILIES.md)
 notes: free text
 ```
 
@@ -55,6 +56,13 @@ params:
 - Params may reference each other in any order. Cycles are reported.
 - `min`/`max` produce a `PARAM_OUT_OF_RANGE` warning when violated. `vary` bounds
   are used by `sw variants`.
+
+Params may be `true`/`false` (switches, evaluated as 1/0), e.g. `has_back: true`
+with `enabled: has_back` on parts.
+
+**YAML trap:** in flow lists, YAML splits at commas, including commas inside
+function calls. Quote such expressions: `rotate: ["-atan2(lean, back_height)", 0, 0]`.
+The error message detects this case and says so.
 
 ## Materials
 
@@ -89,10 +97,82 @@ parts:
     tags: [structural]            # free tags; `floating_ok`, `thin_ok` silence validators
 ```
 
+### Geometry expressions (recursive)
+
+`shape:` takes a **geometry expression**, and so does everything else that
+expects geometry (boolean tools, `boolean.base/tools`, `combine.items`):
+
+```yaml
+{type: <generator>, <generator params>..., ops: [...], material: m, rotate: [rx, ry, rz], translate: [x, y, z]}
+```
+
+evaluated as `generator → centre → ops → rotate → translate`. So a tool can have its own ops:
+
+```yaml
+shape:
+  type: boolean
+  operation: difference
+  base: {type: chamfer_box, size: [0.4, 0.3, 0.3], ops: [{type: taper, scale: 0.8}]}
+  tools:
+    - {type: cylinder, radius: 0.08, height: 0.5, rotate: [90, 0, 0], material: iron, ops: [{type: taper, scale: 0.6}]}
+```
+
+`material` on an expression sets the material of the faces it creates (inner
+expressions keep theirs). Parts can then have several materials (one glTF
+primitive each). `mirror` and `repeat` also exist as **ops** (copies stay in
+one part), distinct from part-level `mirror:`/`array:` (named instances).
+
 ### Build order inside a part
 
 ```
-shape → centre on bounding box → ops (in order) → rotate → place (position | attach) → array → mirror
+measure → shape expression → centre → part ops → rotate → place (position | attach) → array → mirror
+```
+
+### Measure: relationships from real geometry
+
+```yaml
+measure:
+  post: {section: rear_leg_right, axis: y, at: rail_y}                          # min/max/center/size
+  span: {gap: [front_leg_left, front_leg_right], axis: x, section: {axis: y, at: 0.2}}   # start/end/length/center
+  box:  {bounds: seat}
+  pt:   {anchor: seat, at: top_back}
+  hit:  {ray: seat, from: [0, 2, 0], dir: [0, -1, 0]}                          # x/y/z/distance
+position: [span.center, 0.2, post.center.z]
+```
+
+Queries see parts built earlier (ordering is automatic). See docs/RELATIONSHIPS.md.
+
+### Optional parts and components
+
+```yaml
+top_rail: {enabled: has_back, ...}          # not built when false
+top:
+  component: plank_top                       # components/plank_top.yaml
+  with: {length: 1.2, width: 0.3, planks: 2} # public params only
+  materials: {top: wood, under: wood_dark}   # map component material slots
+  anchor: top
+  position: [0, 0.45, 0]
+```
+
+Component parts are named `<instance>_<part>` (`top_plank_0`); the group is
+addressable as `top`. See docs/FAMILIES.md.
+
+### Baked and imported geometry
+
+```yaml
+shape: {type: mesh_file, path: source/rock.glb, node: Rock_LOD0, piece: -1, scale: 1, z_up: false,
+        generated_by: "blender --background -P make_rock.py"}   # recorded, never executed
+tags: [open_ok]   # if the file is not watertight
+```
+
+Paths must stay inside the asset directory (GLB, OBJ, STL, PLY). Authored UVs
+and vertex colours are kept. `sw import FILE NAME [--split]` writes such a
+source for you.
+
+### Per-part UV settings
+
+```yaml
+uv: {share_instances: true, seams: regions}   # see docs/UV.md
 ```
 
 ### Anchors
@@ -136,12 +216,14 @@ Families (v0.1):
 
 - **Primitives:** `box`, `chamfer_box`, `cylinder` (also frustum and cone,
   optional rim chamfer), `sphere`, `icosphere`, `capsule`, `torus`, `ring`
+- **Composition:** `boolean` (base + tools, any operation), `combine` (several shells in one part)
+- **Sources:** `mesh_file` (baked/imported/external geometry)
 - **Profiles:** `lathe` (open profile around Y), `revolve` (closed outline
   around Y), `extrude` (2D polygon with holes and taper), `tube` (sweep along a
   3D path, optional radius taper)
 - **Procedural:** `random_hull` (seeded)
 - **Ops:** `scale rotate translate` · `taper bend twist shear` · `jitter noise inflate` ·
-  `subdivide smooth decimate` · `subtract union intersect flat_bottom`
+  `subdivide smooth decimate` · `subtract union intersect flat_bottom` · `mirror repeat`
 
 Boolean ops take a nested shape as the tool:
 
@@ -169,13 +251,20 @@ checks:
   - {expr: asset.height, min: height - 0.05, severity: warning}
 ```
 
+`when: <expr>` makes a check conditional (`{expr: asset.height, min: 0.85, when: has_back}`).
+
 The namespace contains all params plus metrics:
-`asset`, every part instance (`front_leg_left`) and every source part (`front_leg`,
-the union of its instances). Each exposes `min`, `max`, `center`, `size`
+`asset`, every part instance (`front_leg_left`), every source part (`front_leg`,
+the union of its instances) and every component instance (`top`). Each exposes `min`, `max`, `center`, `size`
 (each with `.x .y .z`), `width`, `height`, `depth` and `triangles`. Bounds may be
 expressions. A failing check is a `CHECK_FAILED` error unless `severity: warning`.
 
-## Inheritance (`extends`)
+## Inheritance (`extends`) and family interfaces
+
+If the base declares `interface: {params: [...]}`, a variant may set only those
+params (plus asset/budget/profile/style/materials/uv/collision/notes), and its
+`checks` are *added* to the base's. Without an interface, the rules below apply
+(v0.1 behaviour, flagged with `FAMILY_NO_INTERFACE`).
 
 ```yaml
 extends: ../tavern_chair

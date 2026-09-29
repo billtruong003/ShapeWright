@@ -13,6 +13,28 @@ decisions don't block important futures (see §B and §C at the end).
 Column guide: *Agent-native* = how an agent expresses it (not how a human clicks it).
 *Impl.* = implementation family / library. *Arch.* = architectural impact.
 
+
+## Status changes from the architecture-hardening phase
+
+See docs/HARDENING.md. Rows below keep their original text; these entries override them.
+
+| Capability | Was | Now | How |
+|---|---|---|---|
+| Per-face attributes, provenance, regions | — | NOW | typed attribute contract (docs/MESH_MODEL.md) |
+| Named regions within parts (§6) | LONG | NOW (data), NEAR (selector syntax) | `region` face attribute, `--mode regions` |
+| Per-face materials within a part (§11) | NEAR | NOW | `material:` on geometry expressions → glTF primitive per material |
+| Vertex colours (§11) | NEAR | PARTIAL | attribute, import and export (`COLOR_0`) work; no authoring syntax yet |
+| CSG with modified tools; mirror within a part (§1, §4) | NEAR | NOW | recursive geometry expressions, `boolean`/`combine` shapes, `mirror`/`repeat` ops |
+| Spatial relations from real geometry (§17) | — | NOW | `measure:` queries (section, gap, bounds, anchor, ray) |
+| Enforced constraints / solver (§17) | RESEARCH | RESEARCH (deliberately) | see docs/RELATIONSHIPS.md |
+| Reusable components (§5) | NEAR | NOW | `components/*.yaml` with public/private params |
+| Structural variation / optional parts (§24) | NEAR | NOW | `enabled:` + checks with `when:` |
+| Family interfaces (§24) | — | NOW | `interface:` + `sw family` |
+| Import GLB/OBJ/STL/PLY (§31) | NEAR | NOW (skeleton) | `mesh_file`, `sw import --split` |
+| Stable UVs, shared instance UVs, seams (§10) | NEAR | NOW (region-level) | part-owned regions, `uv.lock.yaml`, `share_instances`, `seams: regions` |
+| Chart identity across geometry edits (§10) | — | RESEARCH | would need chart transfer by projection |
+| Cross-part booleans (§1) | NEAR | NEAR | blocked by placement↔geometry ordering; see HARDENING.md |
+
 ---
 
 ## 1. Geometry creation

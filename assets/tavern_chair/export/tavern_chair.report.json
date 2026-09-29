@@ -1,7 +1,7 @@
 {
  "asset": "tavern_chair",
  "status": "PASS",
- "source_hash": "90b4778db717",
+ "source_hash": "495d065cabd3",
  "counts": {
   "error": 0,
   "warning": 0,
@@ -20,7 +20,7 @@
  "metrics": {
   "triangles": 484,
   "parts": 11,
-  "sliver_triangles": 55,
+  "sliver_triangles": 39,
   "size_m": [
    0.5267,
    0.9826,
@@ -44,9 +44,10 @@
    "top_rail.size.x / seat.size.x": 1.0804,
    "rear_leg_right.size.x": 0.0761
   },
-  "uv_utilization": 0.555,
+  "uv_utilization": 0.422,
   "uv_overlap": 0.0,
-  "texel_density_px_m": 283.3,
+  "uv_owners": 11,
+  "texel_density_px_m": 249.7,
   "texel_density_target": 256,
   "gltf_validator": {
    "numErrors": 0,
@@ -58,7 +59,7 @@
  "issues": [],
  "export": {
   "path": "assets/tavern_chair/export/tavern_chair.glb",
-  "bytes": 55292,
+  "bytes": 55812,
   "nodes": 24,
   "meshes": 22,
   "materials": 2

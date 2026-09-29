@@ -12,7 +12,8 @@ import math
 import numpy as np
 
 from ..limits import LIMITS, check
-from ..mesh import Mesh, from_manifold
+from .. import backend
+from ..mesh import Mesh
 from ..registry import Param, shape
 
 SEG = dict(min=3, max=LIMITS.max_segments)
@@ -62,10 +63,7 @@ def lathe_mesh(profile: list[tuple[float, float]], segments: int) -> Mesh:
 @shape("box", "Axis-aligned box.", [Param("size", "vec3", doc="[width x, height y, depth z] in metres")],
        example="{type: box, size: [0.4, 0.05, 0.4]}")
 def box(a, b):
-    import trimesh
-
-    t = trimesh.creation.box(extents=np.maximum(a["size"], 1e-6))
-    return _finish(Mesh(t.vertices, t.faces))
+    return _finish(backend.box(a["size"]))
 
 
 @shape("chamfer_box", "Box with every edge chamfered (44 triangles). The workhorse of stylized low-poly props.",
@@ -73,8 +71,6 @@ def box(a, b):
         Param("chamfer", "num", 0.01, "chamfer width in metres (clamped to 45% of the smallest side)", min=0)],
        example="{type: chamfer_box, size: [0.46, 0.06, 0.44], chamfer: 0.012}")
 def chamfer_box(a, b):
-    import trimesh
-
     s = np.maximum(np.asarray(a["size"]), 1e-6)
     c = min(a["chamfer"], 0.45 * s.min())
     if c <= 1e-6:
@@ -83,8 +79,7 @@ def chamfer_box(a, b):
     for shrink in np.eye(3):
         h = s / 2 - (1 - shrink) * c  # full along one axis, inset along the other two
         pts.extend(np.array(list(np.ndindex(2, 2, 2))) * 2 * h - h)
-    hull = trimesh.convex.convex_hull(np.array(pts))
-    return _finish(Mesh(hull.vertices, hull.faces))
+    return _finish(backend.convex_hull(np.array(pts)))
 
 
 @shape("cylinder", "Cylinder / frustum / cone along Y, optionally with chamfered rims.",
@@ -121,10 +116,7 @@ def sphere(a, b):
        [Param("radius", "num", doc="radius", min=0), Param("subdivisions", "int", 1, "0..4", min=0, max=4)],
        example="{type: icosphere, radius: 0.2, subdivisions: 1}")
 def icosphere(a, b):
-    import trimesh
-
-    t = trimesh.creation.icosphere(subdivisions=a["subdivisions"], radius=a["radius"])
-    return _finish(Mesh(t.vertices, t.faces))
+    return _finish(backend.icosphere(a["subdivisions"], a["radius"]))
 
 
 @shape("capsule", "Capsule along Y (cylinder with hemispherical ends).",
@@ -174,8 +166,6 @@ def lathe(a, b):
         Param("scale_top", "vec2", [1.0, 1.0], "XY scale of the far face (taper)")],
        example="{type: extrude, polygon: [[-0.2,0],[0.2,0],[0.15,0.3],[-0.15,0.3]], depth: 0.04}")
 def extrude(a, b):
-    import manifold3d as mf
-
     contours = [np.array(a["polygon"], dtype=np.float64)]
     for i, hole in enumerate(a["holes"] or []):
         contours.append(np.array([b.vec(p, 2, f"holes[{i}]") for p in hole], dtype=np.float64))
@@ -183,9 +173,7 @@ def extrude(a, b):
     for c in contours:
         area = 0.5 * np.sum(c[:, 0] * np.roll(c[:, 1], -1) - np.roll(c[:, 0], -1) * c[:, 1])
         fixed.append(c if (area > 0) == (len(fixed) == 0) else c[::-1])
-    cs = mf.CrossSection(fixed, mf.FillRule.EvenOdd)
-    m = cs.extrude(a["depth"], scale_top=tuple(a["scale_top"])).translate([0, 0, -a["depth"] / 2])
-    return _finish(from_manifold(m))
+    return _finish(backend.extrude_polygon(fixed, a["depth"], a["scale_top"]))
 
 
 @shape("tube", "Sweep a regular polygon along a 3D path (pipes, cables, arms, branches, handles).",
@@ -243,24 +231,18 @@ def tube(a, b):
         Param("seed", "int", 0, "random seed (same seed = same shape)")],
        category="procedural", example="{type: random_hull, size: [0.6, 0.4, 0.5], points: 20, seed: 3}")
 def random_hull(a, b):
-    import trimesh
-
     rng = np.random.default_rng(a["seed"])
     d = rng.normal(size=(a["points"], 3))
     d /= np.linalg.norm(d, axis=1)[:, None]
-    hull = trimesh.convex.convex_hull(d * np.asarray(a["size"]) / 2)
-    return _finish(Mesh(hull.vertices, hull.faces))
+    return _finish(backend.convex_hull(d * np.asarray(a["size"]) / 2))
 
 
 def _revolve(polygon, segments: int) -> Mesh:
-    import manifold3d as mf
-
     c = np.array(polygon, dtype=np.float64)
     area = 0.5 * np.sum(c[:, 0] * np.roll(c[:, 1], -1) - np.roll(c[:, 0], -1) * c[:, 1])
     if area < 0:
         c = c[::-1]
-    m = mf.CrossSection([c]).revolve(segments).rotate([-90, 0, 0])  # manifold revolves about Z; we are Y-up
-    return _finish(from_manifold(m))
+    return _finish(backend.revolve_polygon(c, segments))
 
 
 @shape("revolve", "Revolve a closed 2D polygon of [radius, y] points around Y (rings, flanges, rims, hollow forms). "

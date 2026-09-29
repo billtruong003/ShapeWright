@@ -10,7 +10,7 @@ import numpy as np
 
 from .. import expr
 from ..assemble import Asset
-from ..mesh import to_manifold
+from .. import backend
 from ..report import Issue
 from ..render.raster import coverage
 from ..surface import Surface
@@ -68,8 +68,10 @@ def mesh_integrity(asset: Asset, surface: Surface, metrics: dict):
         _, counts = np.unique(und, axis=0, return_counts=True)
         open_e, nonman = int((counts == 1).sum()), int((counts > 2).sum())
         if open_e:
-            out.append(_issue("GEO_OPEN_EDGES", "error", "geometry", f"{open_e} boundary edges (surface has holes)", w,
-                              "shapes should be closed; check boolean inputs and custom profiles", count=open_e))
+            ok = "open_ok" in p.tags
+            out.append(_issue("GEO_OPEN_EDGES", "warning" if ok else "error", "geometry", f"{open_e} boundary edges (surface has holes)", w,
+                              "intentional (tag open_ok)" if ok else
+                              "shapes should be closed; for imported/baked open surfaces tag the part open_ok", count=open_e))
         if nonman:
             out.append(_issue("GEO_NONMANIFOLD_EDGES", "error", "geometry", f"{nonman} edges shared by more than two faces", w, count=nonman))
         _, dcounts = np.unique(directed, axis=0, return_counts=True)
@@ -130,23 +132,15 @@ def assembly(asset: Asset, surface: Surface, metrics: dict):
 
     parts = asset.parts
     n = len(parts)
-    manifolds = {}
-
-    def mf(i):
-        if i not in manifolds:
-            try:
-                manifolds[i] = to_manifold(parts[i].mesh)
-            except ValueError:
-                manifolds[i] = None
-        return manifolds[i]
+    closed = {i: backend.is_closed_manifold(parts[i].mesh) for i in range(n)}
 
     adj = {i: set() for i in range(n)}
     for i in range(n):
         for j in range(i + 1, n):
             if _bbox_gap(parts[i].bounds, parts[j].bounds) > TOL:
                 continue
-            a, c = mf(i), mf(j)
-            touching = True if a is None or c is None else a.min_gap(c, 2 * TOL) <= TOL
+            # open (e.g. imported) meshes cannot be measured exactly; bbox contact is the fallback
+            touching = True if not (closed[i] and closed[j]) else backend.min_gap(parts[i].mesh, parts[j].mesh, 2 * TOL) <= TOL
             if touching:
                 adj[i].add(j)
                 adj[j].add(i)
@@ -164,24 +158,17 @@ def assembly(asset: Asset, surface: Surface, metrics: dict):
     if floating:
         out.append(_issue("ASM_FLOATING_PARTS", "error", "assembly",
                           f"{len(floating)} part(s) do not touch the rest of the asset: {', '.join(floating[:8])}", floating[0],
-                          "attach them to a neighbouring part (attach: {to: ..., at: ...}) or check offsets; tag floating_ok if intended",
+                          "attach them to a neighbouring part (attach / measure) or check offsets; tag floating_ok if intended",
                           parts=floating))
     metrics["contacts"] = int(sum(len(v) for v in adj.values()) // 2)
 
     hidden = []
     for i in range(n):
-        near = [j for j in adj[i]]
-        if not near or mf(i) is None:
+        near = [j for j in adj[i] if closed[j]]
+        if not near or not closed[i]:
             continue
-        a = mf(i)
-        vol = a.volume()
-        if vol <= 0:
-            continue
-        rest = None
-        for j in near:
-            if mf(j) is not None:
-                rest = mf(j) if rest is None else rest + mf(j)
-        if rest is not None and (a - rest).volume() < 0.02 * vol:
+        vol, uncovered = backend.uncovered_volume(parts[i].mesh, [parts[j].mesh for j in near])
+        if vol > 0 and uncovered < 0.02 * vol:
             hidden.append(parts[i].name)
     for h in hidden:
         out.append(_issue("ASM_HIDDEN_PART", "warning", "assembly", "part is (almost) entirely inside other parts; its triangles are wasted", h,
@@ -211,7 +198,8 @@ def budget(asset: Asset, surface: Surface, metrics: dict):
                               f"reduce segments/ops on the heaviest parts ({heavy})", over=tris - limit))
         elif tris > 0.95 * limit:
             out.append(_issue("BUDGET_NEAR_LIMIT", "info", "budget", f"{tris}/{limit} triangles (within 5% of budget)", ""))
-    used = sorted({p.material for p in asset.parts if p.material})
+    used = sorted({p.material for p in asset.parts if p.material} |
+                  {m for sp in surface.parts.values() for m in sp.face_material if m})
     metrics["materials"] = len(used)
     mlimit = asset.budget.get("materials")
     if mlimit and len(used) > mlimit:
@@ -247,6 +235,11 @@ def metric_namespace(asset: Asset) -> dict:
     for p in asset.parts:
         groups.setdefault(p.base, []).append(p)
         env[p.name] = box_ns(p.bounds, p.mesh.n_tris, p.name)
+    for p in asset.parts:  # component instances are addressable as a group
+        if p.component:
+            groups.setdefault(p.component, [])
+            if p not in groups[p.component]:
+                groups[p.component].append(p)
     for base, ps in groups.items():
         if base not in env or len(ps) > 1:
             bb = np.stack([np.min([q.bounds[0] for q in ps], 0), np.max([q.bounds[1] for q in ps], 0)])
@@ -265,6 +258,13 @@ def design_checks(asset: Asset, surface: Surface, metrics: dict):
             out.append(_issue("CHECK_ERROR", "error", "intent", "check must be {expr, min?, max?, doc?}", where))
             continue
         label = chk.get("name") or chk["expr"]
+        if "when" in chk:
+            try:
+                if not expr.evaluate(str(chk["when"]), env):
+                    continue
+            except expr.ExprError as e:
+                out.append(_issue("CHECK_ERROR", "error", "intent", f"when: {e}", where))
+                continue
         try:
             v = expr.evaluate(str(chk["expr"]), env)
         except expr.ExprError as e:
@@ -295,7 +295,8 @@ def design_checks(asset: Asset, surface: Surface, metrics: dict):
 
 
 @validator("uv_layout", "surface", "UV0 presence, 0..1 bounds, overlap, texel-density consistency and atlas utilization; normal orientation.",
-           ("UV_MISSING", "UV_OUT_OF_BOUNDS", "UV_OVERLAP", "UV_TEXEL_DENSITY", "NRM_FLIPPED"))
+           ("UV_MISSING", "UV_OUT_OF_BOUNDS", "UV_OVERLAP", "UV_TEXEL_DENSITY", "NRM_FLIPPED", "UV_LOCK_STALE", "UV_REGION_REGENERATED",
+            "UV_UNLOCKED", "ATTR_INVALIDATED"))
 def uv_layout(asset: Asset, surface: Surface, metrics: dict):
     out = []
     for p in asset.parts:
@@ -310,14 +311,18 @@ def uv_layout(asset: Asset, surface: Surface, metrics: dict):
                           "set uv.method: auto (requires the xatlas package)"))
         return out
     res = min(surface.uv_resolution, 1024)
-    tris, owner, dens, _areas3d = [], [], {}, {}
+    dens = {}
     oob = []
-    for i, p in enumerate(asset.parts):
-        uv = surface.parts[p.name].corner_uv
+    groups: dict[str, list] = {}
+    shared = {o for o in surface.owners.values() if o.endswith("*")}
+    for p in asset.parts:
+        sp = surface.parts[p.name]
+        uv = sp.corner_uv
         if uv.min() < -1e-6 or uv.max() > 1 + 1e-6:
             oob.append(p.name)
-        tris.append(np.stack([uv[..., 0] * res, (1 - uv[..., 1]) * res], -1))
-        owner.append(np.full(len(uv), i))
+        o = sp.uv_owner
+        if o not in shared or o not in groups:  # shared owners: rasterize one representative
+            groups.setdefault(o, []).append(np.stack([uv[..., 0] * res, (1 - uv[..., 1]) * res], -1))
         a2 = 0.5 * np.abs((uv[:, 1, 0] - uv[:, 0, 0]) * (uv[:, 2, 1] - uv[:, 0, 1]) - (uv[:, 2, 0] - uv[:, 0, 0]) * (uv[:, 1, 1] - uv[:, 0, 1]))
         _, a3 = p.mesh.face_normals()
         dens.setdefault(p.base, [0.0, 0.0])
@@ -325,16 +330,39 @@ def uv_layout(asset: Asset, surface: Surface, metrics: dict):
         dens[p.base][1] += a3.sum()
     if oob:
         out.append(_issue("UV_OUT_OF_BOUNDS", "error", "surface", f"UVs outside 0..1 on: {', '.join(oob)}", oob[0]))
-    count, who = coverage(np.concatenate(tris), res, res, np.concatenate(owner))
-    covered = int((count > 0).sum())
-    overl = int((count > 1).sum())
-    ratio = overl / max(covered, 1)
+    total = np.zeros((res, res), dtype=np.int32)
+    overlap = np.zeros((res, res), dtype=bool)
+    masks = {}
+    for o, tris in groups.items():
+        count, _ = coverage(np.concatenate(tris), res, res)
+        masks[o] = count > 0
+        total += masks[o]
+        overlap |= count > 1  # charts of one owner overlapping themselves
+    overlap |= total > 1  # different owners overlapping (never intended)
+    covered = int((total > 0).sum())
+    ratio = int(overlap.sum()) / max(covered, 1)
     metrics["uv_utilization"] = round(covered / res / res, 3)
     metrics["uv_overlap"] = round(ratio, 4)
+    metrics["uv_owners"] = len(groups)
     if ratio > 0.002:
-        involved = sorted({asset.parts[k].name for k in np.unique(who[count > 1]) if k >= 0})
+        involved = sorted(o.rstrip("*") for o, m in masks.items() if (m & overlap).any())
         out.append(_issue("UV_OVERLAP", "error", "surface", f"{ratio:.1%} of used UV area overlaps", ",".join(involved[:6]),
-                          "regenerate UVs (uv.method: auto) or increase padding", ratio=round(ratio, 4)))
+                          "run `sw uv lock` after structural changes, or remove authored overlapping UVs", ratio=round(ratio, 4)))
+    if surface.uv_method == "regions":
+        if surface.lock == "stale":
+            out.append(_issue("UV_LOCK_STALE", "warning", "surface", f"uv.lock.yaml does not match the parts ({', '.join(surface.lock_notes[:6])}); "
+                              "regions were recomputed, so every chart may have moved", "uv", "run `sw uv lock ASSET` and commit uv.lock.yaml"))
+        elif surface.lock == "used" and surface.lock_notes:
+            out.append(_issue("UV_REGION_REGENERATED", "info", "surface", f"geometry changed since the lock; charts regenerated inside their fixed regions: "
+                              f"{', '.join(surface.lock_notes[:8])}", "uv", "textures/bakes for these parts must be redone; other parts are unaffected"))
+        elif surface.lock == "none":
+            out.append(_issue("UV_UNLOCKED", "info", "surface", "no uv.lock.yaml: UV regions follow part areas and move when parts change", "uv",
+                              "run `sw uv lock ASSET` before texturing or baking"))
+    for p in asset.parts:
+        if p.mesh.invalidated:
+            sev = "warning" if p.source == "file" and "uv" in p.mesh.invalidated else "info"
+            out.append(_issue("ATTR_INVALIDATED", sev, "surface", f"attributes dropped by a topology-changing op: {', '.join(sorted(p.mesh.invalidated))}", p.name,
+                              "authored UVs/colours do not survive booleans/decimation (docs/MESH_MODEL.md); apply those ops before authoring"))
     texture = asset.budget.get("texture_size", surface.uv_resolution)
     px_per_m = {k: float(np.sqrt(v[0] / max(v[1], 1e-12)) * texture) for k, v in dens.items() if v[1] > 0}
     if px_per_m:
@@ -345,7 +373,7 @@ def uv_layout(asset: Asset, surface: Surface, metrics: dict):
             lo = min(px_per_m, key=px_per_m.get)
             hi = max(px_per_m, key=px_per_m.get)
             out.append(_issue("UV_TEXEL_DENSITY", "warning", "surface", f"texel density varies {spread:.2f}x ({lo}: {px_per_m[lo]:.0f} px/m, {hi}: {px_per_m[hi]:.0f} px/m)", lo,
-                              "regenerate UVs with uv.method: auto so charts are scaled uniformly"))
+                              "regions follow surface area; after large size changes run `sw uv lock` again"))
         target = asset.budget.get("texel_density")
         if target:
             metrics["texel_density_target"] = target

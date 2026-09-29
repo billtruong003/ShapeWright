@@ -32,14 +32,25 @@ determinism. Use `LIMITS` for any count the user controls.
 ### A new op (modifier)
 
 ```python
-@op("bulge", "Push the middle outward along an axis.", [Param("amount", "num", doc="metres")],
+@op("bulge", "Push the middle outward along an axis.", [Param("amount", "num", doc="metres")], "preserve",
     category="deform", example="{type: bulge, amount: 0.02}")
 def bulge(mesh, a, b):
-    return Mesh(new_vertices, mesh.F)
+    return mesh.with_positions(new_vertices)       # 'preserve': keeps topology and all attributes
 ```
 
-Ops receive a part-local mesh centred on its bounding box. Keep the surface
-closed. Use `b.build_shape(raw, "shape")` for nested tool shapes.
+Every op declares a **topology class** (`preserve | refine | rebuild | resample`),
+its attribute contract (docs/MESH_MODEL.md). `tests/test_mesh_contract.py`
+verifies the declaration against the op's behaviour automatically. Ops that
+change topology build their result with `mesh.remapped(...)` (explicit
+correspondence) or through a `backend` function. Never construct `Mesh(V, F)`
+from scratch inside an op: that silently drops attributes.
+
+Ops receive a mesh centred on its bounding box. Keep the surface closed. Use
+`b.build_geometry(raw, "shape")` for nested geometry expressions.
+
+**Geometry libraries** (Manifold, trimesh, scipy, xatlas, ...) may only be
+imported in `shapewright/backend.py` (enforced by `tests/test_architecture.py`).
+Add a small backend function with a stated policy instead (docs/BACKEND.md).
 
 ### A new validator
 

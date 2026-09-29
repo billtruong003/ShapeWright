@@ -1,0 +1,60 @@
+# Reuse demo: the same `plank_top` component as tavern_table, different public params.
+# The stretcher length comes from a `gap` query between the trestle legs, not arithmetic.
+shapewright: 0.1
+asset:
+  name: tavern_bench
+  kind: prop/furniture/bench
+  description: Two-plank tavern bench with slab trestle legs, from the tavern set.
+profile: mobile_mid
+style: stylized_lowpoly
+budget: {triangles: 500}
+
+params:
+  length:      {value: 1.2, min: 0.8, max: 2.0}
+  seat_height: {value: 0.45, doc: matches tavern_chair seat height range}
+  seat_depth:  0.32
+  top_t:       0.06
+  slab:        0.06
+  inset:       0.14
+
+materials:
+  wood:      {base_color: "#9a6a40", roughness: 0.85}
+  wood_dark: {base_color: "#5e3b22", roughness: 0.9}
+
+parts:
+  top:
+    component: plank_top
+    with: {length: length, width: seat_depth, thickness: top_t, planks: 2, batten_from_end: inset + 0.09}
+    materials: {top: wood, under: wood_dark}
+    anchor: top
+    position: [0, seat_height, 0]
+
+  trestle:
+    doc: slab legs, wider at the foot
+    shape:
+      type: extrude
+      polygon: [[-0.14, 0], [0.14, 0], [0.1, 0.06], [0.1, seat_height - top_t + 0.02], [-0.1, seat_height - top_t + 0.02], [-0.1, 0.06]]
+      depth: slab
+      rotate: [0, 90, 0]
+    ops: [{type: jitter, amount: 0.003, seed: 31}]
+    anchor: bottom
+    position: [length / 2 - inset, 0, 0]
+    mirror: x
+    material: wood_dark
+
+  stretcher:
+    doc: spans the real gap between the trestles
+    measure:
+      span: {gap: [trestle_left, trestle_right], axis: x, section: {axis: y, at: 0.16}}
+    shape: {type: chamfer_box, size: [span.length + 0.04, 0.05, 0.05], chamfer: 0.008}
+    position: [span.center, 0.16, 0]
+    material: wood_dark
+
+sockets:
+  seat_left: {attach: {to: top, at: top, offset: [-0.3, 0, 0]}}
+  seat_right: {attach: {to: top, at: top, offset: [0.3, 0, 0]}}
+
+collision: {mode: single_box}
+
+checks:
+  - {expr: top.max.y, min: 0.42, max: 0.5, doc: same seat height as tavern_chair}

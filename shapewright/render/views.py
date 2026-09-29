@@ -64,6 +64,8 @@ MODES = {
     "wire": "clay plus triangle edges (topology density)",
     "normals": "world-space normals as RGB; magenta never appears for correct winding",
     "silhouette": "black shape on white; readability at a distance",
+    "provenance": "faces coloured by the geometry expression that created them (e.g. boolean cut faces), with legend",
+    "regions": "faces coloured by surface region (top/bottom/side/bevel/cut...), with legend",
 }
 FOV = 30.0
 
@@ -143,8 +145,13 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
     bounds = frame if frame is not None else (np.stack([np.min([p.bounds[0] for p in parts], 0), np.max([p.bounds[1] for p in parts], 0)]))
     cam = Camera(view, bounds, W, H)
 
-    tris, nrms, fnorm, owner = [], [], [], []
+    tris, nrms, fnorm, owner, labels = [], [], [], [], []
     for pi, p in enumerate(parts):
+        if mode in ("provenance", "regions"):
+            labels.append(p.mesh.label_values("origin" if mode == "provenance" else "region"))
+        elif mode == "material":
+            fm = surface.parts[p.name].face_material
+            labels.append(np.array([m if m else p.material for m in fm], dtype=object))
         sp = surface.parts[p.name]
         tris.append(sp.positions[sp.indices].astype(np.float64))
         nrms.append(sp.normals[sp.indices].astype(np.float64))
@@ -172,27 +179,33 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
         cmap = part_colors(asset)
         base = np.zeros((len(parts), 3))
         for i, p in enumerate(parts):
-            if mode == "parts":
-                base[i] = cmap[p.base]
-            elif mode == "material":
-                mat = asset.materials.get(p.material or "", None)
-                base[i] = _srgb(mat["base_color"]) if mat else CLAY
+            base[i] = cmap[p.base] if mode == "parts" else CLAY
+        tri_base = base[OWN]
+        legend = {}
+        if labels:
+            lab = np.concatenate(labels)
+            if mode == "material":
+                for m in dict.fromkeys(lab):
+                    mat = asset.materials.get(m or "", None)
+                    tri_base[lab == m] = _srgb(mat["base_color"]) if mat else CLAY
             else:
-                base[i] = CLAY
-            if focus_set and not isolate:
-                base[i] = FOCUS if p.name in focus_set else GHOST
+                for k, v in enumerate(dict.fromkeys(lab)):
+                    legend[str(v)] = np.array(PALETTE[k % len(PALETTE)])
+                    tri_base[lab == v] = legend[str(v)]
+        if focus_set and not isolate:
+            tri_base = np.where(np.isin(OWN, [i for i, p in enumerate(parts) if p.name in focus_set])[:, None], FOCUS, GHOST)
         n = buf.normal
         key_l = -cam.fwd * 0.55 + cam.up * 0.55 - cam.right * 0.45
         key_l /= np.linalg.norm(key_l)
         fill_l = -cam.fwd * 0.6 + cam.right * 0.6
         fill_l /= np.linalg.norm(fill_l)
         lam = 0.42 + 0.55 * np.clip(n @ key_l, 0, 1) + 0.18 * np.clip(n @ fill_l, 0, 1) + 0.06 * n[..., 1]
-        col = base[np.clip(pid, 0, None)] * np.clip(lam, 0, 1.25)[..., None]
+        col = tri_base[np.clip(buf.tri, 0, None)] * np.clip(lam, 0, 1.25)[..., None]
         img[hit] = np.clip(col[hit], 0, 1)
         img[hit & ~buf.front] = BACKFACE
 
         # outlines: silhouette, part boundaries and creases make forms legible to vision models
-        if mode in ("clay", "parts", "material", "wire"):
+        if mode in ("clay", "parts", "material", "wire", "provenance", "regions"):
             edge_mask = np.zeros((H, W), dtype=bool)
             for dy, dx in ((0, 1), (1, 0)):
                 a = pid[: H - dy, : W - dx]
@@ -234,6 +247,13 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
     out = Image.fromarray((np.clip(img, 0, 1) * 255 + 0.5).astype(np.uint8)).resize((size, size), Image.LANCZOS)
     if annotate:
         _annotate(out, asset, cam, parts, view, mode, focus_set, supersample, label)
+        if mode in ("provenance", "regions") and legend:
+            d = ImageDraw.Draw(out)
+            y = 36 if focus_set else 22
+            for name, c in list(legend.items())[:14]:
+                d.rectangle([6, y + 2, 16, y + 12], fill=tuple(int(v * 255) for v in c))
+                d.text((20, y), name[-48:], fill=(30, 30, 30), font=_font(max(10, size // 42)))
+                y += max(13, size // 34)
     return out
 
 

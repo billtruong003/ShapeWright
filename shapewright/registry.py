@@ -30,8 +30,11 @@ KINDS = {
     "axis": "x | y | z",
     "str": "string",
     "bool": "true | false",
-    "shape": "nested shape definition",
+    "geometry": "nested geometry expression {type, ..., ops, material, rotate, translate}",
+    "geometry_list": "list of geometry expressions",
 }
+
+TOPOLOGY = ("preserve", "refine", "rebuild", "resample", "generate")
 
 
 @dataclass
@@ -70,12 +73,14 @@ class OpSpec:
     params: list[Param] = field(default_factory=list)
     category: str = ""
     example: str = ""
+    topology: str = "generate"  # attribute policy class, see mesh.POLICY
 
     def param(self, name: str) -> Param | None:
         return next((p for p in self.params if p.name == name), None)
 
     def describe(self) -> dict:
-        d = {"doc": self.doc, "category": self.category, "params": {p.name: p.describe() for p in self.params}}
+        d = {"doc": self.doc, "category": self.category, "topology": self.topology,
+             "params": {p.name: p.describe() for p in self.params}}
         if self.example:
             d["example"] = self.example
         return d
@@ -85,22 +90,29 @@ SHAPES: dict[str, OpSpec] = {}
 OPS: dict[str, OpSpec] = {}
 
 
-def _register(table: dict, family: str, name: str, doc: str, params: list[Param], category: str, example: str):
+def _register(table: dict, family: str, name: str, doc: str, params: list[Param], category: str, example: str, topology: str):
+    if topology not in TOPOLOGY:
+        raise ValueError(f"{family} '{name}': topology must be one of {TOPOLOGY}")
+
     def deco(fn):
         if name in table:
             raise ValueError(f"{family} '{name}' registered twice")
-        table[name] = OpSpec(name, family, fn, doc, params, category, example)
+        table[name] = OpSpec(name, family, fn, doc, params, category, example, topology)
         return fn
 
     return deco
 
 
-def shape(name: str, doc: str, params: list[Param], category: str = "primitive", example: str = ""):
-    return _register(SHAPES, "shape", name, doc, params, category, example)
+def shape(name: str, doc: str, params: list[Param], category: str = "primitive", example: str = "", topology: str = "generate"):
+    """Register a generator. Composite generators (boolean, combine) declare the
+    topology class of what they do to their inputs."""
+    return _register(SHAPES, "shape", name, doc, params, category, example, topology)
 
 
-def op(name: str, doc: str, params: list[Param], category: str = "modifier", example: str = ""):
-    return _register(OPS, "op", name, doc, params, category, example)
+def op(name: str, doc: str, params: list[Param], topology: str, category: str = "modifier", example: str = ""):
+    """Register a modifier. `topology` is mandatory: it states the attribute
+    contract the op obeys (preserve | refine | rebuild | resample)."""
+    return _register(OPS, "op", name, doc, params, category, example, topology)
 
 
 def suggest(name: str, options) -> str:
@@ -110,4 +122,4 @@ def suggest(name: str, options) -> str:
 
 def load_builtin():
     # importing registers everything
-    from .ops import shapes, modifiers  # noqa: F401
+    from .ops import compose, modifiers, shapes, sources  # noqa: F401

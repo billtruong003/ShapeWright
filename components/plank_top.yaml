@@ -1,0 +1,36 @@
+# Reusable sub-assembly: a top made of parallel planks tied together by battens.
+# Used by tavern_table and tavern_bench. Users set only the public params; the
+# construction (plank width, batten placement) is private to the component.
+shapewright: 0.1
+component: plank_top
+doc: Parallel planks with visible seams, held by two battens underneath. Materials `top` and `under`.
+
+params:                      # public interface
+  length:    {value: 1.2, min: 0.3, max: 3.0, doc: plank length (x)}
+  width:     {value: 0.7, min: 0.2, max: 1.5, doc: total width across planks (z)}
+  thickness: {value: 0.06, doc: plank thickness}
+  planks:    {value: 3, min: 1, max: 8, doc: number of planks}
+  gap:       {value: 0.008, doc: seam between planks}
+  wear:      {value: 0.004, doc: hand-made jitter}
+  batten_from_end: {value: 0.2, doc: distance of each batten from the plank ends}
+
+private:
+  plank_w: (width - (planks - 1) * gap) / planks
+
+parts:
+  plank:
+    doc: top boards
+    shape: {type: chamfer_box, size: [length, thickness, plank_w], chamfer: 0.014}
+    ops: [{type: jitter, amount: wear, seed: 21}]
+    anchor: top_back
+    position: [0, 0, -width / 2]
+    array: {count: planks, offset: [0, 0, plank_w + gap]}
+    material: top
+
+  batten:
+    doc: ties every plank together (without it the middle planks float)
+    shape: {type: chamfer_box, size: [0.08, 0.04, width - 0.04], chamfer: 0.008}
+    anchor: top
+    position: [length / 2 - batten_from_end, -thickness + 0.005, 0]
+    mirror: x
+    material: under

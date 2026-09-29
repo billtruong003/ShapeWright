@@ -36,11 +36,15 @@ TOP_KEYS = {
     "uv": "UV generation settings",
     "collision": "collision proxy settings",
     "notes": "free text for humans and agents",
+    "interface": "family contract for variants: {params: [public names], doc} (see docs/FAMILIES.md)",
 }
 
 PART_KEYS = {
-    "shape": "generator definition {type: ..., ...}",
-    "ops": "ordered list of modifiers applied in part-local space",
+    "shape": "geometry expression {type: ..., <params>, ops, material, rotate, translate} (recursive)",
+    "ops": "ordered list of modifiers applied in part-local space (after the shape's own ops)",
+    "measure": "named spatial queries on already-built parts: {name: {section|gap|bounds|anchor|ray: ...}}",
+    "enabled": "true | false | expression; disabled parts are not built",
+    "uv": "per-part UV settings: {share_instances: true}",
     "rotate": "[rx, ry, rz] degrees, applied about the part centre before placement",
     "position": "[x, y, z] world position of the part's anchor",
     "anchor": "which point of this part is placed (default: center)",
@@ -54,6 +58,24 @@ PART_KEYS = {
     "pivot": "anchor used as the exported node origin (default: asset origin)",
     "tags": "free semantic tags",
     "doc": "one-line purpose of the part",
+}
+
+INSTANCE_KEYS = {
+    "component": "component name (components/NAME.yaml)",
+    "with": "values for the component's public params",
+    "materials": "map component material names to asset materials, e.g. {wood: oak}",
+    "enabled": "true | false | expression",
+    "anchor": "anchor of the whole component group", "position": "world position of the group anchor",
+    "attach": "place the group relative to another part", "rotate": "rotate the group (degrees)",
+    "parent": "semantic parent for the component's root parts", "tags": "tags added to every component part",
+    "doc": "purpose", "array": "(not supported for components yet)", "mirror": "(not supported for components yet)",
+}
+
+COMPONENT_KEYS = {
+    "shapewright": "format version", "component": "component name", "doc": "what it is",
+    "params": "PUBLIC parameters (the component's interface) with defaults",
+    "private": "internal derived values; not settable by users",
+    "parts": "parts, as in assets; may reference only parts of the same component", "notes": "free text",
 }
 
 MATERIAL_KEYS = {"base_color", "metallic", "roughness", "emissive", "alpha", "alpha_mode", "double_sided", "doc"}
@@ -101,8 +123,16 @@ def read_yaml(path: Path) -> dict:
     return data
 
 
-def load_source(path: Path, _depth: int = 0) -> dict:
-    """Read a source file and apply `extends` inheritance."""
+FAMILY_OPEN_KEYS = {"shapewright", "extends", "asset", "params", "budget", "profile", "style", "materials", "checks", "notes", "uv", "collision"}
+
+
+def load_source(path: Path, _depth: int = 0, ctx: Ctx | None = None) -> dict:
+    """Read a source file and apply `extends` inheritance.
+
+    If the base declares an `interface`, the variant may only set the base's
+    public params (plus metadata, budgets, materials) and its `checks` are
+    ADDED to the base's checks. Structural overrides are refused with a hint.
+    """
     path = Path(path).resolve()
     data = read_yaml(path)
     if "extends" in data:
@@ -113,8 +143,31 @@ def load_source(path: Path, _depth: int = 0) -> dict:
             base_path = base_path / "asset.yaml"
         if not base_path.exists():
             raise SourceError([Issue("SRC_REF", "error", f"extends target not found: {data['extends']}", "extends", "source")])
-        base = load_source(base_path, _depth + 1)
-        data = _deep_merge(base, {k: v for k, v in data.items() if k != "extends"})
+        base = load_source(base_path, _depth + 1, ctx)
+        iface = base.get("interface")
+        child = {k: v for k, v in data.items() if k != "extends"}
+        if isinstance(iface, dict):
+            errors = []
+            public = set(iface.get("params") or [])
+            for k in child:
+                if k not in FAMILY_OPEN_KEYS:
+                    errors.append(Issue("FAMILY_PRIVATE", "error", f"variant overrides '{k}', which is private to the base asset", k, "source",
+                                        "ask the base to expose it: add a public param or an `enabled:` switch to its interface"))
+            for k in (child.get("params") or {}):
+                if k not in public:
+                    errors.append(Issue("FAMILY_PRIVATE", "error", f"param '{k}' is not in the base's interface", f"params.{k}", "source",
+                                        (suggest(k, public).strip() or f"public params: {', '.join(sorted(public))}")))
+            if errors:
+                raise SourceError(errors)
+            extra_checks = child.pop("checks", None)
+            data = _deep_merge(base, child)
+            if extra_checks:
+                data["checks"] = list(base.get("checks") or []) + list(extra_checks)
+        else:
+            if ctx is not None:
+                ctx.issues.append(Issue("FAMILY_NO_INTERFACE", "info", "base asset declares no `interface`; the variant depends on its internals",
+                                        "extends", "source", "declare interface: {params: [...]} in the base"))
+            data = _deep_merge(base, child)
         data["_extends"] = str(base_path)
     return data
 
@@ -134,13 +187,13 @@ def param_spec(raw: Any) -> dict:
     return {"value": raw, "min": None, "max": None, "doc": "", "vary": None}
 
 
-def resolve_params(params: dict, ctx: Ctx) -> dict[str, float]:
+def resolve_params(params: dict, ctx: Ctx, prefix: str = "params") -> dict[str, float]:
     specs = {k: param_spec(v) for k, v in (params or {}).items()}
     env: dict[str, float] = {}
     pending = dict(specs)
     for name in specs:
         if not name.isidentifier() or name.startswith("_"):
-            ctx.error("SRC_SCHEMA", f"params.{name}", "parameter names must be identifiers")
+            ctx.error("SRC_SCHEMA", f"{prefix}.{name}", "parameter names must be identifiers")
     while pending:
         progressed = False
         for name, spec in list(pending.items()):
@@ -149,13 +202,13 @@ def resolve_params(params: dict, ctx: Ctx) -> dict[str, float]:
                 try:
                     deps = expr.names_in(value)
                 except expr.ExprError as e:
-                    ctx.error("SRC_EXPR", f"params.{name}", str(e))
+                    ctx.error("SRC_EXPR", f"{prefix}.{name}", str(e))
                     pending.pop(name)
                     continue
                 unknown = deps - set(specs)
                 if unknown:
                     u = sorted(unknown)[0]
-                    ctx.error("SRC_EXPR", f"params.{name}", f"unknown name '{u}'", suggest(u, specs).strip())
+                    ctx.error("SRC_EXPR", f"{prefix}.{name}", f"unknown name '{u}'", suggest(u, specs).strip())
                     pending.pop(name)
                     continue
                 if deps - set(env):
@@ -163,25 +216,27 @@ def resolve_params(params: dict, ctx: Ctx) -> dict[str, float]:
                 try:
                     value = expr.evaluate(value, env)
                 except expr.ExprError as e:
-                    ctx.error("SRC_EXPR", f"params.{name}", str(e))
+                    ctx.error("SRC_EXPR", f"{prefix}.{name}", str(e))
                     pending.pop(name)
                     continue
-            if isinstance(value, bool) or not isinstance(value, (int, float)):
-                ctx.error("SRC_SCHEMA", f"params.{name}", f"value must be a number or expression, got {value!r}")
+            if isinstance(value, bool):
+                value = float(value)  # switches: true/false are 1/0
+            if not isinstance(value, (int, float)):
+                ctx.error("SRC_SCHEMA", f"{prefix}.{name}", f"value must be a number or expression, got {value!r}")
                 pending.pop(name)
                 continue
             env[name] = float(value)
             lo, hi = spec["min"], spec["max"]
             if (lo is not None and value < lo) or (hi is not None and value > hi):
                 ctx.issues.append(
-                    Issue("PARAM_OUT_OF_RANGE", "warning", f"{value:g} outside declared range [{lo}, {hi}]", f"params.{name}", "source",
+                    Issue("PARAM_OUT_OF_RANGE", "warning", f"{value:g} outside declared range [{lo}, {hi}]", f"{prefix}.{name}", "source",
                           "keep the value in range or widen the range deliberately")
                 )
             pending.pop(name)
             progressed = True
         if not progressed and pending:
             names = ", ".join(sorted(pending))
-            ctx.error("SRC_CYCLE", "params", f"circular parameter references: {names}")
+            ctx.error("SRC_CYCLE", prefix, f"circular parameter references: {names}")
             break
     return env
 
@@ -217,18 +272,21 @@ def vec(value: Any, n: int, env: dict, where: str, ctx: Ctx) -> list[float] | No
         v = num(value, env, where, ctx)
         return None if v is None else [v, v, v]
     if not isinstance(value, (list, tuple)) or len(value) != n:
-        ctx.error("SRC_SCHEMA", where, f"expected a list of {n} numbers")
+        hint = ""
+        if isinstance(value, (list, tuple)) and any(isinstance(v, str) and v.count("(") != v.count(")") for v in value):
+            hint = "an expression with a comma, e.g. atan2(a, b), was split by YAML: quote it: [\"atan2(a, b)\", 0, 0]"
+        ctx.error("SRC_SCHEMA", where, f"expected a list of {n} numbers", hint)
         return None
     out = [num(v, env, f"{where}[{i}]", ctx) for i, v in enumerate(value)]
     return None if any(v is None for v in out) else out
 
 
-def resolve_args(spec: OpSpec, raw: dict, env: dict, where: str, ctx: Ctx) -> dict | None:
+def resolve_args(spec: OpSpec, raw: dict, env: dict, where: str, ctx: Ctx, extra_keys=frozenset()) -> dict | None:
     """Validate and evaluate the fields of a shape/op definition against its spec."""
     args: dict[str, Any] = {}
     known = {p.name for p in spec.params}
     for key in raw:
-        if key in ("type", "doc"):
+        if key in ("type", "doc") or key in extra_keys:
             continue
         if key not in known:
             ctx.error("SRC_SCHEMA", f"{where}.{key}", f"'{spec.name}' has no parameter '{key}'",
@@ -274,8 +332,14 @@ def resolve_args(spec: OpSpec, raw: dict, env: dict, where: str, ctx: Ctx) -> di
             if not isinstance(value, bool):
                 ctx.error("SRC_SCHEMA", path, "expected true or false")
             args[p.name] = bool(value)
-        elif p.kind == "shape":
-            args[p.name] = value  # resolved lazily by the op itself via build_shape
+        elif p.kind == "geometry":
+            if not isinstance(value, dict) or "type" not in value:
+                ctx.error("SRC_SCHEMA", path, "expected a geometry expression {type: ..., ...}")
+            args[p.name] = value  # built lazily by the op via BuildCtx.build_geometry
+        elif p.kind == "geometry_list":
+            if not isinstance(value, list) or not value or not all(isinstance(v, dict) and "type" in v for v in value):
+                ctx.error("SRC_SCHEMA", path, "expected a non-empty list of geometry expressions")
+            args[p.name] = value
         else:
             args[p.name] = value
     return None if len(ctx.issues) > before and any(i.severity == "error" for i in ctx.issues[before:]) else args
@@ -314,5 +378,5 @@ def op_spec(raw, where, ctx):
 
 __all__ = [
     "Ctx", "load_source", "resolve_params", "resolve_args", "num", "vec", "check_keys", "shape_spec", "op_spec",
-    "TOP_KEYS", "PART_KEYS", "MATERIAL_KEYS", "REQUIRED", "source_hash", "FORMAT_VERSION", "param_spec",
+    "TOP_KEYS", "PART_KEYS", "MATERIAL_KEYS", "INSTANCE_KEYS", "COMPONENT_KEYS", "read_yaml", "REQUIRED", "source_hash", "FORMAT_VERSION", "param_spec",
 ]

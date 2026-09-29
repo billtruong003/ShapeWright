@@ -48,7 +48,7 @@ pip install -r requirements.txt   # pure-Python wheels; no GPU, no display, no B
 ./sw review tavern_chair          # validate + contact sheet + critique checklist
 ./sw render tavern_chair --part back_slat --view front
 ./sw export tavern_chair          # -> assets/tavern_chair/export/tavern_chair.glb
-python3 -m pytest -q              # 80+ tests: shapes, ops, validators, determinism, golden geometry
+python3 -m pytest -q              # 160+ tests: contracts, shapes, ops, validators, determinism, golden geometry
 ```
 
 Optional: `cd tools/gltf-validator && npm install` enables the Khronos glTF-Validator in `sw export`.
@@ -82,19 +82,20 @@ checks:                        # design intent as tests
 "The backrest is too narrow" maps to one parameter, not to vertex indices. The
 part names survive into the GLB as node names.
 
-## What exists today (v0.1 vertical slice)
+## What exists today (v0.1 vertical slice + architecture hardening)
 
 | Area | Implemented |
 |---|---|
-| Representation | declarative YAML sources; params with safe expressions; semantic parts; anchors/attach placement; mirror, linear and radial arrays; `extends` inheritance (asset families); seeded `variants` |
-| Geometry | box, chamfer_box, cylinder/cone/frustum, sphere, icosphere, capsule, torus, ring, lathe, revolve, extrude (with holes and taper), tube sweep, random_hull |
+| Representation | declarative YAML sources; params with safe expressions; semantic parts; recursive geometry expressions; anchors/attach placement; `measure:` spatial queries on real geometry; mirror and arrays; components with public/private params; `enabled:`; family interfaces; seeded `variants` |
+| Geometry | box, chamfer_box, cylinder/cone/frustum, sphere, icosphere, capsule, torus, ring, lathe, revolve, extrude (with holes and taper), tube sweep, random_hull; `boolean`/`combine` composition; `mesh_file` (baked/imported geometry) and `sw import` |
+| Kernel | indexed mesh with a typed attribute contract (provenance, region, material, colour, authored UVs) and per-op topology classes; one backend module wraps all geometry libraries |
 | Ops | taper, bend, twist, shear, jitter, noise, inflate, subdivide, smooth, decimate, boolean subtract/union/intersect (Manifold), flat_bottom, transforms |
-| Surface | flat, smooth and auto-smooth normals; single-atlas UV unwrap and packing (xatlas); PBR materials |
+| Surface | flat, smooth and auto-smooth normals; part-owned UV regions with `uv.lock.yaml` stability, shared instance UVs, region seams; PBR materials, per-face materials |
 | Validation | source, geometry, assembly, budget, intent, surface, style and export layers; 40+ stable issue codes with hints |
 | Inspection | deterministic CPU renderer; 11 views; clay, parts, material, wire, normals and silhouette modes; part focus and isolation; UV view; contact sheets |
 | Iteration | snapshots with critiques, log, compare (image + metrics), restore |
 | Export | deterministic GLB with named part nodes, hierarchy, pivots, sockets, collision proxies (UCX or Godot naming) and metadata extras; Khronos validation plus re-import round-trip |
-| Benchmarks | tavern_chair, tavern_stool (inherits from the chair), tavern_table, barrel, crate, rock, street_lamp |
+| Benchmarks | tavern_chair (family base), tavern_stool (params-only variant), tavern_table and tavern_bench (shared `plank_top` component), barrel, crate, rock, street_lamp |
 
 ## Documentation
 
@@ -109,6 +110,8 @@ part names survive into the GLB as node names.
 | [docs/MODELING_CAPABILITY_MAP.md](docs/MODELING_CAPABILITY_MAP.md) | taxonomy of 3D capabilities and their planned coverage |
 | [docs/RESEARCH.md](docs/RESEARCH.md) | prior art, libraries evaluated, licences, risks |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | stages and success criteria |
+| [docs/MESH_MODEL.md](docs/MESH_MODEL.md), [BACKEND](docs/BACKEND.md), [RELATIONSHIPS](docs/RELATIONSHIPS.md), [UV](docs/UV.md), [FAMILIES](docs/FAMILIES.md) | the hardened foundations |
+| [docs/DESIGN_REVIEW.md](docs/DESIGN_REVIEW.md), [docs/HARDENING.md](docs/HARDENING.md) | the critique of v0.1 and what changed (and what did not) |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | adding shapes, ops, validators, views, profiles, exporters |
 
 ## Licence

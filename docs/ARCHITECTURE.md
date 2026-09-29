@@ -1,5 +1,13 @@
 # Architecture
 
+> **Revision note (hardening phase).** Several sections below are extended by
+> dedicated documents: mesh attributes and op contracts → [MESH_MODEL.md](MESH_MODEL.md);
+> library boundary → [BACKEND.md](BACKEND.md); placement relationships →
+> [RELATIONSHIPS.md](RELATIONSHIPS.md); UV stability → [UV.md](UV.md); reuse →
+> [FAMILIES.md](FAMILIES.md). The review that motivated them is
+> [DESIGN_REVIEW.md](DESIGN_REVIEW.md), and the outcome is [HARDENING.md](HARDENING.md).
+> Where this document and those disagree, those are newer.
+
 This document records the design decisions, the alternatives considered and
 why they lost. It answers the design-phase questions in order: product,
 representation, geometry, semantics, procedural model, modifiers, surfaces,

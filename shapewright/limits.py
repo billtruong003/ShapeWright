@@ -25,6 +25,7 @@ class Limits:
     max_render_size: int = 2048
     max_source_bytes: int = 512_000
     build_timeout_s: int = 120
+    max_mesh_file_bytes: int = 32_000_000
 
 
 LIMITS = Limits()

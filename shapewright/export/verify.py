@@ -35,21 +35,21 @@ def khronos_validate(path: Path) -> tuple[list[Issue], dict]:
 
 
 def roundtrip(asset: Asset, path: Path) -> list[Issue]:
-    import trimesh
+    from .. import backend
 
-    scene = trimesh.load(str(path), force="scene")
+    nodes = backend.load_scene_summary(path)
     issues = []
-    names = set(scene.graph.nodes_geometry)
-    missing = [p.name for p in asset.parts if p.name not in names]
+    part_names = {p.name for p in asset.parts}
+    missing = [n for n in part_names if n not in nodes]
     if missing:
-        issues.append(Issue("EXP_ROUNDTRIP_PARTS", "error", f"parts missing after re-import: {', '.join(missing[:6])}", "", "export"))
-    tris = sum(len(scene.geometry[scene.graph[n][1]].faces) for n in names if not n.startswith(("UCX_",)) and not n.endswith("-colonly"))
+        issues.append(Issue("EXP_ROUNDTRIP_PARTS", "error", f"parts missing after re-import: {', '.join(sorted(missing)[:6])}", "", "export"))
+    tris = sum(t for n, (t, _) in nodes.items() if n in part_names)
     if tris != asset.n_tris:
         issues.append(Issue("EXP_ROUNDTRIP_TRIS", "error", f"re-imported {tris} triangles, expected {asset.n_tris}", "", "export"))
-    geo_nodes = [n for n in names if n in {p.name for p in asset.parts}]
-    if geo_nodes:
-        bounds = np.stack([scene.geometry[scene.graph[n][1]].bounds + scene.graph[n][0][:3, 3] for n in geo_nodes])
-        b = np.stack([bounds[:, 0].min(0), bounds[:, 1].max(0)])
-        if not np.allclose(b, asset.bounds(), atol=1e-4):
+    geo = [b for n, (_, b) in nodes.items() if n in part_names]
+    if geo:
+        g = np.stack(geo)
+        bb = np.stack([g[:, 0].min(0), g[:, 1].max(0)])
+        if not np.allclose(bb, asset.bounds(), atol=1e-4):
             issues.append(Issue("EXP_ROUNDTRIP_BOUNDS", "error", "re-imported bounds differ from the model", "", "export"))
     return issues

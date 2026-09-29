@@ -29,6 +29,15 @@ comparison → GLB export.
   rings), crate (multi-axis mirrors, variants), rock (organic, seeded),
   street lamp (sweep, booleans, emissive).
 
+## Stage 2.5: Architecture hardening ✅
+Prompted by DESIGN_REVIEW.md. No new modelling features; the foundations were
+made to grow: mesh attribute contract, backend boundary, recursive geometry
+expressions, `measure` relationships, geometry sources (`mesh_file`, import),
+stable UV regions with a lock, components/`enabled`/family interfaces.
+**Done when:** every change has a contract test (not only example outputs); all
+benchmarks pass; golden changes are explained (chair/stool/table: see
+HARDENING.md). *(Met: 163 tests.)* Fresh-agent results are in HARDENING.md.
+
 ## Stage 3: Prototype: a fresh agent succeeds unassisted
 - Run the README task ("tavern chair, < 700 tris, mobile") with a *fresh* agent
   that has only the repository. Record the transcript and friction points, and
