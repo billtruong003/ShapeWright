@@ -48,3 +48,16 @@ not as a win.
 | P2 | At least one A run hits a YAML flow-list comma failure or a boolean `OP_FAILED` |
 | P3 | Framework-code reads in A answer placement or rotation questions |
 | P4 | B's savings come mainly from fewer failed builds and a shorter onboarding, not a shorter loop |
+
+## Amendment (after the A runs of T1 and T2, before any B run)
+
+`sw brief`'s example ranking was tuned while the T1/T2 prompts were known, and the A runs' friction
+points fed Phase 14 fixes. T1/T2 B results may therefore overstate the effect. A **held-out T3** was
+added to control for that. Its prompt was not used during development, and it runs both A (at `b7f67de`, the
+pre-Phase-14 commit) and B (at the Phase 14 commit):
+
+| Task | Class | Prompt (task part) |
+|---|---|---|
+| T3 | single textured prop, held out | "A small wooden rowing boat with two oars resting inside it, for a lakeside level in a stylized mobile game. Under 1,000 triangles, surface detail in textures." |
+
+The gate is judged on all three tasks. T3 carries the most weight, because nothing was tuned to it.
