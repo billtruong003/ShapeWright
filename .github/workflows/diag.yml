@@ -1,0 +1,12 @@
+name: diag
+on: {push: {branches: [diag/macos-hull]}}
+jobs:
+  hull:
+    strategy: {fail-fast: false, matrix: {os: [ubuntu-latest, macos-latest]}}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -r requirements.txt
+      - run: python tools/diag/hull.py
