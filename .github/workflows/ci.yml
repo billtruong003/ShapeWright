@@ -25,3 +25,9 @@ jobs:
         with: {python-version: "3.11"}
       - run: pip install -r requirements.txt "mcp>=1.10"
       - run: python -m pytest -q
+      # this OS's exact golden hashes, for `python tests/update_golden.py --merge` (tests/golden.py)
+      - if: always()
+        run: python tests/update_golden.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with: {name: "golden-${{ matrix.os }}", path: tests/golden.json}

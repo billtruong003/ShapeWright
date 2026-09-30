@@ -28,3 +28,12 @@ def test_record_adds_a_platform_for_the_same_geometry_and_resets_on_a_change():
     # a sub-tolerance change on a platform that has a hash is still a change (the hash is the fine check)
     assert record(same, "dddd", SIG, "linux-x86_64")[1] == "changed"
     assert record(None, "eeee", SIG, "darwin-arm64")[1] == "new"
+
+
+def test_merge_takes_another_platforms_hash_only_where_the_signature_agrees():
+    from golden import merge
+
+    ours = {"a": {"hash": {"win32-amd64": "w"}, "sig": SIG}, "b": {"hash": {"win32-amd64": "w2"}, "sig": SIG}}
+    theirs = {"a": {"hash": {"darwin-arm64": "m"}, "sig": SIG}, "b": {"hash": {"darwin-arm64": "m2"}, "sig": {**SIG, "tris": 900}}}
+    assert merge(ours, theirs) == ["a"]
+    assert ours["a"]["hash"] == {"win32-amd64": "w", "darwin-arm64": "m"} and ours["b"]["hash"] == {"win32-amd64": "w2"}

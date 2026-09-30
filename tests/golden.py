@@ -23,8 +23,8 @@ def platform_key() -> str:
     return f"{sys.platform}-{platform.machine().lower()}"
 
 
-def load() -> dict:
-    raw = json.loads(GOLDEN.read_text())
+def load(path: Path = GOLDEN) -> dict:
+    raw = json.loads(Path(path).read_text())
     return {k: ({"hash": {LEGACY_PLATFORM: v}} if isinstance(v, str) else v) for k, v in raw.items()}
 
 
@@ -63,3 +63,18 @@ def record(entry: dict | None, h: str, sig: dict, plat: str) -> tuple[dict, str]
     if same_geometry:  # another OS's rounding of the same geometry: keep every hash, add this one
         return {"hash": {**hashes, plat: h}, "sig": entry.get("sig", sig)}, "platform-added"
     return {"hash": {plat: h}, "sig": sig}, "changed"  # other platforms' hashes are stale until re-recorded there
+
+
+def merge(golden: dict, other: dict) -> list[str]:
+    """Take platform hashes from another golden file (e.g. a CI artifact from another OS) where its signature agrees
+    with ours; returns the assets that gained a hash. Disagreeing assets are left alone: that is a real difference."""
+    gained = []
+    for name, theirs in other.items():
+        ours = golden.get(name)
+        if not ours or "sig" not in theirs or sig_diff(theirs["sig"], ours["sig"]):
+            continue
+        new = {p: h for p, h in theirs["hash"].items() if p not in ours["hash"]}
+        if new:
+            ours["hash"].update(new)
+            gained.append(name)
+    return gained

@@ -3,6 +3,9 @@
 Records this platform's hash and the geometry signature (tests/golden.py). Geometry that is unchanged up to float
 noise only gains this platform's hash; a real change keeps just this platform's hash and a new signature, so the
 other platforms fall back to the signature check until someone runs this script there.
+
+  python tests/update_golden.py --merge golden-*.json   take other platforms' hashes (CI artifacts `golden-<os>`)
+                                                        where their signatures agree; nothing is rebuilt
 """
 
 import sys
@@ -11,10 +14,18 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from golden import load, platform_key, record, save  # noqa: E402
+from golden import load, merge, platform_key, record, save  # noqa: E402
 
 from shapewright.assemble import ROOT, build  # noqa: E402
 from shapewright.mesh import concat, geometry_hash, geometry_signature  # noqa: E402
+
+if sys.argv[1:2] == ["--merge"]:
+    golden = load()
+    for f in sys.argv[2:]:
+        gained = merge(golden, load(Path(f)))
+        print(f"{f}: {len(gained)} assets gained a platform hash")
+    save(golden)
+    sys.exit(0)
 
 old, plat, new, counts = load(), platform_key(), {}, {}
 for p in sorted((ROOT / "assets").glob("*/asset.yaml")):
