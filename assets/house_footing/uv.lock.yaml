@@ -8,27 +8,34 @@ owners:
     rect:
     - 0.0
     - 0.0
-    - 0.62521
-    - 0.625211
-    geometry: 1e18e84998b9c973
+    - 0.563078
+    - 0.563085
+    geometry: 4e21051b4ae01526
   footing_course_low_0:
     rect:
-    - 0.633023
-    - 0.0
-    - 1.0
-    - 0.366948
-    geometry: 78e0716a66f46810
+    - 0.335938
+    - 0.570897
+    - 0.664063
+    - 0.899008
+    geometry: 3c2b6971765047c3
   footing_course_low_1:
     rect:
-    - 0.37479
-    - 0.633023
-    - 0.741767
-    - 0.999971
-    geometry: 7454ab4983889db4
+    - 0.0
+    - 0.570897
+    - 0.328125
+    - 0.899008
+    geometry: ca33d32ca38c38eb
   footing_course_low_2:
     rect:
+    - 0.671875
+    - 0.570897
+    - 1.0
+    - 0.899008
+    geometry: 1c7b78e34930aa76
+  footing_mortar:
+    rect:
+    - 0.570891
     - 0.0
-    - 0.633023
-    - 0.366977
-    - 0.999971
-    geometry: 16ba78bf73a2afed
+    - 0.938227
+    - 0.367038
+    geometry: a652dac31eb097cf
