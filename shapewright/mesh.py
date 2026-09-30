@@ -390,3 +390,9 @@ def geometry_hash(mesh: Mesh, decimals: int = 5) -> str:
     h.update(np.round(mesh.V, decimals).astype(np.float64).tobytes())
     h.update(mesh.F.astype(np.int64).tobytes())
     return h.hexdigest()[:16]
+
+
+def geometry_signature(mesh: Mesh) -> dict:
+    """Coarse geometry summary that survives cross-platform float noise (the hash does not): see tests/golden.py."""
+    return {"tris": mesh.n_tris, "bounds": [[round(float(v), 6) for v in row] for row in mesh.bounds()],
+            "area": round(mesh.area(), 8), "volume": round(mesh.volume(), 9)}

@@ -124,13 +124,24 @@ def _vertex_normals(m: Mesh) -> np.ndarray:
     return N / np.where(length > 0, length, 1)[:, None]
 
 
-@op("jitter", "Seeded random vertex offsets: hand-crafted asymmetry for stylized props. Keeps shared vertices welded.",
+JITTER_WAVELENGTH = 0.0137  # m: vertices a few mm apart get unrelated offsets (not a round number: no grid alignment)
+
+
+@op("jitter", "Seeded random vertex offsets: hand-crafted asymmetry for stylized props. The offset is a function of the "
+    "vertex position (a fine seeded random field), so coincident vertices stay welded and every OS builds the same shape.",
     [Param("amount", "num|vec3", doc="max offset in metres (number or per-axis)"), Param("seed", "int", 0, "random seed")], "preserve",
     category="stylize", example="{type: jitter, amount: 0.004, seed: 7}")
 def jitter(m, a, b):
+    # Phase 20a: offsets used to be drawn per vertex index. Vertex order comes from sorting rounded coordinates, and one
+    # bit of arm64 rounding reordered it, so macOS put the wear on other vertices. A field of position has no order.
     rng = np.random.default_rng(a["seed"])
     amt = np.broadcast_to(np.asarray(a["amount"], dtype=np.float64), (3,))
-    return m.with_positions(m.V + rng.uniform(-1, 1, size=m.V.shape) * amt)
+    d = rng.normal(size=(3, 3, 3))
+    d /= np.linalg.norm(d, axis=2, keepdims=True)
+    phase = rng.uniform(0, 2 * np.pi, size=(3, 3))
+    waves = np.sin(np.einsum("vc,kjc->vkj", m.V, d) * (2 * np.pi / JITTER_WAVELENGTH) + phase)  # (vertices, axis, wave)
+    field = np.clip(waves.sum(axis=2) / 2, -1.0, 1.0)  # three waves per axis: spread close to uniform, never past amount
+    return m.with_positions(m.V + field * amt)
 
 
 @op("noise", "Smooth seeded displacement along vertex normals (organic lumps, rock surfaces).",

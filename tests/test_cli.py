@@ -42,7 +42,7 @@ def test_set_overrides_params_without_touching_the_source(capsys):
 
     src = (ROOT / "assets" / "tavern_chair" / "asset.yaml").read_text()
     assert main(["validate", "tavern_chair", "--set", "lean=0.14,seat_width=0.56"]) == 0
-    assert "0.607x" in capsys.readouterr().out
+    assert "0.601x" in capsys.readouterr().out
     assert (ROOT / "assets" / "tavern_chair" / "asset.yaml").read_text() == src
     assert not (ROOT / "assets" / "tavern_chair" / ".set_override.yaml").exists()
     assert main(["validate", "tavern_chair", "--set", "nope=1"]) == 2

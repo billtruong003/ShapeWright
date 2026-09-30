@@ -144,7 +144,7 @@ OPS
   flat_bottom   (fraction, at)  Cut everything below a height to create a flat base: a fraction of the local height from t
   inflate       (amount*)  Push vertices along their normals (positive grows, negative shrinks).
   intersect     (shape*, position, rotate)  Boolean intersection with a tool geometry.
-  jitter        (amount*, seed)  Seeded random vertex offsets: hand-crafted asymmetry for stylized props. Keeps shared vert
+  jitter        (amount*, seed)  Seeded random vertex offsets: hand-crafted asymmetry for stylized props. The offset is a f
   mirror        (axis, at, merge)  Mirror the geometry across a local plane and keep both halves in this part (`merge: union`
   noise         (amount*, frequency, seed, octaves)  Smooth seeded displacement along vertex normals (organic lumps, rock surfaces).
   repeat        (count*, offset, radial, angle)  Repeat the geometry inside this part (linear offset or radial around a local axis); copies

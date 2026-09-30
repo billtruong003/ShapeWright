@@ -78,8 +78,9 @@ def test_flush_coplanar_faces_of_two_parts_z_fight(tmp_path):
 
 
 def test_jitter_that_inverts_thin_geometry_is_reported(tmp_path):
-    # MHP-01: a 1 mm shingle wedge turned inside out under 6 mm of wear jitter (magenta patches); every layer passed
-    thin = """  shingle: {shape: {type: box, size: [0.3, 0.001, 0.2]}, material: m, ops: [{type: jitter, amount: 0.006, seed: 3}], anchor: bottom, position: [0, 0, 0]}
+    # MHP-01: a 1 mm shingle wedge turned inside out under 6 mm of wear jitter (magenta patches); every layer passed.
+    # Since Phase 20a jitter is a field of position, so whether a given slab crosses depends on the seed (seed 2 does)
+    thin = """  shingle: {shape: {type: box, size: [0.3, 0.001, 0.2]}, material: m, ops: [{type: jitter, amount: 0.006, seed: 2}], anchor: bottom, position: [0, 0, 0]}
 """
     a, rep = _asset(tmp_path, thin)
     hit = [i for i in rep["issues"] if i["code"] == "OP_FACES_INVERTED"]

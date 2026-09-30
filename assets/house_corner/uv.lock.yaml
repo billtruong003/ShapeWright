@@ -6,22 +6,29 @@ padding_px: 8
 owners:
   node_stone_course_high:
     rect:
-    - 0.337111
-    - 0.670733
-    - 0.62866
-    - 0.962237
-    geometry: 3354ee0f6bc9ec16
+    - 0.327972
+    - 0.679836
+    - 0.637291
+    - 0.989144
+    geometry: 4b8b7f76c7c8683d
   node_stone_course_low:
     rect:
     - 0.0
-    - 0.670733
-    - 0.329299
+    - 0.679836
+    - 0.32016
     - 1.0
-    geometry: e23dac2f22730fde
+    geometry: faa291cbbc31860b
+  node_stone_mortar:
+    rect:
+    - 0.645103
+    - 0.679836
+    - 0.850535
+    - 0.885436
+    geometry: 80a552161423f821
   post_beam:
     rect:
     - 0.0
     - 0.0
-    - 0.663681
-    - 0.662921
-    geometry: f7dc657f78eacc5b
+    - 0.672784
+    - 0.672024
+    geometry: 3d367166a27e4ba4

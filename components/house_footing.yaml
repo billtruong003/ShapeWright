@@ -36,3 +36,12 @@ parts:
     anchor: bottom
     position: [0, ch + gap / 2, 0]
     material: stone
+
+  mortar:
+    doc: >-
+      mortar bed in the course joint, 3 cm behind the stone faces. It ties the courses together: they used to touch only
+      where the jitter happened to bridge the joint, and a different wear pattern left the upper course floating (Phase 20a)
+    shape: {type: box, size: [length - gap - 0.06, gap + 2 * wear + 0.01, depth - 0.08]}
+    anchor: center
+    position: [0, ch, 0]
+    material: stone

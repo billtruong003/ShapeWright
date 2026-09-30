@@ -3,12 +3,31 @@ on:
   push: {branches: [main]}
   pull_request:
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: "3.11"}
-      - run: pip install -r requirements.txt "mcp>=1.10" ruff
+      - run: pip install ruff
       - run: ruff check .
+  test:
+    # golden geometry: exact hashes are compared on the platform that recorded them, the tolerant signature on
+    # every platform (tests/golden.py), so the same suite runs on all three
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -r requirements.txt "mcp>=1.10"
       - run: python -m pytest -q
+      # this OS's exact golden hashes, for `python tests/update_golden.py --merge` (tests/golden.py)
+      - if: always()
+        run: python tests/update_golden.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with: {name: "golden-${{ matrix.os }}", path: tests/golden.json}

@@ -58,7 +58,8 @@ def test_without_lock_an_edit_moves_unrelated_parts(tmp_path):
     _, _, before = uvs(d)
     edit(d, "slat_width:     0.09", "slat_width:     0.12")
     _, _, after = uvs(d)
-    assert not np.array_equal(before["seat"], after["seat"])
+    moved = {k for k in before if not np.array_equal(before[k], after[k])} - {"back_slat_0", "back_slat_1"}
+    assert moved  # parts nobody edited (the stretchers, with the current wear pattern)
 
 
 def test_structural_change_makes_the_lock_stale(tmp_path):
