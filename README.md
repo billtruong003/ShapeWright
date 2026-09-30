@@ -31,6 +31,9 @@ sw export my_barrel --target godot           # -> assets/my_barrel/export/my_bar
 
 No GPU, no display, no Blender: it runs the same on a laptop, in CI and in a cloud agent container.
 
+Documentation site (tutorials, quickstarts per platform, gallery): build it with `python tools/site/build_site.py --build`
+(published by `.github/workflows/docs.yml` once GitHub Pages is enabled).
+
 ## Use it from your agent
 
 | Where you work | How |

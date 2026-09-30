@@ -1,0 +1,51 @@
+site_name: Shapewright
+site_description: Agent-native 3D modelling for game assets. Declarative sources, deterministic validation, inspection renders, game-ready GLB.
+repo_url: https://github.com/billtruong003/shapewright
+docs_dir: website
+site_dir: .build/site
+theme:
+  name: material
+  features: [navigation.sections, navigation.top, content.code.copy, search.suggest]
+  palette:
+    - scheme: default
+      primary: brown
+      toggle: {icon: material/weather-night, name: Dark mode}
+    - scheme: slate
+      primary: brown
+      toggle: {icon: material/weather-sunny, name: Light mode}
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.details
+extra_javascript:
+  - path: https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js
+    type: module
+nav:
+  - Home: index.md
+  - Quickstart:
+      - Pick your setup: quickstart/index.md
+      - Claude Code (cloud): quickstart/claude-code-cloud.md
+      - Claude Code (local): quickstart/claude-code-local.md
+      - Claude Desktop, Cursor, Codex (MCP): quickstart/mcp-clients.md
+      - ChatGPT and other chats: quickstart/chat.md
+      - By hand (CLI and workbench): quickstart/cli.md
+  - Use cases:
+      - A game prop in one session: use-cases/prop.md
+      - A modular kit and buildings from it: use-cases/modular-kit.md
+      - One design, many variants: use-cases/variants.md
+      - Import and repair an existing model: use-cases/import-repair.md
+      - Tight budgets (VR, mobile, web): use-cases/budgets.md
+      - Assets in CI: use-cases/ci.md
+  - Gallery: gallery.md
+  - Concepts:
+      - The loop: concepts/loop.md
+      - Validation layers: concepts/validation.md
+      - Reuse and composition: concepts/composition.md
+  - Reference:
+      - Shapes and ops: reference/vocabulary.md
+      - Issue codes: reference/codes.md
+      - Profiles: reference/profiles.md
