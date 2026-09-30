@@ -471,10 +471,13 @@ class Unit:
     where: str
     members: list = field(default_factory=list)  # component: list[Unit]
     component: str | None = None
+    stack: tuple = ()  # enclosing component / asset names (nesting depth, cycles)
+    materials: dict = field(default_factory=dict)  # material name map inherited from enclosing instances
+    asset_parts: list | None = None  # `asset:` instance: the other asset's built parts
 
     @property
     def is_group(self) -> bool:
-        return bool(self.members)
+        return bool(self.members) or self.asset_parts is not None
 
 
 def _refs(raw: dict) -> list[tuple[str, str]]:
@@ -496,22 +499,32 @@ def _refs(raw: dict) -> list[tuple[str, str]]:
 
 
 def _rename(raw: dict, mapping: dict, materials: dict) -> dict:
-    """Prefix component-internal references and remap material names."""
+    """Prefix component-internal references and remap material names.
+
+    A reference may name a part (`slat`), one of its instances (`slat_2`) or, with nested components, a part of a
+    sibling instance (`window_jamb`): the owning name is replaced and the suffix kept."""
     raw = copy.deepcopy(raw)
+
+    def ren(ref):
+        if not isinstance(ref, str):
+            return ref
+        owner = _owner_of(ref, mapping)
+        return ref if owner is None else mapping[owner] + ref[len(owner):]
+
     at = raw.get("attach")
-    if isinstance(at, dict) and at.get("to") in mapping:
-        at["to"] = mapping[at["to"]]
-    if raw.get("parent") in mapping:
-        raw["parent"] = mapping[raw["parent"]]
+    if isinstance(at, dict) and "to" in at:
+        at["to"] = ren(at["to"])
+    if "parent" in raw:
+        raw["parent"] = ren(raw["parent"])
     for spec in (raw.get("measure") or {}).values():
         if not isinstance(spec, dict):
             continue
         if isinstance(spec.get("gap"), list):
-            spec["gap"] = [mapping.get(n, n) for n in spec["gap"]]
+            spec["gap"] = [ren(n) for n in spec["gap"]]
             continue
         for kind in ("section", "bounds", "anchor", "ray"):
-            if isinstance(spec.get(kind), str) and spec[kind] in mapping:
-                spec[kind] = mapping[spec[kind]]
+            if isinstance(spec.get(kind), str):
+                spec[kind] = ren(spec[kind])
 
     def remap_materials(node):
         if isinstance(node, dict):
@@ -554,6 +567,9 @@ def _enabled(raw: dict, env: dict, where: str, ctx: S.Ctx) -> bool:
         return True
 
 
+MAX_NESTING = 4
+
+
 def expand_units(raw_parts: dict, env: dict, asset_dir: Path, ctx: S.Ctx) -> tuple[list[Unit], list[str]]:
     units, disabled = [], []
     for name, raw in raw_parts.items():
@@ -567,32 +583,128 @@ def expand_units(raw_parts: dict, env: dict, asset_dir: Path, ctx: S.Ctx) -> tup
         if not _enabled(raw, env, where, ctx):
             disabled.append(name)
             continue
-        if "component" not in raw:
-            units.append(Unit(name, raw, env, where))
+        if "component" in raw and "asset" in raw:
+            ctx.error("SRC_SCHEMA", where, "a part is either a component instance or an asset instance, not both")
             continue
-        S.check_keys(raw, S.INSTANCE_KEYS, where, ctx)
-        comp = load_component(str(raw["component"]), asset_dir, ctx, where)
-        if comp is None:
-            continue
-        cenv = resolve_component_env(comp, raw.get("with") or {}, env, ctx, where)
-        mapping = {p: f"{name}_{p}" for p in (comp.get("parts") or {})}
-        members = []
-        for p, praw in (comp.get("parts") or {}).items():
-            pwhere = f"{where}<{raw['component']}>.parts.{p}"
-            if not isinstance(praw, dict):
-                ctx.error("SRC_SCHEMA", pwhere, "part must be a mapping")
-                continue
-            if not _enabled(praw, cenv, pwhere, ctx):
-                disabled.append(mapping[p])
-                continue
-            for path, ref in _refs(praw):
-                if _owner_of(ref, mapping) is None:
-                    ctx.error("SRC_REF", f"{pwhere}.{path}", f"component parts may only reference parts of the same component; '{ref}' is outside",
-                              f"parts: {', '.join(mapping)}")
-            members.append(Unit(mapping[p], _rename(praw, mapping, raw.get("materials") or {}), cenv, pwhere, component=name))
-        if members:
-            units.append(Unit(name, raw, env, where, members, component=str(raw["component"])))
+        if "component" in raw:
+            u = _expand_instance(name, raw, env, asset_dir, ctx, where, (), {}, disabled)
+        elif "asset" in raw:
+            u = _asset_unit(name, raw, env, asset_dir, ctx, where, ())
+        else:
+            u = Unit(name, raw, env, where)
+        if u is not None:
+            units.append(u)
     return units, disabled
+
+
+def _expand_instance(name: str, raw: dict, env: dict, asset_dir: Path, ctx: S.Ctx, where: str, stack: tuple,
+                     outer_materials: dict, disabled: list) -> Unit | None:
+    """A component instance -> a group Unit whose members are parts or (nested) component instances."""
+    S.check_keys(raw, S.INSTANCE_KEYS, where, ctx)
+    cname = str(raw["component"])
+    if cname in stack:
+        ctx.error("SRC_CYCLE", f"{where}.component", f"component '{cname}' contains itself: {' -> '.join(stack + (cname,))}")
+        return None
+    if len(stack) >= MAX_NESTING:
+        ctx.error("SRC_LIMIT", f"{where}.component", f"components nest at most {MAX_NESTING} deep: {' -> '.join(stack + (cname,))}")
+        return None
+    comp = load_component(cname, asset_dir, ctx, where)
+    if comp is None:
+        return None
+    cenv = resolve_component_env(comp, raw.get("with") or {}, env, ctx, where)
+    own = raw.get("materials") or {}
+    mats = {**outer_materials, **{k: outer_materials.get(v, v) for k, v in own.items()}}  # nested maps compose outward
+    mapping = {p: f"{name}_{p}" for p in (comp.get("parts") or {})}
+    members = []
+    for p, praw in (comp.get("parts") or {}).items():
+        pwhere = f"{where}<{cname}>.parts.{p}"
+        if not isinstance(praw, dict):
+            ctx.error("SRC_SCHEMA", pwhere, "part must be a mapping")
+            continue
+        if not _enabled(praw, cenv, pwhere, ctx):
+            disabled.append(mapping[p])
+            continue
+        for path, ref in _refs(praw):
+            if _owner_of(ref, mapping) is None:
+                ctx.error("SRC_REF", f"{pwhere}.{path}", f"component parts may only reference parts of the same component; '{ref}' is outside",
+                          f"parts: {', '.join(mapping)}")
+        renamed = _rename(praw, mapping, mats if "component" not in praw else {})
+        if "component" in praw:
+            sub = _expand_instance(mapping[p], renamed, cenv, asset_dir, ctx, pwhere, stack + (cname,), mats, disabled)
+            if sub is not None:
+                members.append(sub)
+        elif "asset" in praw:
+            ctx.error("SRC_SCHEMA", pwhere, "components cannot instance assets (assets instance components and assets)")
+        else:
+            members.append(Unit(mapping[p], renamed, cenv, pwhere, component=name))
+    if not members:
+        return None
+    return Unit(name, raw, env, where, members, component=cname, stack=stack, materials=outer_materials)
+
+
+ASSET_INSTANCE_KEYS = {"asset", "with", "materials", "enabled", "position", "rotate", "anchor", "attach", "measure", "parent",
+                       "tags", "doc", "array", "mirror", "pivot"}
+_ASSET_STACK: list = []
+
+
+def _asset_unit(name: str, raw: dict, env: dict, asset_dir: Path, ctx: S.Ctx, where: str, stack: tuple) -> Unit | None:
+    """`asset: NAME` instance: build the other asset (with `with:` param overrides) and place its parts as one group."""
+    S.check_keys(raw, ASSET_INSTANCE_KEYS, where, ctx)
+    ref = str(raw["asset"])
+    try:
+        path = (asset_dir / ref).resolve() if ref.endswith(".yaml") or "/" in ref else resolve_asset_path(ref)
+    except SourceError:
+        known = sorted({p.parent.name for d in paths.asset_dirs() + [ROOT / "assets"] for p in d.glob("*/asset.yaml")})
+        ctx.error("SRC_REF", f"{where}.asset", f"unknown asset '{ref}'", suggest(ref, known).strip())
+        return None
+    if path.is_dir():
+        path = path / "asset.yaml"
+    key = str(path.resolve())
+    if key in _ASSET_STACK:
+        ctx.error("SRC_CYCLE", f"{where}.asset", f"asset '{ref}' instances itself: {' -> '.join(Path(k).parent.name for k in _ASSET_STACK + [key])}")
+        return None
+    if len(_ASSET_STACK) >= MAX_NESTING:
+        ctx.error("SRC_LIMIT", f"{where}.asset", f"asset instances nest at most {MAX_NESTING} deep")
+        return None
+    given = raw.get("with") or {}
+    if not isinstance(given, dict):
+        ctx.error("SRC_SCHEMA", f"{where}.with", "with must be a mapping of the instanced asset's params")
+        return None
+    overrides = {k: S.num(v, env, f"{where}.with.{k}", ctx) for k, v in given.items()}
+    _ASSET_STACK.append(key)
+    try:
+        child = _build_with_params(path, overrides, ctx, where)
+    finally:
+        _ASSET_STACK.pop()
+    if child is None:
+        return None
+    return Unit(name, raw, env, where, [], component=f"asset:{child.name}", stack=stack, asset_parts=[child])
+
+
+def _build_with_params(path: Path, overrides: dict, ctx: S.Ctx, where: str):
+    try:
+        data = S.load_source(path)
+        params = dict(data.get("params") or {})
+        pack_params = set()
+        if data.get("_pack"):
+            pack_params = set((S.read_yaml(S.resolve_pack_path(str(S.read_yaml(path).get("pack", data["_pack"])), path)).get("params") or {}))
+        for k in overrides:
+            if k in pack_params:
+                ctx.error("PACK_OVERRIDE", f"{where}.with.{k}", f"'{k}' belongs to pack '{data['_pack']}' and is the same for every member",
+                          "change it in the pack (every member follows), or give the instanced asset its own param")
+            elif k not in params:
+                ctx.error("SRC_REF", f"{where}.with.{k}", f"'{k}' is not a param of asset '{path.parent.name}'", suggest(k, params).strip())
+        if set(overrides) - (set(params) - pack_params):
+            return None
+        for k, v in overrides.items():
+            params[k] = {**params[k], "value": v} if isinstance(params[k], dict) else v
+        data["params"] = params
+        return build(path, data=data)
+    except SourceError as e:
+        for i in e.issues:
+            if i.severity == "error":
+                ctx.error(i.code, f"{where}<{path.parent.name}>.{i.where}", i.message, i.hint)
+        return None
 
 
 def resolve_component_env(comp: dict, given: dict, outer_env: dict, ctx: S.Ctx, where: str) -> dict:
@@ -627,15 +739,20 @@ def _owner_of(target: str, names) -> str | None:
 
 def _order(units: list[Unit], disabled: list[str], ctx: S.Ctx) -> list[Unit]:
     # every addressable name -> the top-level unit that produces it
+    def flat(ms):
+        for m in ms:
+            yield m
+            yield from flat(m.members)
+
     owner_unit = {}
     for u in units:
         owner_unit[u.name] = u.name
-        for m in u.members:
+        for m in flat(u.members):
             owner_unit[m.name] = u.name
     deps = {}
     for u in units:
         d = set()
-        for (path, ref), src in [(r, u) for r in _refs(u.raw)] + [(r, m) for m in u.members for r in _refs(m.raw)]:
+        for (path, ref), src in [(r, u) for r in _refs(u.raw)] + [(r, m) for m in flat(u.members) for r in _refs(m.raw)]:
             owner = _owner_of(ref, owner_unit)
             if owner is None:
                 if _owner_of(ref, disabled):
@@ -688,11 +805,17 @@ class World:
     def __init__(self):
         self.parts: list[Part] = []
         self.base_bounds: dict[str, np.ndarray] = {}
+        self.groups: dict[str, list[str]] = {}  # component / asset instance name -> its part names (nested ones too)
 
     def mesh(self, name: str) -> Mesh | None:
         exact = [p for p in self.parts if p.name == name]
         if exact:
             return exact[0].mesh
+        if name in self.groups:
+            from .mesh import concat
+
+            members = set(self.groups[name])
+            return concat([p.mesh for p in self.parts if p.name in members])
         group = [p.mesh for p in self.parts if p.base == name or p.component == name]
         if group:
             from .mesh import concat
@@ -1052,29 +1175,99 @@ def build_part(u: Unit, world: World, materials: dict, style: dict, asset_dir: P
     return out
 
 
+def _import_asset_parts(u: Unit, child, materials: dict, ctx: S.Ctx) -> list[Part]:
+    """Copy an instanced asset's built parts into this asset: names prefixed, materials merged (or mapped)."""
+    import dataclasses
+
+    mapping = u.raw.get("materials") or {}
+    if not isinstance(mapping, dict):
+        ctx.error("SRC_SCHEMA", f"{u.where}.materials", "materials must map the instanced asset's material names to this asset's")
+        return []
+    for cname, mat in child.materials.items():
+        host = str(mapping.get(cname, cname))
+        if host not in materials:
+            materials[host] = mat
+        elif cname not in mapping and materials[host] != mat:
+            ctx.error("MATERIAL_CONFLICT", f"{u.where}.asset", f"material '{cname}' of asset '{child.name}' differs from this asset's '{host}'",
+                      f"map it: materials: {{{cname}: {host}}} (use this asset's), or rename one of them; members of one pack share materials")
+    out = []
+    for p in child.parts:
+        q = dataclasses.replace(p, name=f"{u.name}_{p.name}", base=f"{u.name}_{p.base}", mesh=p.mesh, instance=dict(p.instance),
+                                tags=list(p.tags), component=u.name,
+                                material=None if p.material is None else str(mapping.get(p.material, p.material)),
+                                parent=None if p.parent is None else f"{u.name}_{p.parent}")
+        q.instance["asset_instance_of"] = child.name
+        out.append(q)
+    return out
+
+
+def _group_pivot(u: Unit, built: list[Part], ctx: S.Ctx) -> None:
+    """`pivot:` on an instance: the group becomes one hinged node (its first root part carries the pivot, the rest are its children)."""
+    spec = u.raw.get("pivot")
+    b = np.stack([np.min([p.bounds[0] for p in built], 0), np.max([p.bounds[1] for p in built], 0)])
+    if isinstance(spec, dict):
+        if set(spec) != {"at"}:
+            ctx.error("SRC_SCHEMA", f"{u.where}.pivot", "pivot mapping takes only `at`: {at: [x, y, z]} in asset coordinates")
+            return
+        at = S.vec(spec["at"], 3, u.env, f"{u.where}.pivot.at", ctx)
+        point = None if at is None else np.asarray(at, dtype=float)
+    else:
+        c = np.asarray(S.vec(spec, 3, u.env, f"{u.where}.pivot", ctx)) if isinstance(spec, (list, tuple)) else anchor_coeffs(spec, f"{u.where}.pivot", ctx)
+        point = None if c is None else anchor_point(b, c)
+    if point is None:
+        return
+    roots = [p for p in built if p.parent is None or p.parent not in {q.name for q in built}]
+    root = roots[0]
+    root.pivot = point
+    for p in built:
+        if p is not root and (p.parent is None or p.parent not in {q.name for q in built}):
+            p.parent = root.name
+
+
 def build_group(u: Unit, world: World, materials: dict, style: dict, asset_dir: Path, ctx: S.Ctx) -> list[Part]:
-    """Build a component instance in its own space, then place it as one group."""
+    """Build a component or asset instance in its own space, then place it as one group."""
+    import dataclasses
+
+    if "measure" in u.raw:  # cross-instance measure: queries see everything built before this instance
+        mvals = measure(u.raw, u.env, world, ctx, u.where)
+        if mvals is None:
+            return []
+        env2 = {**u.env, **mvals}
+        if u.asset_parts is None:  # params (`with`) and enabled flags may use the measured values: expand again
+            u = _expand_instance(u.name, u.raw, env2, asset_dir, ctx, u.where, u.stack, u.materials, [])
+            if u is None:
+                return []
+        u = dataclasses.replace(u, env=env2)
     local = World()
-    local.parts = []
     built: list[Part] = []
-    for m in _member_order(u.members, ctx):
-        # members see only their own component's parts
-        ps = build_part(m, local, materials, style, asset_dir, ctx)
-        local.parts.extend(ps)
-        built.extend(ps)
+    if u.asset_parts is not None:
+        built = _import_asset_parts(u, u.asset_parts[0], materials, ctx)
+        for p in built:
+            local.base_bounds[p.base] = p.bounds if p.base not in local.base_bounds else np.stack(
+                [np.minimum(local.base_bounds[p.base][0], p.bounds[0]), np.maximum(local.base_bounds[p.base][1], p.bounds[1])])
+    else:
+        for m in _member_order(u.members, ctx):
+            # members see only their own component's parts (nested instances are members too)
+            ps = (build_group if m.is_group else build_part)(m, local, materials, style, asset_dir, ctx)
+            local.parts.extend(ps)
+            built.extend(ps)
     if not built:
         return []
     group_bounds = np.stack([np.min([p.bounds[0] for p in built], 0), np.max([p.bounds[1] for p in built], 0)])
     # origin: keep (MODULAR_HOUSE_PACK_01): the component's own origin is its pivot. With the default, the
     # group is placed by its bounding box, which moves whenever optional sub-parts change its extents.
-    keep = u.raw.get("origin", "center") == "keep"
-    if u.raw.get("origin", "center") not in ("center", "keep"):
-        ctx.error("SRC_SCHEMA", f"{u.where}.origin", "origin must be center | keep")
-        return []
-    if keep and ("anchor" in u.raw or "attach" in u.raw):
-        ctx.error("SRC_SCHEMA", u.where, "a component instance with origin: keep is placed by its own origin; remove anchor/attach",
-                  "position puts the component's origin; rotate turns the group about it")
-        return []
+    # An asset instance is placed by the asset's own origin unless it names an anchor or attach.
+    if u.asset_parts is not None:
+        keep = "anchor" not in u.raw and "attach" not in u.raw
+    else:
+        keep = u.raw.get("origin", "center") == "keep"
+        if u.raw.get("origin", "center") not in ("center", "keep"):
+            ctx.error("SRC_SCHEMA", f"{u.where}.origin", "origin must be center | keep")
+            return []
+        if keep and ("anchor" in u.raw or "attach" in u.raw):
+            ctx.error("SRC_SCHEMA", u.where, "a component instance with origin: keep is placed by its own origin; remove anchor/attach",
+                      "position puts the component's origin; rotate turns the group about it")
+            return []
     center = np.zeros(3) if keep else (group_bounds[0] + group_bounds[1]) / 2
     if "rotate" in u.raw:
         rot = S.vec(u.raw["rotate"], 3, u.env, f"{u.where}.rotate", ctx)
@@ -1098,38 +1291,47 @@ def build_group(u: Unit, world: World, materials: dict, style: dict, asset_dir: 
         if p.parent is None and u.raw.get("parent"):
             p.parent = u.raw["parent"]
         p.tags = list(dict.fromkeys(p.tags + list(u.raw.get("tags") or [])))
+    if u.raw.get("pivot") is not None:
+        _group_pivot(u, built, ctx)
     for name, b in local.base_bounds.items():
         world.base_bounds[name] = b + shift
+    for name, members in local.groups.items():
+        world.groups[name] = members
     world.base_bounds[u.name] = group_bounds + shift
+    world.groups[u.name] = [p.name for p in built]
     if "array" not in u.raw and "mirror" not in u.raw:
         return built
     out = []  # replicate the whole placed group: band -> band_left / band_right, parts renamed with the instance
     for rep_name, group, info in _replicate(u.name, _Group(built), u.raw, u.env, ctx, u.where):
         for p in group.parts:
             p.name = rep_name + p.name[len(u.name):]
+            if p.parent and p.parent.startswith(u.name + "_"):
+                p.parent = rep_name + p.parent[len(u.name):]
             p.component = rep_name
             if info:
                 p.instance = {**p.instance, **info, "component_instance_of": u.name}
             out.append(p)
         world.base_bounds[rep_name] = group.bounds()
+        world.groups[rep_name] = [p.name for p in group.parts]
     return out
 
 
 # --------------------------------------------------------------------------- main build
 
 
-def build(path: str | Path) -> Asset:
-    """Build an asset from its source (see docs/ARCHITECTURE.md)."""
+def build(path: str | Path, data: dict | None = None) -> Asset:
+    """Build an asset from its source (see docs/ARCHITECTURE.md). `data`: an already loaded (and possibly
+    param-overridden) source for `path`, as `asset:` instances use."""
     from .ops.sources import FILE_ROOTS
 
     token = FILE_ROOTS.set(())
     try:
-        return _build(path, FILE_ROOTS)
+        return _build(path, FILE_ROOTS, data)
     finally:
         FILE_ROOTS.reset(token)
 
 
-def _build(path: str | Path, file_roots_var) -> Asset:
+def _build(path: str | Path, file_roots_var, preloaded: dict | None = None) -> Asset:
     t0 = time.perf_counter()
     load_builtin()
     path = Path(path)
@@ -1138,7 +1340,7 @@ def _build(path: str | Path, file_roots_var) -> Asset:
     if not path.exists():
         raise SourceError([Issue("SRC_REF", "error", f"no asset source at {path}", str(path), "source")])
     ctx = S.Ctx()
-    data = S.load_source(path, ctx=ctx)
+    data = preloaded if preloaded is not None else S.load_source(path, ctx=ctx)
     file_roots_var.set(tuple(Path(r) for r in (data.get("_file_roots") or [])))
     S.check_keys(data, S.TOP_KEYS, "", ctx)
     env = S.resolve_params(data.get("params") or {}, ctx)

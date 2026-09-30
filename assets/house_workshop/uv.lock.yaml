@@ -1245,9 +1245,9 @@ owners:
     geometry: 23755857b2b9dba0
   footing_m_fb_0_0_course_low_1:
     rect:
-    - 0.677118
+    - 0.677056
     - 0.86684
-    - 0.698385
+    - 0.698322
     - 0.888106
     geometry: 6ca5851ae77bd889
   footing_m_fb_0_0_course_low_2:
@@ -1329,9 +1329,9 @@ owners:
     geometry: 661cde44a2502999
   footing_m_fb_1_1_course_low_1:
     rect:
-    - 0.727463
+    - 0.727401
     - 0.86684
-    - 0.74873
+    - 0.748668
     - 0.888105
     geometry: 152db9976dd47e23
   footing_m_fb_1_1_course_low_2:
@@ -1420,9 +1420,9 @@ owners:
     geometry: 03e5b8c26b8f2ac6
   footing_m_fb_3_0_course_low_2:
     rect:
-    - 0.828154
+    - 0.828092
     - 0.86684
-    - 0.84942
+    - 0.849358
     - 0.888105
     geometry: e80c3cfee3e7ead1
   footing_m_fb_3_1_course_high:
@@ -1434,9 +1434,9 @@ owners:
     geometry: bf4a71f6ba6ed2a7
   footing_m_fb_3_1_course_low_0:
     rect:
-    - 0.903672
+    - 0.90361
     - 0.86684
-    - 0.924938
+    - 0.924876
     - 0.888105
     geometry: 59ecf470da117153
   footing_m_fb_3_1_course_low_1:
@@ -1448,9 +1448,9 @@ owners:
     geometry: 0475c33a8216b88b
   footing_m_fb_3_1_course_low_2:
     rect:
-    - 0.954017
+    - 0.953955
     - 0.86684
-    - 0.975284
+    - 0.975221
     - 0.888105
     geometry: edd764866db8cc07
   footing_m_fb_4_0_course_high:
@@ -1525,16 +1525,16 @@ owners:
     geometry: 39174dc7158f88b7
   footing_sides_0_0_course_low_1:
     rect:
-    - 0.853327
+    - 0.853265
     - 0.86684
-    - 0.874593
+    - 0.874531
     - 0.888105
     geometry: a07142515840194e
   footing_sides_0_0_course_low_2:
     rect:
-    - 0.626773
+    - 0.626711
     - 0.86684
-    - 0.648039
+    - 0.647977
     - 0.888106
     geometry: 899492f426647ee5
   footing_sides_0_1_course_high:
@@ -1553,9 +1553,9 @@ owners:
     geometry: 36bc76d1569d240f
   footing_sides_0_1_course_low_1:
     rect:
-    - 0.878499
+    - 0.878437
     - 0.86684
-    - 0.899766
+    - 0.899704
     - 0.888105
     geometry: dbef7f4d7ea46549
   footing_sides_0_1_course_low_2:
@@ -1581,16 +1581,16 @@ owners:
     geometry: c2137a95bc44c42d
   footing_sides_0_2_course_low_1:
     rect:
-    - 0.702291
+    - 0.702229
     - 0.86684
-    - 0.723557
+    - 0.723495
     - 0.888105
     geometry: 815492e7e4717be8
   footing_sides_0_2_course_low_2:
     rect:
-    - 0.651946
+    - 0.651883
     - 0.86684
-    - 0.673212
+    - 0.67315
     - 0.888106
     geometry: ddce997522018c7d
   footing_sides_1_0_course_high:
@@ -1616,9 +1616,9 @@ owners:
     geometry: 6e7d2d895fa3a5e5
   footing_sides_1_0_course_low_2:
     rect:
-    - 0.928845
+    - 0.928782
     - 0.86684
-    - 0.950111
+    - 0.950049
     - 0.888105
     geometry: d5a201d069d1fa0a
   footing_sides_1_1_course_high:
@@ -1637,9 +1637,9 @@ owners:
     geometry: 5d57462943ff45b2
   footing_sides_1_1_course_low_1:
     rect:
-    - 0.802981
+    - 0.802919
     - 0.86684
-    - 0.824248
+    - 0.824186
     - 0.888105
     geometry: 838641b7998b6920
   footing_sides_1_1_course_low_2:
@@ -1665,16 +1665,16 @@ owners:
     geometry: bd52a367d130d6e5
   footing_sides_1_2_course_low_1:
     rect:
-    - 0.777809
+    - 0.777747
     - 0.86684
-    - 0.799075
+    - 0.799013
     - 0.888105
     geometry: 6e18943ba08c19ac
   footing_sides_1_2_course_low_2:
     rect:
-    - 0.752636
+    - 0.752574
     - 0.86684
-    - 0.773902
+    - 0.77384
     - 0.888105
     geometry: 13c7c5e4f33428a7
   gable_m_0_infill:
@@ -1756,9 +1756,9 @@ owners:
     geometry: 1c975425d586e3a3
   gable_m_1_strut_l:
     rect:
-    - 0.601557
+    - 0.601495
     - 0.86684
-    - 0.622867
+    - 0.622805
     - 0.888161
     geometry: a9cd5755b6811e9e
   gable_m_1_strut_r:
@@ -1805,9 +1805,9 @@ owners:
     geometry: 77ab7f5ada637b55
   gable_w_strut_l:
     rect:
-    - 0.576019
+    - 0.575957
     - 0.86684
-    - 0.597651
+    - 0.597589
     - 0.88848
     geometry: eec74017918bc86f
   gable_w_strut_r:
@@ -1973,30 +1973,30 @@ owners:
     geometry: b03978a78654261d
   m_door_plank_0:
     rect:
-    - 0.394246
+    - 0.394184
     - 0.86684
-    - 0.416307
+    - 0.416245
     - 0.888839
     geometry: ddbd07c4d9330616
   m_door_plank_1:
     rect:
-    - 0.368279
+    - 0.368217
     - 0.86684
-    - 0.39034
+    - 0.390278
     - 0.888839
     geometry: d8e02b417c7ae23c
   m_door_plank_2:
     rect:
-    - 0.524084
+    - 0.524022
     - 0.86684
-    - 0.546145
+    - 0.546083
     - 0.888839
     geometry: 66b7e957298cc223
   m_door_plank_3:
     rect:
-    - 0.550051
+    - 0.549989
     - 0.86684
-    - 0.572112
+    - 0.57205
     - 0.888839
     geometry: c005ca000597e85a
   m_door_pull:
@@ -2204,9 +2204,9 @@ owners:
     geometry: d853cb275934b81d
   m_front_window_frame_0_sill:
     rect:
-    - 0.237713
+    - 0.237651
     - 0.86684
-    - 0.25992
+    - 0.259858
     - 0.889024
     geometry: e20c9e4b879445fe
   m_front_window_frame_1_glass:
@@ -2253,9 +2253,9 @@ owners:
     geometry: 9985bff0d8bf091b
   m_front_window_frame_1_sill:
     rect:
-    - 0.185487
+    - 0.185425
     - 0.86684
-    - 0.207694
+    - 0.207631
     - 0.889024
     geometry: 79d3e38cc2203d1f
   m_left_0_0_brace_a:
@@ -2666,9 +2666,9 @@ owners:
     geometry: 440016e21ea38fd6
   m_upper_back_window_0_sill:
     rect:
-    - 0.289939
+    - 0.289877
     - 0.86684
-    - 0.312146
+    - 0.312084
     - 0.889024
     geometry: 5e644f45d42a6081
   m_upper_back_window_1_glass:
@@ -2715,9 +2715,9 @@ owners:
     geometry: a94a01f8e0419f5e
   m_upper_back_window_1_sill:
     rect:
-    - 0.2116
+    - 0.211538
     - 0.86684
-    - 0.233807
+    - 0.233745
     - 0.889024
     geometry: eb5a856f098eca4f
   m_upper_back_window_2_glass:
@@ -2764,9 +2764,9 @@ owners:
     geometry: bdb65c4293c5120e
   m_upper_back_window_2_sill:
     rect:
-    - 0.263826
+    - 0.263764
     - 0.86684
-    - 0.286033
+    - 0.285971
     - 0.889024
     geometry: c22539045125b395
   m_upper_front_0_brace_l:
@@ -4561,48 +4561,6 @@ owners:
     - 0.315169
     - 0.507754
     geometry: 8b2a19f72b3fdc89
-  w_awning_barge_left:
-    rect:
-    - 0.942002
-    - 0.963943
-    - 0.957563
-    - 0.979494
-    geometry: 0ceda094a7882990
-  w_awning_barge_right:
-    rect:
-    - 0.961469
-    - 0.963943
-    - 0.976977
-    - 0.97944
-    geometry: d98bfa7d3f09a9af
-  w_awning_deck:
-    rect:
-    - 0.481116
-    - 0.512264
-    - 0.513344
-    - 0.5445
-    geometry: 3a147479b07393a3
-  w_awning_fascia_board:
-    rect:
-    - 0.159126
-    - 0.86684
-    - 0.18158
-    - 0.889229
-    geometry: d315f2f8898029b6
-  w_awning_shingles_even:
-    rect:
-    - 0.044312
-    - 0.385658
-    - 0.084488
-    - 0.425835
-    geometry: d444ad7475f1da8b
-  w_awning_shingles_odd:
-    rect:
-    - 0.817649
-    - 0.549333
-    - 0.846628
-    - 0.578319
-    geometry: a98b6ecb880e49d1
   w_back_0_head_plate:
     rect:
     - 0.669063
@@ -4635,7 +4593,7 @@ owners:
     rect:
     - 0.948281
     - 0.549333
-    - 0.976871
+    - 0.97687
     - 0.577899
     geometry: bf75b8efe7eceb64
   w_back_0_stud_0:
@@ -4745,9 +4703,9 @@ owners:
     geometry: a2cdcd2a6d68851a
   w_back_window_0_sill:
     rect:
-    - 0.316052
+    - 0.31599
     - 0.86684
-    - 0.338259
+    - 0.338197
     - 0.889024
     geometry: 84a1c74a4c8b0f54
   w_back_window_1_glass:
@@ -4794,9 +4752,9 @@ owners:
     geometry: 6fae8175c8412a32
   w_back_window_1_sill:
     rect:
-    - 0.342166
+    - 0.342103
     - 0.86684
-    - 0.364372
+    - 0.36431
     - 0.889024
     geometry: e53262c679fe6891
   w_door_brace:
@@ -4843,30 +4801,30 @@ owners:
     geometry: 206734ff89102bbc
   w_door_plank_0:
     rect:
-    - 0.420214
+    - 0.420152
     - 0.86684
-    - 0.442275
+    - 0.442213
     - 0.888839
     geometry: '2443366533895717'
   w_door_plank_1:
     rect:
-    - 0.472149
+    - 0.472087
     - 0.86684
-    - 0.49421
+    - 0.494148
     - 0.888839
     geometry: 577ac195e6ae46ad
   w_door_plank_2:
     rect:
-    - 0.446181
+    - 0.446119
     - 0.86684
-    - 0.468242
+    - 0.46818
     - 0.888839
     geometry: 4c68d67261221914
   w_door_plank_3:
     rect:
-    - 0.498116
+    - 0.498054
     - 0.86684
-    - 0.520177
+    - 0.520115
     - 0.888839
     geometry: 2959fe1f4eed1c03
   w_door_pull:
@@ -4932,55 +4890,125 @@ owners:
     - 0.829288
     - 0.543273
     geometry: c0d2e0faa79268f2
-  w_front_shop_head_plate:
+  w_front_shop_awning_barge_left:
+    rect:
+    - 0.942002
+    - 0.963943
+    - 0.957563
+    - 0.979494
+    geometry: 35a056cf8604e0ee
+  w_front_shop_awning_barge_right:
+    rect:
+    - 0.961469
+    - 0.963943
+    - 0.976977
+    - 0.97944
+    geometry: 17dbff7c3a138db7
+  w_front_shop_awning_deck:
+    rect:
+    - 0.481116
+    - 0.512264
+    - 0.513344
+    - 0.5445
+    geometry: 69cfbce180ea38f7
+  w_front_shop_awning_fascia_board:
+    rect:
+    - 0.159126
+    - 0.86684
+    - 0.181518
+    - 0.889164
+    geometry: cad680c00c4a5db8
+  w_front_shop_awning_shingles_even:
+    rect:
+    - 0.044312
+    - 0.385658
+    - 0.084488
+    - 0.425835
+    geometry: 568d0238dfd38419
+  w_front_shop_awning_shingles_odd:
+    rect:
+    - 0.817649
+    - 0.549333
+    - 0.846628
+    - 0.578319
+    geometry: 75d51479033787d2
+  w_front_shop_wall_head_plate:
     rect:
     - 0.971064
     - 0.806192
     - 0.997307
     - 0.832415
     geometry: 209e537f15856c23
-  w_front_shop_head_rail:
+  w_front_shop_wall_head_rail:
     rect:
     - 0.630864
     - 0.743501
     - 0.658368
     - 0.770991
     geometry: db66fbb17baa388e
-  w_front_shop_infill:
+  w_front_shop_wall_infill:
     rect:
     - 0.829091
     - 0.176753
     - 0.892073
     - 0.239735
     geometry: 92d182d9eb1ea8f0
-  w_front_shop_sill_plate:
+  w_front_shop_wall_sill_plate:
     rect:
     - 0.060306
     - 0.83671
     - 0.086472
     - 0.862856
     geometry: 5869c75b953284ce
-  w_front_shop_sill_rail:
+  w_front_shop_wall_sill_rail:
     rect:
     - 0.063788
     - 0.616371
     - 0.091668
     - 0.644235
     geometry: 7a30d52d6b5bf7b9
-  w_front_shop_stud_0:
+  w_front_shop_wall_stud_0:
     rect:
     - 0.903049
     - 0.512264
     - 0.934024
     - 0.543185
     geometry: d8b44057a83326a3
-  w_front_shop_stud_1:
+  w_front_shop_wall_stud_1:
     rect:
     - 0.868169
     - 0.512264
     - 0.899143
     - 0.543185
     geometry: 7f8805365cd14868
+  w_front_shop_window_head:
+    rect:
+    - 0.621952
+    - 0.83671
+    - 0.645524
+    - 0.860287
+    geometry: 17ba53ae7ed86605
+  w_front_shop_window_jamb_left:
+    rect:
+    - 0.566375
+    - 0.83671
+    - 0.590257
+    - 0.860594
+    geometry: 84e15c81d77332c3
+  w_front_shop_window_jamb_right:
+    rect:
+    - 0.594163
+    - 0.83671
+    - 0.618046
+    - 0.860594
+    geometry: e2524dcec8dd39ff
+  w_front_shop_window_sill:
+    rect:
+    - 0.584854
+    - 0.549333
+    - 0.614392
+    - 0.578864
+    geometry: 3bd186226d39a60c
   w_right_0_brace_a:
     rect:
     - 0.666521
@@ -5051,31 +5079,3 @@ owners:
     - 0.785938
     - 0.832461
     geometry: c75067cd78a1ec13
-  w_shop_frame_head:
-    rect:
-    - 0.621952
-    - 0.83671
-    - 0.645524
-    - 0.860287
-    geometry: 17ba53ae7ed86605
-  w_shop_frame_jamb_left:
-    rect:
-    - 0.566375
-    - 0.83671
-    - 0.590257
-    - 0.860594
-    geometry: 84e15c81d77332c3
-  w_shop_frame_jamb_right:
-    rect:
-    - 0.594163
-    - 0.83671
-    - 0.618046
-    - 0.860594
-    geometry: e2524dcec8dd39ff
-  w_shop_frame_sill:
-    rect:
-    - 0.584854
-    - 0.549333
-    - 0.614392
-    - 0.578864
-    geometry: 3bd186226d39a60c

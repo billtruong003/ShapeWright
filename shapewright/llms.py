@@ -43,8 +43,11 @@ then register the server command `sw mcp` (see docs/MCP.md). Every CLI step belo
   `bottom`, `top_front`, `bottom_back_left`, ... `center` is the default.
 - Relationships: `measure:` queries on built parts (section, gap, bounds, anchor, ray), not hand arithmetic.
 - Repetition: `array` with `each:`/`skip:`; symmetry: `mirror: x`. Instances are named `<part>_0..n`, `<part>_left/right`.
-- Reuse: `components/` (sub-assemblies with public params), `packs/` (shared params + materials for a set),
-  `extends` (variants of one design). Check a set with `sw pack --pack NAME`.
+- Reuse: `components/` (sub-assemblies with public params; they nest), `packs/` (shared params + materials for
+  a set), `extends` (variants of one design). A part can place a whole other asset: `asset: NAME` with
+  `with: {its own params}` (modular kits: build module assets, then houses from them). Instances (component or
+  asset) accept `measure:` (place against measured neighbours) and `pivot:` (one hinged node).
+  Check a set with `sw pack --pack NAME`.
 - Surfaces: material archetypes (`wood`, `stone`, `metal`, `painted`, `flat`, `authored`) with semantic params;
   `sw doc wood`. Lock UVs before texture work: `sw uv NAME lock`.
 - Try values without editing: `sw validate NAME --set a=1,b=2`; keep one with `sw set NAME a=1`.

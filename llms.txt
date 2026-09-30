@@ -35,8 +35,11 @@ then register the server command `sw mcp` (see docs/MCP.md). Every CLI step belo
   `bottom`, `top_front`, `bottom_back_left`, ... `center` is the default.
 - Relationships: `measure:` queries on built parts (section, gap, bounds, anchor, ray), not hand arithmetic.
 - Repetition: `array` with `each:`/`skip:`; symmetry: `mirror: x`. Instances are named `<part>_0..n`, `<part>_left/right`.
-- Reuse: `components/` (sub-assemblies with public params), `packs/` (shared params + materials for a set),
-  `extends` (variants of one design). Check a set with `sw pack --pack NAME`.
+- Reuse: `components/` (sub-assemblies with public params; they nest), `packs/` (shared params + materials for
+  a set), `extends` (variants of one design). A part can place a whole other asset: `asset: NAME` with
+  `with: {its own params}` (modular kits: build module assets, then houses from them). Instances (component or
+  asset) accept `measure:` (place against measured neighbours) and `pivot:` (one hinged node).
+  Check a set with `sw pack --pack NAME`.
 - Surfaces: material archetypes (`wood`, `stone`, `metal`, `painted`, `flat`, `authored`) with semantic params;
   `sw doc wood`. Lock UVs before texture work: `sw uv NAME lock`.
 - Try values without editing: `sw validate NAME --set a=1,b=2`; keep one with `sw set NAME a=1`.
@@ -167,7 +170,7 @@ PACKS     blacksmith cozy_house   (packs/NAME.yaml: shared params/materials; `pa
 MATERIALS authored flat metal painted stone wood   (material `archetype:` + semantic params; `sw doc wood`; docs/SURFACES.md)
 MEASURE   section gap bounds anchor ray   (part-level `measure:` queries; docs/RELATIONSHIPS.md)
 POINTS    arc helix line   (items inside any point list: polygon, holes, profile, path; `sw doc arc`)
-PARTS     array mirror origin rotate_about   (`sw doc array`: per-instance each/skip/start, nested arrays)
+PARTS     array mirror origin rotate_about component asset   (`sw doc array`: per-instance each/skip/start, nested arrays)
 EXPORT    glb; targets generic godot unity unreal   (profiles godot / unity / unreal; asset `export: {target, merge, lods}`; docs/PRODUCTION.md)
 
 * = required.  `sw doc NAME` for details, `sw caps --json` for everything.

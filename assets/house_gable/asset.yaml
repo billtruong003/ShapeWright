@@ -11,10 +11,13 @@ asset:
 export: {merge: by_material}
 collision: {mode: single_box}
 
+params:
+  deep: {value: 2, min: 1, max: 4, doc: house depth in bays (the gable spans it)}
+
 parts:
   gable:
     component: house_gable
-    with: {span: 2 * bay + wall_t, pitch: pitch, depth: wall_t, plaster: plaster_t, timber: timber, chamfer: chamfer, wear: wear}
+    with: {span: deep * bay + wall_t, pitch: pitch, depth: wall_t, plaster: plaster_t, timber: timber, chamfer: chamfer, wear: wear}
     materials: {timber: timber, plaster: plaster}
     origin: keep
     position: [0, 0, 0]

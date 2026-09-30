@@ -252,6 +252,50 @@ defaults a member may override. `sw pack --pack NAME` reviews all members togeth
 `mirror:` and `array:` on a component instance replicate the whole placed group. Instances are named
 `<instance>_left` / `<instance>_0`, and their parts `<instance>_left_<part>`.
 
+### Composition: nested components, asset instances, measure and pivot on instances (Phase 19)
+
+**Nested components.** A component's part may itself be a `component:` instance, up to 4 levels deep. A
+component that contains itself is refused with `SRC_CYCLE`.
+- Names compose: `frame_left_post` is part `post` of instance `left` of instance `frame`.
+- `materials:` maps compose outward: `leg.wood -> frame.timber -> table.oak`.
+- A component part may reference a sibling's sub-part (`attach: {to: left_post}`) or instance (`slat_2`).
+
+**Asset instances.** A part may place a whole other asset:
+
+```yaml
+wall_back:
+  asset: house_wall_window          # a project or library asset name, or a relative path to an asset.yaml
+  with: {shutters: 0, seed: 20}     # that asset's OWN params; its pack's params are shared and read-only
+  materials: {oak: timber}          # optional: map its material names onto this asset's
+  rotate: [0, 180, 0]
+  position: [x0 + bay / 2, y_wall, -D / 2]
+  array: {count: nx, offset: [bay, 0, 0]}
+```
+
+- **Placement.** The instanced asset is placed by its own origin (assets rest on y = 0). With `anchor`/`attach` it is placed by its bounding box instead.
+- **Naming.** Parts are named `<instance>_<its part>` and keep `asset_instance_of` in their metadata.
+- **Materials.** The other asset's materials merge into this one. A same-named material with a different definition is `MATERIAL_CONFLICT`; map it explicitly to resolve it.
+- **Guards.** Cycles are refused, nesting stops at 4 levels, and unknown `with` keys are `SRC_REF`. Setting a pack param in `with` is `PACK_OVERRIDE`.
+- **Allowed keys:** `asset`, `with`, `materials`, `enabled`, `position`, `rotate`, `anchor`, `attach`, `measure`, `parent`, `tags`, `doc`, `array`, `mirror`, `pivot`.
+
+**`measure:` on an instance** (component or asset) runs against everything built before it. Its results can
+be used in `with`, `position`, `rotate` and `enabled`. Example: a shutter placed by its back face onto
+the stud face it hangs on, with no hand-derived depth:
+
+```yaml
+shutter:
+  component: plank_top
+  measure:
+    frame_box: {bounds: window}
+    stud: {bounds: wall_stud_1}
+  anchor: back_left
+  position: [frame_box.max.x + 0.02, frame_box.center.y, stud.max.z - 0.005]   # 5 mm into the measured face
+```
+
+**`pivot:` on an instance** hinges the whole group. It takes an anchor name, `[x, y, z]` box coefficients or
+`{at: [x, y, z]}`. The group's first root part carries the pivot and the other parts become its children,
+so the group exports as one animatable node (doors, lids, shutters).
+
 ### Per-part UV settings
 
 ```yaml

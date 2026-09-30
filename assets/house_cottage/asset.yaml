@@ -1,8 +1,9 @@
 # Demo house A (cozy_house kit): a small one-storey cottage, 3 x 2 bays, gable roof along x,
 # door in the middle of the front, windows either side and on the back, chimney on the right gable.
 #
-# Every placement is grid arithmetic on pack params: node i sits at x = x0 + i * bay; walls sit on
-# grid lines between nodes; every kit piece is placed by its own origin (`origin: keep`).
+# Phase 19: the house instances the kit's MODULE ASSETS (`asset: house_wall_window`), not the components
+# underneath them. Every piece is placed by its own origin with grid arithmetic on pack params:
+# node i at x = x0 + i * bay; walls on grid lines between nodes; storey level y_wall.
 shapewright: 0.1
 pack: cozy_house
 asset:
@@ -26,230 +27,48 @@ params:
   y_wall: base_h - sink                 # walls and posts start here (ground storey)
   y_top: base_h + storey - sink         # top of posts and top band = roof bearing height
   run: D / 2 + wall_t / 2 + eave        # roof: ridge plumb line -> eave end
-  dt: roof_t / cos(pitch)
   y_roof: y_top - eave * tan(pitch)     # roof origin height (underside at the eave end)
-  ridge_y: y_roof + run * tan(pitch) + dt + shingle_t * 0.35
-  verge_len: verge + wall_t / 2
+  ridge_y: y_roof + run * tan(pitch) + roof_t / cos(pitch) + shingle_t * 0.35
+  verge_x: W / 2 + (verge + wall_t / 2) / 2
 
 parts:
-  # ---------------------------------------------------------------- footing
-  footing_fb:
-    doc: footing courses along the front and back grid lines, between node stones
-    component: house_footing
-    with: {length: bay - footing_d, height: y_wall, depth: footing_d, blocks: 3}
-    materials: {stone: stone}
-    origin: keep
-    position: [x0 + bay / 2, 0, D / 2]
-    array: [{count: nx, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]
-  footing_side:
-    component: house_footing
-    with: {length: bay - footing_d, height: y_wall, depth: footing_d, blocks: 3}
-    materials: {stone: stone}
-    origin: keep
-    rotate: [0, 90, 0]
-    position: [x0, 0, z0 + bay / 2]
-    array: [{count: nz, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]
-  node_stone:
-    doc: one squared stone under every perimeter node (the corner solution of the footing)
-    component: house_footing
-    with: {length: footing_d, height: y_wall, depth: footing_d, blocks: 1}
-    materials: {stone: stone}
-    origin: keep
-    position: [x0, 0, D / 2]
-    array: [{count: nx + 1, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]
-  node_stone_side:
-    component: house_footing
-    with: {length: footing_d, height: y_wall, depth: footing_d, blocks: 1}
-    materials: {stone: stone}
-    origin: keep
-    position: [x0, 0, z0 + bay]
-    array: [{count: nz - 1, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]
+  # ---------------------------------------------------------------- footing, corners, deck
+  footing_fb:   {asset: house_footing, position: [x0 + bay / 2, 0, D / 2], array: [{count: nx, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]}
+  footing_side: {asset: house_footing, rotate: [0, 90, 0], position: [x0, 0, z0 + bay / 2], array: [{count: nz, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]}
+  node_fb:      {asset: house_corner, position: [x0, 0, D / 2], array: [{count: nx + 1, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]}
+  node_side:    {asset: house_corner, position: [x0, 0, z0 + bay], array: [{count: nz - 1, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]}
+  deck:         {asset: house_floor, position: [x0 + bay / 2, base_h - floor_t, z0 + bay / 2], array: [{count: nx, offset: [bay, 0, 0]}, {count: nz, offset: [0, 0, bay]}]}
 
-  # ---------------------------------------------------------------- ground deck
-  deck:
-    component: house_floor
-    with: {w: bay, d: bay, t: floor_t}
-    materials: {planks: planks, timber: timber}
-    origin: keep
-    position: [x0 + bay / 2, base_h, z0 + bay / 2]
-    array: [{count: nx, offset: [bay, 0, 0]}, {count: nz, offset: [0, 0, bay]}]
+  # ---------------------------------------------------------------- top band (wall plate) between posts
+  band_fb:   {asset: house_beam, position: [x0 + bay / 2, y_top - band_h / 2, D / 2], array: [{count: nx, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]}
+  band_side: {asset: house_beam, rotate: [0, 90, 0], position: [x0, y_top - band_h / 2, z0 + bay / 2], array: [{count: nz, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]}
 
-  # ---------------------------------------------------------------- frame: posts and top band
-  post_fb:
-    component: house_timber
-    with: {length: storey, w: post, d: post, chamfer: chamfer, wear: wear}
-    materials: {timber: timber}
-    origin: keep
-    position: [x0, y_wall, D / 2]
-    array: [{count: nx + 1, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]
-  post_side:
-    component: house_timber
-    with: {length: storey, w: post, d: post, chamfer: chamfer, wear: wear}
-    materials: {timber: timber}
-    origin: keep
-    position: [x0, y_wall, z0 + bay]
-    array: [{count: nz - 1, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]
-  band_fb:
-    doc: top band beam (wall plate) between posts, carries the roof
-    component: house_timber
-    with: {length: bay - post, w: band_h, d: wall_t, chamfer: chamfer, wear: wear, seed: 3}
-    materials: {timber: timber}
-    origin: keep
-    rotate: [0, 0, 90]
-    position: [x0 + post / 2 + (bay - post), y_top - band_h / 2, D / 2]
-    array: [{count: nx, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]
-  band_side:
-    component: house_timber
-    with: {length: bay - post, w: wall_t, d: band_h, chamfer: chamfer, wear: wear, seed: 4}
-    materials: {timber: timber}
-    origin: keep
-    rotate: [90, 0, 0]
-    position: [x0, y_top - band_h / 2, z0 + post / 2]
-    array: [{count: nz, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]
-
-  # ---------------------------------------------------------------- walls
-  wall_front_window:
-    component: house_wall
-    with: {span: bay - post, height: panel_h, depth: wall_t, plaster: plaster_t, timber: timber, chamfer: chamfer, wear: wear,
-           opening: 1, op_w: win_w, op_h: win_h, op_sill: win_sill + sink}
-    materials: {timber: timber, plaster: plaster}
-    origin: keep
-    position: [x0 + bay / 2, y_wall, D / 2]
-    array: {count: 2, offset: [2 * bay, 0, 0]}
-  wall_front_door:
-    component: house_wall
-    with: {span: bay - post, height: panel_h, depth: wall_t, plaster: plaster_t, timber: timber, chamfer: chamfer, wear: wear,
-           opening: 2, op_w: door_w, op_h: door_h + sink, seed: 10}
-    materials: {timber: timber, plaster: plaster}
-    origin: keep
-    position: [x0 + 1.5 * bay, y_wall, D / 2]
-  wall_back:
-    component: house_wall
-    with: {span: bay - post, height: panel_h, depth: wall_t, plaster: plaster_t, timber: timber, chamfer: chamfer, wear: wear,
-           opening: 1, op_w: win_w, op_h: win_h, op_sill: win_sill + sink, seed: 20}
-    materials: {timber: timber, plaster: plaster}
-    origin: keep
-    position: [x0 + bay / 2, y_wall, -D / 2]
-    array: {count: nx, offset: [bay, 0, 0]}
-  wall_side:
-    component: house_wall
-    with: {span: bay - post, height: panel_h, depth: wall_t, plaster: plaster_t, timber: timber, chamfer: chamfer, wear: wear,
-           opening: 0, seed: 30}
-    materials: {timber: timber, plaster: plaster}
-    origin: keep
-    rotate: [0, 90, 0]
-    position: [x0, y_wall, z0 + bay / 2]
-    array: [{count: nz, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]
-
-  # ---------------------------------------------------------------- openings
-  window_front:
-    component: house_window_frame
-    with: {w: win_w, h: win_h, depth: wall_t, frame: frame}
-    materials: {timber: timber, glass: glass}
-    origin: keep
-    position: [x0 + bay / 2, base_h + win_sill, D / 2]
-    array: {count: 2, offset: [2 * bay, 0, 0]}
-  shutters_front:
-    doc: open shutters beside both front windows (the blacksmith kit's plank_top, stood upright as in the shutter module)
-    component: plank_top
-    with: {length: win_h, width: win_w / 2, thickness: 0.045, planks: 3, gap: 0.008, wear: wear, batten_from_end: 0.15}
-    materials: {top: planks, under: timber}
-    rotate: [90, 0, 90]
-    anchor: center
-    position: [x0 + bay / 2 + win_w / 2 + frame + win_w / 4 + 0.02, base_h + win_sill + win_h / 2, D / 2 + wall_t / 2 + 0.024]
-    array: [{count: 2, offset: [2 * bay, 0, 0]}, {count: 2, offset: [-(win_w + 2 * frame + win_w / 2 + 0.04), 0, 0]}]
-  window_back:
-    component: house_window_frame
-    with: {w: win_w, h: win_h, depth: wall_t, frame: frame}
-    materials: {timber: timber, glass: glass}
-    origin: keep
-    position: [x0 + bay / 2, base_h + win_sill, -D / 2]
-    array: {count: nx, offset: [bay, 0, 0]}
-  door_frame:
-    component: house_door_frame
-    with: {w: door_w, h: door_h + sink - timber, depth: wall_t, frame: door_frame}
-    materials: {timber: timber}
-    origin: keep
-    position: [x0 + 1.5 * bay, y_wall + timber, D / 2]
-  door:
-    component: house_door
-    with: {w: door_w - 2 * door_frame - 0.012, h: door_h + sink - timber - door_frame * 1.3 - 0.008}
-    materials: {planks: planks, timber: timber, iron: iron}
-    origin: keep
-    position: [x0 + 1.5 * bay, y_wall + timber + 0.004, D / 2 - 0.03]
+  # ---------------------------------------------------------------- walls (openings, shutters, doors come with their modules)
+  wall_front_window: {asset: house_wall_window, position: [x0 + bay / 2, y_wall, D / 2], array: {count: 2, offset: [2 * bay, 0, 0]}}
+  wall_front_door:   {asset: house_wall_door, with: {seed: 10}, position: [x0 + 1.5 * bay, y_wall, D / 2]}
+  wall_back:  {asset: house_wall_window, with: {shutters: 0, seed: 20}, rotate: [0, 180, 0], position: [x0 + bay / 2, y_wall, -D / 2], array: {count: nx, offset: [bay, 0, 0]}}
+  wall_side:  {asset: house_wall_plain, with: {seed: 30}, rotate: [0, 90, 0], position: [x0, y_wall, z0 + bay / 2], array: [{count: nz, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]}
 
   # ---------------------------------------------------------------- roof
-  roof_front:
-    component: house_roof
-    with: {length: bay, run: run, pitch: pitch, t: roof_t, st: shingle_t, course: course, tile: tile_w, eave: eave}
-    materials: {roof: roof, timber: timber}
-    origin: keep
-    position: [x0 + bay / 2, y_roof, 0]
-    array: {count: nx, offset: [bay, 0, 0]}
-  roof_back:
-    component: house_roof
-    with: {length: bay, run: run, pitch: pitch, t: roof_t, st: shingle_t, course: course, tile: tile_w, eave: eave}
-    materials: {roof: roof, timber: timber}
-    origin: keep
-    rotate: [0, 180, 0]
-    position: [x0 + bay / 2, y_roof, 0]
-    array: {count: nx, offset: [bay, 0, 0]}
-  verge:
-    doc: verge pieces beyond each gable wall, with barge boards (the roof end module)
-    component: house_roof
-    with: {length: verge_len, run: run, pitch: pitch, t: roof_t, st: shingle_t, course: course, tile: tile_w, eave: eave, rafters: 0, barge_r: 1, align: -1}
-    materials: {roof: roof, timber: timber}
-    origin: keep
-    position: [W / 2 + verge_len / 2, y_roof, 0]
-  verge_back:
-    component: house_roof
-    with: {length: verge_len, run: run, pitch: pitch, t: roof_t, st: shingle_t, course: course, tile: tile_w, eave: eave, rafters: 0, barge_l: 1, align: 1}
-    materials: {roof: roof, timber: timber}
-    origin: keep
-    rotate: [0, 180, 0]
-    position: [W / 2 + verge_len / 2, y_roof, 0]
-  verge_l:
-    component: house_roof
-    with: {length: verge_len, run: run, pitch: pitch, t: roof_t, st: shingle_t, course: course, tile: tile_w, eave: eave, rafters: 0, barge_l: 1, align: 1}
-    materials: {roof: roof, timber: timber}
-    origin: keep
-    position: [-W / 2 - verge_len / 2, y_roof, 0]
-  verge_l_back:
-    component: house_roof
-    with: {length: verge_len, run: run, pitch: pitch, t: roof_t, st: shingle_t, course: course, tile: tile_w, eave: eave, rafters: 0, barge_r: 1, align: -1}
-    materials: {roof: roof, timber: timber}
-    origin: keep
-    rotate: [0, 180, 0]
-    position: [-W / 2 - verge_len / 2, y_roof, 0]
-  gable:
-    component: house_gable
-    with: {span: D + wall_t, pitch: pitch, depth: wall_t, plaster: plaster_t, timber: timber, chamfer: chamfer, wear: wear}
-    materials: {timber: timber, plaster: plaster}
-    origin: keep
-    position: [x0, y_top, 0]
-    array: {count: 2, offset: [W, 0, 0]}
-  ridge:
-    component: house_ridge
-    with: {length: W + 2 * verge_len}
-    materials: {roof: roof}
-    origin: keep
-    position: [0, ridge_y - 0.03, 0]
+  roof_front: {asset: house_roof_section, with: {deep: nz}, position: [x0 + bay / 2, y_roof, 0], array: {count: nx, offset: [bay, 0, 0]}}
+  roof_back:  {asset: house_roof_section, with: {deep: nz}, rotate: [0, 180, 0], position: [x0 + bay / 2, y_roof, 0], array: {count: nx, offset: [bay, 0, 0]}}
+  verge:        {asset: house_roof_end, with: {deep: nz}, position: [verge_x, y_roof, 0]}
+  verge_back:   {asset: house_roof_end, with: {deep: nz, left: 1}, rotate: [0, 180, 0], position: [verge_x, y_roof, 0]}
+  verge_l:      {asset: house_roof_end, with: {deep: nz, left: 1}, position: [-verge_x, y_roof, 0]}
+  verge_l_back: {asset: house_roof_end, with: {deep: nz}, rotate: [0, 180, 0], position: [-verge_x, y_roof, 0]}
+  gable: {asset: house_gable, with: {deep: nz}, position: [x0, y_top, 0], array: {count: 2, offset: [W, 0, 0]}}
+  ridge: {asset: house_ridge, with: {length: W + 2 * verge + wall_t}, position: [0, ridge_y - 0.03, 0]}
 
   # ---------------------------------------------------------------- extras
   chimney:
     doc: against the right gable wall, outside; rises through the verge overhang and clears the ridge
-    component: house_chimney
+    asset: house_chimney
     with: {height: ridge_y + 0.7, shoulder: y_top - 0.3}
-    materials: {stone: stone, roof: roof}
-    origin: keep
+    measure:
+      gable_r: {bounds: gable_1}
     rotate: [0, -90, 0]
-    position: [W / 2 + wall_t / 2 + 0.35, 0, 0]
-  steps:
-    component: house_steps
-    with: {width: door_w + 0.5, rise: base_h - 0.004, steps: 2, tread: 0.34}
-    materials: {stone: stone}
-    origin: keep
-    position: [x0 + 1.5 * bay, 0, D / 2 + footing_d / 2]
+    position: [gable_r.max.x + 0.35, 0, 0]
+  steps: {asset: house_steps, position: [x0 + 1.5 * bay, 0, D / 2 + footing_d / 2]}
 
 sockets:
   entrance: {attach: {to: origin, offset: [x0 + 1.5 * bay, base_h, D / 2 + 0.6]}, doc: in front of the door}

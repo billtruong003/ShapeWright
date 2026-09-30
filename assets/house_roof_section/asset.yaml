@@ -11,10 +11,13 @@ asset:
 export: {merge: by_material}
 collision: {mode: single_hull}
 
+params:
+  deep: {value: 2, min: 1, max: 4, doc: house depth in bays (the slope runs from the ridge over half of it)}
+
 parts:
   slope:
     component: house_roof
-    with: {length: bay, run: bay + wall_t / 2 + eave, pitch: pitch, t: roof_t, st: shingle_t, course: course, tile: tile_w, eave: eave}
+    with: {length: bay, run: deep * bay / 2 + wall_t / 2 + eave, pitch: pitch, t: roof_t, st: shingle_t, course: course, tile: tile_w, eave: eave}
     materials: {roof: roof, timber: timber}
     origin: keep
     position: [0, 0, 0]

@@ -84,6 +84,9 @@ INSTANCE_KEYS = {
     "parent": "semantic parent for the component's root parts", "tags": "tags added to every component part",
     "doc": "purpose", "array": "repeat the whole group (names: <instance>_0.., parts <instance>_0_<part>)",
     "mirror": "mirror the whole group (names: <instance>_left/_right, parts <instance>_left_<part>)",
+    "measure": "spatial queries on parts built before this instance; results are usable in with/position/rotate/enabled",
+    "pivot": "hinge the whole group: an anchor name, [x, y, z] box coefficients or {at: [x, y, z]}; its first root part "
+             "carries the pivot and the other parts become its children (one animatable node)",
 }
 
 COMPONENT_KEYS = {

@@ -79,6 +79,14 @@ PART_FEATURES = {
     "rotate_about": {"doc": "center (default) | anchor: rotate about the unrotated shape's anchor point, which stays where position/attach puts it "
                             "(a leaf tilting about its base, a lid about its hinge edge).",
                      "example": "{anchor: bottom, rotate_about: anchor, rotate: [0, 0, 35], position: [0, 0.3, 0]}"},
+    "component": {"doc": "Instance a sub-assembly from components/NAME.yaml: `with` sets its public params, `materials` maps its slots, "
+                         "`origin: keep` places it by its own origin. Components nest (a component part may be a component instance, "
+                         "4 levels). Instances accept measure (queries on parts built before), pivot (hinge the group), array, mirror.",
+                  "example": "{component: plank_top, with: {length: 1.2, planks: 3}, materials: {top: oak}, origin: keep, position: [0, 0.45, 0]}"},
+    "asset": {"doc": "Instance a whole other asset (project or library name, or a relative asset.yaml path), placed by its own origin "
+                     "(or by anchor/attach). `with` sets ITS own params (pack params are shared, read-only); `materials` maps its "
+                     "material names; parts are named <instance>_<part>. For modular kits: houses from module assets.",
+              "example": "{asset: house_wall_window, with: {shutters: 0}, rotate: [0, 180, 0], position: [1, 0.48, -2], array: {count: 3, offset: [2, 0, 0]}}"},
 }
 
 
