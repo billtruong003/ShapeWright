@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -12,7 +13,7 @@ import numpy as np
 from ..assemble import ROOT, Asset
 from ..report import Issue
 
-VALIDATOR_DIR = ROOT / "tools" / "gltf-validator"
+VALIDATOR_DIR = Path(os.environ.get("SW_GLTF_VALIDATOR") or ROOT / "tools" / "gltf-validator")  # override for installed copies
 
 
 def khronos_validate(path: Path) -> tuple[list[Issue], dict]:

@@ -38,7 +38,9 @@ from .mesh import Mesh, region_by_normal, rotation_matrix
 from .registry import SHAPES, load_builtin, suggest
 from .report import Issue, SourceError
 
-ROOT = Path(__file__).resolve().parent.parent
+from . import paths
+
+ROOT = paths.LIB  # the bundled library (repository root in a checkout); projects are found via paths
 AXIS_TOKENS = {"left": (0, -1), "right": (0, 1), "bottom": (1, -1), "top": (1, 1), "back": (2, -1), "front": (2, 1)}
 SIDE_NAMES = {0: ("left", "right"), 1: ("bottom", "top"), 2: ("back", "front")}
 KEEP_ORIGIN = {"strut"}  # shapes whose parts keep their authored coordinates by default
@@ -333,13 +335,13 @@ def apply_ops(mesh: Mesh, ops: Any, env: dict, ctx: S.Ctx, where: str, asset_dir
 def load_named(kind: str, name: str | None, asset_dir: Path, ctx: S.Ctx) -> dict:
     if not name:
         return {}
-    for base in (asset_dir, ROOT):
-        p = base / kind / f"{name}.yaml"
-        if p.exists():
-            data = yaml.safe_load(p.read_text()) or {}
-            data.setdefault("name", name)
-            return data
-    options = sorted(p.stem for p in (ROOT / kind).glob("*.yaml"))
+    local = asset_dir / kind / f"{name}.yaml"
+    p = local if local.exists() else paths.find(kind, name)
+    if p is not None:
+        data = yaml.safe_load(p.read_text()) or {}
+        data.setdefault("name", name)
+        return data
+    options = paths.names(kind)
     ctx.error("SRC_REF", kind[:-1], f"unknown {kind[:-1]} '{name}'", suggest(name, options).strip() or f"available: {', '.join(options)}")
     return {}
 
@@ -528,13 +530,13 @@ def _rename(raw: dict, mapping: dict, materials: dict) -> dict:
 
 
 def load_component(name: str, asset_dir: Path, ctx: S.Ctx, where: str) -> dict | None:
-    for base in (asset_dir, ROOT):
-        p = base / "components" / f"{name}.yaml"
-        if p.exists():
-            data = S.read_yaml(p)
-            S.check_keys(data, S.COMPONENT_KEYS, f"components/{name}", ctx)
-            return data
-    options = sorted(p.stem for p in (ROOT / "components").glob("*.yaml"))
+    local = asset_dir / "components" / f"{name}.yaml"
+    p = local if local.exists() else paths.find("components", name)
+    if p is not None:
+        data = S.read_yaml(p)
+        S.check_keys(data, S.COMPONENT_KEYS, f"components/{name}", ctx)
+        return data
+    options = paths.names("components")
     ctx.error("SRC_REF", f"{where}.component", f"unknown component '{name}'", suggest(name, options).strip() or f"available: {', '.join(options)}")
     return None
 
@@ -1229,7 +1231,7 @@ def resolve_asset_path(ref: str) -> Path:
     p = Path(ref)
     if p.exists():
         return p / "asset.yaml" if p.is_dir() else p
-    for base in (Path.cwd() / "assets", ROOT / "assets"):
+    for base in paths.asset_dirs():
         if (base / ref / "asset.yaml").exists():
             return base / ref / "asset.yaml"
     raise SourceError([Issue("SRC_REF", "error", f"cannot find asset '{ref}'", ref, "source",

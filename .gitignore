@@ -9,3 +9,5 @@ tools/gltf-validator/package-lock.json
 *.egg-info/
 # MODULAR_HOUSE_PACK_01: kit exports are reproducible (`sw export`) and shipped in modular_house_pack/
 assets/house_*/export/
+build/
+dist/

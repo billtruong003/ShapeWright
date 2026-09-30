@@ -26,10 +26,10 @@ from urllib.parse import parse_qs, urlparse
 
 import yaml
 
-from .. import cli
+from .. import cli, paths
 
-ROOT = Path(__file__).resolve().parent.parent.parent
-ASSETS = ROOT / "assets"
+ROOT = paths.LIB
+ASSETS = paths.assets_home()
 PAGE = Path(__file__).with_name("index.html")
 NAME = re.compile(r"^[A-Za-z0-9_\-]+$")
 VIEWS = ("front", "front_right", "right", "back_right", "back", "back_left", "left", "front_left", "top", "low_front", "uv")

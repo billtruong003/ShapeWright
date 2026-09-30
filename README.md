@@ -18,6 +18,29 @@ iterates on code.
 3/4 views, semantic part colours, wireframe density and the UV atlas. A vision
 model can critique proportions from this and a human can review it at a glance.*
 
+## First asset in five minutes
+
+```bash
+pip install "git+https://github.com/billtruong003/shapewright"   # or clone and use ./sw (pip install -r requirements.txt)
+sw init my_assets && cd my_assets            # a project folder; library examples stay usable by name
+sw brief "a chunky wooden barrel for a mobile game, under 800 triangles"
+sw new my_barrel --from barrel               # start from the closest example
+sw review my_barrel                          # validation + contact sheet: assets/my_barrel/.build/sheet.png
+sw export my_barrel --target godot           # -> assets/my_barrel/export/my_barrel_godot.glb (+ report)
+```
+
+No GPU, no display, no Blender: it runs the same on a laptop, in CI and in a cloud agent container.
+
+## Use it from your agent
+
+| Where you work | How |
+|---|---|
+| **Claude Code** (local or cloud) | clone the repo (it ships `AGENTS.md`, `CLAUDE.md` and a `.claude/skills/shapewright` skill), or `pip install` and point the agent at `llms.txt` |
+| **Claude Desktop, Cursor, ChatGPT connectors, any MCP client** | `pip install "shapewright[mcp]"`, register `sw mcp` as an MCP server; see [docs/MCP.md](docs/MCP.md) |
+| **Any other agent or chat** | paste [`llms.txt`](llms.txt) (one page, generated from the code with `sw caps --llms`) |
+| **People** | `sw workbench --open`: a local page where every button runs, and shows, an `sw` command |
+| **Docker** | `docker build -t shapewright .` then `docker run --rm -v "$PWD:/work" shapewright brief "..."` |
+
 ## What using it looks like
 
 ```text
@@ -39,7 +62,7 @@ Agent: reads AGENTS.md, runs `sw caps`, looks at assets/ for similar assets
 That session is real: see `assets/tavern_chair/history/` for both iterations
 and their critiques, and `docs/images/tavern_chair_compare_1_2.png` for the diff.
 
-## Quick start
+## Quick start (from a clone)
 
 ```bash
 pip install -r requirements.txt   # pure-Python wheels; no GPU, no display, no Blender
@@ -104,6 +127,8 @@ part names survive into the GLB as node names.
 | Read | For |
 |---|---|
 | [AGENTS.md](AGENTS.md) | operating manual for agents (start here if you are one) |
+| [llms.txt](llms.txt) | the one-page brief for any AI agent (generated: `sw caps --llms`) |
+| [docs/PHASE_PLAN_16.md](docs/PHASE_PLAN_16.md) | the current development plan (Phases 16+) and its run protocol |
 | [docs/VISION.md](docs/VISION.md) | what this is, what it is not, the design principles |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | the design and why: representation, kernel, validation, rendering, security |
 | [docs/ASSET_FORMAT.md](docs/ASSET_FORMAT.md) | the asset source specification |

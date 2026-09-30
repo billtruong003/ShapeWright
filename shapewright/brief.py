@@ -10,13 +10,14 @@ lists the rules that apply to this kind of prop. It is deterministic: keyword ov
 from __future__ import annotations
 
 import re
-from pathlib import Path
 
 import yaml
 
 from .caps import manifest
 
-ROOT = Path(__file__).resolve().parent.parent
+from . import paths
+
+ROOT = paths.LIB
 
 STOP = {"the", "and", "with", "for", "that", "from", "into", "under", "over", "game", "prop", "asset", "make", "create",
         "small", "large", "model", "textured", "texture", "textures", "surface", "detail", "export", "exported",
@@ -75,7 +76,11 @@ def _tokens(text: str) -> set[str]:
 
 def _examples() -> list[dict]:
     out = []
-    for p in sorted((ROOT / "assets").glob("*/asset.yaml")):
+    seen = set()
+    for p in sorted(q for d in paths.asset_dirs() + [ROOT / "assets"] for q in d.glob("*/asset.yaml")):
+        if p.resolve() in seen:
+            continue
+        seen.add(p.resolve())
         try:
             src = yaml.safe_load(p.read_text()) or {}
         except yaml.YAMLError:
@@ -156,7 +161,7 @@ def brief(request: str, n_examples: int = 3) -> str:
     tris = re.search(r"(\d[\d,]*)\s*(?:triangles|tris)", request.lower())
     prof, why = _profile(request, m["profiles"])
     try:
-        budget = (yaml.safe_load((ROOT / "profiles" / f"{prof}.yaml").read_text()) or {}).get("budget", {})
+        budget = (yaml.safe_load((paths.find("profiles", prof) or ROOT / "profiles" / f"{prof}.yaml").read_text()) or {}).get("budget", {})
     except OSError:
         budget = {}
     add(f"PROFILE: profile: {prof}  ({why}; budget {budget})")

@@ -1,0 +1,11 @@
+# sdist contents: the library that setup.py copies into the wheel as shapewright/_lib
+graft profiles
+graft styles
+graft packs
+graft components
+graft templates
+recursive-include assets *.yaml *.glb *.gltf *.obj *.stl *.ply *.png
+prune assets/*/export
+prune assets/*/.build
+prune assets/*/history
+global-exclude __pycache__ *.pyc

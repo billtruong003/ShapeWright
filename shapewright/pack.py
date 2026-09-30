@@ -21,7 +21,8 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw
 
-from .assemble import ROOT, Asset, build, resolve_asset_path
+from . import paths
+from .assemble import Asset, build, resolve_asset_path
 from .render.views import _font, render
 from .surface import build_surface
 from .validate.run import run_validation
@@ -34,12 +35,12 @@ def select(refs: list[str], tag: str | None, base: Path | None = None, pack: str
     if pack:
         from .source import read_yaml
 
-        for p in sorted((base or ROOT / "assets").glob("*/asset.yaml")):
+        for p in sorted((base or paths.assets_home()).glob("*/asset.yaml")):
             ref = str(read_yaml(p).get("pack", ""))
             if ref and (ref == pack or Path(ref).stem == pack) and p.resolve() not in [q.resolve() for q in paths]:
                 paths.append(p)
     if tag:
-        for p in sorted((base or ROOT / "assets").glob("*/asset.yaml")):
+        for p in sorted((base or paths.assets_home()).glob("*/asset.yaml")):
             try:
                 a = build(p)
             except Exception:  # broken assets are reported by `sw bench`, not here
@@ -149,7 +150,7 @@ def format_pack(rep: dict) -> str:
 
 
 def sheet_path(name: str) -> Path:
-    d = ROOT / ".build" / "packs"
+    d = paths.build_dir() / "packs"
     d.mkdir(parents=True, exist_ok=True)
     safe = "".join(ch if ch.isalnum() or ch in "-_" else "_" for ch in name) or "pack"
     return d / f"{safe}.png"

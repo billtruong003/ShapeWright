@@ -1,0 +1,7 @@
+.git
+**/__pycache__
+**/.build
+assets/*/export
+modular_house_pack
+tools/gltf-validator/node_modules
+docs/experiments

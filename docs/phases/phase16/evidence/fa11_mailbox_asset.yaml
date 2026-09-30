@@ -1,0 +1,73 @@
+shapewright: 0.1
+asset:
+  name: mailbox
+  kind: prop/street/mailbox
+  description: Cozy stylized wooden mailbox on a post with arched roof, front door and a side flag.
+profile: mobile_mid
+style: stylized_lowpoly
+budget: {triangles: 850}
+
+params:
+  bw: 0.36
+  bh: 0.24
+  bd: 0.5
+  post_h: 0.7
+  post_w: 0.12
+
+materials:
+  wood:  {archetype: wood, color: "#8a5a36", grain_strength: 0.35, edge_wear: 0.3}
+  red:   {archetype: painted, color: "#c9382e"}
+
+parts:
+  post:
+    shape: {type: chamfer_box, size: [post_w, post_h, post_w], chamfer: 0.012}
+    anchor: bottom
+    position: [0, 0, 0]
+    material: wood
+  bracket:
+    shape: {type: chamfer_box, size: [0.2, 0.05, bd], chamfer: 0.01}
+    anchor: bottom
+    position: [0, post_h, 0]
+    material: wood
+  body:
+    shape: {type: chamfer_box, size: [bw, bh, bd], chamfer: 0.015}
+    anchor: bottom
+    position: [0, post_h + 0.05, 0]
+    material: wood
+  roof:
+    doc: arched top, half cylinder profile extruded along Z
+    shape:
+      type: extrude
+      depth: bd + 0.06
+      polygon:
+        - [-0.2, 0]
+        - [0.2, 0]
+        - {arc: {center: [0, 0], radius: 0.2, from: 0, to: 180, segments: 6}}
+      scale_top: [1, 1]
+    anchor: bottom
+    position: [0, post_h + 0.05 + bh - 0.02, 0]
+    material: red
+  door:
+    shape: {type: chamfer_box, size: [0.26, 0.17, 0.03], chamfer: 0.005}
+    anchor: back
+    position: [0, post_h + 0.05 + 0.11, bd / 2]
+    material: wood
+  knob:
+    shape: {type: cylinder, radius: 0.02, height: 0.03, segments: 6}
+    rotate: [90, 0, 0]
+    anchor: back
+    position: [0, post_h + 0.05 + 0.16, bd / 2 + 0.03]
+    material: red
+  flag_pole:
+    shape: {type: chamfer_box, size: [0.03, 0.26, 0.035], chamfer: 0.004}
+    anchor: bottom_left
+    position: [bw / 2, post_h + 0.05 + 0.03, 0.08]
+    material: wood
+  flag:
+    shape: {type: chamfer_box, size: [0.03, 0.11, 0.15], chamfer: 0.004}
+    anchor: bottom_left
+    position: [bw / 2, post_h + 0.05 + 0.15, 0.08 + 0.0175 + 0.075]
+    material: red
+
+checks:
+  - {expr: asset.height, min: 0.9, max: 1.3}

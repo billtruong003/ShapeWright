@@ -5,7 +5,7 @@ asset:
   name: NAME
   kind: prop                      # e.g. prop/furniture/chair
   description: One sentence describing the asset and its purpose.
-profile: mobile_mid               # production budgets (profiles/*.yaml)
+profile: mobile_mid               # production budgets: triangles, MATERIALS, texture size (`sw doc mobile_mid`)
 style: stylized_lowpoly           # art direction (styles/*.yaml)
 budget: {triangles: 800}          # overrides the profile
 
@@ -14,8 +14,8 @@ params:                           # every meaningful dimension gets a name
   height: 0.8
   thickness: 0.05
 
-materials:
-  main: {base_color: "#8a5a36", roughness: 0.85}
+materials:                        # archetypes: wood stone metal painted flat authored (`sw doc wood`)
+  main: {archetype: wood, color: "#8a5a36"}
 
 parts:
   body:

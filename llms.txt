@@ -1,0 +1,172 @@
+# Shapewright
+
+> Agent-native 3D modelling for game assets. You write a declarative YAML asset source (named parts,
+> params, checks); deterministic tools build the mesh, validate it in layers, render inspection images
+> you look at, and export a game-ready GLB (Godot / Unity / Unreal / generic). Headless: no GPU, no
+> display, no Blender. Units metres, +Y up, front +Z, right +X, angles in degrees.
+
+## Install
+
+    pip install shapewright            # or: git clone ... && pip install -r requirements.txt && use ./sw
+    sw init my_project && cd my_project # optional: a project folder (assets/, packs/, components/)
+    sw doctor                          # environment check
+
+Through MCP (Claude Desktop, Cursor, ChatGPT connectors, Claude Code): `pip install "shapewright[mcp]"`,
+then register the server command `sw mcp` (see docs/MCP.md). Every CLI step below is also an MCP tool.
+
+## The loop (do exactly this)
+
+1. `sw brief "the request"` - closest example asset with full source, profile and budget, rules, vocabulary.
+2. `sw new NAME` (or `sw new NAME --from EXAMPLE`) and edit `assets/NAME/asset.yaml`. Set `profile:` to the one
+   `brief` suggested (the template says mobile_mid): the profile's budget limits triangles AND materials (table below).
+3. `sw review NAME` - validation summary + contact sheet at `assets/NAME/.build/sheet.png`. LOOK at the image.
+4. Critique specifically ("leg 0.045 -> 0.07: spindly"), change params first, then parts, then ops.
+5. `sw snapshot NAME -m "first version"` BEFORE the first edit, then after each revision
+   `sw snapshot NAME -m "what changed" --critique "what you saw"`; `sw compare NAME 1 current`.
+6. Stop when: no validation errors, no significant critique left, constraints met (or 6 revisions).
+7. `sw export NAME [--target godot|unity|unreal]` -> `assets/NAME/export/NAME.glb` (with a target:
+   `NAME_godot.glb` etc.) + `.report.json`. Report tris vs budget, materials, size, path.
+
+## Rules
+
+- Highest abstraction that works: params > placement (`anchor`/`attach`) > ops > new shapes. No vertex lists.
+- Placement: `anchor:` is the point of THIS part that lands on `position:` (or on another part's point with
+  `attach: {to: PART, at: ANCHOR}`). Anchor names combine `left|right` (x), `bottom|top` (y), `back|front` (z):
+  `bottom`, `top_front`, `bottom_back_left`, ... `center` is the default.
+- Relationships: `measure:` queries on built parts (section, gap, bounds, anchor, ray), not hand arithmetic.
+- Repetition: `array` with `each:`/`skip:`; symmetry: `mirror: x`. Instances are named `<part>_0..n`, `<part>_left/right`.
+- Reuse: `components/` (sub-assemblies with public params), `packs/` (shared params + materials for a set),
+  `extends` (variants of one design). Check a set with `sw pack --pack NAME`.
+- Surfaces: material archetypes (`wood`, `stone`, `metal`, `painted`, `flat`, `authored`) with semantic params;
+  `sw doc wood`. Lock UVs before texture work: `sw uv NAME lock`.
+- Try values without editing: `sw validate NAME --set a=1,b=2`; keep one with `sw set NAME a=1`.
+- `ASM_FLOATING_PARTS` means the part really floats: fix the placement; `floating_ok` is only for hovering parts.
+- Every issue has a code and a hint; `sw doc CODE` explains it. `sw doc PROFILE|STYLE|PACK|COMPONENT` prints that file.
+- `extrude` draws the polygon in the XY plane and extrudes along +Z (centred like every shape unless `origin: keep`).
+- Missing capability: produce a mesh file and use `{type: mesh_file}`, or `sw import FILE NAME`.
+
+## Minimal asset
+
+    shapewright: 0.1
+    asset: {name: stool, kind: prop/furniture/stool}
+    profile: mobile_mid
+    style: stylized_lowpoly
+    budget: {triangles: 400}
+    params:
+      height: {value: 0.45, min: 0.35, max: 0.6}
+      leg: 0.05
+    materials:
+      oak: {archetype: wood, color: "#8a5a34"}
+    parts:
+      seat:
+        shape: {type: chamfer_box, size: [0.36, 0.05, 0.36], chamfer: 0.012}
+        material: oak
+        anchor: top
+        position: [0, height, 0]
+      leg:
+        shape: {type: chamfer_box, size: [leg, height - 0.05, leg], chamfer: 0.006}
+        material: oak
+        anchor: bottom
+        position: [-0.14, 0, -0.14]
+        array: [{count: 2, offset: [0.28, 0, 0]}, {count: 2, offset: [0, 0, 0.28]}]   # leg_0_0 .. leg_1_1
+    checks:
+      - {expr: seat.max.y, min: 0.35, max: 0.6}
+
+## Profiles (budgets per prop; `budget:` in an asset overrides)
+
+    profile          triangles  materials  texture  texel px/m  doc
+    desktop_indie         5000          3     1024         512  Desktop indie game props. Comfortable budgets, still one or 
+    godot                 5000          3     1024         512  Godot 4 target. Convex collision via -convcolonly (StaticBod
+    mobile_low             600          1      256         128  Low-end mobile / older devices. Aggressive budgets; one mate
+    mobile_mid            1500          2      512         256  Mid-range mobile (e.g. 2022 Android). Props are cheap, draw 
+    unity                 5000          3     1024         512  Unity target (glTF import, e.g. glTFast). Static parts merge
+    unreal                5000          3     1024         512  Unreal Engine target. UCX_ convex collision (Unreal's import
+    vr_standalone         1200          1      512         384  Standalone VR (Quest-class). Tight triangles and draw calls,
+    web                   2000          2      512         256  WebGL / WebGPU scenes. Small downloads matter as much as tri
+
+## Capabilities (generated from the code: `sw caps`)
+
+shapewright 0.1.0  (units m, +Y up, front +Z, angles in degrees)
+
+COMMANDS
+  sw brief REQUEST                              start here: closest example asset (with source), profile, rules and vocabulary for a request
+  sw workbench [--port N]                       local browser workbench for people over these same commands (127.0.0.1 only)
+  sw caps                                       list capabilities (this manifest); --json for everything; --llms for the one-page agent brief (llms.txt)
+  sw doc NAME                                   details and example for one shape, op, view, mode, issue code, profile, style, pack or component
+  sw new NAME [--from ASSET]                    scaffold assets/NAME/asset.yaml (optionally as a variant of ASSET)
+  sw set ASSET NAME=VALUE                       write param values into the source file, keeping comments (what --set previews)
+  sw stats ASSET                                per-part triangles, sizes, positions, materials; sockets; params
+  sw validate ASSET                             layered deterministic validation (exit 1 on errors); --json
+  sw render ASSET                               images: --view V --mode M --part P [--isolate] or --sheet
+  sw review ASSET                               validate + contact sheet + style checklist: the inspection step of the loop
+  sw snapshot ASSET -m NOTE [--critique TEXT]   record an iteration (source + metrics + critique)
+  sw log ASSET                                  list iterations
+  sw compare ASSET A B                          diff two iterations (numbers or 'current'): image + metrics
+  sw restore ASSET N                            put iteration N's source back (current source is backed up)
+  sw export ASSET                               validate, write GLB, verify with Khronos validator + re-import
+  sw variants ASSET --count N                   derive seeded variants from params that declare `vary`
+  sw import FILE NAME [--split]                 create an asset from GLB/OBJ/STL/PLY (parts per node/piece; geometry stays in the file)
+  sw uv ASSET lock|show                         lock UV regions (uv.lock.yaml) so edits never move other parts' UVs
+  sw family ASSET                               validate a base asset and every variant that extends it
+  sw pack ASSET... | --pack NAME | --tag TAG    review assets as one set: common-scale sheet + material/param/density consistency report
+  sw materials ASSET                            material sheet: every material on reference shapes, textured + albedo (semantic material review)
+  sw bench                                      validate every asset under assets/ (CI)
+  sw init [DIR]                                 make a folder a project: assets/, packs/, components/, styles/, profiles/ + shapewright.yaml (shadows the library)
+  sw doctor                                     check the environment and optional tools
+
+SHAPES
+  boolean       (operation, base*, tools*)  Boolean of geometry expressions: base (op) each tool, in order. Inputs may carry their own
+  box           (size*)  Axis-aligned box.
+  capsule       (radius*, height*, segments, cap_rings)  Capsule along Y (cylinder with hemispherical ends).
+  chamfer_box   (size*, chamfer)  Box with every edge chamfered (44 triangles). The workhorse of stylized low-poly props.
+  combine       (items*)  Several geometry expressions kept as separate shells in one part (no boolean). Use when pi
+  cylinder      (radius*, height*, radius_top, segments, chamfer)  Cylinder / frustum / cone along Y, optionally with chamfered rims.
+  extrude       (polygon*, depth*, holes, scale_top, chamfer)  Extrude a 2D polygon (XY plane) along Z; supports holes and tapering. Robust via Manifold.
+  icosphere     (radius*, subdivisions)  Geodesic sphere: evenly distributed triangles, ideal base for organic deformation.
+  lathe         (profile*, segments)  Revolve a profile of [radius, y] points around Y (barrels, bottles, lamp posts, mugs). Rad
+  mesh_file     (path*, node, piece, scale, z_up, generated_by)  Baked / imported / externally generated mesh from a file inside the asset directory (GLB, 
+  random_hull   (size*, points, seed)  Convex hull of seeded random points on an ellipsoid: the classic low-poly rock/boulder/cry
+  revolve       (polygon*, segments)  Revolve a closed 2D polygon of [radius, y] points around Y (rings, flanges, rims, hollow f
+  ring          (radius*, thickness*, height*, segments)  Flat ring / band / washer around Y with a rectangular cross-section (hoops, collars, rims)
+  sphere        (radius*, segments, rings)  UV sphere (low-poly friendly: few rings).
+  strut         (from*, to*, size, radius, sides, chamfer, extend, roll, depth_axis)  A beam, brace, rod or post running from one point to another (braces, rafters, rungs, axle
+  torus         (radius*, tube*, segments, sides)  Torus around Y (rings, hoops, handles).
+  tube          (path*, radius*, radius_end, sides, corner_radius, corner_segments)  Sweep a regular polygon along a 3D path (pipes, cables, arms, branches, handles).
+
+OPS
+  bend          (axis, toward, angle)  Bend along `axis` toward `toward` by `angle` degrees (circular arc). Needs vertices along 
+  clean         (weld, degenerate, duplicates, winding, fill_holes)  Repair imported/baked geometry: weld coincident vertices, drop zero-area and duplicate fac
+  decimate      (ratio)  Reduce triangles with quadric simplification.
+  flat_bottom   (fraction, at)  Cut everything below a height to create a flat base: a fraction of the local height from t
+  inflate       (amount*)  Push vertices along their normals (positive grows, negative shrinks).
+  intersect     (shape*, position, rotate)  Boolean intersection with a tool geometry.
+  jitter        (amount*, seed)  Seeded random vertex offsets: hand-crafted asymmetry for stylized props. Keeps shared vert
+  mirror        (axis, at, merge)  Mirror the geometry across a local plane and keep both halves in this part (`merge: union`
+  noise         (amount*, frequency, seed, octaves)  Smooth seeded displacement along vertex normals (organic lumps, rock surfaces).
+  repeat        (count*, offset, radial, angle)  Repeat the geometry inside this part (linear offset or radial around a local axis); copies
+  rotate        (angles*)  Rotate in local space (degrees, X then Y then Z).
+  scale         (factor*)  Scale in local space.
+  shear         (axis, toward, amount*)  Offset along `toward` proportionally to position along `axis` (lean).
+  smooth        (iterations, strength)  Taubin smoothing (rounds forms without shrinking much).
+  subdivide     (iterations)  Split every triangle into four (midpoint; shape unchanged). Use before smooth/noise/bend.
+  subtract      (shape*, position, rotate)  Boolean difference with a tool geometry (holes, notches, cut-outs). Cut faces keep the too
+  taper         (axis, scale)  Scale the cross-section linearly along an axis (1 at the min end, `scale` at the max end).
+  translate     (offset*)  Move in local space (mostly useful inside nested expressions).
+  twist         (axis, angle)  Rotate cross-sections progressively around an axis.
+  union         (shape*, position, rotate)  Boolean union with extra geometry (fuses into one closed surface).
+
+VIEWS  front back left right top bottom front_right front_left back_right back_left low_front
+MODES  clay parts material wire normals silhouette provenance regions textured albedo roughness metallic texel seams
+
+VALIDATION LAYERS  geometry assembly budget intent surface style export
+PROFILES  desktop_indie godot mobile_low mobile_mid unity unreal vr_standalone web
+STYLES    cozy_timber realistic_clean stylized_lowpoly
+COMPONENTS fantasy_mushroom house_chimney house_door house_door_frame house_floor house_footing house_gable house_ridge house_roof house_steps house_timber house_wall house_window_frame iron_band leg_frame plank_top smith_hammer   (components/NAME.yaml; use with `component:` in a part)
+PACKS     blacksmith cozy_house   (packs/NAME.yaml: shared params/materials; `pack: NAME` in an asset)
+MATERIALS authored flat metal painted stone wood   (material `archetype:` + semantic params; `sw doc wood`; docs/SURFACES.md)
+MEASURE   section gap bounds anchor ray   (part-level `measure:` queries; docs/RELATIONSHIPS.md)
+POINTS    arc helix line   (items inside any point list: polygon, holes, profile, path; `sw doc arc`)
+PARTS     array mirror origin rotate_about   (`sw doc array`: per-instance each/skip/start, nested arrays)
+EXPORT    glb; targets generic godot unity unreal   (profiles godot / unity / unreal; asset `export: {target, merge, lods}`; docs/PRODUCTION.md)
+
+* = required.  `sw doc NAME` for details, `sw caps --json` for everything.

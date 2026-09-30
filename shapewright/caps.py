@@ -9,7 +9,8 @@ from __future__ import annotations
 import yaml
 
 from . import __version__
-from .assemble import AXIS_TOKENS, ROOT
+from . import paths
+from .assemble import AXIS_TOKENS
 from .registry import OPS, SHAPES, load_builtin
 from .render.views import MODES, VIEWS
 from .source import PART_KEYS, TOP_KEYS
@@ -19,8 +20,8 @@ from .validate import load_builtin as load_validators
 COMMANDS = {
     "brief REQUEST": "start here: closest example asset (with source), profile, rules and vocabulary for a request",
     "workbench [--port N]": "local browser workbench for people over these same commands (127.0.0.1 only)",
-    "caps": "list capabilities (this manifest); --json for everything",
-    "doc NAME": "details and example for one shape, op, view, mode or issue code",
+    "caps": "list capabilities (this manifest); --json for everything; --llms for the one-page agent brief (llms.txt)",
+    "doc NAME": "details and example for one shape, op, view, mode, issue code, profile, style, pack or component",
     "new NAME [--from ASSET]": "scaffold assets/NAME/asset.yaml (optionally as a variant of ASSET)",
     "set ASSET NAME=VALUE": "write param values into the source file, keeping comments (what --set previews)",
     "stats ASSET": "per-part triangles, sizes, positions, materials; sockets; params",
@@ -39,13 +40,14 @@ COMMANDS = {
     "pack ASSET... | --pack NAME | --tag TAG": "review assets as one set: common-scale sheet + material/param/density consistency report",
     "materials ASSET": "material sheet: every material on reference shapes, textured + albedo (semantic material review)",
     "bench": "validate every asset under assets/ (CI)",
+    "init [DIR]": "make a folder a project: assets/, packs/, components/, styles/, profiles/ + shapewright.yaml (shadows the library)",
     "doctor": "check the environment and optional tools",
 }
 
 
 def _named(kind: str) -> dict:
     out = {}
-    for p in sorted((ROOT / kind).glob("*.yaml")):
+    for p in paths.files(kind):
         try:  # one broken file must not take down `sw caps` / `sw doc` for everything (MODULAR_HOUSE_PACK_01)
             data = yaml.safe_load(p.read_text()) or {}
         except yaml.YAMLError as e:

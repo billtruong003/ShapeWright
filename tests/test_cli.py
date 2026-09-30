@@ -118,11 +118,9 @@ def test_set_writes_param_values_and_keeps_everything_else(make_asset, capsys):
 
 def test_a_broken_component_file_does_not_break_caps_or_doc(monkeypatch, tmp_path, capsys):
     # MODULAR_HOUSE_PACK_01: an unquoted "doc: a: b" in one component crashed `sw doc torus` with a traceback
-    from shapewright import caps
-
     (tmp_path / "components").mkdir()
     (tmp_path / "components" / "broken.yaml").write_text("component: broken\ndoc: steps over it: a threshold\n")
-    monkeypatch.setattr(caps, "ROOT", tmp_path)
+    monkeypatch.setenv("SW_PROJECT", str(tmp_path))  # a project's broken file is listed next to the library's
     assert main(["doc", "torus"]) == 0
     capsys.readouterr()
     assert main(["caps", "--json"]) == 0

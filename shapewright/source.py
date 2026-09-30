@@ -226,12 +226,12 @@ def load_source(path: Path, _depth: int = 0, ctx: Ctx | None = None) -> dict:
 
 
 def resolve_pack_path(ref: str, asset_path: Path) -> Path:
-    from .assemble import ROOT
+    from . import paths
 
     ref = str(ref)
-    p = (asset_path.parent / ref).resolve() if ref.endswith(".yaml") else ROOT / "packs" / f"{ref}.yaml"
+    p = (asset_path.parent / ref).resolve() if ref.endswith(".yaml") else (paths.find("packs", ref) or paths.LIB / "packs" / f"{ref}.yaml")
     if not p.exists():
-        options = sorted(q.stem for q in (ROOT / "packs").glob("*.yaml"))
+        options = paths.names("packs")
         raise SourceError([Issue("SRC_REF", "error", f"pack not found: {ref}", "pack", "source",
                                  suggest(ref, options).strip() or f"packs: {', '.join(options) or 'none'} (packs/NAME.yaml)")])
     return p

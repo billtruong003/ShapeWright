@@ -87,6 +87,11 @@ def _print_source_error(e: SourceError, as_json: bool):
 def cmd_caps(a):
     from .caps import manifest, summary_text
 
+    if a.llms:
+        from .llms import llms_text
+
+        print(llms_text(), end="")
+        return 0
     print(json.dumps(manifest(), indent=1) if a.json else summary_text())
     return 0
 
@@ -141,9 +146,18 @@ def cmd_doc(a):
             print(compact_json(v))
             print("See docs/VALIDATION.md for the meaning and fixes of each code.")
             return 0
+    from . import paths
+
+    for kind in ("profiles", "styles", "packs", "components"):
+        f = paths.find(kind, a.name)
+        if f is not None:  # the file itself is the documentation: budgets, review questions, params, parts
+            print(f"# {kind[:-1]} {a.name}: {f}")
+            print(f.read_text().rstrip())
+            return 0
     from .registry import suggest
 
     names = list(m["shapes"]) + list(m["ops"]) + list(m["views"]) + list(m["modes"]) + list(m["point_generators"]) + list(m["part_features"])
+    names += [n for k in ("profiles", "styles", "packs", "components") for n in paths.names(k)]
     print(f"unknown name '{a.name}'.{suggest(a.name, names)}")
     return 2
 
@@ -350,9 +364,10 @@ def cmd_export(a):
 
 
 def cmd_new(a):
+    from . import paths
     from .assemble import ROOT
 
-    base = Path(a.dir) if a.dir else (Path.cwd() / "assets" if (Path.cwd() / "assets").exists() else ROOT / "assets")
+    base = Path(a.dir) if a.dir else paths.assets_home()
     d = base / a.name
     if (d / "asset.yaml").exists():
         print(f"{_rel(d / 'asset.yaml')} already exists")
@@ -407,10 +422,10 @@ def cmd_variants(a):
 
 
 def cmd_import(a):
-    from .assemble import ROOT
+    from . import paths
     from .importer import import_file
 
-    base = Path(a.dir) if a.dir else (Path.cwd() / "assets" if (Path.cwd() / "assets").exists() else ROOT / "assets")
+    base = Path(a.dir) if a.dir else paths.assets_home()
     res = import_file(Path(a.file), base / a.name, a.name, split=a.split, scale=a.scale, z_up=a.z_up)
     print(f"created {_rel(Path(res['asset']))} with {len(res['parts'])} part(s):")
     for r in res["parts"][:40]:
@@ -476,11 +491,12 @@ def cmd_family(a):
 
 
 def cmd_bench(a):
-    from .assemble import ROOT, build
+    from . import paths
+    from .assemble import build
     from .surface import build_surface
     from .validate.run import run_validation
 
-    base = Path(a.dir) if a.dir else ROOT / "assets"
+    base = Path(a.dir) if a.dir else paths.assets_home()
     worst = 0
     for p in sorted(base.glob("*/asset.yaml")):
         try:
@@ -528,6 +544,25 @@ def cmd_materials(a):
     return 0
 
 
+def cmd_init(a):
+    from . import paths
+
+    d = Path(a.dir).resolve()
+    marker = d / paths.MARKER
+    if marker.exists():
+        print(f"{_rel(marker)} already exists: this is a Shapewright project")
+        return 0
+    for sub_ in ("assets", "packs", "components", "styles", "profiles"):
+        (d / sub_).mkdir(parents=True, exist_ok=True)
+    marker.write_text(
+        "# Shapewright project marker. `sw` run anywhere inside this folder uses it as the project:\n"
+        "# assets/ holds your assets; packs/, components/, styles/, profiles/ shadow the library's files of the same name.\n"
+        "shapewright: 0.1\n")
+    print(f"initialised Shapewright project in {_rel(d)}")
+    print("next: sw brief \"what you want to make\"   then   sw new NAME   (library examples stay usable by name)")
+    return 0
+
+
 def cmd_doctor(a):
     import importlib
     import shutil
@@ -543,6 +578,10 @@ def cmd_doctor(a):
         except ImportError:
             ok = False
             print(f"MISS {mod:20} ({why})  -> pip install -r requirements.txt")
+    from . import paths
+
+    print(f"lib  {paths.LIB}")
+    print(f"proj {paths.project() or '(none: run `sw init` to make the current folder a project)'}")
     node = shutil.which("node")
     kv = (VALIDATOR_DIR / "node_modules" / "gltf-validator").exists()
     print(f"{'ok  ' if node and kv else 'opt '} khronos gltf-validator  {'installed' if kv else 'optional: cd tools/gltf-validator && npm install'}")
@@ -576,6 +615,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--assets", help="folder of assets to work on (default: assets/)")
     p = add("caps", cmd_caps, "capability manifest", asset=False)
     p.add_argument("--json", action="store_true")
+    p.add_argument("--llms", action="store_true", help="print llms.txt: a one-page brief for AI agents")
     p = add("doc", cmd_doc, "details for a shape/op/view/mode/issue code", asset=False)
     p.add_argument("name")
     p = add("stats", cmd_stats, "per-part numbers")
@@ -640,6 +680,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--out", help="sheet path (default: .build/packs/<tag>.png)")
     p.add_argument("--size", type=int, default=300, help="tile size")
     p.add_argument("--json", action="store_true")
+    p = add("init", cmd_init, "make a folder a Shapewright project (assets/, packs/, components/ + marker)", asset=False)
+    p.add_argument("dir", nargs="?", default=".")
     add("doctor", cmd_doctor, "environment check", asset=False)
     return ap
 

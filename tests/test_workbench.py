@@ -31,7 +31,7 @@ def test_workbench_imports_nothing_but_the_cli():
         elif isinstance(node, ast.Import):
             mods.update(a.name for a in node.names)
     internal = {m for m in mods if m.startswith(".")}
-    assert internal == {"..:cli"}, internal
+    assert internal == {"..:cli,paths"}, internal  # paths only locates the project/library (Phase 16); it builds nothing
     external = {m.split(".")[0] for m in mods - internal}
     assert external <= {"__future__", "contextlib", "io", "json", "re", "shlex", "time", "http", "pathlib", "urllib", "yaml", "webbrowser"}
 
