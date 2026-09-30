@@ -11,6 +11,20 @@ Every phase follows the same run protocol (§1) and the same record format (§2)
 > from the asset source, results re-imported and validated), not native kernels. Phase 23 stays native.
 > The phase numbers are kept so references stay valid.
 
+## Status (updated at the end of the cloud run)
+
+| phase | branch | verdict | record |
+|---|---|---|---|
+| MHP-01 (acceptance test) | `test/modular-house-pack` | PARTIAL | docs/experiments/MODULAR_HOUSE_PACK_01.md |
+| 16 packaging + AI docs | `phase/16-packaging` | PASS (Docker not built) | docs/phases/PHASE_16.md |
+| 17 MCP server | `phase/17-mcp` | PARTIAL (no agent MCP client run) | docs/phases/PHASE_17.md |
+| 19 composition | `phase/19-composition` | PARTIAL (1 of 3 houses converted) | docs/phases/PHASE_19.md |
+| 20 seam validation | `phase/20-seams` | PASS (gate restated) | docs/phases/PHASE_20.md |
+| 18 docs site | `phase/18-docs-site` | PARTIAL (deploy not run) | docs/phases/PHASE_18.md |
+
+The branches are **stacked**: each one contains the ones above it, so `phase/18-docs-site` has everything.
+None is merged into `main`.
+
 ---
 
 ## 1. Run protocol (every phase)
