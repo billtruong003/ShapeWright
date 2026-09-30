@@ -1,0 +1,1643 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Agent-native 3D modelling for game assets. Declarative sources, deterministic validation, inspection renders, game-ready GLB.">
+      
+      
+      
+        <link rel="canonical" href="https://billtruong003.github.io/ShapeWright/reference/vocabulary/">
+      
+      
+        <link rel="prev" href="../../concepts/composition/">
+      
+      
+        <link rel="next" href="../codes/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Shapes and ops - Shapewright</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="brown" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#shapes-and-ops" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Shapewright" class="md-header__button md-logo" aria-label="Shapewright" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Shapewright
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Shapes and ops
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="brown" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="brown" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/billtruong003/ShapeWright" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Shapewright" class="md-nav__button md-logo" aria-label="Shapewright" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Shapewright
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/billtruong003/ShapeWright" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Quickstart
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pick your setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/claude-code-cloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Claude Code (cloud)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/claude-code-local/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Claude Code (local)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/mcp-clients/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Claude Desktop, Cursor, Codex (MCP)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/chat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ChatGPT and other chats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    By hand (CLI and workbench)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use cases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Use cases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/prop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A game prop in one session
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/modular-kit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A modular kit and buildings from it
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/variants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    One design, many variants
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/import-repair/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Import and repair an existing model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/budgets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tight budgets (VR, mobile, web)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/ci/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Assets in CI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/loop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The loop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation layers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/composition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reuse and composition
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shapes and ops
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shapes and ops
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shapes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ops
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#material-archetypes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Material archetypes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part features
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#point-generators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Point generators
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../codes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Issue codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../profiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shapes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ops
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#material-archetypes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Material archetypes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part features
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#point-generators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Point generators
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="shapes-and-ops">Shapes and ops</h1>
+<p><em>Generated from <code>sw caps --json</code>. <code>sw doc NAME</code> prints the same entries.</em></p>
+<h2 id="shapes">Shapes</h2>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>what</th>
+<th>example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>boolean</code></td>
+<td>Boolean of geometry expressions: base (op) each tool, in order. Inputs may carry their own ops, transforms and materials; faces keep their provenance. Each input is centred at the origin before its own <code>translate</code>; give inputs <code>origin: keep</code> to keep the coordinates they were drawn in (a hull and its cavity outlined in one frame line up without offsets).</td>
+<td><code>{type: boolean, operation: difference, base: {type: chamfer_box, size: [0.4, 0.3, 0.3], chamfer: 0.02}, tools: [{type: cylinder, radius: 0.08, height: 0.5, rotate: [90, 0, 0], ops: [{type: taper, scale: 0.6}]}]}</code></td>
+</tr>
+<tr>
+<td><code>box</code></td>
+<td>Axis-aligned box.</td>
+<td><code>{type: box, size: [0.4, 0.05, 0.4]}</code></td>
+</tr>
+<tr>
+<td><code>capsule</code></td>
+<td>Capsule along Y (cylinder with hemispherical ends).</td>
+<td><code>{type: capsule, radius: 0.05, height: 0.4, segments: 8}</code></td>
+</tr>
+<tr>
+<td><code>chamfer_box</code></td>
+<td>Box with every edge chamfered (44 triangles). The workhorse of stylized low-poly props.</td>
+<td><code>{type: chamfer_box, size: [0.46, 0.06, 0.44], chamfer: 0.012}</code></td>
+</tr>
+<tr>
+<td><code>combine</code></td>
+<td>Several geometry expressions kept as separate shells in one part (no boolean). Use when pieces interpenetrate by design and one semantic part is wanted. Items are centred before their <code>translate</code> unless they say <code>origin: keep</code> (then polygon/path coordinates are kept as drawn).</td>
+<td><code>{type: combine, items: [{type: box, size: [0.2, 0.2, 0.2]}, {type: sphere, radius: 0.1, translate: [0, 0.15, 0]}]}</code></td>
+</tr>
+<tr>
+<td><code>cylinder</code></td>
+<td>Cylinder / frustum / cone along Y, optionally with chamfered rims.</td>
+<td><code>{type: cylinder, radius: 0.03, height: 0.4, segments: 8}</code></td>
+</tr>
+<tr>
+<td><code>extrude</code></td>
+<td>Extrude a 2D polygon (XY plane) along Z; supports holes and tapering. Robust via Manifold.</td>
+<td><code>{type: extrude, polygon: [[-0.2,0],[0.2,0],[0.15,0.3],[-0.15,0.3]], depth: 0.04, chamfer: 0.005}</code></td>
+</tr>
+<tr>
+<td><code>icosphere</code></td>
+<td>Geodesic sphere: evenly distributed triangles, ideal base for organic deformation.</td>
+<td><code>{type: icosphere, radius: 0.2, subdivisions: 1}</code></td>
+</tr>
+<tr>
+<td><code>lathe</code></td>
+<td>Revolve a profile of [radius, y] points around Y (barrels, bottles, lamp posts, mugs). Radius 0 closes the end at a pole; otherwise ends are capped.</td>
+<td><code>{type: lathe, profile: [[0.2, 0], [0.24, 0.3], [0.2, 0.6]], segments: 12}</code></td>
+</tr>
+<tr>
+<td><code>mesh_file</code></td>
+<td>Baked / imported / externally generated mesh from a file inside the asset directory (GLB, OBJ, STL, PLY). Keeps authored UVs and vertex colours as attributes. Not parametric.</td>
+<td><code>{type: mesh_file, path: source/example.obj}</code></td>
+</tr>
+<tr>
+<td><code>random_hull</code></td>
+<td>Convex hull of seeded random points on an ellipsoid: the classic low-poly rock/boulder/crystal base.</td>
+<td><code>{type: random_hull, size: [0.6, 0.4, 0.5], points: 20, seed: 3}</code></td>
+</tr>
+<tr>
+<td><code>revolve</code></td>
+<td>Revolve a closed 2D polygon of [radius, y] points around Y (rings, flanges, rims, hollow forms). Unlike <code>lathe</code>, the profile is a closed outline and may stay away from the axis.</td>
+<td><code>{type: revolve, polygon: [[0.2, 0], [0.25, 0], [0.25, 0.05], [0.2, 0.05]], segments: 12}</code></td>
+</tr>
+<tr>
+<td><code>ring</code></td>
+<td>Flat ring / band / washer around Y with a rectangular cross-section (hoops, collars, rims).</td>
+<td><code>{type: ring, radius: 0.33, thickness: 0.02, height: 0.05, segments: 12}</code></td>
+</tr>
+<tr>
+<td><code>sphere</code></td>
+<td>UV sphere (low-poly friendly: few rings).</td>
+<td><code>{type: sphere, radius: 0.1, segments: 10, rings: 6}</code></td>
+</tr>
+<tr>
+<td><code>strut</code></td>
+<td>A beam, brace, rod or post running from one point to another (braces, rafters, rungs, axles, legs). Box section with <code>size</code>, or round with <code>radius</code>. A part whose shape is a strut keeps its asset coordinates (origin: keep), so <code>from</code>/<code>to</code> are where the ends go; they may use params and <code>measure</code> results.</td>
+<td><code>{type: strut, from: [-0.4, 0.1, 0], to: [0.4, 0.9, 0], size: [0.08, 0.06], chamfer: 0.008}</code></td>
+</tr>
+<tr>
+<td><code>torus</code></td>
+<td>Torus around Y (rings, hoops, handles).</td>
+<td><code>{type: torus, radius: 0.25, tube: 0.012, segments: 16, sides: 4}</code></td>
+</tr>
+<tr>
+<td><code>tube</code></td>
+<td>Sweep a regular polygon along a 3D path (pipes, cables, arms, branches, handles).</td>
+<td><code>{type: tube, path: [[0,0,0],[0,0.5,0],[0.4,0.5,0]], radius: 0.03, corner_radius: 0.12, sides: 8}</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="ops">Ops</h2>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>what</th>
+<th>example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bend</code></td>
+<td>Bend along <code>axis</code> toward <code>toward</code> by <code>angle</code> degrees (circular arc). Needs vertices along the axis (subdivide first).</td>
+<td><code>{type: bend, axis: y, toward: z, angle: -12}</code></td>
+</tr>
+<tr>
+<td><code>clean</code></td>
+<td>Repair imported/baked geometry: weld coincident vertices, drop zero-area and duplicate faces, make winding consistent (outward for closed shells), optionally fill holes. Kept faces keep their UVs and labels.</td>
+<td><code>{type: clean, fill_holes: true}</code></td>
+</tr>
+<tr>
+<td><code>decimate</code></td>
+<td>Reduce triangles with quadric simplification.</td>
+<td><code>{type: decimate, ratio: 0.5}</code></td>
+</tr>
+<tr>
+<td><code>flat_bottom</code></td>
+<td>Cut everything below a height to create a flat base: a fraction of the local height from the bottom, or <code>at</code>, a y in the part's authoring coordinates. For parts placed by their own coordinates (strut, origin: keep) those are asset coordinates, so <code>at: 0</code> trims a splayed leg exactly at the ground; for centred parts y = 0 is the part's centre.</td>
+<td><code>{type: flat_bottom, at: 0}</code></td>
+</tr>
+<tr>
+<td><code>inflate</code></td>
+<td>Push vertices along their normals (positive grows, negative shrinks).</td>
+<td><code>{type: inflate, amount: 0.005}</code></td>
+</tr>
+<tr>
+<td><code>intersect</code></td>
+<td>Boolean intersection with a tool geometry.</td>
+<td><code>{type: intersect, shape: {type: sphere, radius: 0.3}}</code></td>
+</tr>
+<tr>
+<td><code>jitter</code></td>
+<td>Seeded random vertex offsets: hand-crafted asymmetry for stylized props. Keeps shared vertices welded.</td>
+<td><code>{type: jitter, amount: 0.004, seed: 7}</code></td>
+</tr>
+<tr>
+<td><code>mirror</code></td>
+<td>Mirror the geometry across a local plane and keep both halves in this part (<code>merge: union</code> fuses overlapping halves; <code>combine</code> keeps two shells). For separate named twins use part-level <code>mirror:</code>.</td>
+<td><code>{type: mirror, axis: x, at: 0.3, merge: combine}</code></td>
+</tr>
+<tr>
+<td><code>noise</code></td>
+<td>Smooth seeded displacement along vertex normals (organic lumps, rock surfaces).</td>
+<td><code>{type: noise, amount: 0.03, frequency: 5, seed: 2}</code></td>
+</tr>
+<tr>
+<td><code>repeat</code></td>
+<td>Repeat the geometry inside this part (linear offset or radial around a local axis); copies stay one part.</td>
+<td><code>{type: repeat, count: 3, offset: [0.3, 0, 0]}</code></td>
+</tr>
+<tr>
+<td><code>rotate</code></td>
+<td>Rotate in local space (degrees, X then Y then Z).</td>
+<td><code>{type: rotate, angles: [0, 45, 0]}</code></td>
+</tr>
+<tr>
+<td><code>scale</code></td>
+<td>Scale in local space.</td>
+<td><code>{type: scale, factor: [1, 1.2, 1]}</code></td>
+</tr>
+<tr>
+<td><code>shear</code></td>
+<td>Offset along <code>toward</code> proportionally to position along <code>axis</code> (lean).</td>
+<td><code>{type: shear, axis: y, toward: z, amount: -0.04}</code></td>
+</tr>
+<tr>
+<td><code>smooth</code></td>
+<td>Taubin smoothing (rounds forms without shrinking much).</td>
+<td><code>{type: smooth, iterations: 5, strength: 0.5}</code></td>
+</tr>
+<tr>
+<td><code>subdivide</code></td>
+<td>Split every triangle into four (midpoint; shape unchanged). Use before smooth/noise/bend.</td>
+<td><code>{type: subdivide, iterations: 1}</code></td>
+</tr>
+<tr>
+<td><code>subtract</code></td>
+<td>Boolean difference with a tool geometry (holes, notches, cut-outs). Cut faces keep the tool's provenance/material.</td>
+<td><code>{type: subtract, shape: {type: box, size: [0.1, 0.1, 0.2], ops: [{type: taper, scale: 0.5}]}, position: [0, 0.1, 0]}</code></td>
+</tr>
+<tr>
+<td><code>taper</code></td>
+<td>Scale the cross-section linearly along an axis (1 at the min end, <code>scale</code> at the max end).</td>
+<td><code>{type: taper, axis: y, scale: 0.8}</code></td>
+</tr>
+<tr>
+<td><code>translate</code></td>
+<td>Move in local space (mostly useful inside nested expressions).</td>
+<td><code>{type: translate, offset: [0, 0.1, 0]}</code></td>
+</tr>
+<tr>
+<td><code>twist</code></td>
+<td>Rotate cross-sections progressively around an axis.</td>
+<td><code>{type: twist, axis: y, angle: 20}</code></td>
+</tr>
+<tr>
+<td><code>union</code></td>
+<td>Boolean union with extra geometry (fuses into one closed surface).</td>
+<td><code>{type: union, shape: {type: cylinder, radius: 0.05, height: 0.8}, position: [0, 0, 0]}</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="material-archetypes">Material archetypes</h2>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>what</th>
+<th>example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>authored</code></td>
+<td>Texture set authored elsewhere (written by <code>sw import</code>): the part keeps its own UVs and textures, which pass through to the export unchanged. Not baked into the asset atlas; assign a procedural archetype to re-surface the part instead (docs/IMPORT.md).</td>
+<td><code>{archetype: authored, textures: {base_color: source/textures/body_base_color.png}, color: '#ffffff', roughness: 1.0}</code></td>
+</tr>
+<tr>
+<td><code>flat</code></td>
+<td>Uniform colour and roughness (v0.1 behaviour).</td>
+<td><code>{archetype: flat, color: '#8a5a36', roughness: 0.85}</code></td>
+</tr>
+<tr>
+<td><code>metal</code></td>
+<td>Stylized metal: subtle brushed variation, brighter worn edges, optional rust patches.</td>
+<td><code>{archetype: metal, color: '#5a5f66', roughness: 0.5, edge_wear: 0.5, rust: 0.2}</code></td>
+</tr>
+<tr>
+<td><code>painted</code></td>
+<td>Painted surface over an underlying material colour; worn edges reveal the under colour (chipped paint).</td>
+<td><code>{archetype: painted, color: '#3f6b8a', under_color: '#6b4a30', chips: 0.5}</code></td>
+</tr>
+<tr>
+<td><code>stone</code></td>
+<td>Stylized stone: blotchy tonal variation, darker cavities, lighter edges.</td>
+<td><code>{archetype: stone, color: '#8b8f94', variation: 0.4, edge_wear: 0.3}</code></td>
+</tr>
+<tr>
+<td><code>wood</code></td>
+<td>Stylized wood: growth rings along the part's long axis, streaky grain, optional worn edges.</td>
+<td><code>{archetype: wood, color: '#8a5a36', grain_strength: 0.35, grain_scale: 0.03, edge_wear: 0.3}</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="part-features">Part features</h2>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>what</th>
+<th>example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>array</code></td>
+<td>Named instances: {count, offset} or {count, radial: x|y|z, angle, start, center}. Optional: <code>each: {translate, rotate, scale}</code> evaluated per instance with i (0..n-1) and n (rotate/scale about the part's anchor point; rand(i) gives a repeatable 0..1 value), <code>skip: [indices]</code>. A list of arrays nests (rows x columns): names name_i_j. Radial step = angle/count for 360, else angle/(count-1).</td>
+<td><code>array: [{count: 8, offset: [0.2, 0, 0]}, {count: 5, offset: [0, 0.1, 0.15], each: {translate: ["(i % 2) * 0.1", 0, 0]}}]</code></td>
+</tr>
+<tr>
+<td><code>mirror</code></td>
+<td>x | y | z | {axis, at} | a list of those: twin instances named _left/_right, _bottom/_top, _back/_front.</td>
+<td><code>mirror: [x, z]</code></td>
+</tr>
+<tr>
+<td><code>origin</code></td>
+<td>center (default) | keep. keep: the shape keeps its own coordinates (tube paths, strut ends written in asset coordinates, including measure results); position becomes an offset; no anchor/attach. strut parts keep by default.</td>
+<td><code>{shape: {type: tube, radius: 0.02, path: [[0, 0, 0], [0, 0.5, 0], [0.4, 0.5, 0]], corner_radius: 0.1}, origin: keep}</code></td>
+</tr>
+<tr>
+<td><code>rotate_about</code></td>
+<td>center (default) | anchor: rotate about the unrotated shape's anchor point, which stays where position/attach puts it (a leaf tilting about its base, a lid about its hinge edge).</td>
+<td><code>{anchor: bottom, rotate_about: anchor, rotate: [0, 0, 35], position: [0, 0.3, 0]}</code></td>
+</tr>
+<tr>
+<td><code>component</code></td>
+<td>Instance a sub-assembly from components/NAME.yaml: <code>with</code> sets its public params, <code>materials</code> maps its slots, <code>origin: keep</code> places it by its own origin. Components nest (a component part may be a component instance, 4 levels). Instances accept measure (queries on parts built before), pivot (hinge the group), array, mirror.</td>
+<td><code>{component: plank_top, with: {length: 1.2, planks: 3}, materials: {top: oak}, origin: keep, position: [0, 0.45, 0]}</code></td>
+</tr>
+<tr>
+<td><code>asset</code></td>
+<td>Instance a whole other asset (project or library name, or a relative asset.yaml path), placed by its own origin (or by anchor/attach). <code>with</code> sets ITS own params (pack params are shared, read-only); <code>materials</code> maps its material names; parts are named <instance>_<part>. For modular kits: houses from module assets.</td>
+<td><code>{asset: house_wall_window, with: {shutters: 0}, rotate: [0, 180, 0], position: [1, 0.48, -2], array: {count: 3, offset: [2, 0, 0]}}</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="point-generators">Point generators</h2>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>what</th>
+<th>example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>arc</code></td>
+<td _3D="(3D" _degrees_="(degrees," _height="(height" _spiral_="(spiral)," along="along" axis_="axis)," center_="center," counter-clockwise="counter-clockwise" first="first" from="from" from_="from," gained="gained" normal_="normal)," only_="only)" plane="plane" plane:="plane:" radius_="radius," radius_end="radius_end" rise="rise" segments_="segments," the="the" to="to" xy_124_xz_124_yz="xy|xz|yz">points on a circular arc:</td>
+<td><code>polygon: [[0.5, 0], [0.7, 0], {arc: {center: [0, 0], radius: 0.7, from: 0, to: 180}}, [-0.5, 0], {arc: {center: [0, 0], radius: 0.5, from: 180, to: 0}}]   # a round arch ring</code></td>
+</tr>
+<tr>
+<td><code>helix</code></td>
+<td _degrees_="(degrees)," _rise="(rise" axis:="axis:" center_="center," per="per" pitch="pitch" radius_="radius," radius_end="radius_end" segments_per_turn_="segments_per_turn," start="start" turn_="turn)," turns_="turns," x_124_y_124_z_="x|y|z,">a helix around an axis:</td>
+<td><code>path: [{helix: {radius: 0.05, pitch: 0.02, turns: 4, axis: y}}]   # wound rope, spring, grip wrap</code></td>
+</tr>
+<tr>
+<td><code>line</code></td>
+<td from_="from," segments="segments" to_="to,">evenly spaced points from <code>from</code> to <code>to</code>:</td>
+<td><code>path: [[0, 0, 0], {line: {from: [0, 0.5, 0], to: [0.5, 0.5, 0], segments: 4}}]</code></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js" type="module"></script>
+      
+    
+  </body>
+</html>
