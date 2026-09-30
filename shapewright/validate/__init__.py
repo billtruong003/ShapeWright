@@ -45,4 +45,6 @@ def validator(name: str, layer: str, doc: str, codes: tuple):
 
 
 def load_builtin():
-    from . import checks  # noqa: F401
+    from . import checks, seams  # noqa: F401
+
+    seams.register()

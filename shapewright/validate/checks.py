@@ -95,7 +95,7 @@ def _bbox_gap(a: np.ndarray, b: np.ndarray) -> float:
 
 
 @validator("assembly", "assembly", "Connectivity of parts (nothing floats), grounding, origin placement, parts hidden inside others, unit sanity.",
-           ("ASM_FLOATING_PARTS", "ASM_FLOATING_TAGGED_NEAR", "ASM_FLOATING_TAG_UNUSED", "ASM_BELOW_GROUND", "ASM_NOT_GROUNDED", "ASM_ORIGIN_OFFSET", "ASM_HIDDEN_PART", "ASM_SCALE_SUSPICIOUS"))
+           ("ASM_FLOATING_PARTS", "ASM_FLOATING_TAGGED_NEAR", "ASM_FLOATING_TAG_UNUSED", "ASM_BELOW_GROUND", "ASM_NOT_GROUNDED", "ASM_ORIGIN_OFFSET", "ASM_HIDDEN_PART", "ASM_SCALE_SUSPICIOUS", "ASM_CONTACT_ONLY"))
 def assembly(asset: Asset, surface: Surface, metrics: dict):
     out = []
     placement = (asset.meta or {}).get("placement", "floor")
@@ -182,7 +182,7 @@ def assembly(asset: Asset, surface: Surface, metrics: dict):
                               parts[i].name, f"attach it to {nb[0]} (attach / measure) and remove floating_ok"))
     metrics["contacts"] = int(sum(len(v) for v in adj.values()) // 2)
 
-    hidden = []
+    hidden, contact_only = [], []
     # a part behind glass (alpha BLEND/MASK material) is visible, so see-through parts don't hide others
     see_through = {j for j in range(n) if (asset.materials.get(parts[j].material or "") or {}).get("alpha_mode", "OPAQUE") != "OPAQUE"}
     for i in range(n):
@@ -192,6 +192,14 @@ def assembly(asset: Asset, surface: Surface, metrics: dict):
         vol, uncovered = backend.solid_uncovered_volume(solid[i], [solid[j] for j in sorted(near)])
         if vol > 0 and uncovered < 0.02 * vol:
             hidden.append(parts[i].name)
+        elif vol > 0 and len(near) == len(adj[i]) and vol - uncovered < 1e-9:
+            # MODULAR_HOUSE_PACK_01: an awning met the wall only face to face; every layer passed, the render showed a hairline
+            contact_only.append(parts[i].name)
+    if contact_only:
+        out.append(_issue("ASM_CONTACT_ONLY", "info", "assembly",
+                          f"{len(contact_only)} part(s) touch their neighbours only face to face, with no overlap: {', '.join(contact_only[:8])}",
+                          contact_only[0], "fine for parts that merely rest; for mounted pieces embed 1-5 mm past the jitter so no hairline "
+                          "shows after rounding or export", parts=contact_only))
     for h in hidden:
         out.append(_issue("ASM_HIDDEN_PART", "warning", "assembly", "part is (almost) entirely inside other parts; its triangles are wasted", h,
                           "move it outward, enlarge it, or delete it"))

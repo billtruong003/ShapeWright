@@ -156,6 +156,8 @@ def probe(asset, tol=5e-4, min_area=1e-5):
 
 
 def main(argv):
+    # Phase 20: the same algorithm now runs as the `seams` validator (shapewright/validate/seams.py);
+    # this probe stays as the experiment instrument with its own tolerance switch and full pair listing.
     from shapewright.assemble import build, resolve_asset_path
 
     tol, min_area = 5e-4, 1e-5

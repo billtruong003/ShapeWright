@@ -64,6 +64,7 @@ warnings. It never produces errors, because style is a judgement call.
 | `GEO_PART_FRAGMENTED` | info | a part consists of several disconnected shells (expected for `combine`, `repeat`, multi-shell files) |
 | `GEO_CUT_SPLIT` | warning | a subtract/intersect/boolean/flat_bottom cut split a piece into several (reported at the op) |
 | `GEO_SLIVER_TRIS` | info | more than 25% very thin triangles (shading artefacts) |
+| `OP_FACES_INVERTED` | warning | a displacing op (`jitter`, `noise`, `inflate`) turned faces inside out: the geometry is thinner than the displacement (the mesh stays closed, so the checks above pass; it renders as dark or missing patches). Reported at the op |
 
 ### assembly (semantic structure)
 | Code | Sev | Meaning |
@@ -76,6 +77,9 @@ warnings. It never produces errors, because style is a judgement call.
 | `ASM_ORIGIN_OFFSET` | warning | origin outside the footprint of the grounded parts |
 | `ASM_HIDDEN_PART` | warning | a part is (almost) entirely inside other parts: wasted triangles (see-through `alpha_mode` BLEND/MASK parts, e.g. lantern glass, do not count as hiding) |
 | `ASM_SCALE_SUSPICIOUS` | warning | size suggests a units mistake (< 1 cm or > 200 m) |
+| `ASM_CONTACT_ONLY` | info | parts touch their neighbours only face to face, with no overlap. Fine for parts that rest; mounted pieces should embed 1–5 mm past the jitter so no hairline shows after rounding or export |
+| `SEAM_COPLANAR_OVERLAP` | warning | two parts share at least 0.5 cm² of the same surface, facing the same way, within 1 mm: it z-fights in an engine. Overlap buried inside a third closed part (generalised winding number) and back-to-back contact are not reported. Data: `parts`, `area_m2`. Fix: depth ranks (offset one face by a few mm), end one part inside the other, or cut one |
+| `SEAM_SKIPPED` | info | the seam check is skipped above 400k triangles |
 
 ### budget (production profile)
 | Code | Sev | Meaning |

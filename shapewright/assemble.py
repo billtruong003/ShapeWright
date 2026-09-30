@@ -316,6 +316,7 @@ def apply_ops(mesh: Mesh, ops: Any, env: dict, ctx: S.Ctx, where: str, asset_dir
         b = BuildCtx(env, ctx, path, asset_dir, materials)
         if frame is not None:
             b.frame = np.asarray(frame, float)
+        before = mesh
         try:
             mesh = spec.fn(mesh, args, b)
         except LimitError as e:
@@ -326,7 +327,22 @@ def apply_ops(mesh: Mesh, ops: Any, env: dict, ctx: S.Ctx, where: str, asset_dir
             return None
         if not _check_mesh(mesh, spec.name, path, ctx):
             return None
+        if spec.topology == "preserve" and len(before.F) == len(mesh.F) and len(mesh.F):
+            flipped = _flipped_faces(before, mesh)
+            if flipped:  # MODULAR_HOUSE_PACK_01: jitter turned a 1 mm shingle wedge inside out; every layer passed
+                ctx._add(Issue("OP_FACES_INVERTED", "warning", f"{spec.name} turned {flipped} face(s) inside out (the geometry is thinner "
+                               "than the displacement)", path, "geometry",
+                               "lower the amount below half the thinnest dimension, or thicken the shape"))
     return mesh
+
+
+def _flipped_faces(a: Mesh, b: Mesh) -> int:
+    def normals(m):
+        v = m.V[m.F]
+        return np.cross(v[:, 1] - v[:, 0], v[:, 2] - v[:, 0])
+    na, nb = normals(a), normals(b)
+    big = np.linalg.norm(na, axis=1) > 1e-12
+    return int(np.sum(np.einsum("ij,ij->i", na[big], nb[big]) < 0))
 
 
 # --------------------------------------------------------------------------- profiles, materials
