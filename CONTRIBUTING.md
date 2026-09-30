@@ -79,6 +79,10 @@ flag, and a round-trip test.
   output in geometry, renders or exports.
 - **Golden geometry:** if you intentionally change modelling behaviour, run
   `python3 tests/update_golden.py` and explain the change in the commit message.
+  Each asset has an exact hash per platform and a tolerant signature (triangles, bounds, area, volume;
+  `tests/golden.py`). Booleans round differently on Linux, Windows and macOS, so a hash is only compared on the
+  platform that recorded it; the signature is compared everywhere. Running the script on an OS with the same
+  geometry only adds that OS's hash.
 - **Dependencies:** permissive licences only (BSD, MIT, Apache-2.0, zlib, ISC,
   HPND). Record new ones in `docs/RESEARCH.md#licences` and `requirements.txt`
   with the reason.

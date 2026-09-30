@@ -3,6 +3,7 @@
 import hashlib
 import json
 import struct
+import sys
 from pathlib import Path
 
 import pytest
@@ -10,12 +11,14 @@ import pytest
 from shapewright.assemble import ROOT, build
 from shapewright.export.gltf import write_glb
 from shapewright.export.verify import roundtrip
-from shapewright.mesh import concat, geometry_hash
+from shapewright.mesh import concat, geometry_hash, geometry_signature
 from shapewright.surface import build_surface
 from shapewright.validate.run import run_validation
 
+sys.path.insert(0, str(Path(__file__).parent))
+import golden  # noqa: E402
+
 ASSETS = sorted(p.parent.name for p in (ROOT / "assets").glob("*/asset.yaml"))
-GOLDEN = Path(__file__).parent / "golden.json"
 
 
 @pytest.mark.parametrize("name", ASSETS)
@@ -29,11 +32,17 @@ def test_benchmark_asset_has_no_errors(name):
 def test_geometry_matches_golden(name):
     """Refactors must not silently change modelling behaviour.
     If a change is intentional: python tests/update_golden.py"""
-    golden = json.loads(GOLDEN.read_text())
-    a = build(ROOT / "assets" / name)
-    h = geometry_hash(concat([p.mesh for p in a.parts]))
-    assert name in golden, f"{name}: new asset has no golden hash yet; record it with python tests/update_golden.py"
-    assert golden[name] == h, f"{name}: geometry changed ({golden[name]} -> {h}); if intended: python tests/update_golden.py"
+    entry = golden.load().get(name)
+    assert entry, f"{name}: new asset has no golden record yet; record it with python tests/update_golden.py"
+    mesh = concat([p.mesh for p in build(ROOT / "assets" / name).parts])
+    diff = golden.sig_diff(geometry_signature(mesh), entry["sig"])
+    assert not diff, f"{name}: geometry changed: {'; '.join(diff)}; if intended: python tests/update_golden.py"
+    recorded = entry["hash"].get(golden.platform_key())
+    if recorded is None:  # no exact hash from this OS yet: the signature above is the check
+        return
+    h = geometry_hash(mesh)
+    assert recorded == h, (f"{name}: geometry changed below the signature tolerance ({recorded} -> {h} on "
+                           f"{golden.platform_key()}); if intended: python tests/update_golden.py")
 
 
 def test_export_is_byte_deterministic_and_roundtrips(tmp_path):

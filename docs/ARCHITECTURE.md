@@ -342,8 +342,9 @@ untrusted: asset sources written by agents in the loop, imported files (future)
 - **Defect-injection tests:** each validator must fire on a deliberately
   broken asset (floating part, below ground, budget, open mesh, inverted, UV
   overlap, hidden part, schema errors, cycles, unsafe expressions).
-- **Golden geometry:** a hash of every benchmark's geometry (rounded) in
-  `tests/golden.json`. A refactor cannot silently change modelling behaviour.
+- **Golden geometry:** a hash of every benchmark's geometry (rounded) per platform, plus a tolerant signature
+  (triangles, bounds, area, volume) checked on every platform, in `tests/golden.json` (`tests/golden.py`).
+  A refactor cannot silently change modelling behaviour; CI runs on Linux, Windows and macOS.
   Intentional changes regenerate the golden file (`python tests/update_golden.py`)
   and show up in review.
 - **Determinism:** GLB bytes are identical across builds, and there is a

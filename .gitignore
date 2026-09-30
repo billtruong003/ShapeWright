@@ -15,3 +15,4 @@ dist/
 website/reference/
 website/gallery/
 website/gallery.md
+.venv/
