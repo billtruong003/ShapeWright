@@ -544,6 +544,12 @@ def cmd_materials(a):
     return 0
 
 
+def cmd_mcp(a):
+    from .mcp_server import main as mcp_main
+
+    return mcp_main(transport=a.transport, project=a.project, host=a.host, port=a.port)
+
+
 def cmd_init(a):
     from . import paths
 
@@ -680,6 +686,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--out", help="sheet path (default: .build/packs/<tag>.png)")
     p.add_argument("--size", type=int, default=300, help="tile size")
     p.add_argument("--json", action="store_true")
+    p = add("mcp", cmd_mcp, "run the MCP server (tools: brief, new, write_source, review, render, export, ...)", asset=False)
+    p.add_argument("--transport", choices=("stdio", "streamable-http", "sse"), default="stdio")
+    p.add_argument("--project", help="project folder (default: $SW_PROJECT, a shapewright.yaml above cwd, or cwd)")
+    p.add_argument("--host", default="127.0.0.1", help="HTTP transports only (default: localhost)")
+    p.add_argument("--port", type=int, default=8000, help="HTTP transports only")
     p = add("init", cmd_init, "make a folder a Shapewright project (assets/, packs/, components/ + marker)", asset=False)
     p.add_argument("dir", nargs="?", default=".")
     add("doctor", cmd_doctor, "environment check", asset=False)
@@ -688,7 +699,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv=None) -> int:
     args = build_parser().parse_args(argv)
-    if hasattr(signal, "SIGALRM") and args.cmd != "workbench":  # the server runs until stopped; each command it runs has its own
+    if hasattr(signal, "SIGALRM") and args.cmd not in ("workbench", "mcp"):  # the server runs until stopped; each command it runs has its own
         def _timeout(*_):
             raise TimeoutError(f"command exceeded {LIMITS.build_timeout_s}s (see shapewright/limits.py)")
 
@@ -697,7 +708,7 @@ def main(argv=None) -> int:
     t0 = time.perf_counter()
     try:
         rc = args.fn(args)
-        if not getattr(args, "json", False) and args.cmd not in ("caps", "doc"):
+        if not getattr(args, "json", False) and args.cmd not in ("caps", "doc", "mcp"):
             print(f"({args.cmd}: {time.perf_counter() - t0:.1f} s)", file=sys.stderr)
         return rc
     except SourceError as e:

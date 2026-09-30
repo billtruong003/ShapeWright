@@ -40,6 +40,7 @@ COMMANDS = {
     "pack ASSET... | --pack NAME | --tag TAG": "review assets as one set: common-scale sheet + material/param/density consistency report",
     "materials ASSET": "material sheet: every material on reference shapes, textured + albedo (semantic material review)",
     "bench": "validate every asset under assets/ (CI)",
+    "mcp [--transport stdio|streamable-http]": "MCP server: every loop step as a tool, review/render return images (pip install shapewright[mcp])",
     "init [DIR]": "make a folder a project: assets/, packs/, components/, styles/, profiles/ + shapewright.yaml (shadows the library)",
     "doctor": "check the environment and optional tools",
 }
