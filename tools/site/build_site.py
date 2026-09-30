@@ -49,7 +49,7 @@ def reference():
         out.append("")
     (SITE / "reference" / "vocabulary.md").write_text("\n".join(out))
     codes = ["# Issue codes", "", "*Generated from the validator registry. Meanings and fixes: "
-             "[VALIDATION.md](https://github.com/billtruong003/shapewright/blob/main/docs/VALIDATION.md).*", "",
+             "[VALIDATION.md](https://github.com/billtruong003/ShapeWright/blob/main/docs/VALIDATION.md).*", "",
              "| layer | validator | what it checks | codes |", "|---|---|---|---|"]
     for v in m["validators"]:
         codes.append(f"| {v['layer']} | `{v['name']}` | {v['doc']} | {' '.join(f'`{c}`' for c in v['codes'])} |")
@@ -115,7 +115,7 @@ def gallery():
         page += [f'<figure markdown><model-viewer src="models/{name}.glb" camera-controls '
                  f'style="width:100%;height:300px;background:#ecebe7;border-radius:8px" alt="{caption}">'
                  f'<img slot="poster" src="img/{name}.png" alt="{caption}" style="width:100%;height:300px;object-fit:contain"></model-viewer>',
-                 f'<figcaption>{caption}. <a href="https://github.com/billtruong003/shapewright/blob/main/assets/{name}/asset.yaml">source</a>'
+                 f'<figcaption>{caption}. <a href="https://github.com/billtruong003/ShapeWright/blob/main/assets/{name}/asset.yaml">source</a>'
                  '</figcaption></figure>', ""]
     page += ["</div>", ""]
     (SITE / "gallery.md").write_text("\n".join(page))

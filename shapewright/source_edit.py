@@ -94,10 +94,17 @@ def set_params(path: Path, overrides: dict) -> list[str]:
     params = data.get("params") or {}
     lines = text.split("\n")
     changes = []
+    inherited = _inherited_params(path, data)
+    for k in [k for k in overrides if k not in params]:
+        if k in inherited.get("pack", set()):
+            raise ValueError(f"'{k}' belongs to pack '{data.get('pack')}' and is read-only here; change it in the pack for every member")
+        if k not in inherited.get("base", {}):
+            raise ValueError(f"'{k}' is not a param of this source file.{suggest(k, {**params, **inherited.get('base', {})})}")
+        spec = inherited["base"][k]  # a variant overrides an inherited param: add it under its own params:
+        lines = _insert_param(lines, k, spec)
+        params = {**params, k: spec}
+        data = {**data, "params": params}
     for k, v in overrides.items():
-        if k not in params:
-            raise ValueError(f"'{k}' is not a param of this source file.{suggest(k, params)}"
-                             " (params inherited from a base or pack are set in that file, or add them under params:)")
         old = params[k].get("value") if isinstance(params[k], dict) else params[k]
         if isinstance(params[k], dict) and isinstance(v, (int, float)) and not isinstance(v, bool):
             lo, hi = params[k].get("min"), params[k].get("max")
@@ -114,9 +121,35 @@ def set_params(path: Path, overrides: dict) -> list[str]:
         cur = cur.get("value") if isinstance(cur, dict) else cur
         if cur != v:
             raise ValueError(f"editing '{k}' did not produce {v!r} (read back {cur!r}); the file was not changed")
-    rest_before = {k: v for k, v in data.items() if k != "params"}
+    rest_before = {k: v for k, v in (yaml.safe_load(text) or {}).items() if k != "params"}
     rest_after = {k: v for k, v in (yaml.safe_load(new_text) or {}).items() if k != "params"}
     if rest_before != rest_after:
         raise ValueError("the edit touched more than params; the file was not changed")
     path.write_text(new_text)
     return changes
+
+
+def _inherited_params(path: Path, data: dict) -> dict:
+    """Params a variant inherits from its `extends` base (settable here) and its pack's (read-only)."""
+    from .source import load_source, read_yaml, resolve_pack_path
+
+    out: dict = {"base": {}, "pack": set()}
+    if data.get("pack"):
+        out["pack"] = set((read_yaml(resolve_pack_path(str(data["pack"]), path)).get("params") or {}))
+    if "extends" in data:
+        merged = load_source(path).get("params") or {}
+        out["base"] = {k: v for k, v in merged.items() if k not in out["pack"] and k not in (data.get("params") or {})}
+    return out
+
+
+def _insert_param(lines: list[str], name: str, spec) -> list[str]:
+    """Add `name: <base spec>` under the file's params: (creating the key if needed); the value is then set as usual."""
+    entry = f"  {name}: " + (_fmt(spec) if not isinstance(spec, dict) else
+                             "{" + ", ".join(f"{k}: {_fmt(v)}" for k, v in spec.items() if k in ("value", "min", "max")) + "}")
+    for i, line in enumerate(lines):
+        stripped = line.split("#", 1)[0].rstrip()
+        if stripped in ("params: {}", "params:{}"):
+            return lines[:i] + ["params:", entry] + lines[i + 1:]
+        if stripped == "params:":
+            return lines[:i + 1] + [entry] + lines[i + 1:]
+    return lines + ["params:", entry]

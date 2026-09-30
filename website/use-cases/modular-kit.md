@@ -40,4 +40,4 @@ sw validate shed
 - **Seams.** The `seams` validator flags coplanar same-facing overlaps between parts (z-fighting), which every other check passes. The first cottage had 6 visible ones.
 - **Stress test.** Change `bay`, `storey`, `timber`, `post` and `pitch` in the pack and rebuild. All three houses re-flow with no edits.
 
-Read the full record: [MODULAR_HOUSE_PACK_01](https://github.com/billtruong003/shapewright/blob/main/docs/experiments/MODULAR_HOUSE_PACK_01.md).
+Read the full record: [MODULAR_HOUSE_PACK_01](https://github.com/billtruong003/ShapeWright/blob/main/docs/experiments/MODULAR_HOUSE_PACK_01.md).

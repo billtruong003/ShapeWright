@@ -5,7 +5,7 @@ Claude Code on the web runs in a container with your repository cloned. Shapewri
 1. **Put Shapewright in the repository you give the session.** Either work in a fork or clone of `shapewright`, or add it to your game repo:
 
     ```bash
-    pip install "git+https://github.com/billtruong003/shapewright"   # in the environment's setup script
+    pip install "git+https://github.com/billtruong003/ShapeWright"   # in the environment's setup script
     sw init art                                                       # once; commit art/shapewright.yaml
     ```
 

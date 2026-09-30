@@ -23,7 +23,7 @@ Every phase follows the same run protocol (§1) and the same record format (§2)
 | 18 docs site | `phase/18-docs-site` | PARTIAL (deploy not run) | docs/phases/PHASE_18.md |
 
 The branches are **stacked**: each one contains the ones above it, so `phase/18-docs-site` has everything.
-None is merged into `main`.
+All of them were fast-forwarded into `main` on 2026-09-30; the branches stay for review.
 
 ---
 

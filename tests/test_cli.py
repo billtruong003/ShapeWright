@@ -126,3 +126,18 @@ def test_a_broken_component_file_does_not_break_caps_or_doc(monkeypatch, tmp_pat
     assert main(["caps", "--json"]) == 0
     m = json.loads(capsys.readouterr().out)
     assert "unreadable" in m["components"]["broken"]
+
+
+def test_sw_set_on_a_variant_adds_the_inherited_param(tmp_path, monkeypatch):
+    # Phase 18 docs: `sw set` refused every param a variant inherits from its base
+    monkeypatch.setenv("SW_PROJECT", str(tmp_path))
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "assets").mkdir()
+    assert main(["new", "my_barrel", "--from", "barrel"]) == 0
+    assert main(["set", "my_barrel", "height=0.93"]) == 0
+    f = tmp_path / "assets" / "my_barrel" / "asset.yaml"
+    import yaml
+
+    assert yaml.safe_load(f.read_text())["params"]["height"]["value"] == 0.93
+    assert "extends:" in f.read_text()
+    assert main(["set", "my_barrel", "height=5"]) == 2  # still range-checked against the base's min/max

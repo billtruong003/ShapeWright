@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: "3.11"}
-      - run: pip install "git+https://github.com/billtruong003/shapewright"
+      - run: pip install "git+https://github.com/billtruong003/ShapeWright"
       - run: sw bench --dir assets
       - run: for a in assets/*/; do sw review "$(basename "$a")" > /dev/null; done   # sheets as build artifacts
       - uses: actions/upload-artifact@v4

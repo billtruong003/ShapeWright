@@ -1,6 +1,7 @@
 site_name: Shapewright
 site_description: Agent-native 3D modelling for game assets. Declarative sources, deterministic validation, inspection renders, game-ready GLB.
-repo_url: https://github.com/billtruong003/shapewright
+repo_url: https://github.com/billtruong003/ShapeWright
+site_url: https://billtruong003.github.io/ShapeWright/
 docs_dir: website
 site_dir: .build/site
 theme:

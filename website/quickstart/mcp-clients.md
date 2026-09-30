@@ -23,4 +23,4 @@ The client gets 16 tools: `guide`, `brief`, `doc`, `list_assets`, `read_source`,
 - `review`, `render`, `compare` and `pack_review` return **images**, so the model sees what it made.
 - Tools take asset names, never paths. Writes stay in the project's `assets/`, and library examples are read-only until copied.
 
-Remote-only clients connect over HTTPS: run `sw mcp --transport streamable-http --port 8000` behind an authenticating tunnel or proxy. Full details are in [docs/MCP.md](https://github.com/billtruong003/shapewright/blob/main/docs/MCP.md).
+Remote-only clients connect over HTTPS: run `sw mcp --transport streamable-http --port 8000` behind an authenticating tunnel or proxy. Full details are in [docs/MCP.md](https://github.com/billtruong003/ShapeWright/blob/main/docs/MCP.md).

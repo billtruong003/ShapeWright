@@ -1,11 +1,12 @@
 name: docs
+# Builds the site and publishes it to the gh-pages branch (Settings -> Pages -> Source: Deploy from a branch, gh-pages / root).
 on:
   push: {branches: [main]}
   workflow_dispatch:
-permissions: {contents: read, pages: write, id-token: write}
+permissions: {contents: write}
 concurrency: {group: pages, cancel-in-progress: true}
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -13,13 +14,8 @@ jobs:
         with: {python-version: "3.11"}
       - run: pip install -r requirements.txt "mkdocs>=1.6,<2" "mkdocs-material>=9.5"
       - run: python -m pytest -q tests/test_site_docs.py      # every `# run` block in the tutorials still works
-      - run: python tools/site/build_site.py --build             # reference + gallery, then mkdocs build --strict
-      - uses: actions/upload-pages-artifact@v3
-        with: {path: .build/site}
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment: {name: github-pages, url: "${{ steps.d.outputs.page_url }}"}
-    steps:
-      - id: d
-        uses: actions/deploy-pages@v4
+      - run: python tools/site/build_site.py                     # generated reference + gallery
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python -m mkdocs gh-deploy --force --strict

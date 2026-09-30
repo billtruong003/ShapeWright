@@ -1,7 +1,7 @@
 # Claude Code (local)
 
 ```bash
-git clone https://github.com/billtruong003/shapewright && cd shapewright
+git clone https://github.com/billtruong003/ShapeWright && cd shapewright
 pip install -r requirements.txt          # or: pip install -e ".[dev,mcp]"
 ./sw doctor
 claude                                   # CLAUDE.md -> AGENTS.md, and the shapewright skill, load automatically
@@ -10,7 +10,7 @@ claude                                   # CLAUDE.md -> AGENTS.md, and the shape
 For your own project instead of the Shapewright repository:
 
 ```bash
-pip install "git+https://github.com/billtruong003/shapewright"
+pip install "git+https://github.com/billtruong003/ShapeWright"
 cd my_game && sw init art && cd art
 claude mcp add shapewright -- sw mcp --project "$PWD"   # optional: tools instead of shell commands
 ```
