@@ -11,26 +11,38 @@ asset:
 export: {merge: by_material}
 collision: {mode: single_box}
 
+params:
+  shutters: {value: 1, min: 0, max: 1, doc: 1 = open shutters beside the window}
+  size:     {value: 1, min: 0, max: 2, doc: "window size family: 0 small, 1 standard, 2 tall (pack win_*); every size keeps the same head height"}
+  ww:   win_w + (win_w_small - win_w) * (size == 0)
+  wh:   win_h + (win_h_small - win_h) * (size == 0) + (win_h_tall - win_h) * (size == 2)
+  sill: win_sill + win_h - wh
+  seed:     {value: 0, doc: jitter seed offset (neighbouring walls look hand-made, not cloned)}
+
 parts:
   wall:
     component: house_wall
     with: {span: bay - post, height: panel_h, depth: wall_t, plaster: plaster_t, timber: timber, chamfer: chamfer, wear: wear,
-           opening: 1, op_w: win_w, op_h: win_h, op_sill: win_sill + sink}
+           opening: 1, op_w: ww, op_h: wh, op_sill: sill + sink, seed: seed}
     materials: {timber: timber, plaster: plaster}
     origin: keep
     position: [0, 0, 0]
   window:
     component: house_window_frame
-    with: {w: win_w, h: win_h, depth: wall_t, frame: frame}
+    with: {w: ww, h: wh, depth: wall_t, frame: frame}
     materials: {timber: timber, glass: glass}
     origin: keep
-    position: [0, win_sill + sink, 0]
+    position: [0, sill + sink, 0]
   shutter:
     doc: open shutter against the outer face (reuses the blacksmith kit's plank_top component)
     component: plank_top
-    with: {length: win_h, width: win_w / 2, thickness: 0.045, planks: 3, gap: 0.008, wear: wear, batten_from_end: 0.15}
+    with: {length: wh, width: ww / 2, thickness: 0.045, planks: 3, gap: 0.008, wear: wear, batten_from_end: 0.15}
     materials: {top: planks, under: timber}
     rotate: [90, 0, 90]
-    anchor: center
+    enabled: shutters
+    measure:
+      frame_box: {bounds: window}
+      stud: {bounds: wall_stud_1}
+    anchor: back_left
     mirror: x
-    position: [win_w / 2 + frame + win_w / 4 + 0.02, win_sill + sink + win_h / 2, wall_t / 2 + 0.024]   # battens 5 mm into the stud (hand-derived: instances cannot measure each other)
+    position: [frame_box.max.x + 0.02, frame_box.center.y, stud.max.z - 0.005]   # beside the frame, 5 mm into the measured stud face

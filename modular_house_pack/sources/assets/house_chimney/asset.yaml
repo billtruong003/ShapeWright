@@ -11,10 +11,14 @@ asset:
 export: {merge: by_material}
 collision: {mode: single_box}
 
+params:
+  height: {value: base_h + storey + 3.0, doc: cap top above the ground}
+  shoulder: {value: base_h + storey - 0.3, doc: where the wide base steps in}
+
 parts:
   chimney:
     component: house_chimney
-    with: {height: base_h + storey + 3.0, shoulder: base_h + storey - 0.3}
+    with: {height: height, shoulder: shoulder}
     materials: {stone: stone, roof: roof}
     origin: keep
     position: [0, 0, 0]

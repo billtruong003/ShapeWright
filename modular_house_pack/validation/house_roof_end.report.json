@@ -1,7 +1,7 @@
 {
  "asset": "house_roof_end",
  "status": "PASS",
- "source_hash": "f447dfd3397d",
+ "source_hash": "ae3ec6870571",
  "counts": {
   "error": 0,
   "warning": 0,
@@ -20,7 +20,7 @@
  "metrics": {
   "triangles": 538,
   "parts": 5,
-  "sliver_triangles": 20,
+  "sliver_triangles": 22,
   "size_m": [
    0.49,
    2.9164,
@@ -37,7 +37,7 @@
   "budget_triangles": 3000,
   "materials": 2,
   "draw_calls": 2,
-  "uv_utilization": 0.298,
+  "uv_utilization": 0.299,
   "uv_overlap": 0.0,
   "uv_owners": 5,
   "texel_density_px_m": 180.2,
@@ -45,12 +45,13 @@
   "texture": {
    "resolution": 1024,
    "target_px_m": 100.0,
-   "achieved_px_m": 180.2,
+   "achieved_px_m": 179.5,
    "memory_kb": 8192,
    "lifecycle": {
     "DERIVED": 5
    }
   },
+  "seam_zfight_pairs": 0,
   "gltf_validator": {
    "numErrors": 0,
    "numWarnings": 0,
@@ -111,17 +112,17 @@
    "msg": "materials declared but unused: glass, iron, planks, plaster, stone"
   },
   {
-   "code": "UV_UNLOCKED",
+   "code": "UV_REGION_REGENERATED",
    "severity": "info",
    "layer": "surface",
    "where": "uv",
-   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
-   "hint": "run `sw uv ASSET lock` before texturing or baking"
+   "msg": "geometry changed since the lock; charts regenerated inside their fixed regions: verge_shingles_even, verge_shingles_odd",
+   "hint": "textures/bakes for these parts must be redone; other parts are unaffected"
   }
  ],
  "export": {
   "path": "assets/house_roof_end/export/house_roof_end.glb",
-  "bytes": 304928,
+  "bytes": 306036,
   "nodes": 3,
   "meshes": 2,
   "materials": 2,

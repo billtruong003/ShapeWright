@@ -11,10 +11,14 @@ asset:
 export: {merge: by_material}
 collision: {mode: single_box}
 
+params:
+  depth: {value: wall_t, doc: "beam depth across the wall line (a floor band filling the outer half of the wall: wall_t / 2)"}
+  seed:  {value: 3, doc: jitter seed}
+
 parts:
   beam:
     component: house_timber
-    with: {length: bay - post, w: band_h, d: wall_t, chamfer: chamfer, wear: wear, seed: 3}
+    with: {length: bay - post, w: band_h, d: depth, chamfer: chamfer, wear: wear, seed: seed}
     materials: {timber: timber}
     origin: keep
     rotate: [0, 0, 90]

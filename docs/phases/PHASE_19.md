@@ -8,6 +8,8 @@
 
 The townhouse and workshop were only partly converted (their shopfronts), so the "house sources ≥ 50 % shorter" gate holds for one house of three.
 
+> **Closed by Phase 19b** (docs/phases/PHASE_19b.md): the townhouse (309 → 66 lines) and the workshop (437 → 95) are now built from module assets too, so the gate holds for all three houses.
+
 Branch `phase/19-composition`, stacked on `phase/17-mcp`. It is not merged.
 
 ## What shipped

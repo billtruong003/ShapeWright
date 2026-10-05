@@ -11,11 +11,14 @@ asset:
 export: {merge: by_material}
 collision: {mode: single_box}
 
+params:
+  seed: {value: 7, doc: jitter seed offset (neighbouring walls look hand-made, not cloned)}
+
 parts:
   wall:
     component: house_wall
     with: {span: bay - post, height: panel_h, depth: wall_t, plaster: plaster_t, timber: timber, chamfer: chamfer, wear: wear,
-           opening: 1, op_w: win_w * 0.7, op_h: win_h * 0.9, op_sill: win_sill + sink + 0.1, braces: 1, seed: 7}
+           opening: 1, op_w: win_w * 0.7, op_h: win_h * 0.9, op_sill: win_sill + sink + 0.1, braces: 1, seed: seed}
     materials: {timber: timber, plaster: plaster}
     origin: keep
     position: [0, 0, 0]

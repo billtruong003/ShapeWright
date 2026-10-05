@@ -4,2593 +4,2733 @@ version: 1
 resolution: 2048
 padding_px: 8
 owners:
-  band_fb_0_0_beam:
+  band_fb_0_0_beam_beam:
     rect:
-    - 0.517866
-    - 0.637289
-    - 0.559694
-    - 0.679087
-    geometry: a706399f98eb10d2
-  band_fb_0_1_beam:
+    - 0.636528
+    - 0.62516
+    - 0.67639
+    - 0.66501
+    geometry: dd4e850d91bb4bda
+  band_fb_0_1_beam_beam:
     rect:
-    - 0.472132
-    - 0.637289
-    - 0.51396
-    - 0.679087
-    geometry: d7b1d19e59231cf1
-  band_fb_1_0_beam:
+    - 0.592758
+    - 0.62516
+    - 0.632621
+    - 0.66501
+    geometry: bc7535fd45a5510d
+  band_fb_1_0_beam_beam:
     rect:
-    - 0.426398
-    - 0.637289
-    - 0.468226
-    - 0.679087
-    geometry: ee56069fd87d02a7
-  band_fb_1_1_beam:
+    - 0.370715
+    - 0.62516
+    - 0.41228
+    - 0.6667
+    geometry: 36c499f17aed4ab6
+  band_fb_1_1_beam_beam:
     rect:
-    - 0.380664
-    - 0.637289
-    - 0.422492
-    - 0.679087
-    geometry: 151eb787d10e519e
-  band_fb_2_0_beam:
+    - 0.325244
+    - 0.62516
+    - 0.366809
+    - 0.6667
+    geometry: c310cc95ae1aba72
+  band_fb_2_0_beam_beam:
     rect:
-    - 0.289197
-    - 0.637289
-    - 0.331024
-    - 0.679087
-    geometry: 35d730cbf49e14ae
-  band_fb_2_1_beam:
+    - 0.548989
+    - 0.62516
+    - 0.588852
+    - 0.66501
+    geometry: 6e419052c1f86423
+  band_fb_2_1_beam_beam:
     rect:
-    - 0.334931
-    - 0.637289
-    - 0.376758
-    - 0.679087
-    geometry: 113f831c8315e0c9
-  band_side_0_0_beam:
+    - 0.50522
+    - 0.62516
+    - 0.545083
+    - 0.66501
+    geometry: 3c8e501cded9eef3
+  band_side_0_0_beam_beam:
     rect:
-    - 0.609361
-    - 0.637289
-    - 0.650528
-    - 0.678435
-    geometry: 86a7ffb1c15637bf
-  band_side_0_1_beam:
+    - 0.143359
+    - 0.62516
+    - 0.184924
+    - 0.666701
+    geometry: 7e52069ccb372f6a
+  band_side_0_1_beam_beam:
     rect:
-    - 0.699508
-    - 0.637289
-    - 0.740675
-    - 0.678435
-    geometry: 237409460bf19d02
-  band_side_1_0_beam:
+    - 0.234302
+    - 0.62516
+    - 0.275866
+    - 0.666701
+    geometry: 22c4cd1a9cea3b6f
+  band_side_1_0_beam_beam:
     rect:
-    - 0.744582
-    - 0.637289
-    - 0.785749
-    - 0.678435
-    geometry: e6f68738baded902
-  band_side_1_1_beam:
+    - 0.279773
+    - 0.62516
+    - 0.321338
+    - 0.666701
+    geometry: 8ba5ae19f072acd3
+  band_side_1_1_beam_beam:
     rect:
-    - 0.654435
-    - 0.637289
-    - 0.695602
-    - 0.678435
-    geometry: 07bb9e57941f7cf3
-  chimney_base:
+    - 0.18883
+    - 0.62516
+    - 0.230395
+    - 0.666701
+    geometry: 5ecdee14d6ec812f
+  chimney_chimney_base:
     rect:
-    - 0.662947
-    - 0.256165
-    - 0.756541
-    - 0.34973
-    geometry: d05313c93a2ecdc5
-  chimney_base_band_0:
+    - 0.654592
+    - 0.25171
+    - 0.745921
+    - 0.343012
+    geometry: 9cec555e0b1cd73f
+  chimney_chimney_base_band_0:
     rect:
-    - 0.30095
-    - 0.685538
-    - 0.339871
-    - 0.724474
-    geometry: 3f2ec5ed92111fbc
-  chimney_base_band_1:
+    - 0.338047
+    - 0.67309
+    - 0.376291
+    - 0.711326
+    geometry: a272451c80219b6b
+  chimney_chimney_base_band_1:
     rect:
-    - 0.429433
-    - 0.685538
-    - 0.468355
-    - 0.724474
-    geometry: 7c7393e5385cc1c1
-  chimney_base_band_2:
+    - 0.422348
+    - 0.67309
+    - 0.460592
+    - 0.711326
+    geometry: 4f17859e8107460a
+  chimney_chimney_base_band_2:
     rect:
-    - 0.386605
-    - 0.685538
-    - 0.425527
-    - 0.724474
-    geometry: 7e5aa35cfc7ae600
-  chimney_base_band_3:
+    - 0.380198
+    - 0.67309
+    - 0.418442
+    - 0.711326
+    geometry: 4c005cb3c0841f19
+  chimney_chimney_base_band_3:
     rect:
-    - 0.343777
-    - 0.685538
-    - 0.382699
-    - 0.724474
-    geometry: 40d0e20ecd5b2f0e
-  chimney_base_band_4:
+    - 0.464498
+    - 0.67309
+    - 0.502743
+    - 0.711326
+    geometry: 5d95f17e87360fcd
+  chimney_chimney_base_band_4:
     rect:
-    - 0.258122
-    - 0.685538
-    - 0.297043
-    - 0.724474
-    geometry: 521bed51a3b7f0f0
-  chimney_cap:
+    - 0.295897
+    - 0.67309
+    - 0.334141
+    - 0.711326
+    geometry: 059ae3d73682140d
+  chimney_chimney_cap:
     rect:
-    - 0.081
-    - 0.770661
-    - 0.116874
-    - 0.806542
-    geometry: fcf9cdff549265f5
-  chimney_course_band_0:
+    - 0.588715
+    - 0.795039
+    - 0.623052
+    - 0.829384
+    geometry: 5ee3b579a68e2b1e
+  chimney_chimney_course_band_0:
     rect:
-    - 0.357266
-    - 0.849345
-    - 0.388747
-    - 0.880819
-    geometry: fcc1577448c8c477
-  chimney_course_band_1:
+    - 0.45293
+    - 0.834467
+    - 0.483682
+    - 0.865231
+    geometry: 18ff47b318b93875
+  chimney_chimney_course_band_1:
     rect:
-    - 0.286492
-    - 0.849345
-    - 0.317973
-    - 0.880819
-    geometry: 0fb7828ba91bcf9d
-  chimney_course_band_2:
+    - 0.418272
+    - 0.834467
+    - 0.449024
+    - 0.865231
+    geometry: 1b60fdeb8e72d78d
+  chimney_chimney_course_band_2:
     rect:
-    - 0.251104
-    - 0.849345
-    - 0.282586
-    - 0.880819
-    geometry: 15b4fd89278d2b6a
-  chimney_course_band_3:
+    - 0.383614
+    - 0.834467
+    - 0.414366
+    - 0.865231
+    geometry: 236bc30e4c0e4051
+  chimney_chimney_course_band_3:
     rect:
-    - 0.321879
-    - 0.849345
-    - 0.35336
-    - 0.880819
-    geometry: 63bb480931a582c0
-  chimney_pot_0:
+    - 0.348955
+    - 0.834467
+    - 0.379707
+    - 0.865231
+    geometry: 4f6d8ab54d62fdfb
+  chimney_chimney_pot_0:
     rect:
-    - 0.049114
-    - 0.979156
-    - 0.069475
-    - 0.999541
-    geometry: 817560d63c4433ac
-  chimney_pot_1:
+    - 0.148678
+    - 0.960275
+    - 0.168726
+    - 0.980347
+    geometry: 74edc6012fd7cbd0
+  chimney_chimney_pot_1:
     rect:
-    - 0.024807
-    - 0.979156
-    - 0.045208
-    - 0.999581
-    geometry: 9f37846207e2ad35
-  chimney_stack:
+    - 0.0
+    - 0.960275
+    - 0.021055
+    - 0.981335
+    geometry: dc49a01889879d65
+  chimney_chimney_stack:
     rect:
-    - 0.731025
-    - 0.370396
-    - 0.808984
-    - 0.44837
-    geometry: 771e5024ea4a3b01
-  chimney_weathering:
+    - 0.63567
+    - 0.364775
+    - 0.716378
+    - 0.445479
+    geometry: e5353c4822b54458
+  chimney_chimney_weathering:
     rect:
-    - 0.198943
-    - 0.770661
-    - 0.233745
-    - 0.805468
-    geometry: 751a449d68faca1c
-  deck_0_0_joist_0:
+    - 0.626958
+    - 0.795039
+    - 0.661224
+    - 0.82931
+    geometry: 9db699fc8600ee8d
+  deck_0_0_deck_joist_0:
     rect:
-    - 0.659938
-    - 0.729017
-    - 0.696906
-    - 0.765913
+    - 0.0
+    - 0.715366
+    - 0.036398
+    - 0.751694
     geometry: b4a9f8a4d49c9178
-  deck_0_0_joist_1:
+  deck_0_0_deck_joist_1:
     rect:
-    - 0.782559
-    - 0.729017
-    - 0.819526
-    - 0.765913
+    - 0.120913
+    - 0.715366
+    - 0.157311
+    - 0.751694
     geometry: 18a595df5741025c
-  deck_0_0_plank_0:
+  deck_0_0_deck_plank_0:
     rect:
-    - 0.697363
-    - 0.770661
-    - 0.731781
-    - 0.804978
-    geometry: 8d1454c5132e0bf3
-  deck_0_0_plank_1:
+    - 0.803934
+    - 0.715366
+    - 0.840084
+    - 0.751439
+    geometry: 05751270e3ff8918
+  deck_0_0_deck_plank_1:
     rect:
-    - 0.229947
-    - 0.811122
-    - 0.264366
-    - 0.845439
-    geometry: 471abfcdc524a6d7
-  deck_0_0_plank_2:
+    - 0.60365
+    - 0.715366
+    - 0.639801
+    - 0.751439
+    geometry: 099e28dfa7931160
+  deck_0_0_deck_plank_2:
     rect:
-    - 0.467416
-    - 0.770661
-    - 0.501834
-    - 0.804978
-    geometry: 8ed616687afe84e8
-  deck_0_0_plank_3:
+    - 0.196761
+    - 0.795039
+    - 0.232207
+    - 0.83056
+    geometry: 79141dd7ba1f1c52
+  deck_0_0_deck_plank_3:
     rect:
-    - 0.344921
-    - 0.811122
-    - 0.379339
-    - 0.845439
-    geometry: 4a25c82a893ebe21
-  deck_0_0_plank_4:
+    - 0.763877
+    - 0.715366
+    - 0.800028
+    - 0.751439
+    geometry: 631d91cbbd01bc8e
+  deck_0_0_deck_plank_4:
     rect:
-    - 0.191623
-    - 0.811122
-    - 0.226041
-    - 0.845439
-    geometry: 9fc7dcecd63807a3
-  deck_0_0_plank_5:
+    - 0.0
+    - 0.795039
+    - 0.035446
+    - 0.83056
+    geometry: 44bd04d0dabcff2d
+  deck_0_0_deck_plank_5:
     rect:
-    - 0.50574
-    - 0.770661
-    - 0.540158
-    - 0.804978
-    geometry: e864cf7731adc982
-  deck_0_0_plank_6:
+    - 0.472473
+    - 0.7556
+    - 0.507919
+    - 0.791121
+    geometry: 6304dd3b75f28d5b
+  deck_0_0_deck_plank_6:
     rect:
-    - 0.812336
-    - 0.770661
-    - 0.846755
-    - 0.804978
-    geometry: dfb9816d348af4fe
-  deck_0_1_joist_0:
+    - 0.551178
+    - 0.7556
+    - 0.586624
+    - 0.791121
+    geometry: 8183d247b35bc3a4
+  deck_0_1_deck_joist_0:
     rect:
-    - 0.905146
-    - 0.729017
-    - 0.942096
-    - 0.765899
+    - 0.362712
+    - 0.715366
+    - 0.399093
+    - 0.751679
     geometry: 48e6db261eb1f60f
-  deck_0_1_joist_1:
+  deck_0_1_deck_joist_1:
     rect:
-    - 0.823433
-    - 0.729017
-    - 0.860383
-    - 0.765899
+    - 0.282137
+    - 0.715366
+    - 0.318518
+    - 0.751679
     geometry: aac68969d8a4e2df
-  deck_0_1_plank_0:
+  deck_0_1_deck_plank_0:
     rect:
-    - 0.038325
-    - 0.811122
-    - 0.072743
-    - 0.845439
-    geometry: 2c95591cd14b73a5
-  deck_0_1_plank_1:
+    - 0.157409
+    - 0.795039
+    - 0.192855
+    - 0.83056
+    geometry: 5d4980d7388dd0e7
+  deck_0_1_deck_plank_1:
     rect:
-    - 0.774012
-    - 0.770661
-    - 0.80843
-    - 0.804978
-    geometry: 101632a654ad3f66
-  deck_0_1_plank_2:
+    - 0.275466
+    - 0.795039
+    - 0.310912
+    - 0.83056
+    geometry: 493924f757e32a67
+  deck_0_1_deck_plank_2:
     rect:
-    - 0.620714
-    - 0.770661
-    - 0.655132
-    - 0.804978
-    geometry: 73790a13a11670d9
-  deck_0_1_plank_3:
+    - 0.314818
+    - 0.795039
+    - 0.350264
+    - 0.83056
+    geometry: 012b34db365226ad
+  deck_0_1_deck_plank_3:
     rect:
-    - 0.314117
-    - 0.770661
-    - 0.348536
-    - 0.804978
-    geometry: 073f0b43bd10b1af
-  deck_0_1_plank_4:
+    - 0.643707
+    - 0.715366
+    - 0.679858
+    - 0.751439
+    geometry: 939e341c0272a76e
+  deck_0_1_deck_plank_4:
     rect:
-    - 0.390766
-    - 0.770661
-    - 0.425185
-    - 0.804978
-    geometry: 2d3a4c3a5f3f3be2
-  deck_0_1_plank_5:
+    - 0.787292
+    - 0.7556
+    - 0.822738
+    - 0.791121
+    geometry: c6810e91877d9d76
+  deck_0_1_deck_plank_5:
     rect:
-    - 0.92731
-    - 0.770661
-    - 0.961728
-    - 0.804978
-    geometry: 48baa304403dce63
-  deck_0_1_plank_6:
+    - 0.236114
+    - 0.795039
+    - 0.27156
+    - 0.83056
+    geometry: 57228b1ea69983fc
+  deck_0_1_deck_plank_6:
     rect:
-    - 0.153298
-    - 0.811122
-    - 0.187716
-    - 0.845439
-    geometry: 6e1dca86ab072664
-  deck_1_0_joist_0:
+    - 0.563594
+    - 0.715366
+    - 0.599744
+    - 0.751439
+    geometry: 80acb53202cfb3cc
+  deck_1_0_deck_joist_0:
     rect:
-    - 0.414006
-    - 0.729017
-    - 0.45128
-    - 0.766219
+    - 0.756951
+    - 0.67309
+    - 0.793651
+    - 0.709718
     geometry: 490caee56227dec7
-  deck_1_0_joist_1:
+  deck_1_0_deck_joist_1:
     rect:
-    - 0.741685
-    - 0.729017
-    - 0.778653
-    - 0.765913
+    - 0.080609
+    - 0.715366
+    - 0.117007
+    - 0.751694
     geometry: 4587a46fe8865ef5
-  deck_1_0_plank_0:
+  deck_1_0_deck_plank_0:
     rect:
-    - 0.544065
-    - 0.770661
-    - 0.578483
-    - 0.804978
-    geometry: 8aa3f258d011a2c0
-  deck_1_0_plank_1:
+    - 0.747939
+    - 0.7556
+    - 0.783385
+    - 0.791121
+    geometry: 58ff29dd0e2a16e7
+  deck_1_0_deck_plank_1:
     rect:
-    - 0.114974
-    - 0.811122
-    - 0.149392
-    - 0.845439
-    geometry: 981c1896b6994e7e
-  deck_1_0_plank_2:
+    - 0.905348
+    - 0.7556
+    - 0.940794
+    - 0.791121
+    geometry: cdb9339b41b3444b
+  deck_1_0_deck_plank_2:
     rect:
-    - 0.352442
-    - 0.770661
-    - 0.38686
-    - 0.804978
-    geometry: 2671581ce35f054d
-  deck_1_0_plank_3:
+    - 0.708587
+    - 0.7556
+    - 0.744033
+    - 0.791121
+    geometry: eb6c1d1d92a0ade8
+  deck_1_0_deck_plank_3:
     rect:
-    - 0.306596
-    - 0.811122
-    - 0.341015
-    - 0.845439
-    geometry: 63fc982de99f2188
-  deck_1_0_plank_4:
+    - 0.683764
+    - 0.715366
+    - 0.719914
+    - 0.751439
+    geometry: 2307e1df6c51044f
+  deck_1_0_deck_plank_4:
     rect:
-    - 0.076649
-    - 0.811122
-    - 0.111067
-    - 0.845439
-    geometry: bdaf2ac36572341d
-  deck_1_0_plank_5:
+    - 0.511826
+    - 0.7556
+    - 0.547272
+    - 0.791121
+    geometry: 15e32c4dad3c5bea
+  deck_1_0_deck_plank_5:
     rect:
-    - 0.659038
-    - 0.770661
-    - 0.693457
-    - 0.804978
-    geometry: a53adcb6e66bc58c
-  deck_1_0_plank_6:
+    - 0.393769
+    - 0.7556
+    - 0.429215
+    - 0.791121
+    geometry: cd203a47cb3b790f
+  deck_1_0_deck_plank_6:
     rect:
-    - 0.582389
-    - 0.770661
-    - 0.616808
-    - 0.804978
-    geometry: 8275afe6f34299d0
-  deck_1_1_joist_0:
+    - 0.23636
+    - 0.7556
+    - 0.271806
+    - 0.791121
+    geometry: 99e1525880604e05
+  deck_1_1_deck_joist_0:
     rect:
-    - 0.455186
-    - 0.729017
-    - 0.492459
-    - 0.766219
+    - 0.797557
+    - 0.67309
+    - 0.834256
+    - 0.709718
     geometry: 4e63523f016bb981
-  deck_1_1_joist_1:
+  deck_1_1_deck_joist_1:
     rect:
-    - 0.700812
-    - 0.729017
-    - 0.737779
-    - 0.765913
+    - 0.040304
+    - 0.715366
+    - 0.076702
+    - 0.751694
     geometry: 620b164e7fa5b8c3
-  deck_1_1_plank_0:
+  deck_1_1_deck_plank_0:
     rect:
-    - 0.0
-    - 0.811122
-    - 0.034418
-    - 0.845439
-    geometry: 20d4a4fa4ab03860
-  deck_1_1_plank_1:
+    - 0.078705
+    - 0.795039
+    - 0.114151
+    - 0.83056
+    geometry: e825cc0eabb62bd0
+  deck_1_1_deck_plank_1:
     rect:
-    - 0.735687
-    - 0.770661
-    - 0.770106
-    - 0.804978
-    geometry: b4b4ab345e5d9b29
-  deck_1_1_plank_2:
+    - 0.039352
+    - 0.795039
+    - 0.074798
+    - 0.83056
+    geometry: d5bf1146cf3c337d
+  deck_1_1_deck_plank_2:
     rect:
-    - 0.850661
-    - 0.770661
-    - 0.885079
-    - 0.804978
-    geometry: 4f903d134235c362
-  deck_1_1_plank_3:
+    - 0.629882
+    - 0.7556
+    - 0.665328
+    - 0.791121
+    geometry: 3c828abada096c72
+  deck_1_1_deck_plank_3:
     rect:
-    - 0.429091
-    - 0.770661
-    - 0.463509
-    - 0.804978
-    geometry: da464af6f7cad15d
-  deck_1_1_plank_4:
+    - 0.433121
+    - 0.7556
+    - 0.468567
+    - 0.791121
+    geometry: 8fed16516c711d66
+  deck_1_1_deck_plank_4:
     rect:
-    - 0.275793
-    - 0.770661
-    - 0.310211
-    - 0.804978
-    geometry: bdab7739dbfcff35
-  deck_1_1_plank_5:
+    - 0.07895
+    - 0.7556
+    - 0.114397
+    - 0.791121
+    geometry: bbc00df3fd94c07c
+  deck_1_1_deck_plank_5:
     rect:
-    - 0.888986
-    - 0.770661
-    - 0.923404
-    - 0.804978
-    geometry: 96985ffea1c08145
-  deck_1_1_plank_6:
+    - 0.354416
+    - 0.7556
+    - 0.389862
+    - 0.791121
+    geometry: 87a1f1224e239e02
+  deck_1_1_deck_plank_6:
     rect:
-    - 0.268272
-    - 0.811122
-    - 0.30269
-    - 0.845439
-    geometry: cff5104fc2a93a0b
-  deck_2_0_joist_0:
+    - 0.118303
+    - 0.7556
+    - 0.153749
+    - 0.791121
+    geometry: 535b189429bfc44d
+  deck_2_0_deck_joist_0:
     rect:
-    - 0.946003
-    - 0.729017
-    - 0.982737
-    - 0.76568
+    - 0.523519
+    - 0.715366
+    - 0.559688
+    - 0.751464
     geometry: c90e5cf598c04a64
-  deck_2_0_joist_1:
+  deck_2_0_deck_joist_1:
     rect:
-    - 0.619065
-    - 0.729017
-    - 0.656032
-    - 0.765913
+    - 0.959419
+    - 0.67309
+    - 0.995817
+    - 0.709418
     geometry: ca9130e61105588b
-  deck_2_0_plank_0:
+  deck_2_0_deck_plank_0:
     rect:
-    - 0.728165
-    - 0.811122
-    - 0.762583
-    - 0.845438
-    geometry: d12fc1cd30d0a322
-  deck_2_0_plank_1:
+    - 0.59053
+    - 0.7556
+    - 0.625976
+    - 0.791121
+    geometry: 5483c117da5d27bd
+  deck_2_0_deck_plank_1:
     rect:
-    - 0.843138
-    - 0.811122
-    - 0.877557
-    - 0.845438
-    geometry: 4725615d8e5d6314
-  deck_2_0_plank_2:
+    - 0.157655
+    - 0.7556
+    - 0.193101
+    - 0.791121
+    geometry: 4404512e126f2c0c
+  deck_2_0_deck_plank_2:
     rect:
-    - 0.383245
-    - 0.811122
-    - 0.417664
-    - 0.845438
-    geometry: c1ba1334c604822a
-  deck_2_0_plank_3:
+    - 0.275712
+    - 0.7556
+    - 0.311158
+    - 0.791121
+    geometry: a385c24fa716d0a5
+  deck_2_0_deck_plank_3:
     rect:
-    - 0.881463
-    - 0.811122
-    - 0.915881
-    - 0.845438
-    geometry: 2ee2726e37a6fd33
-  deck_2_0_plank_4:
+    - 0.669235
+    - 0.7556
+    - 0.704681
+    - 0.791121
+    geometry: f915b247f8167a4c
+  deck_2_0_deck_plank_4:
     rect:
-    - 0.804814
-    - 0.811122
-    - 0.839232
-    - 0.845438
-    geometry: aa2ff3009f87fd31
-  deck_2_0_plank_5:
+    - 0.944701
+    - 0.7556
+    - 0.980147
+    - 0.791121
+    geometry: 54764c76f3f59941
+  deck_2_0_deck_plank_5:
     rect:
-    - 0.459894
-    - 0.811122
-    - 0.494312
-    - 0.845438
-    geometry: 2c1dc25decbc1cd4
-  deck_2_0_plank_6:
+    - 0.315064
+    - 0.7556
+    - 0.35051
+    - 0.791121
+    geometry: c1a850d70adc49b6
+  deck_2_0_deck_plank_6:
     rect:
-    - 0.498219
-    - 0.811122
-    - 0.532637
-    - 0.845438
-    geometry: 8629fc37ba480422
-  deck_2_1_joist_0:
+    - 0.118057
+    - 0.795039
+    - 0.153503
+    - 0.83056
+    geometry: 6aa837fb036e4cec
+  deck_2_1_deck_joist_0:
     rect:
-    - 0.578164
-    - 0.729017
-    - 0.615158
-    - 0.765941
+    - 0.919088
+    - 0.67309
+    - 0.955513
+    - 0.709445
     geometry: 1b19bd776adb43eb
-  deck_2_1_joist_1:
+  deck_2_1_deck_joist_1:
     rect:
-    - 0.864289
-    - 0.729017
-    - 0.90124
-    - 0.765899
+    - 0.322424
+    - 0.715366
+    - 0.358806
+    - 0.751679
     geometry: 530b0402b3b805ab
-  deck_2_1_plank_0:
+  deck_2_1_deck_plank_0:
     rect:
-    - 0.689841
-    - 0.811122
-    - 0.724259
-    - 0.845438
-    geometry: 16c93b9242c54b54
-  deck_2_1_plank_1:
+    - 0.432875
+    - 0.795039
+    - 0.468321
+    - 0.83056
+    geometry: ad6c3a04abc03b61
+  deck_2_1_deck_plank_1:
     rect:
-    - 0.651516
-    - 0.811122
-    - 0.685935
-    - 0.845438
-    geometry: 156d9ea62c4203d9
-  deck_2_1_plank_2:
+    - 0.865996
+    - 0.7556
+    - 0.901442
+    - 0.791121
+    geometry: e33058b887376cc1
+  deck_2_1_deck_plank_2:
     rect:
-    - 0.574868
-    - 0.811122
-    - 0.609286
-    - 0.845438
-    geometry: a8ed6a39e173f71d
-  deck_2_1_plank_3:
+    - 0.35417
+    - 0.795039
+    - 0.389617
+    - 0.83056
+    geometry: c3ccdf01240da6d8
+  deck_2_1_deck_plank_3:
     rect:
-    - 0.613192
-    - 0.811122
-    - 0.64761
-    - 0.845438
-    geometry: 022a107eafe52214
-  deck_2_1_plank_4:
+    - 0.723821
+    - 0.715366
+    - 0.759971
+    - 0.751439
+    geometry: aca3b38b9f4eb899
+  deck_2_1_deck_plank_4:
     rect:
-    - 0.536543
-    - 0.811122
-    - 0.570961
-    - 0.845438
-    geometry: '5570290455043161'
-  deck_2_1_plank_5:
+    - 0.826644
+    - 0.7556
+    - 0.86209
+    - 0.791121
+    geometry: e60eb74e82ca6eff
+  deck_2_1_deck_plank_5:
     rect:
-    - 0.42157
-    - 0.811122
-    - 0.455988
-    - 0.845438
-    geometry: 71375229caae6a64
-  deck_2_1_plank_6:
+    - 0.197007
+    - 0.7556
+    - 0.232453
+    - 0.791121
+    geometry: 8acbe54ec815b1ff
+  deck_2_1_deck_plank_6:
     rect:
-    - 0.76649
-    - 0.811122
-    - 0.800908
-    - 0.845438
-    geometry: 4a7e07934c52f8dd
-  door_brace:
+    - 0.393523
+    - 0.795039
+    - 0.428969
+    - 0.83056
+    geometry: ca0f80c313b0b68d
+  footing_fb_0_0_footing_course_high:
     rect:
-    - 0.572345
-    - 0.950458
-    - 0.59512
-    - 0.973156
-    geometry: a98c4f8a9e510b0a
-  door_frame_head:
+    - 0.55272
+    - 0.517903
+    - 0.603792
+    - 0.568962
+    geometry: 10bacba7d3512c29
+  footing_fb_0_0_footing_course_low_0:
     rect:
-    - 0.037927
-    - 0.849345
-    - 0.069742
-    - 0.881163
-    geometry: 34d56b834abe68ff
-  door_frame_jamb_left:
+    - 0.757086
+    - 0.869479
+    - 0.784724
+    - 0.897111
+    geometry: d42098f05ab42257
+  footing_fb_0_0_footing_course_low_1:
     rect:
-    - 0.878791
-    - 0.637289
-    - 0.919072
-    - 0.677504
-    geometry: 03643fd338362ef6
-  door_frame_jamb_right:
+    - 0.031545
+    - 0.869479
+    - 0.059184
+    - 0.897111
+    geometry: 91e9531f87840b31
+  footing_fb_0_0_footing_course_low_2:
     rect:
-    - 0.834603
-    - 0.637289
-    - 0.874885
-    - 0.677505
-    geometry: 159db81c75e2a634
-  door_ledge_0:
+    - 0.94926
+    - 0.834467
+    - 0.976899
+    - 0.862099
+    geometry: dd5e7795fc1921fc
+  footing_fb_0_0_footing_mortar:
     rect:
-    - 0.302326
-    - 0.979156
-    - 0.320827
-    - 0.997672
-    geometry: fa5c926f2aad9756
-  door_ledge_1:
+    - 0.244487
+    - 0.834467
+    - 0.275404
+    - 0.865324
+    geometry: 64d593abbade7c35
+  footing_fb_0_1_footing_course_high:
     rect:
-    - 0.324733
-    - 0.979156
-    - 0.3431
-    - 0.997539
-    geometry: c5db04dd0d959e0e
-  door_plank_0:
+    - 0.332808
+    - 0.517903
+    - 0.383879
+    - 0.568962
+    geometry: 5cf722ab4e535fda
+  footing_fb_0_1_footing_course_low_0:
     rect:
-    - 0.658238
-    - 0.849345
-    - 0.687175
-    - 0.8782
-    geometry: ba1e657de4ffb2cb
-  door_plank_1:
+    - 0.410088
+    - 0.869479
+    - 0.437727
+    - 0.897111
+    geometry: 516bc9ead0eb42ae
+  footing_fb_0_1_footing_course_low_1:
     rect:
-    - 0.625394
-    - 0.849345
-    - 0.654331
-    - 0.8782
-    geometry: 6bc3ca05ba73ce5e
-  door_plank_2:
+    - 0.599359
+    - 0.869479
+    - 0.626998
+    - 0.897111
+    geometry: e2737127ad9bfb1c
+  footing_fb_0_1_footing_course_low_2:
     rect:
-    - 0.691081
-    - 0.849345
-    - 0.720019
-    - 0.8782
-    geometry: 23b9e39de390cf47
-  door_plank_3:
+    - 0.72554
+    - 0.869479
+    - 0.753179
+    - 0.897111
+    geometry: 127e09c7e7d147f6
+  footing_fb_0_1_footing_mortar:
     rect:
-    - 0.59255
-    - 0.849345
-    - 0.621488
-    - 0.8782
-    geometry: 18487c2efc54450d
-  door_pull:
+    - 0.140019
+    - 0.834467
+    - 0.170936
+    - 0.865324
+    geometry: 181af98912e98ef0
+  footing_fb_1_0_footing_course_high:
     rect:
-    - 0.683155
-    - 0.979156
-    - 0.696778
-    - 0.992773
-    geometry: c1753a6bd5e2900c
-  door_strap_0:
+    - 0.497742
+    - 0.517903
+    - 0.548814
+    - 0.568962
+    geometry: 30be84c5d840a355
+  footing_fb_1_0_footing_course_low_0:
     rect:
-    - 0.557364
-    - 0.979156
-    - 0.574534
-    - 0.996326
-    geometry: 0ef54aa102b7bb69
-  door_strap_1:
+    - 0.851721
+    - 0.869479
+    - 0.87936
+    - 0.897111
+    geometry: 0c4269db45e8319b
+  footing_fb_1_0_footing_course_low_1:
     rect:
-    - 0.27991
-    - 0.979156
-    - 0.29842
-    - 0.997675
-    geometry: 5842bd54b5a296c3
-  footing_fb_0_0_course_high:
+    - 0.157726
+    - 0.869479
+    - 0.185365
+    - 0.897111
+    geometry: 249512dd6c39d378
+  footing_fb_1_0_footing_course_low_2:
     rect:
-    - 0.582512
-    - 0.465629
-    - 0.635606
-    - 0.518723
-    geometry: 0de33170ebe02da5
-  footing_fb_0_0_course_low_0:
+    - 0.346998
+    - 0.869479
+    - 0.374637
+    - 0.897111
+    geometry: ed56a5bbaf2fcd2b
+  footing_fb_1_0_footing_mortar:
     rect:
-    - 0.639664
-    - 0.887187
-    - 0.667741
-    - 0.915258
-    geometry: 39e9930772b661ac
-  footing_fb_0_0_course_low_1:
+    - 0.27931
+    - 0.834467
+    - 0.310226
+    - 0.865324
+    geometry: 0151d5b03fc72a35
+  footing_fb_1_1_footing_course_high:
     rect:
-    - 0.767596
-    - 0.887187
-    - 0.795673
-    - 0.915258
-    geometry: 8a34497825c5b623
-  footing_fb_0_0_course_low_2:
+    - 0.607698
+    - 0.517903
+    - 0.65877
+    - 0.568962
+    geometry: 3f3431cdb50b9223
+  footing_fb_1_1_footing_course_low_0:
     rect:
-    - 0.543714
-    - 0.887187
-    - 0.571791
-    - 0.915258
-    geometry: 82ed0fe638a39e43
-  footing_fb_0_1_course_high:
+    - 0.788631
+    - 0.869479
+    - 0.81627
+    - 0.897111
+    geometry: db89969841706880
+  footing_fb_1_1_footing_course_low_1:
     rect:
-    - 0.753512
-    - 0.465629
-    - 0.806605
-    - 0.518722
-    geometry: 611d764a72494e3e
-  footing_fb_0_1_course_low_0:
+    - 0.66245
+    - 0.869479
+    - 0.690089
+    - 0.897111
+    geometry: 1bc69529caae6a7f
+  footing_fb_1_1_footing_course_low_2:
     rect:
-    - 0.255866
-    - 0.887187
-    - 0.283942
-    - 0.915258
-    geometry: 661cde44a2502999
-  footing_fb_0_1_course_low_1:
+    - 0.567814
+    - 0.869479
+    - 0.595453
+    - 0.897111
+    geometry: 51b5a0195fcca6ec
+  footing_fb_1_1_footing_mortar:
     rect:
-    - 0.917086
-    - 0.849345
-    - 0.945163
-    - 0.877416
-    geometry: 152db9976dd47e23
-  footing_fb_0_1_course_low_2:
+    - 0.174842
+    - 0.834467
+    - 0.205758
+    - 0.865324
+    geometry: 6c05a7b380ae182f
+  footing_fb_2_0_footing_course_high:
     rect:
-    - 0.671647
-    - 0.887187
-    - 0.699724
-    - 0.915258
-    geometry: d47a556dfec95976
-  footing_fb_1_0_course_high:
+    - 0.387786
+    - 0.517903
+    - 0.438858
+    - 0.568962
+    geometry: 9786b9f3d689bc5c
+  footing_fb_2_0_footing_course_low_0:
     rect:
-    - 0.468512
-    - 0.465629
-    - 0.521606
-    - 0.518723
-    geometry: 093091f222f211d3
-  footing_fb_1_0_course_low_0:
+    - 0.473178
+    - 0.869479
+    - 0.500817
+    - 0.897111
+    geometry: 9b88c0c5fa4c28ae
+  footing_fb_2_0_footing_course_low_1:
     rect:
-    - 0.607681
-    - 0.887187
-    - 0.635757
-    - 0.915258
-    geometry: 83f6f4756ecb7b34
-  footing_fb_1_0_course_low_1:
+    - 0.220817
+    - 0.869479
+    - 0.248456
+    - 0.897111
+    geometry: 49559bd313d1313d
+  footing_fb_2_0_footing_course_low_2:
     rect:
-    - 0.70363
-    - 0.887187
-    - 0.731707
-    - 0.915258
-    geometry: ea9f2b36146385a0
-  footing_fb_1_0_course_low_2:
+    - 0.315452
+    - 0.869479
+    - 0.343091
+    - 0.897111
+    geometry: 277d0f326df47c95
+  footing_fb_2_0_footing_mortar:
     rect:
-    - 0.351815
-    - 0.887187
-    - 0.379892
-    - 0.915258
-    geometry: d751e4d1215b69f5
-  footing_fb_1_1_course_high:
+    - 0.314133
+    - 0.834467
+    - 0.345049
+    - 0.865324
+    geometry: d74ccb7b49a2f5ac
+  footing_fb_2_1_footing_course_high:
     rect:
-    - 0.411512
-    - 0.465629
-    - 0.464606
-    - 0.518723
-    geometry: f319e75ab8821e4c
-  footing_fb_1_1_course_low_0:
+    - 0.442764
+    - 0.517903
+    - 0.493836
+    - 0.568962
+    geometry: 88455f310140589a
+  footing_fb_2_1_footing_course_low_0:
     rect:
-    - 0.159916
-    - 0.887187
-    - 0.187993
-    - 0.915258
-    geometry: c6f9c31864fb3528
-  footing_fb_1_1_course_low_1:
+    - 0.126181
+    - 0.869479
+    - 0.15382
+    - 0.897111
+    geometry: 0b84eda0b29bca66
+  footing_fb_2_1_footing_course_low_1:
     rect:
-    - 0.383798
-    - 0.887187
-    - 0.411875
-    - 0.915258
-    geometry: b6be3a8d7c90b7c9
-  footing_fb_1_1_course_low_2:
+    - 0.189271
+    - 0.869479
+    - 0.21691
+    - 0.897111
+    geometry: 9c2c8fd033495195
+  footing_fb_2_1_footing_course_low_2:
     rect:
-    - 0.447765
-    - 0.887187
-    - 0.475842
-    - 0.915258
-    geometry: 907dbbcd68d2a094
-  footing_fb_2_0_course_high:
+    - 0.883266
+    - 0.869479
+    - 0.910905
+    - 0.897111
+    geometry: 2227d3f6f0ca025a
+  footing_fb_2_1_footing_mortar:
     rect:
-    - 0.924509
-    - 0.465629
-    - 0.977602
-    - 0.518722
-    geometry: e8398c2af825d275
-  footing_fb_2_0_course_low_0:
+    - 0.209665
+    - 0.834467
+    - 0.240581
+    - 0.865324
+    geometry: 601604bfb07ebacc
+  footing_side_0_0_footing_course_high:
     rect:
-    - 0.735613
-    - 0.887187
-    - 0.76369
-    - 0.915258
-    geometry: 5d10f1e1dd764e80
-  footing_fb_2_0_course_low_1:
+    - 0.345338
+    - 0.457442
+    - 0.397561
+    - 0.509665
+    geometry: a0646e42ddd06bb2
+  footing_side_0_0_footing_course_low_0:
     rect:
-    - 0.575697
-    - 0.887187
-    - 0.603774
-    - 0.915258
-    geometry: 03e5b8c26b8f2ac6
-  footing_fb_2_0_course_low_2:
+    - 0.693995
+    - 0.869479
+    - 0.721634
+    - 0.897111
+    geometry: 7e88bac18de83402
+  footing_side_0_0_footing_course_low_1:
+    rect:
+    - 0.283907
+    - 0.869479
+    - 0.311546
+    - 0.897111
+    geometry: f2738387ab1e0e22
+  footing_side_0_0_footing_course_low_2:
+    rect:
+    - 0.441633
+    - 0.869479
+    - 0.469272
+    - 0.897111
+    geometry: 13a930d1d02f511b
+  footing_side_0_0_footing_mortar:
+    rect:
+    - 0.815015
+    - 0.795039
+    - 0.847835
+    - 0.827815
+    geometry: e215a838fab65155
+  footing_side_0_1_footing_course_high:
+    rect:
+    - 0.513726
+    - 0.457442
+    - 0.565949
+    - 0.509665
+    geometry: 41a3cb823c37d635
+  footing_side_0_1_footing_course_low_0:
+    rect:
+    - 0.536269
+    - 0.869479
+    - 0.563908
+    - 0.897111
+    geometry: 0f2802b828d9f5b4
+  footing_side_0_1_footing_course_low_1:
+    rect:
+    - 0.252362
+    - 0.869479
+    - 0.280001
+    - 0.897111
+    geometry: 4d31b025c02200f7
+  footing_side_0_1_footing_course_low_2:
+    rect:
+    - 0.094636
+    - 0.869479
+    - 0.122275
+    - 0.897111
+    geometry: 819c5aaf0c8922bf
+  footing_side_0_1_footing_mortar:
+    rect:
+    - 0.851741
+    - 0.795039
+    - 0.884562
+    - 0.827815
+    geometry: 8dabdf04f3eb3c75
+  footing_side_1_0_footing_course_high:
+    rect:
+    - 0.457597
+    - 0.457442
+    - 0.50982
+    - 0.509665
+    geometry: 49b7e8010739014c
+  footing_side_1_0_footing_course_low_0:
+    rect:
+    - 0.820176
+    - 0.869479
+    - 0.847815
+    - 0.897111
+    geometry: 4e229a667086bcb3
+  footing_side_1_0_footing_course_low_1:
+    rect:
+    - 0.06309
+    - 0.869479
+    - 0.090729
+    - 0.897111
+    geometry: b380e5171b3782f2
+  footing_side_1_0_footing_course_low_2:
+    rect:
+    - 0.378543
+    - 0.869479
+    - 0.406182
+    - 0.897111
+    geometry: e16122a8142c88b1
+  footing_side_1_0_footing_mortar:
+    rect:
+    - 0.888468
+    - 0.795039
+    - 0.921288
+    - 0.827815
+    geometry: 7ba980560ab14a16
+  footing_side_1_1_footing_course_high:
+    rect:
+    - 0.401468
+    - 0.457442
+    - 0.45369
+    - 0.509665
+    geometry: 1edbaff4bb39fa63
+  footing_side_1_1_footing_course_low_0:
+    rect:
+    - 0.630905
+    - 0.869479
+    - 0.658544
+    - 0.897111
+    geometry: f15b82f4852b954d
+  footing_side_1_1_footing_course_low_1:
+    rect:
+    - 0.504724
+    - 0.869479
+    - 0.532363
+    - 0.897111
+    geometry: 1bfce01edbc43905
+  footing_side_1_1_footing_course_low_2:
     rect:
     - 0.0
-    - 0.887187
-    - 0.028077
-    - 0.915258
-    geometry: e80c3cfee3e7ead1
-  footing_fb_2_1_course_high:
+    - 0.869479
+    - 0.027639
+    - 0.897111
+    geometry: 597311775e3cf545
+  footing_side_1_1_footing_mortar:
     rect:
-    - 0.696512
-    - 0.465629
-    - 0.749606
-    - 0.518723
-    geometry: bf4a71f6ba6ed2a7
-  footing_fb_2_1_course_low_0:
-    rect:
-    - 0.94907
-    - 0.849345
-    - 0.977146
-    - 0.877416
-    geometry: 59ecf470da117153
-  footing_fb_2_1_course_low_1:
-    rect:
-    - 0.415781
-    - 0.887187
-    - 0.443858
-    - 0.915258
-    geometry: 0475c33a8216b88b
-  footing_fb_2_1_course_low_2:
-    rect:
-    - 0.09595
-    - 0.887187
-    - 0.124027
-    - 0.915258
-    geometry: edd764866db8cc07
-  footing_side_0_0_course_high:
-    rect:
-    - 0.525512
-    - 0.465629
-    - 0.578606
-    - 0.518723
-    geometry: 49d7aa8864605cbd
-  footing_side_0_0_course_low_0:
-    rect:
-    - 0.127933
-    - 0.887187
-    - 0.15601
-    - 0.915258
-    geometry: 165d56e7d4f88526
-  footing_side_0_0_course_low_1:
-    rect:
-    - 0.319832
-    - 0.887187
-    - 0.347909
-    - 0.915258
-    geometry: 631fef2a543b9ab8
-  footing_side_0_0_course_low_2:
-    rect:
-    - 0.223882
-    - 0.887187
-    - 0.251959
-    - 0.915258
-    geometry: a712ab4159335b30
-  footing_side_0_1_course_high:
-    rect:
-    - 0.639512
-    - 0.465629
-    - 0.692606
-    - 0.518723
-    geometry: a29ec9577dd99698
-  footing_side_0_1_course_low_0:
-    rect:
-    - 0.511731
-    - 0.887187
-    - 0.539808
-    - 0.915258
-    geometry: c536508cc8b73014
-  footing_side_0_1_course_low_1:
-    rect:
-    - 0.191899
-    - 0.887187
-    - 0.219976
-    - 0.915258
-    geometry: a659dc1e375f4401
-  footing_side_0_1_course_low_2:
-    rect:
-    - 0.063966
-    - 0.887187
-    - 0.092043
-    - 0.915258
-    geometry: 7c07cfbd8042cbaf
-  footing_side_1_0_course_high:
-    rect:
-    - 0.810511
-    - 0.465629
-    - 0.863604
-    - 0.518722
-    geometry: c4c18ec1f1b202d7
-  footing_side_1_0_course_low_0:
-    rect:
-    - 0.821137
-    - 0.849345
-    - 0.849214
-    - 0.877416
-    geometry: 69ad9d4ce564e15c
-  footing_side_1_0_course_low_1:
-    rect:
-    - 0.479748
-    - 0.887187
-    - 0.507825
-    - 0.915258
-    geometry: 0d5d3d944d765c6c
-  footing_side_1_0_course_low_2:
-    rect:
-    - 0.85312
-    - 0.849345
-    - 0.881197
-    - 0.877416
-    geometry: 9cd16f4674d9a7a1
-  footing_side_1_1_course_high:
-    rect:
-    - 0.86751
-    - 0.465629
-    - 0.920603
-    - 0.518722
-    geometry: 837e089eb06ab999
-  footing_side_1_1_course_low_0:
-    rect:
-    - 0.287849
-    - 0.887187
-    - 0.315926
-    - 0.915258
-    geometry: 640ec06bc575ddab
-  footing_side_1_1_course_low_1:
-    rect:
-    - 0.031983
-    - 0.887187
-    - 0.06006
-    - 0.915258
-    geometry: b60f6e102878770b
-  footing_side_1_1_course_low_2:
-    rect:
-    - 0.885103
-    - 0.849345
-    - 0.91318
-    - 0.877416
-    geometry: abee3053c5813ec2
-  gable_0_infill:
+    - 0.925194
+    - 0.795039
+    - 0.958015
+    - 0.827815
+    geometry: 969981ff48ac0e20
+  gable_0_gable_infill:
     rect:
     - 0.0
     - 0.0
-    - 0.136279
-    - 0.136307
+    - 0.13418
+    - 0.134207
     geometry: 6519bd76bcd7731d
-  gable_0_king_post:
+  gable_0_gable_king_post:
     rect:
-    - 0.813452
-    - 0.685538
-    - 0.851938
-    - 0.723988
-    geometry: bffdc1afe7154be0
-  gable_0_rake_l:
+    - 0.126944
+    - 0.67309
+    - 0.165335
+    - 0.711443
+    geometry: 4e48b57d820e7d93
+  gable_0_gable_rake_l:
     rect:
-    - 0.053169
-    - 0.584002
-    - 0.101585
-    - 0.632523
+    - 0.0
+    - 0.573481
+    - 0.047671
+    - 0.621254
     geometry: bbb85cf997810a05
-  gable_0_rake_r:
+  gable_0_gable_rake_r:
     rect:
-    - 0.262831
-    - 0.584002
-    - 0.310574
-    - 0.631644
+    - 0.206674
+    - 0.573481
+    - 0.253682
+    - 0.620389
     geometry: 8c32fd106985829c
-  gable_0_strut_l:
+  gable_0_gable_strut_l:
     rect:
-    - 0.756552
-    - 0.849345
-    - 0.785273
-    - 0.878083
+    - 0.75761
+    - 0.834467
+    - 0.785888
+    - 0.862762
     geometry: 57e087262c3cc701
-  gable_0_strut_r:
+  gable_0_gable_strut_r:
     rect:
-    - 0.789179
-    - 0.849345
-    - 0.81723
-    - 0.877418
+    - 0.917734
+    - 0.834467
+    - 0.945354
+    - 0.862108
     geometry: 2733decb6995b979
-  gable_0_tie:
+  gable_0_gable_tie:
     rect:
-    - 0.0
-    - 0.465629
-    - 0.057835
-    - 0.523343
-    geometry: 76817f3140c0531a
-  gable_1_infill:
+    - 0.935071
+    - 0.364775
+    - 0.99338
+    - 0.422958
+    geometry: 8769b9f8c9836e02
+  gable_1_gable_infill:
     rect:
-    - 0.140185
+    - 0.138086
     - 0.0
-    - 0.276464
-    - 0.136307
+    - 0.272266
+    - 0.134207
     geometry: ba5e6a7211c9c6c1
-  gable_1_king_post:
+  gable_1_gable_king_post:
     rect:
-    - 0.771059
-    - 0.685538
-    - 0.809546
-    - 0.723988
-    geometry: 88e9711b78249a1a
-  gable_1_rake_l:
+    - 0.169242
+    - 0.67309
+    - 0.207633
+    - 0.711443
+    geometry: 0830c50449dd505a
+  gable_1_gable_rake_l:
     rect:
-    - 0.105491
-    - 0.584002
-    - 0.153908
-    - 0.632523
+    - 0.051577
+    - 0.573481
+    - 0.099248
+    - 0.621254
     geometry: 92004a15a5ce0cd2
-  gable_1_rake_r:
+  gable_1_gable_rake_r:
     rect:
-    - 0.365778
-    - 0.584002
-    - 0.413252
-    - 0.631375
+    - 0.257588
+    - 0.573481
+    - 0.304331
+    - 0.620124
     geometry: 7a79999840be16b7
-  gable_1_strut_l:
+  gable_1_gable_strut_l:
     rect:
-    - 0.723925
-    - 0.849345
-    - 0.752646
-    - 0.878083
+    - 0.725426
+    - 0.834467
+    - 0.753704
+    - 0.862762
     geometry: da25d460140b96fc
-  gable_1_strut_r:
+  gable_1_gable_strut_r:
     rect:
-    - 0.559308
-    - 0.849345
-    - 0.588644
-    - 0.878691
+    - 0.692635
+    - 0.834467
+    - 0.72152
+    - 0.863361
     geometry: 361c3a6745df8138
-  gable_1_tie:
+  gable_1_gable_tie:
     rect:
-    - 0.884902
-    - 0.370396
-    - 0.942736
-    - 0.42811
-    geometry: 8ba1437814601e43
-  node_stone_0_0_course_high:
+    - 0.872855
+    - 0.364775
+    - 0.931164
+    - 0.422958
+    geometry: c2e1524fea977565
+  node_fb_0_0_node_stone_course_high:
     rect:
-    - 0.062576
-    - 0.919164
-    - 0.089958
-    - 0.946551
-    geometry: 706b443b279ab339
-  node_stone_0_0_course_low:
+    - 0.617299
+    - 0.932061
+    - 0.641319
+    - 0.956044
+    geometry: 3c23b4f507b2e974
+  node_fb_0_0_node_stone_course_low:
     rect:
-    - 0.277667
-    - 0.919164
-    - 0.303647
-    - 0.945097
-    geometry: db4f0fef90931716
-  node_stone_0_1_course_high:
+    - 0.031043
+    - 0.901018
+    - 0.05818
+    - 0.928154
+    geometry: 2293f6b83480bfa4
+  node_fb_0_0_node_stone_mortar:
     rect:
-    - 0.893444
-    - 0.887187
-    - 0.920826
-    - 0.914574
-    geometry: 7b5da430d3cbac3e
-  node_stone_0_1_course_low:
+    - 0.528856
+    - 0.960275
+    - 0.546472
+    - 0.977877
+    geometry: 5537ca6afcc837bd
+  node_fb_0_0_post_beam:
     rect:
-    - 0.546645
-    - 0.919164
-    - 0.572625
-    - 0.945097
-    geometry: 1f3345c6df11eedb
-  node_stone_1_0_course_high:
+    - 0.848005
+    - 0.457442
+    - 0.899737
+    - 0.509113
+    geometry: 674e05e9ab72f2c7
+  node_fb_0_1_node_stone_course_high:
     rect:
-    - 0.862156
-    - 0.887187
-    - 0.889538
-    - 0.914574
-    geometry: 977108b5f9acbc32
-  node_stone_1_0_course_low:
+    - 0.47767
+    - 0.932061
+    - 0.501689
+    - 0.956044
+    geometry: 234c926596e55e79
+  node_fb_0_1_node_stone_course_low:
     rect:
-    - 0.367326
-    - 0.919164
-    - 0.393307
-    - 0.945097
-    geometry: 84b2e9387019f114
-  node_stone_1_1_course_high:
+    - 0.124173
+    - 0.901018
+    - 0.151309
+    - 0.928154
+    geometry: 5ff4bfdd5d32a4bc
+  node_fb_0_1_node_stone_mortar:
     rect:
-    - 0.031288
-    - 0.919164
-    - 0.05867
-    - 0.946551
-    geometry: edce8424fb78f2c0
-  node_stone_1_1_course_low:
+    - 0.442764
+    - 0.960275
+    - 0.460381
+    - 0.977877
+    geometry: 9bdf91ac096b4b22
+  node_fb_0_1_post_beam:
     rect:
-    - 0.427099
-    - 0.919164
-    - 0.45308
-    - 0.945097
-    geometry: c94e273c28baa5cf
-  node_stone_2_0_course_high:
+    - 0.681089
+    - 0.457442
+    - 0.732821
+    - 0.509113
+    geometry: 1c99af77b0d816c0
+  node_fb_1_0_node_stone_course_high:
     rect:
-    - 0.79958
-    - 0.887187
-    - 0.826962
-    - 0.914574
-    geometry: 48ec9edf08f12662
-  node_stone_2_0_course_low:
+    - 0.421818
+    - 0.932061
+    - 0.445837
+    - 0.956044
+    geometry: 67914062cc9a9616
+  node_fb_1_0_node_stone_course_low:
     rect:
-    - 0.397213
-    - 0.919164
-    - 0.423193
-    - 0.945097
-    geometry: 696ac2cc70c50a1d
-  node_stone_2_1_course_high:
+    - 0.062086
+    - 0.901018
+    - 0.089223
+    - 0.928154
+    geometry: 58e2b0ae8afd7a58
+  node_fb_1_0_node_stone_mortar:
     rect:
-    - 0.924733
-    - 0.887187
-    - 0.952115
-    - 0.914574
-    geometry: 0622849e607bc2cb
-  node_stone_2_1_course_low:
-    rect:
-    - 0.33744
-    - 0.919164
-    - 0.36342
-    - 0.945097
-    geometry: c746d5a9b52a6a0a
-  node_stone_3_0_course_high:
-    rect:
-    - 0.956021
-    - 0.887187
-    - 0.983403
-    - 0.914574
-    geometry: 9ff4a6db7d5e643a
-  node_stone_3_0_course_low:
-    rect:
-    - 0.307553
-    - 0.919164
-    - 0.333534
-    - 0.945097
-    geometry: a94e32bee9f52485
-  node_stone_3_1_course_high:
-    rect:
-    - 0.830868
-    - 0.887187
-    - 0.85825
-    - 0.914574
-    geometry: 996c7d4a77cf122e
-  node_stone_3_1_course_low:
-    rect:
-    - 0.456986
-    - 0.919164
-    - 0.482966
-    - 0.945097
-    geometry: 077a0e39fabfbf79
-  node_stone_side_0_course_high:
+    - 0.550379
+    - 0.960275
+    - 0.567995
+    - 0.977877
+    geometry: 0c1e99a925da8b46
+  node_fb_1_0_post_beam:
     rect:
     - 0.0
-    - 0.919164
-    - 0.027382
-    - 0.946551
-    geometry: 4241c1721f0bfe11
-  node_stone_side_0_course_low:
+    - 0.517903
+    - 0.051732
+    - 0.569575
+    geometry: b0efe33fc7f094b3
+  node_fb_1_1_node_stone_course_high:
     rect:
-    - 0.486872
-    - 0.919164
-    - 0.512852
-    - 0.945097
-    geometry: 11fb93e2e51dc542
-  node_stone_side_1_course_high:
+    - 0.449744
+    - 0.932061
+    - 0.473763
+    - 0.956044
+    geometry: 30c52ea7743635d0
+  node_fb_1_1_node_stone_course_low:
     rect:
-    - 0.093865
-    - 0.919164
-    - 0.121247
-    - 0.946551
-    geometry: a8370f079ced9923
-  node_stone_side_1_course_low:
+    - 0.186259
+    - 0.901018
+    - 0.213396
+    - 0.928154
+    geometry: 234f4da885876103
+  node_fb_1_1_node_stone_mortar:
     rect:
-    - 0.516759
-    - 0.919164
-    - 0.542739
-    - 0.945097
-    geometry: ba937d693baa5ab5
-  post_fb_0_0_beam:
+    - 0.464287
+    - 0.960275
+    - 0.481904
+    - 0.977877
+    geometry: ec1480e49b44c3a5
+  node_fb_1_1_post_beam:
     rect:
-    - 0.056819
-    - 0.527249
-    - 0.109731
-    - 0.580096
-    geometry: 588c6130d58635e8
-  post_fb_0_1_beam:
+    - 0.62545
+    - 0.457442
+    - 0.677182
+    - 0.509113
+    geometry: 97acfa7ba9ade4ba
+  node_fb_2_0_node_stone_course_high:
     rect:
-    - 0.170456
-    - 0.527249
-    - 0.223368
-    - 0.580096
-    geometry: 1ee1a3dc288a73e1
-  post_fb_1_0_beam:
+    - 0.365966
+    - 0.932061
+    - 0.389985
+    - 0.956044
+    geometry: c12912a480d4e9ef
+  node_fb_2_0_node_stone_course_low:
     rect:
-    - 0.340911
-    - 0.527249
-    - 0.393823
-    - 0.580096
-    geometry: 94618e7e35fc20b7
-  post_fb_1_1_beam:
+    - 0.217302
+    - 0.901018
+    - 0.244439
+    - 0.928154
+    geometry: a9c6f391a08d5bfd
+  node_fb_2_0_node_stone_mortar:
     rect:
-    - 0.39773
-    - 0.527249
-    - 0.450642
-    - 0.580096
-    geometry: 4088f3ed358fef41
-  post_fb_2_0_beam:
+    - 0.571902
+    - 0.960275
+    - 0.589518
+    - 0.977877
+    geometry: 75a37e72048f868c
+  node_fb_2_0_post_beam:
     rect:
-    - 0.113637
-    - 0.527249
-    - 0.166549
-    - 0.580096
-    geometry: 1e708538a9a4395d
-  post_fb_2_1_beam:
+    - 0.055639
+    - 0.517903
+    - 0.107371
+    - 0.569575
+    geometry: a1f799338e560a9a
+  node_fb_2_1_node_stone_course_high:
     rect:
-    - 0.284093
-    - 0.527249
-    - 0.337005
-    - 0.580096
-    geometry: f05422a7ba6e9158
-  post_fb_3_0_beam:
+    - 0.393892
+    - 0.932061
+    - 0.417911
+    - 0.956044
+    geometry: 5c2783b6d91876c9
+  node_fb_2_1_node_stone_course_low:
+    rect:
+    - 0.155216
+    - 0.901018
+    - 0.182353
+    - 0.928154
+    geometry: 65f546b2bd9e7b88
+  node_fb_2_1_node_stone_mortar:
+    rect:
+    - 0.48581
+    - 0.960275
+    - 0.503427
+    - 0.977877
+    geometry: cdcf42aaee63dcc0
+  node_fb_2_1_post_beam:
+    rect:
+    - 0.736727
+    - 0.457442
+    - 0.78846
+    - 0.509113
+    geometry: a2342753dd73257d
+  node_fb_3_0_node_stone_course_high:
+    rect:
+    - 0.589373
+    - 0.932061
+    - 0.613393
+    - 0.956044
+    geometry: e3969234242fb305
+  node_fb_3_0_node_stone_course_low:
     rect:
     - 0.0
-    - 0.527249
-    - 0.052912
-    - 0.580096
-    geometry: 150907ba71708072
-  post_fb_3_1_beam:
+    - 0.901018
+    - 0.027137
+    - 0.928154
+    geometry: f7c3e558f29a5e13
+  node_fb_3_0_node_stone_mortar:
     rect:
-    - 0.227274
-    - 0.527249
-    - 0.280186
-    - 0.580096
-    geometry: 41caa77d9f8dfa2b
-  post_side_0_beam:
+    - 0.593424
+    - 0.960275
+    - 0.611041
+    - 0.977877
+    geometry: 3fa3d71a069619c3
+  node_fb_3_0_post_beam:
     rect:
-    - 0.511367
-    - 0.527249
-    - 0.564279
-    - 0.580096
-    geometry: 0f7e83f3d6040774
-  post_side_1_beam:
+    - 0.903643
+    - 0.457442
+    - 0.955376
+    - 0.509113
+    geometry: 62268c85378d8ee6
+  node_fb_3_1_node_stone_course_high:
     rect:
-    - 0.454548
-    - 0.527249
-    - 0.50746
-    - 0.580096
-    geometry: feb50f5515be73dc
-  ridge_collar_0:
+    - 0.533521
+    - 0.932061
+    - 0.557541
+    - 0.956044
+    geometry: 361faf552c71f7a9
+  node_fb_3_1_node_stone_course_low:
     rect:
-    - 0.641287
-    - 0.979156
-    - 0.658315
-    - 0.996238
+    - 0.914812
+    - 0.869479
+    - 0.941949
+    - 0.896616
+    geometry: 06635b0255ee2a33
+  node_fb_3_1_node_stone_mortar:
+    rect:
+    - 0.507333
+    - 0.960275
+    - 0.52495
+    - 0.977877
+    geometry: 03ded27fa5a69961
+  node_fb_3_1_post_beam:
+    rect:
+    - 0.792366
+    - 0.457442
+    - 0.844099
+    - 0.509113
+    geometry: 612b12e24d35bc9d
+  node_side_0_node_stone_course_high:
+    rect:
+    - 0.505595
+    - 0.932061
+    - 0.529615
+    - 0.956044
+    geometry: 12ac298bf5fc6d71
+  node_side_0_node_stone_course_low:
+    rect:
+    - 0.945855
+    - 0.869479
+    - 0.972992
+    - 0.896616
+    geometry: b4708706c1d390b7
+  node_side_0_node_stone_mortar:
+    rect:
+    - 0.614947
+    - 0.960275
+    - 0.632564
+    - 0.977877
+    geometry: 34719acf1e8a1292
+  node_side_0_post_beam:
+    rect:
+    - 0.111277
+    - 0.517903
+    - 0.16301
+    - 0.569575
+    geometry: d4bdb3bfbc958b92
+  node_side_1_node_stone_course_high:
+    rect:
+    - 0.561447
+    - 0.932061
+    - 0.585467
+    - 0.956044
+    geometry: 5dd56657afd27222
+  node_side_1_node_stone_course_low:
+    rect:
+    - 0.093129
+    - 0.901018
+    - 0.120266
+    - 0.928154
+    geometry: 35ff32e7df792d60
+  node_side_1_node_stone_mortar:
+    rect:
+    - 0.63647
+    - 0.960275
+    - 0.654087
+    - 0.977877
+    geometry: 6acc0e6e3f4b116a
+  node_side_1_post_beam:
+    rect:
+    - 0.166916
+    - 0.517903
+    - 0.218648
+    - 0.569575
+    geometry: 741ac7fcc8c3da71
+  ridge_ridge_collar_0:
+    rect:
+    - 0.865504
+    - 0.960275
+    - 0.882269
+    - 0.977094
     geometry: 38cbf6c5ca6d3313
-  ridge_collar_1:
+  ridge_ridge_collar_1:
     rect:
-    - 0.57844
-    - 0.979156
-    - 0.595483
-    - 0.996253
+    - 0.803444
+    - 0.960275
+    - 0.820225
+    - 0.977109
     geometry: d3c02c50855e068d
-  ridge_collar_2:
+  ridge_ridge_collar_2:
     rect:
-    - 0.515294
-    - 0.979156
-    - 0.532422
-    - 0.996339
+    - 0.74109
+    - 0.960275
+    - 0.757955
+    - 0.977194
     geometry: a2fff40efa6d0c48
-  ridge_collar_3:
+  ridge_ridge_collar_3:
     rect:
-    - 0.536329
-    - 0.979156
-    - 0.553458
-    - 0.996339
+    - 0.761861
+    - 0.960275
+    - 0.778726
+    - 0.977194
     geometry: f3a21c28647c24cf
-  ridge_collar_4:
+  ridge_ridge_collar_4:
     rect:
-    - 0.620338
-    - 0.979156
-    - 0.637381
-    - 0.996253
+    - 0.844817
+    - 0.960275
+    - 0.861598
+    - 0.977109
     geometry: 45ac7edc1a83ec55
-  ridge_collar_5:
+  ridge_ridge_collar_5:
     rect:
-    - 0.662221
-    - 0.979156
-    - 0.679249
-    - 0.996238
+    - 0.886176
+    - 0.960275
+    - 0.902941
+    - 0.977094
     geometry: e7847c5eb9300c1a
-  ridge_collar_6:
+  ridge_ridge_collar_6:
     rect:
-    - 0.599389
-    - 0.979156
-    - 0.616432
-    - 0.996253
+    - 0.824131
+    - 0.960275
+    - 0.840911
+    - 0.977109
     geometry: ee477a6bf21d18f5
-  ridge_roll:
+  ridge_ridge_roll:
     rect:
-    - 0.812891
-    - 0.370396
-    - 0.880995
-    - 0.438272
-    geometry: 409b15d0ff4ead84
-  roof_back_0_deck:
+    - 0.801334
+    - 0.364775
+    - 0.868948
+    - 0.432161
+    geometry: 018c36c090f9e20c
+  roof_back_0_slope_deck:
     rect:
-    - 0.396998
+    - 0.391064
     - 0.0
-    - 0.509719
-    - 0.112719
+    - 0.502049
+    - 0.110983
     geometry: ddba410b8c00fe78
-  roof_back_0_fascia_board:
+  roof_back_0_slope_fascia_board:
     rect:
-    - 0.12078
-    - 0.770661
-    - 0.156113
-    - 0.805902
+    - 0.511635
+    - 0.795039
+    - 0.546424
+    - 0.829738
     geometry: 319d817183430d17
-  roof_back_0_rafter_tail_0:
+  roof_back_0_slope_rafter_tail_0:
     rect:
-    - 0.143444
-    - 0.950458
-    - 0.168144
-    - 0.975147
+    - 0.65429
+    - 0.901018
+    - 0.67861
+    - 0.925326
     geometry: cd7c6366e6551729
-  roof_back_0_rafter_tail_1:
+  roof_back_0_slope_rafter_tail_1:
     rect:
-    - 0.257868
-    - 0.950458
-    - 0.282567
-    - 0.975146
+    - 0.795418
+    - 0.901018
+    - 0.819737
+    - 0.925326
     geometry: b3b8f9cd39875f74
-  roof_back_0_rafter_tail_2:
+  roof_back_0_slope_rafter_tail_2:
     rect:
-    - 0.662896
-    - 0.919164
-    - 0.687749
-    - 0.944027
+    - 0.569312
+    - 0.901018
+    - 0.593782
+    - 0.925497
     geometry: 987d07a09b1a6576
-  roof_back_0_rafter_tail_3:
+  roof_back_0_slope_rafter_tail_3:
     rect:
-    - 0.691655
-    - 0.919164
-    - 0.716508
-    - 0.944027
+    - 0.51256
+    - 0.901018
+    - 0.53703
+    - 0.925497
     geometry: 3692e685b0d71e70
-  roof_back_0_shingles_even:
+  roof_back_0_slope_shingles_even:
     rect:
-    - 0.0
-    - 0.256165
-    - 0.110325
-    - 0.36649
-    geometry: 7bafd178e3e2e3be
-  roof_back_0_shingles_odd:
+    - 0.338761
+    - 0.25171
+    - 0.447703
+    - 0.360652
+    geometry: 04cbb0dcd6449ac4
+  roof_back_0_slope_shingles_odd:
     rect:
-    - 0.0
-    - 0.140213
-    - 0.112045
-    - 0.252259
-    geometry: 0a0a0d3f040cc0cf
-  roof_back_1_deck:
+    - 0.227193
+    - 0.138114
+    - 0.336884
+    - 0.247804
+    geometry: ba24032261b1a434
+  roof_back_1_slope_deck:
     rect:
-    - 0.746881
+    - 0.735739
     - 0.0
-    - 0.859602
-    - 0.112719
+    - 0.846724
+    - 0.110983
     geometry: 8dce153e18ba21bc
-  roof_back_1_fascia_board:
+  roof_back_1_slope_fascia_board:
     rect:
-    - 0.237651
-    - 0.770661
-    - 0.271887
-    - 0.804984
+    - 0.66513
+    - 0.795039
+    - 0.698838
+    - 0.828834
     geometry: 2d86ffba69ddf5df
-  roof_back_1_rafter_tail_0:
+  roof_back_1_slope_rafter_tail_0:
     rect:
-    - 0.286474
-    - 0.950458
-    - 0.311173
-    - 0.975146
+    - 0.823644
+    - 0.901018
+    - 0.847963
+    - 0.925326
     geometry: fb48ab6aaa84281d
-  roof_back_1_rafter_tail_1:
+  roof_back_1_slope_rafter_tail_1:
     rect:
-    - 0.372291
-    - 0.950458
-    - 0.396991
-    - 0.975146
+    - 0.90832
+    - 0.901018
+    - 0.932639
+    - 0.925326
     geometry: 083d9d3398a12629
-  roof_back_1_rafter_tail_2:
+  roof_back_1_slope_rafter_tail_2:
     rect:
-    - 0.343685
-    - 0.950458
-    - 0.368385
-    - 0.975146
+    - 0.880095
+    - 0.901018
+    - 0.904414
+    - 0.925326
     geometry: 0f6f635007f206f9
-  roof_back_1_rafter_tail_3:
+  roof_back_1_slope_rafter_tail_3:
     rect:
-    - 0.17205
-    - 0.950458
-    - 0.19675
-    - 0.975146
+    - 0.710742
+    - 0.901018
+    - 0.735061
+    - 0.925326
     geometry: 5f57cc24d458239a
-  roof_back_1_shingles_even:
+  roof_back_1_slope_shingles_even:
     rect:
-    - 0.807802
-    - 0.140213
-    - 0.918127
-    - 0.250538
-    geometry: 1f41a2d8f7e9ff37
-  roof_back_1_shingles_odd:
+    - 0.225912
+    - 0.25171
+    - 0.334855
+    - 0.360652
+    geometry: b974d70eb5dcea4b
+  roof_back_1_slope_shingles_odd:
     rect:
-    - 0.115951
-    - 0.140213
-    - 0.227997
-    - 0.252259
-    geometry: 5bf9c9ef93ac21bc
-  roof_back_2_deck:
-    rect:
-    - 0.630253
     - 0.0
-    - 0.742975
-    - 0.112719
+    - 0.138114
+    - 0.10969
+    - 0.247804
+    geometry: f92e1d72f9051fbd
+  roof_back_2_slope_deck:
+    rect:
+    - 0.620847
+    - 0.0
+    - 0.731832
+    - 0.110983
     geometry: 9aaae906f491672c
-  roof_back_2_fascia_board:
+  roof_back_2_slope_fascia_board:
     rect:
-    - 0.957746
-    - 0.811122
-    - 0.991798
-    - 0.845088
+    - 0.740178
+    - 0.795039
+    - 0.773706
+    - 0.828482
     geometry: b1e7d4826d0e4816
-  roof_back_2_rafter_tail_0:
+  roof_back_2_slope_rafter_tail_0:
     rect:
-    - 0.749173
-    - 0.919164
-    - 0.774026
-    - 0.944027
+    - 0.540936
+    - 0.901018
+    - 0.565406
+    - 0.925497
     geometry: faece5cc81339f84
-  roof_back_2_rafter_tail_1:
+  roof_back_2_slope_rafter_tail_1:
     rect:
-    - 0.720414
-    - 0.919164
-    - 0.745267
-    - 0.944027
+    - 0.484184
+    - 0.901018
+    - 0.508654
+    - 0.925497
     geometry: 41d6a5ee1bcaf2d2
-  roof_back_2_rafter_tail_2:
+  roof_back_2_slope_rafter_tail_2:
     rect:
-    - 0.458109
-    - 0.950458
-    - 0.482809
-    - 0.975146
+    - 0.964771
+    - 0.901018
+    - 0.98909
+    - 0.925326
     geometry: 3c5d231f6a741bf1
-  roof_back_2_rafter_tail_3:
+  roof_back_2_slope_rafter_tail_3:
     rect:
-    - 0.605377
-    - 0.919164
-    - 0.63023
-    - 0.944029
+    - 0.42743
+    - 0.901018
+    - 0.451901
+    - 0.925499
     geometry: 5f2c02664d1ed53e
-  roof_back_2_shingles_even:
+  roof_back_2_slope_shingles_even:
     rect:
-    - 0.693571
-    - 0.140213
-    - 0.803895
-    - 0.250538
-    geometry: af1a9bd5b399fc16
-  roof_back_2_shingles_odd:
+    - 0.113064
+    - 0.25171
+    - 0.222006
+    - 0.360652
+    geometry: 2adaf7713490a11d
+  roof_back_2_slope_shingles_odd:
     rect:
-    - 0.231903
-    - 0.140213
-    - 0.343948
-    - 0.252259
-    geometry: 41d788d88a7ff8e8
-  roof_front_0_deck:
+    - 0.113597
+    - 0.138114
+    - 0.223287
+    - 0.247804
+    geometry: 549f8567a9c3ac37
+  roof_front_0_slope_deck:
     rect:
-    - 0.863509
+    - 0.85063
     - 0.0
-    - 0.97623
-    - 0.112719
+    - 0.961616
+    - 0.110983
     geometry: 534d45a0b2d3866f
-  roof_front_0_fascia_board:
+  roof_front_0_slope_fascia_board:
     rect:
-    - 0.16002
-    - 0.770661
-    - 0.195037
-    - 0.805553
+    - 0.55033
+    - 0.795039
+    - 0.584809
+    - 0.829394
     geometry: a50fd19db0e8b126
-  roof_front_0_rafter_tail_0:
+  roof_front_0_slope_rafter_tail_0:
     rect:
-    - 0.576532
-    - 0.919164
-    - 0.60147
-    - 0.944112
+    - 0.398969
+    - 0.901018
+    - 0.423523
+    - 0.925581
     geometry: 6cfd54a86f5b6f26
-  roof_front_0_rafter_tail_1:
+  roof_front_0_slope_rafter_tail_1:
     rect:
-    - 0.777932
-    - 0.919164
-    - 0.802785
-    - 0.944027
+    - 0.597689
+    - 0.901018
+    - 0.622158
+    - 0.925497
     geometry: ae7b16001e703f25
-  roof_front_0_rafter_tail_2:
+  roof_front_0_slope_rafter_tail_2:
     rect:
-    - 0.486715
-    - 0.950458
-    - 0.511415
-    - 0.975146
+    - 0.0
+    - 0.932061
+    - 0.024319
+    - 0.956369
     geometry: 5088f4571f1f4210
-  roof_front_0_rafter_tail_3:
+  roof_front_0_slope_rafter_tail_3:
     rect:
-    - 0.634137
-    - 0.919164
-    - 0.65899
-    - 0.944029
+    - 0.455807
+    - 0.901018
+    - 0.480278
+    - 0.925499
     geometry: 15b8ebb8af0add74
-  roof_front_0_shingles_even:
+  roof_front_0_slope_shingles_even:
     rect:
-    - 0.114231
-    - 0.256165
-    - 0.224552
-    - 0.366483
-    geometry: a48178dc26b7c16d
-  roof_front_0_shingles_odd:
-    rect:
-    - 0.578332
-    - 0.140213
-    - 0.689664
-    - 0.251546
-    geometry: c9d87b28688a089d
-  roof_front_1_deck:
-    rect:
-    - 0.28037
     - 0.0
-    - 0.393092
-    - 0.112719
+    - 0.25171
+    - 0.109157
+    - 0.360869
+    geometry: 82e99b2acfac31a1
+  roof_front_0_slope_shingles_odd:
+    rect:
+    - 0.34079
+    - 0.138114
+    - 0.450267
+    - 0.247589
+    geometry: 4caa5555ffe8bd71
+  roof_front_1_slope_deck:
+    rect:
+    - 0.276172
+    - 0.0
+    - 0.387158
+    - 0.110983
     geometry: 6b663ea77059024a
-  roof_front_1_fascia_board:
+  roof_front_1_slope_fascia_board:
     rect:
-    - 0.919787
-    - 0.811122
-    - 0.953839
-    - 0.845088
+    - 0.702744
+    - 0.795039
+    - 0.736272
+    - 0.828482
     geometry: 5436fcd787720e0f
-  roof_front_1_rafter_tail_0:
+  roof_front_1_slope_rafter_tail_0:
     rect:
-    - 0.200656
-    - 0.950458
-    - 0.225356
-    - 0.975146
+    - 0.738967
+    - 0.901018
+    - 0.763286
+    - 0.925326
     geometry: ed0bf422ec2cbf6d
-  roof_front_1_rafter_tail_1:
+  roof_front_1_slope_rafter_tail_1:
     rect:
-    - 0.31508
-    - 0.950458
-    - 0.339779
-    - 0.975146
+    - 0.851869
+    - 0.901018
+    - 0.876188
+    - 0.925326
     geometry: cf71442e7d0d73ba
-  roof_front_1_rafter_tail_2:
+  roof_front_1_slope_rafter_tail_2:
     rect:
-    - 0.429503
-    - 0.950458
-    - 0.454203
-    - 0.975146
+    - 0.936546
+    - 0.901018
+    - 0.960865
+    - 0.925326
     geometry: 48f1552aa2d6def0
-  roof_front_1_rafter_tail_3:
+  roof_front_1_slope_rafter_tail_3:
     rect:
-    - 0.229262
-    - 0.950458
-    - 0.253961
-    - 0.975146
+    - 0.767193
+    - 0.901018
+    - 0.791512
+    - 0.925326
     geometry: 5509637f751920a1
-  roof_front_1_shingles_even:
+  roof_front_1_slope_shingles_even:
     rect:
-    - 0.228458
-    - 0.256165
-    - 0.338779
-    - 0.366483
-    geometry: 6de4e861882a6167
-  roof_front_1_shingles_odd:
+    - 0.794003
+    - 0.138114
+    - 0.903161
+    - 0.247272
+    geometry: 0d185bf07ad29f0c
+  roof_front_1_slope_shingles_odd:
     rect:
-    - 0.463093
-    - 0.140213
-    - 0.574426
-    - 0.251546
-    geometry: 3ccc0080b272b500
-  roof_front_2_deck:
+    - 0.454173
+    - 0.138114
+    - 0.56365
+    - 0.247589
+    geometry: f7394dc864a7fadc
+  roof_front_2_slope_deck:
     rect:
-    - 0.513626
+    - 0.505955
     - 0.0
-    - 0.626347
-    - 0.112719
+    - 0.616941
+    - 0.110983
     geometry: 5d8212570487a096
-  roof_front_2_fascia_board:
+  roof_front_2_slope_fascia_board:
     rect:
-    - 0.0
-    - 0.849345
-    - 0.03402
-    - 0.883281
+    - 0.777612
+    - 0.795039
+    - 0.811108
+    - 0.828453
     geometry: 634b49946a816a5b
-  roof_front_2_rafter_tail_0:
+  roof_front_2_slope_rafter_tail_0:
     rect:
-    - 0.114838
-    - 0.950458
-    - 0.139538
-    - 0.975147
+    - 0.626065
+    - 0.901018
+    - 0.650384
+    - 0.925326
     geometry: 97947ed6335f13c0
-  roof_front_2_rafter_tail_1:
+  roof_front_2_slope_rafter_tail_1:
     rect:
-    - 0.400897
-    - 0.950458
-    - 0.425597
-    - 0.975146
+    - 0.682516
+    - 0.901018
+    - 0.706835
+    - 0.925326
     geometry: 46e059d865263175
-  roof_front_2_rafter_tail_2:
+  roof_front_2_slope_rafter_tail_2:
     rect:
-    - 0.543833
-    - 0.950458
-    - 0.568439
-    - 0.975072
+    - 0.197199
+    - 0.932061
+    - 0.221426
+    - 0.956297
     geometry: c2e28c1b07d88b4e
-  roof_front_2_rafter_tail_3:
+  roof_front_2_slope_rafter_tail_3:
     rect:
-    - 0.515321
-    - 0.950458
-    - 0.539927
-    - 0.975072
+    - 0.169066
+    - 0.932061
+    - 0.193293
+    - 0.956297
     geometry: 6a42b92cce89dbe9
-  roof_front_2_shingles_even:
+  roof_front_2_slope_shingles_even:
     rect:
-    - 0.342685
-    - 0.256165
-    - 0.453006
-    - 0.366483
-    geometry: c9816c097f768c0e
-  roof_front_2_shingles_odd:
+    - 0.68094
+    - 0.138114
+    - 0.790097
+    - 0.247272
+    geometry: bec98f985ad29d1f
+  roof_front_2_slope_shingles_odd:
     rect:
-    - 0.347854
-    - 0.140213
-    - 0.459187
-    - 0.251546
-    geometry: 6656f70a8c2f9145
-  shutters_front_0_0_batten_left:
+    - 0.567556
+    - 0.138114
+    - 0.677033
+    - 0.247589
+    geometry: 36eb27bf68b665eb
+  steps_steps_step_0:
     rect:
-    - 0.452186
-    - 0.979156
-    - 0.469316
-    - 0.996375
-    geometry: 86218a3b3e3a950f
-  shutters_front_0_0_batten_right:
+    - 0.717139
+    - 0.517903
+    - 0.766669
+    - 0.567433
+    geometry: 48bf0f9bd932b34b
+  steps_steps_step_1:
     rect:
-    - 0.368042
-    - 0.979156
-    - 0.385172
-    - 0.996375
-    geometry: a8163513c27f80df
-  shutters_front_0_0_plank_0:
+    - 0.461302
+    - 0.62516
+    - 0.501314
+    - 0.665145
+    geometry: 75a49455a9e879f8
+  verge_back_verge_barge_left:
     rect:
-    - 0.823708
-    - 0.950458
-    - 0.844609
-    - 0.971302
-    geometry: 66d6ae6e4d311cd7
-  shutters_front_0_0_plank_1:
-    rect:
-    - 0.873322
-    - 0.950458
-    - 0.894223
-    - 0.971302
-    geometry: ad011ccd4d33df24
-  shutters_front_0_0_plank_2:
-    rect:
-    - 0.898129
-    - 0.950458
-    - 0.91903
-    - 0.971302
-    geometry: 65e3f7aeba039914
-  shutters_front_0_1_batten_left:
-    rect:
-    - 0.431151
-    - 0.979156
-    - 0.44828
-    - 0.996375
-    geometry: 50d1a358549ef3b7
-  shutters_front_0_1_batten_right:
-    rect:
-    - 0.347006
-    - 0.979156
-    - 0.364136
-    - 0.996375
-    geometry: 88309700b0516f7d
-  shutters_front_0_1_plank_0:
-    rect:
-    - 0.72448
-    - 0.950458
-    - 0.745381
-    - 0.971302
-    geometry: 186bee64d246cb87
-  shutters_front_0_1_plank_1:
-    rect:
-    - 0.0
-    - 0.979156
-    - 0.020901
-    - 1.0
-    geometry: 02af4bc2bbccaf33
-  shutters_front_0_1_plank_2:
-    rect:
-    - 0.848515
-    - 0.950458
-    - 0.869416
-    - 0.971302
-    geometry: caaaa0e5ee77c80d
-  shutters_front_1_0_batten_left:
-    rect:
-    - 0.494258
-    - 0.979156
-    - 0.511387
-    - 0.996375
-    geometry: 5f6972a329a756b0
-  shutters_front_1_0_batten_right:
-    rect:
-    - 0.410115
-    - 0.979156
-    - 0.427244
-    - 0.996375
-    geometry: 2f4c2218f976dcad
-  shutters_front_1_0_plank_0:
-    rect:
-    - 0.798901
-    - 0.950458
-    - 0.819802
-    - 0.971302
-    geometry: fe71ba67aea9cb83
-  shutters_front_1_0_plank_1:
-    rect:
-    - 0.749287
-    - 0.950458
-    - 0.770188
-    - 0.971302
-    geometry: 251641f8ad4e0f55
-  shutters_front_1_0_plank_2:
-    rect:
-    - 0.774094
-    - 0.950458
-    - 0.794995
-    - 0.971302
-    geometry: 1cea07d5ce5c70a5
-  shutters_front_1_1_batten_left:
-    rect:
-    - 0.473222
-    - 0.979156
-    - 0.490352
-    - 0.996375
-    geometry: fdad2d45fecdc5e0
-  shutters_front_1_1_batten_right:
-    rect:
-    - 0.389078
-    - 0.979156
-    - 0.406208
-    - 0.996375
-    geometry: 1bb649e1d44828ea
-  shutters_front_1_1_plank_0:
-    rect:
-    - 0.947743
-    - 0.950458
-    - 0.968644
-    - 0.971302
-    geometry: a83a63cab1cf794d
-  shutters_front_1_1_plank_1:
-    rect:
-    - 0.922936
-    - 0.950458
-    - 0.943837
-    - 0.971302
-    geometry: d5496c417172d196
-  shutters_front_1_1_plank_2:
-    rect:
-    - 0.97255
-    - 0.950458
-    - 0.993451
-    - 0.971302
-    geometry: 576e050899de9f93
-  steps_step_0:
-    rect:
-    - 0.314481
-    - 0.584002
-    - 0.361872
-    - 0.631407
-    geometry: 92dc2706acb6c6ff
-  steps_step_1:
-    rect:
-    - 0.789655
-    - 0.637289
-    - 0.830697
-    - 0.678304
-    geometry: f1d055766b765183
-  verge_back_barge_left:
-    rect:
-    - 0.5636
-    - 0.637289
-    - 0.605455
-    - 0.678876
+    - 0.416186
+    - 0.62516
+    - 0.457396
+    - 0.666107
     geometry: 11d152e61400ae4a
-  verge_back_deck:
+  verge_back_verge_deck:
     rect:
-    - 0.456912
-    - 0.256165
-    - 0.556024
-    - 0.355274
+    - 0.45161
+    - 0.25171
+    - 0.549194
+    - 0.349293
     geometry: da6fc2e0f50458a7
-  verge_back_fascia_board:
+  verge_back_verge_fascia_board:
     rect:
-    - 0.120096
-    - 0.979156
-    - 0.139546
-    - 0.998605
+    - 0.241804
+    - 0.960275
+    - 0.260956
+    - 0.979425
     geometry: 796ea1ae872104be
-  verge_back_shingles_even:
+  verge_back_verge_shingles_even:
     rect:
-    - 0.354284
-    - 0.465629
-    - 0.407606
-    - 0.518949
-    geometry: e0ef3e82db846f7e
-  verge_back_shingles_odd:
+    - 0.288888
+    - 0.457442
+    - 0.341432
+    - 0.509981
+    geometry: f4361bf0bc6d82b9
+  verge_back_verge_shingles_odd:
     rect:
-    - 0.568185
-    - 0.527249
-    - 0.620463
-    - 0.579529
-    geometry: 76857b98f58fe68d
-  verge_barge_right:
+    - 0.277801
+    - 0.517903
+    - 0.328901
+    - 0.569006
+    geometry: ce9252400554d3d5
+  verge_l_back_verge_barge_right:
     rect:
-    - 0.467228
-    - 0.584002
-    - 0.513392
-    - 0.629916
-    geometry: 2e72054ff33fd928
-  verge_deck:
-    rect:
-    - 0.061741
-    - 0.465629
-    - 0.119318
-    - 0.523069
-    geometry: 3de3b1a7032b0084
-  verge_fascia_board:
-    rect:
-    - 0.073382
-    - 0.979156
-    - 0.092832
-    - 0.998605
-    geometry: 7b72a9967f644c6e
-  verge_l_back_barge_right:
-    rect:
-    - 0.241357
-    - 0.637289
-    - 0.28529
-    - 0.680936
+    - 0.096196
+    - 0.62516
+    - 0.139453
+    - 0.668135
     geometry: 90fbe0bd7806840f
-  verge_l_back_deck:
+  verge_l_back_verge_deck:
     rect:
-    - 0.55993
-    - 0.256165
-    - 0.659041
-    - 0.355274
+    - 0.553101
+    - 0.25171
+    - 0.650685
+    - 0.349293
     geometry: d35fe59884f86324
-  verge_l_back_fascia_board:
+  verge_l_back_verge_fascia_board:
     rect:
-    - 0.096739
-    - 0.979156
-    - 0.116189
-    - 0.998605
+    - 0.19569
+    - 0.960275
+    - 0.214841
+    - 0.979425
     geometry: 04fa9b665a1f2caa
-  verge_l_back_shingles_even:
+  verge_l_back_verge_shingles_even:
     rect:
-    - 0.296889
-    - 0.465629
-    - 0.350378
-    - 0.519124
-    geometry: f5ec10b27647417c
-  verge_l_back_shingles_odd:
+    - 0.175478
+    - 0.457442
+    - 0.228525
+    - 0.510493
+    geometry: 6032c8f3e05dd4aa
+  verge_l_back_verge_shingles_odd:
     rect:
-    - 0.680484
-    - 0.527249
-    - 0.732494
-    - 0.579262
-    geometry: 8ec49d85c2f91277
-  verge_l_barge_left:
+    - 0.222555
+    - 0.517903
+    - 0.273895
+    - 0.569241
+    geometry: 2d575009bd54915f
+  verge_l_verge_barge_left:
     rect:
-    - 0.417158
-    - 0.584002
-    - 0.463322
-    - 0.629916
+    - 0.802073
+    - 0.573481
+    - 0.847526
+    - 0.618688
     geometry: 9be39bdad3e41340
-  verge_l_deck:
+  verge_l_verge_deck:
     rect:
-    - 0.123224
-    - 0.465629
-    - 0.17795
-    - 0.520479
+    - 0.060596
+    - 0.457442
+    - 0.114479
+    - 0.511447
     geometry: 7a66b69550315019
-  verge_l_fascia_board:
+  verge_l_verge_fascia_board:
     rect:
-    - 0.143453
-    - 0.979156
-    - 0.162903
-    - 0.998605
+    - 0.218747
+    - 0.960275
+    - 0.237898
+    - 0.979425
     geometry: 6883b5ea9152af8d
-  verge_l_shingles_even:
+  verge_l_verge_shingles_even:
     rect:
-    - 0.239397
-    - 0.465629
-    - 0.292982
-    - 0.519213
-    geometry: 52afd73107fb128b
-  verge_l_shingles_odd:
+    - 0.232432
+    - 0.457442
+    - 0.284982
+    - 0.509991
+    geometry: df1ef2803325f94c
+  verge_l_verge_shingles_odd:
     rect:
-    - 0.7364
-    - 0.527249
-    - 0.788287
-    - 0.579133
-    geometry: 1e1b6cbd3745d37e
-  verge_shingles_even:
+    - 0.569855
+    - 0.457442
+    - 0.621544
+    - 0.509131
+    geometry: e0108aecd027d98b
+  verge_verge_barge_right:
     rect:
-    - 0.181856
-    - 0.465629
-    - 0.235491
-    - 0.519265
-    geometry: 458befc63ef17d93
-  verge_shingles_odd:
-    rect:
-    - 0.62437
-    - 0.527249
-    - 0.676577
-    - 0.579458
-    geometry: ef16ade9604f38fd
-  wall_back_0_head_plate:
-    rect:
-    - 0.855845
-    - 0.685538
-    - 0.89413
-    - 0.723792
-    geometry: 4921fb91386e4290
-  wall_back_0_head_rail:
-    rect:
-    - 0.124585
-    - 0.729017
-    - 0.162099
-    - 0.76649
-    geometry: bf022311367febe0
-  wall_back_0_infill:
-    rect:
-    - 0.760447
-    - 0.256165
-    - 0.851779
-    - 0.347492
-    geometry: 182cb170c50485d8
-  wall_back_0_sill_plate:
-    rect:
-    - 0.643657
-    - 0.685538
-    - 0.682218
-    - 0.724069
-    geometry: 2957b4b8a6bd5a29
-  wall_back_0_sill_rail:
-    rect:
-    - 0.331446
-    - 0.729017
-    - 0.368839
-    - 0.766372
-    geometry: 7f2a8f7ff7197dbc
-  wall_back_0_stud_0:
-    rect:
-    - 0.517298
-    - 0.584002
-    - 0.562672
-    - 0.629298
-    geometry: c4f7fd2ab933642b
-  wall_back_0_stud_1:
-    rect:
-    - 0.665139
-    - 0.584002
-    - 0.710513
-    - 0.629298
-    geometry: 5c4b580052665aa1
-  wall_back_1_head_plate:
-    rect:
-    - 0.898036
-    - 0.685538
-    - 0.936321
-    - 0.723792
-    geometry: f93dce0d433e3b03
-  wall_back_1_head_rail:
-    rect:
-    - 0.166006
-    - 0.729017
-    - 0.20352
-    - 0.76649
-    geometry: de160fdceab0baa0
-  wall_back_1_infill:
-    rect:
-    - 0.855685
-    - 0.256165
-    - 0.947016
-    - 0.347492
-    geometry: 7feeb863bc7e7b2d
-  wall_back_1_sill_plate:
-    rect:
-    - 0.686125
-    - 0.685538
-    - 0.724685
-    - 0.724069
-    geometry: 2259dad73a4e8e85
-  wall_back_1_sill_rail:
-    rect:
-    - 0.248847
-    - 0.729017
-    - 0.28624
-    - 0.766372
-    geometry: c111a2ed8364d996
-  wall_back_1_stud_0:
-    rect:
-    - 0.566579
-    - 0.584002
-    - 0.611953
-    - 0.629298
-    geometry: 3caaf631e0f50ed9
-  wall_back_1_stud_1:
-    rect:
-    - 0.714419
-    - 0.584002
-    - 0.759793
-    - 0.629298
-    geometry: 5eafb255fa2de142
-  wall_back_2_head_plate:
-    rect:
-    - 0.940227
-    - 0.685538
-    - 0.978512
-    - 0.723792
-    geometry: 6d486fdbb0828e19
-  wall_back_2_head_rail:
-    rect:
-    - 0.207427
-    - 0.729017
-    - 0.244941
-    - 0.76649
-    geometry: cef2b914a2707d19
-  wall_back_2_infill:
+    - 0.851432
+    - 0.573481
+    - 0.896885
+    - 0.618688
+    geometry: 2e72054ff33fd928
+  verge_verge_deck:
     rect:
     - 0.0
-    - 0.370396
-    - 0.091331
-    - 0.461723
-    geometry: c5a6aed48a723f7a
-  wall_back_2_sill_plate:
+    - 0.457442
+    - 0.05669
+    - 0.513997
+    geometry: 3de3b1a7032b0084
+  verge_verge_fascia_board:
     rect:
-    - 0.728592
-    - 0.685538
-    - 0.767153
-    - 0.724069
-    geometry: 1c49f1733abb9535
-  wall_back_2_sill_rail:
+    - 0.172632
+    - 0.960275
+    - 0.191783
+    - 0.979425
+    geometry: 7b72a9967f644c6e
+  verge_verge_shingles_even:
     rect:
-    - 0.290147
-    - 0.729017
-    - 0.32754
-    - 0.766372
-    geometry: a5104bc82f65a469
-  wall_back_2_stud_0:
+    - 0.118386
+    - 0.457442
+    - 0.171571
+    - 0.510627
+    geometry: aee6cfc6f7451a17
+  verge_verge_shingles_odd:
     rect:
-    - 0.763699
-    - 0.584002
-    - 0.809073
-    - 0.629298
-    geometry: 29432eded4f05b21
-  wall_back_2_stud_1:
+    - 0.662677
+    - 0.517903
+    - 0.713233
+    - 0.568463
+    geometry: 76922bfef02299bd
+  wall_back_0_wall_head_plate:
     rect:
-    - 0.615859
-    - 0.584002
-    - 0.661233
-    - 0.629298
-    geometry: 8fb53545b45dadb1
-  wall_front_door_head_plate:
+    - 0.24183
+    - 0.715366
+    - 0.27823
+    - 0.751692
+    geometry: b349a00edcc55526
+  wall_back_0_wall_head_rail:
     rect:
-    - 0.043515
-    - 0.685538
-    - 0.082694
-    - 0.724753
-    geometry: b0f016e19186072c
-  wall_front_door_head_rail:
+    - 0.0
+    - 0.7556
+    - 0.035569
+    - 0.791133
+    geometry: a95f8787670fe26a
+  wall_back_0_wall_infill:
     rect:
-    - 0.372745
-    - 0.729017
-    - 0.4101
-    - 0.766333
-    geometry: 0703d9641f841166
-  wall_front_door_infill:
+    - 0.0
+    - 0.364775
+    - 0.088749
+    - 0.453535
+    geometry: beb9369aa0503c3f
+  wall_back_0_wall_sill_plate:
     rect:
-    - 0.648769
-    - 0.370396
-    - 0.727119
-    - 0.448773
+    - 0.893382
+    - 0.62516
+    - 0.931916
+    - 0.663751
+    geometry: 4b259089529a9c11
+  wall_back_0_wall_sill_rail:
+    rect:
+    - 0.883978
+    - 0.715366
+    - 0.920058
+    - 0.751409
+    geometry: bbf143791f895cc1
+  wall_back_0_wall_stud_0:
+    rect:
+    - 0.752802
+    - 0.573481
+    - 0.798166
+    - 0.618757
+    geometry: 3e8dbebaa7ea18aa
+  wall_back_0_wall_stud_1:
+    rect:
+    - 0.555721
+    - 0.573481
+    - 0.601085
+    - 0.618757
+    geometry: 83d04e844877ad50
+  wall_back_0_window_glass:
+    rect:
+    - 0.0
+    - 0.834467
+    - 0.031099
+    - 0.865573
+    geometry: 82162db4dc3a3f85
+  wall_back_0_window_head:
+    rect:
+    - 0.27847
+    - 0.901018
+    - 0.304688
+    - 0.92722
+    geometry: bb0aaf759bd47d6f
+  wall_back_0_window_jamb_left:
+    rect:
+    - 0.140898
+    - 0.932061
+    - 0.165159
+    - 0.956313
+    geometry: 8b30a7618826b9a0
+  wall_back_0_window_jamb_right:
+    rect:
+    - 0.225332
+    - 0.932061
+    - 0.249553
+    - 0.956272
+    geometry: 47e2891620bdfda7
+  wall_back_0_window_mullion_h:
+    rect:
+    - 0.264862
+    - 0.960275
+    - 0.283287
+    - 0.97869
+    geometry: b1d9a2f70eb43594
+  wall_back_0_window_mullion_v:
+    rect:
+    - 0.074629
+    - 0.960275
+    - 0.095469
+    - 0.981135
+    geometry: 00b953be9089ad2e
+  wall_back_0_window_sill:
+    rect:
+    - 0.521943
+    - 0.834467
+    - 0.552391
+    - 0.864914
+    geometry: be25823342d87591
+  wall_back_1_wall_head_plate:
+    rect:
+    - 0.201524
+    - 0.715366
+    - 0.237924
+    - 0.751692
+    geometry: 87184caa756cd370
+  wall_back_1_wall_head_rail:
+    rect:
+    - 0.472227
+    - 0.795039
+    - 0.507729
+    - 0.830505
+    geometry: df6daabf383605ee
+  wall_back_1_wall_infill:
+    rect:
+    - 0.092655
+    - 0.364775
+    - 0.181404
+    - 0.453535
+    geometry: 0ea59238eab77322
+  wall_back_1_wall_sill_plate:
+    rect:
+    - 0.808502
+    - 0.62516
+    - 0.847036
+    - 0.663751
+    geometry: fbde881e2d10fb54
+  wall_back_1_wall_sill_rail:
+    rect:
+    - 0.843991
+    - 0.715366
+    - 0.880071
+    - 0.751409
+    geometry: 2a4bda616c321570
+  wall_back_1_wall_stud_0:
+    rect:
+    - 0.654262
+    - 0.573481
+    - 0.699626
+    - 0.618757
+    geometry: 729290dad5f0605b
+  wall_back_1_wall_stud_1:
+    rect:
+    - 0.703532
+    - 0.573481
+    - 0.748896
+    - 0.618757
+    geometry: 5cfb4a9ccf8d9ca1
+  wall_back_1_window_glass:
+    rect:
+    - 0.035005
+    - 0.834467
+    - 0.066103
+    - 0.865573
+    geometry: ad093acedfac1f3b
+  wall_back_1_window_head:
+    rect:
+    - 0.368844
+    - 0.901018
+    - 0.395062
+    - 0.92722
+    geometry: fac8508915eb489c
+  wall_back_1_window_jamb_left:
+    rect:
+    - 0.11273
+    - 0.932061
+    - 0.136991
+    - 0.956313
+    geometry: 3b1a01cf6dd34e13
+  wall_back_1_window_jamb_right:
+    rect:
+    - 0.337839
+    - 0.932061
+    - 0.362059
+    - 0.956272
+    geometry: 917e0f81110afb8e
+  wall_back_1_window_mullion_h:
+    rect:
+    - 0.354189
+    - 0.960275
+    - 0.372615
+    - 0.97869
+    geometry: 9d09397541df0b99
+  wall_back_1_window_mullion_v:
+    rect:
+    - 0.124121
+    - 0.960275
+    - 0.144772
+    - 0.980947
+    geometry: 53879e93fa51b712
+  wall_back_1_window_sill:
+    rect:
+    - 0.625005
+    - 0.834467
+    - 0.655453
+    - 0.864914
+    geometry: 70d981558b6287c5
+  wall_back_2_wall_head_plate:
+    rect:
+    - 0.161217
+    - 0.715366
+    - 0.197617
+    - 0.751692
+    geometry: 68d4983b842a3457
+  wall_back_2_wall_head_rail:
+    rect:
+    - 0.039475
+    - 0.7556
+    - 0.075044
+    - 0.791133
+    geometry: 0b915cb2c1bc105b
+  wall_back_2_wall_infill:
+    rect:
+    - 0.18531
+    - 0.364775
+    - 0.274059
+    - 0.453535
+    geometry: 658cd18600a3f648
+  wall_back_2_wall_sill_plate:
+    rect:
+    - 0.850942
+    - 0.62516
+    - 0.889476
+    - 0.663751
+    geometry: b350f258b44dbcdb
+  wall_back_2_wall_sill_rail:
+    rect:
+    - 0.923965
+    - 0.715366
+    - 0.960045
+    - 0.751408
+    geometry: 4ac1d22d80953935
+  wall_back_2_wall_stud_0:
+    rect:
+    - 0.604991
+    - 0.573481
+    - 0.650355
+    - 0.618757
+    geometry: e9f09548e0a0b7b9
+  wall_back_2_wall_stud_1:
+    rect:
+    - 0.50645
+    - 0.573481
+    - 0.551815
+    - 0.618757
+    geometry: 85338ecdcf7019a1
+  wall_back_2_window_glass:
+    rect:
+    - 0.961921
+    - 0.795039
+    - 0.993019
+    - 0.826146
+    geometry: 2cd1c049c213fae1
+  wall_back_2_window_head:
+    rect:
+    - 0.308595
+    - 0.901018
+    - 0.334813
+    - 0.92722
+    geometry: e6db6490aee75a13
+  wall_back_2_window_jamb_left:
+    rect:
+    - 0.056394
+    - 0.932061
+    - 0.080655
+    - 0.956313
+    geometry: 02709f0b047d51bf
+  wall_back_2_window_jamb_right:
+    rect:
+    - 0.281586
+    - 0.932061
+    - 0.305806
+    - 0.956272
+    geometry: aec5c0047cc65cac
+  wall_back_2_window_mullion_h:
+    rect:
+    - 0.287194
+    - 0.960275
+    - 0.305619
+    - 0.97869
+    geometry: 7e532c3889df0b84
+  wall_back_2_window_mullion_v:
+    rect:
+    - 0.049795
+    - 0.960275
+    - 0.070723
+    - 0.981216
+    geometry: 08ab9037097d2bf1
+  wall_back_2_window_sill:
+    rect:
+    - 0.590651
+    - 0.834467
+    - 0.621099
+    - 0.864914
+    geometry: 93ef43aad1e6a474
+  wall_front_door_door_brace:
+    rect:
+    - 0.963113
+    - 0.932061
+    - 0.985537
+    - 0.95441
+    geometry: a98c4f8a9e510b0a
+  wall_front_door_door_frame_head:
+    rect:
+    - 0.659359
+    - 0.834467
+    - 0.688729
+    - 0.863851
+    geometry: d320f9d57378d9aa
+  wall_front_door_door_frame_jamb_left:
+    rect:
+    - 0.673756
+    - 0.67309
+    - 0.711447
+    - 0.710691
+    geometry: 92fcedc647b82dde
+  wall_front_door_door_frame_jamb_right:
+    rect:
+    - 0.715354
+    - 0.67309
+    - 0.753045
+    - 0.710691
+    geometry: 5ef43008c18a6a49
+  wall_front_door_door_ledge_0:
+    rect:
+    - 0.398652
+    - 0.960275
+    - 0.416868
+    - 0.978507
+    geometry: fa5c926f2aad9756
+  wall_front_door_door_ledge_1:
+    rect:
+    - 0.420774
+    - 0.960275
+    - 0.438858
+    - 0.978375
+    geometry: c5db04dd0d959e0e
+  wall_front_door_door_plank_0:
+    rect:
+    - 0.885749
+    - 0.834467
+    - 0.913828
+    - 0.86247
+    geometry: fa50c14774cd4b8c
+  wall_front_door_door_plank_1:
+    rect:
+    - 0.789795
+    - 0.834467
+    - 0.817873
+    - 0.86247
+    geometry: 8f8c88aa55a8ed89
+  wall_front_door_door_plank_2:
+    rect:
+    - 0.82178
+    - 0.834467
+    - 0.849858
+    - 0.86247
+    geometry: fc483362b2b2a6b3
+  wall_front_door_door_plank_3:
+    rect:
+    - 0.853764
+    - 0.834467
+    - 0.881843
+    - 0.86247
+    geometry: dd23b4be37b2a434
+  wall_front_door_door_pull:
+    rect:
+    - 0.0
+    - 0.985241
+    - 0.013413
+    - 0.998648
+    geometry: c1753a6bd5e2900c
+  wall_front_door_door_strap_0:
+    rect:
+    - 0.782632
+    - 0.960275
+    - 0.799538
+    - 0.977181
+    geometry: 0ef54aa102b7bb69
+  wall_front_door_door_strap_1:
+    rect:
+    - 0.376521
+    - 0.960275
+    - 0.394746
+    - 0.97851
+    geometry: 5842bd54b5a296c3
+  wall_front_door_wall_head_plate:
+    rect:
+    - 0.402999
+    - 0.715366
+    - 0.439343
+    - 0.751636
+    geometry: b368a6a53d89215b
+  wall_front_door_wall_head_rail:
+    rect:
+    - 0.963951
+    - 0.715366
+    - 1.0
+    - 0.751376
+    geometry: cbb4ee346ff89762
+  wall_front_door_wall_infill:
+    rect:
+    - 0.720284
+    - 0.364775
+    - 0.797428
+    - 0.441944
     geometry: 191ce53af44661ee
-  wall_front_door_sill_plate:
+  wall_front_door_wall_sill_plate:
     rect:
-    - 0.0
-    - 0.729017
-    - 0.037766
-    - 0.766755
-    geometry: 09dc12b6e4bd7e5c
-  wall_front_door_stud_0:
+    - 0.680297
+    - 0.62516
+    - 0.719321
+    - 0.66415
+    geometry: 47f3e8f1db96de32
+  wall_front_door_wall_stud_0:
     rect:
-    - 0.145006
-    - 0.637289
-    - 0.189275
-    - 0.681474
-    geometry: '1820084322013665'
-  wall_front_door_stud_1:
+    - 0.949745
+    - 0.573481
+    - 0.994793
+    - 0.618448
+    geometry: 71af6268bd7e1293
+  wall_front_door_wall_stud_1:
     rect:
-    - 0.193182
-    - 0.637289
-    - 0.237451
-    - 0.681474
-    geometry: 5a8158ff8c1a5967
-  wall_front_window_0_head_plate:
+    - 0.900791
+    - 0.573481
+    - 0.945839
+    - 0.618448
+    geometry: 82e46a18ba931a8c
+  wall_front_window_0_shutter_left_batten_left:
     rect:
-    - 0.922978
-    - 0.637289
-    - 0.962587
-    - 0.676862
-    geometry: 8ff679e938dae691
-  wall_front_window_0_head_rail:
+    - 0.947987
+    - 0.960275
+    - 0.96465
+    - 0.977029
+    geometry: d6b014533c8aae02
+  wall_front_window_0_shutter_left_batten_right:
     rect:
-    - 0.496366
-    - 0.729017
-    - 0.533359
-    - 0.765977
-    geometry: d5e8369e5a13cf87
-  wall_front_window_0_infill:
+    - 0.699542
+    - 0.960275
+    - 0.71641
+    - 0.977232
+    geometry: 97c0cf65461f434a
+  wall_front_window_0_shutter_left_plank_0:
     rect:
-    - 0.095237
-    - 0.370396
-    - 0.186569
-    - 0.461723
+    - 0.645225
+    - 0.932061
+    - 0.66781
+    - 0.95462
+    geometry: 4375edb04d3271cf
+  wall_front_window_0_shutter_left_plank_1:
+    rect:
+    - 0.724697
+    - 0.932061
+    - 0.747282
+    - 0.95462
+    geometry: 1099fbf477a8100c
+  wall_front_window_0_shutter_left_plank_2:
+    rect:
+    - 0.751188
+    - 0.932061
+    - 0.773773
+    - 0.95462
+    geometry: dc00680b1d44df00
+  wall_front_window_0_shutter_right_batten_left:
+    rect:
+    - 0.906847
+    - 0.960275
+    - 0.923511
+    - 0.977029
+    geometry: 352da8ac9a0d6865
+  wall_front_window_0_shutter_right_batten_right:
+    rect:
+    - 0.678767
+    - 0.960275
+    - 0.695635
+    - 0.977232
+    geometry: 2b57a646f2f4d7e0
+  wall_front_window_0_shutter_right_plank_0:
+    rect:
+    - 0.883641
+    - 0.932061
+    - 0.906226
+    - 0.95462
+    geometry: 03be3c1d36815adf
+  wall_front_window_0_shutter_right_plank_1:
+    rect:
+    - 0.857151
+    - 0.932061
+    - 0.879735
+    - 0.95462
+    geometry: 0325827b3d971f11
+  wall_front_window_0_shutter_right_plank_2:
+    rect:
+    - 0.910132
+    - 0.932061
+    - 0.932716
+    - 0.95462
+    geometry: 7aff38c5711ffd04
+  wall_front_window_0_wall_head_plate:
+    rect:
+    - 0.765865
+    - 0.62516
+    - 0.804596
+    - 0.663864
+    geometry: 940f334d63504d9c
+  wall_front_window_0_wall_head_rail:
+    rect:
+    - 0.443249
+    - 0.715366
+    - 0.479478
+    - 0.751558
+    geometry: 6238b108059871ac
+  wall_front_window_0_wall_infill:
+    rect:
+    - 0.749827
+    - 0.25171
+    - 0.839751
+    - 0.34163
     geometry: b586bfb7a9067e15
-  wall_front_window_0_sill_plate:
+  wall_front_window_0_wall_sill_plate:
     rect:
-    - 0.041672
-    - 0.729017
-    - 0.079222
-    - 0.766535
-    geometry: 50d27955954289f0
-  wall_front_window_0_sill_rail:
+    - 0.253718
+    - 0.67309
+    - 0.291991
+    - 0.711328
+    geometry: 3d15d833ddbdf67b
+  wall_front_window_0_wall_sill_rail:
     rect:
-    - 0.0405
-    - 0.770661
-    - 0.077094
-    - 0.807216
-    geometry: 7664284a377e55a0
-  wall_front_window_0_stud_0:
+    - 0.838162
+    - 0.67309
+    - 0.874719
+    - 0.709605
+    geometry: daa20a3fea3cd350
+  wall_front_window_0_wall_stud_0:
     rect:
-    - 0.910558
-    - 0.584002
-    - 0.954987
-    - 0.628345
-    geometry: b00c32597b871454
-  wall_front_window_0_stud_1:
+    - 0.456897
+    - 0.573481
+    - 0.502544
+    - 0.619042
+    geometry: bd4f51dbcddb27c3
+  wall_front_window_0_wall_stud_1:
     rect:
-    - 0.0
-    - 0.637289
-    - 0.044429
-    - 0.681632
-    geometry: d2d6509db562431a
-  wall_front_window_1_head_plate:
+    - 0.35779
+    - 0.573481
+    - 0.403438
+    - 0.619042
+    geometry: 7a186b137dca17e6
+  wall_front_window_0_window_glass:
     rect:
-    - 0.0
-    - 0.685538
-    - 0.039609
-    - 0.725111
-    geometry: c8f62eaef8958f52
-  wall_front_window_1_head_rail:
-    rect:
-    - 0.537265
-    - 0.729017
-    - 0.574258
-    - 0.765976
-    geometry: 188702fb247ea5b5
-  wall_front_window_1_infill:
-    rect:
-    - 0.190475
-    - 0.370396
-    - 0.281806
-    - 0.461723
-    geometry: 391e39f5311d9489
-  wall_front_window_1_sill_plate:
-    rect:
-    - 0.083128
-    - 0.729017
-    - 0.120678
-    - 0.766535
-    geometry: 8a5256cafdc44e31
-  wall_front_window_1_sill_rail:
-    rect:
-    - 0.0
-    - 0.770661
-    - 0.036594
-    - 0.807216
-    geometry: 3282d059da68ca9c
-  wall_front_window_1_stud_0:
-    rect:
-    - 0.048335
-    - 0.637289
-    - 0.092765
-    - 0.681632
-    geometry: 49ce7a60ce76559b
-  wall_front_window_1_stud_1:
-    rect:
-    - 0.096671
-    - 0.637289
-    - 0.1411
-    - 0.681632
-    geometry: 1c0d5c0a764c0e69
-  wall_side_0_0_brace_a:
-    rect:
-    - 0.0
-    - 0.584002
-    - 0.049262
-    - 0.633383
-    geometry: dccbdec7e0f3e11e
-  wall_side_0_0_brace_b:
-    rect:
-    - 0.157814
-    - 0.584002
-    - 0.206422
-    - 0.632486
-    geometry: 740cd83ba24121a5
-  wall_side_0_0_head_plate:
-    rect:
-    - 0.600808
-    - 0.685538
-    - 0.639751
-    - 0.72445
-    geometry: 8439b0742911542a
-  wall_side_0_0_infill_solid:
-    rect:
-    - 0.285712
-    - 0.370396
-    - 0.37257
-    - 0.457257
-    geometry: b65329783b8ebdb9
-  wall_side_0_0_sill_plate:
-    rect:
-    - 0.0866
-    - 0.685538
-    - 0.125575
-    - 0.724549
-    geometry: de8787bb7620aca1
-  wall_side_0_1_brace_a:
-    rect:
-    - 0.792193
-    - 0.527249
-    - 0.841456
-    - 0.57663
-    geometry: 39f614763b26b618
-  wall_side_0_1_brace_b:
-    rect:
-    - 0.210328
-    - 0.584002
-    - 0.258925
-    - 0.632475
-    geometry: 8c4c62d8a9471fdd
-  wall_side_0_1_head_plate:
-    rect:
-    - 0.51511
-    - 0.685538
-    - 0.554053
-    - 0.72445
-    geometry: 04990281e2c91d18
-  wall_side_0_1_infill_solid:
-    rect:
-    - 0.376476
-    - 0.370396
-    - 0.463334
-    - 0.457257
-    geometry: 6bb5ad43ff641fad
-  wall_side_0_1_sill_plate:
-    rect:
-    - 0.215242
-    - 0.685538
-    - 0.254215
-    - 0.724548
-    geometry: 7fc2fb5f36541cda
-  wall_side_1_0_brace_a:
-    rect:
-    - 0.845362
-    - 0.527249
-    - 0.894625
-    - 0.57663
-    geometry: 2095d4431c2ed4a0
-  wall_side_1_0_brace_b:
-    rect:
-    - 0.812979
-    - 0.584002
-    - 0.857867
-    - 0.628714
-    geometry: 38bd6ca234df0f20
-  wall_side_1_0_head_plate:
-    rect:
-    - 0.472261
-    - 0.685538
-    - 0.511204
-    - 0.72445
-    geometry: 03cfb41c520d97bd
-  wall_side_1_0_infill_solid:
-    rect:
-    - 0.467241
-    - 0.370396
-    - 0.554098
-    - 0.457257
-    geometry: fb3682f1c383fab3
-  wall_side_1_0_sill_plate:
-    rect:
-    - 0.172361
-    - 0.685538
-    - 0.211336
-    - 0.724549
-    geometry: 6040796ff3a2feb2
-  wall_side_1_1_brace_a:
-    rect:
-    - 0.898531
-    - 0.527249
-    - 0.947793
-    - 0.57663
-    geometry: 9f6769b61bc6cc63
-  wall_side_1_1_brace_b:
-    rect:
-    - 0.861774
-    - 0.584002
-    - 0.906652
-    - 0.628704
-    geometry: 2eeaa0d5ccbcc434
-  wall_side_1_1_head_plate:
-    rect:
-    - 0.557959
-    - 0.685538
-    - 0.596902
-    - 0.72445
-    geometry: 87fa850525663dfe
-  wall_side_1_1_infill_solid:
-    rect:
-    - 0.558005
-    - 0.370396
-    - 0.644862
-    - 0.457257
-    geometry: 06391063c01c4766
-  wall_side_1_1_sill_plate:
-    rect:
-    - 0.129481
-    - 0.685538
-    - 0.168455
-    - 0.724549
-    geometry: 5e98f6266e187d87
-  window_back_0_glass:
-    rect:
-    - 0.144631
-    - 0.849345
-    - 0.176216
-    - 0.880938
-    geometry: d2d4ce2f2a1e7fd8
-  window_back_0_head:
-    rect:
-    - 0.247164
-    - 0.919164
-    - 0.273761
-    - 0.945778
-    geometry: daa538408d224165
-  window_back_0_jamb_left:
-    rect:
-    - 0.92153
-    - 0.919164
-    - 0.946334
-    - 0.943956
-    geometry: cac142d82613c078
-  window_back_0_jamb_right:
-    rect:
-    - 0.95024
-    - 0.919164
-    - 0.975043
-    - 0.943956
-    geometry: d89cecdf1741e4a7
-  window_back_0_mullion_h:
-    rect:
-    - 0.21205
-    - 0.979156
-    - 0.230764
-    - 0.997858
-    geometry: 0fe4d5a05c16afb9
-  window_back_0_mullion_v:
-    rect:
-    - 0.649348
-    - 0.950458
-    - 0.670621
-    - 0.971717
-    geometry: f1eac2b9d380dbd2
-  window_back_0_sill:
-    rect:
-    - 0.425984
-    - 0.849345
-    - 0.455409
-    - 0.878779
-    geometry: 5a11fc55eda6e571
-  window_back_1_glass:
-    rect:
-    - 0.180122
-    - 0.849345
-    - 0.211707
-    - 0.880938
-    geometry: 70f25e9b80366df8
-  window_back_1_head:
-    rect:
-    - 0.125153
-    - 0.919164
-    - 0.15175
-    - 0.945778
-    geometry: c4fe5546dbaf31a4
-  window_back_1_jamb_left:
-    rect:
-    - 0.864111
-    - 0.919164
-    - 0.888914
-    - 0.943956
-    geometry: 01434e9ee077584e
-  window_back_1_jamb_right:
-    rect:
-    - 0.028709
-    - 0.950458
-    - 0.053513
-    - 0.975249
-    geometry: 86aed26fa52af3de
-  window_back_1_mullion_h:
-    rect:
-    - 0.25729
-    - 0.979156
-    - 0.276004
-    - 0.997858
-    geometry: cadb99e246e7b122
-  window_back_1_mullion_v:
-    rect:
-    - 0.624188
-    - 0.950458
-    - 0.645442
-    - 0.971726
-    geometry: 69fd0b4b151e7a14
-  window_back_1_sill:
-    rect:
-    - 0.459315
-    - 0.849345
-    - 0.48874
-    - 0.878779
-    geometry: 96e7a287398b2195
-  window_back_2_glass:
-    rect:
-    - 0.073648
-    - 0.849345
-    - 0.105233
-    - 0.880938
-    geometry: 956f6da5e99a33af
-  window_back_2_head:
-    rect:
-    - 0.186159
-    - 0.919164
-    - 0.212755
-    - 0.945778
-    geometry: 7da6ce5c0021ee5d
-  window_back_2_jamb_left:
-    rect:
-    - 0.835401
-    - 0.919164
-    - 0.860204
-    - 0.943956
-    geometry: 5591fd5e6a3a449f
-  window_back_2_jamb_right:
-    rect:
-    - 0.086128
-    - 0.950458
-    - 0.110931
-    - 0.975249
-    geometry: 18bff66e9986510f
-  window_back_2_mullion_h:
-    rect:
-    - 0.23467
-    - 0.979156
-    - 0.253384
-    - 0.997858
-    geometry: b467d99d9ec6d1d4
-  window_back_2_mullion_v:
-    rect:
-    - 0.699599
-    - 0.950458
-    - 0.720574
-    - 0.971452
-    geometry: a2cdcd2a6d68851a
-  window_back_2_sill:
-    rect:
-    - 0.492646
-    - 0.849345
-    - 0.522071
-    - 0.878779
-    geometry: 84a1c74a4c8b0f54
-  window_front_0_glass:
-    rect:
-    - 0.215613
-    - 0.849345
-    - 0.247198
-    - 0.880938
+    - 0.105014
+    - 0.834467
+    - 0.136113
+    - 0.865573
     geometry: 434a72fe0d8ad941
-  window_front_0_head:
+  wall_front_window_0_window_head:
     rect:
-    - 0.216661
-    - 0.919164
-    - 0.243258
-    - 0.945778
-    geometry: 140eb1eb8b978749
-  window_front_0_jamb_left:
+    - 0.338719
+    - 0.901018
+    - 0.364938
+    - 0.92722
+    geometry: 0a18e53788322a63
+  wall_front_window_0_window_jamb_left:
     rect:
-    - 0.806691
-    - 0.919164
-    - 0.831495
-    - 0.943956
-    geometry: 60bdc061acf04976
-  window_front_0_jamb_right:
+    - 0.028225
+    - 0.932061
+    - 0.052487
+    - 0.956313
+    geometry: ff4874686929f10e
+  wall_front_window_0_window_jamb_right:
+    rect:
+    - 0.309712
+    - 0.932061
+    - 0.333933
+    - 0.956272
+    geometry: 438d90b5accebf53
+  wall_front_window_0_window_mullion_h:
+    rect:
+    - 0.331858
+    - 0.960275
+    - 0.350283
+    - 0.97869
+    geometry: 17ead74989270a02
+  wall_front_window_0_window_mullion_v:
+    rect:
+    - 0.024962
+    - 0.960275
+    - 0.045889
+    - 0.981216
+    geometry: cd850216ebe9c1a8
+  wall_front_window_0_window_sill:
+    rect:
+    - 0.556297
+    - 0.834467
+    - 0.586745
+    - 0.864914
+    geometry: 2dd3830771548994
+  wall_front_window_1_shutter_left_batten_left:
+    rect:
+    - 0.968556
+    - 0.960275
+    - 0.98522
+    - 0.977029
+    geometry: d1fede4eed9417ad
+  wall_front_window_1_shutter_left_batten_right:
+    rect:
+    - 0.720316
+    - 0.960275
+    - 0.737183
+    - 0.977232
+    geometry: dd86b0e01c23c828
+  wall_front_window_1_shutter_left_plank_0:
+    rect:
+    - 0.777679
+    - 0.932061
+    - 0.800263
+    - 0.95462
+    geometry: f84823608b8d889e
+  wall_front_window_1_shutter_left_plank_1:
+    rect:
+    - 0.698207
+    - 0.932061
+    - 0.720791
+    - 0.95462
+    geometry: 3f126dbf52d201ba
+  wall_front_window_1_shutter_left_plank_2:
+    rect:
+    - 0.671716
+    - 0.932061
+    - 0.6943
+    - 0.95462
+    geometry: 7c7486fdb9c8d1e6
+  wall_front_window_1_shutter_right_batten_left:
+    rect:
+    - 0.927417
+    - 0.960275
+    - 0.94408
+    - 0.977029
+    geometry: 5435ce14aa7231c4
+  wall_front_window_1_shutter_right_batten_right:
+    rect:
+    - 0.657993
+    - 0.960275
+    - 0.674861
+    - 0.977232
+    geometry: 99a2a3a02a0259bd
+  wall_front_window_1_shutter_right_plank_0:
+    rect:
+    - 0.80417
+    - 0.932061
+    - 0.826754
+    - 0.95462
+    geometry: 42d52f540af2044c
+  wall_front_window_1_shutter_right_plank_1:
+    rect:
+    - 0.936622
+    - 0.932061
+    - 0.959207
+    - 0.95462
+    geometry: 1234e50c68e110d1
+  wall_front_window_1_shutter_right_plank_2:
+    rect:
+    - 0.83066
+    - 0.932061
+    - 0.853245
+    - 0.95462
+    geometry: fe26c5710131e207
+  wall_front_window_1_wall_head_plate:
+    rect:
+    - 0.723228
+    - 0.62516
+    - 0.761959
+    - 0.663864
+    geometry: 9700640e928ef3df
+  wall_front_window_1_wall_head_rail:
+    rect:
+    - 0.483384
+    - 0.715366
+    - 0.519612
+    - 0.751558
+    geometry: 82f173c379e6ffd8
+  wall_front_window_1_wall_infill:
+    rect:
+    - 0.843658
+    - 0.25171
+    - 0.933582
+    - 0.34163
+    geometry: 391e39f5311d9489
+  wall_front_window_1_wall_sill_plate:
+    rect:
+    - 0.211539
+    - 0.67309
+    - 0.249812
+    - 0.711328
+    geometry: 44dc7d8260fb98b1
+  wall_front_window_1_wall_sill_rail:
+    rect:
+    - 0.878625
+    - 0.67309
+    - 0.915182
+    - 0.709605
+    geometry: 846448dd300cceff
+  wall_front_window_1_wall_stud_0:
+    rect:
+    - 0.308237
+    - 0.573481
+    - 0.353884
+    - 0.619042
+    geometry: 00d306a26dbbbc2c
+  wall_front_window_1_wall_stud_1:
+    rect:
+    - 0.407344
+    - 0.573481
+    - 0.452991
+    - 0.619042
+    geometry: f0553d6a6202a0ec
+  wall_front_window_1_window_glass:
+    rect:
+    - 0.07001
+    - 0.834467
+    - 0.101108
+    - 0.865573
+    geometry: f601b658d8e85cf5
+  wall_front_window_1_window_head:
+    rect:
+    - 0.248345
+    - 0.901018
+    - 0.274564
+    - 0.92722
+    geometry: 57d8cdf02c7842b0
+  wall_front_window_1_window_jamb_left:
+    rect:
+    - 0.084562
+    - 0.932061
+    - 0.108823
+    - 0.956313
+    geometry: 8f939c6a630deb96
+  wall_front_window_1_window_jamb_right:
+    rect:
+    - 0.253459
+    - 0.932061
+    - 0.277679
+    - 0.956272
+    geometry: 3ef6599c70ee3f14
+  wall_front_window_1_window_mullion_h:
+    rect:
+    - 0.309526
+    - 0.960275
+    - 0.327951
+    - 0.97869
+    geometry: e749cae118844058
+  wall_front_window_1_window_mullion_v:
+    rect:
+    - 0.099375
+    - 0.960275
+    - 0.120215
+    - 0.981135
+    geometry: 18e33def0673366f
+  wall_front_window_1_window_sill:
+    rect:
+    - 0.487589
+    - 0.834467
+    - 0.518036
+    - 0.864914
+    geometry: a2d80f82de042d97
+  wall_side_0_0_wall_brace_a:
+    rect:
+    - 0.927806
+    - 0.517903
+    - 0.976309
+    - 0.566523
+    geometry: dccbdec7e0f3e11e
+  wall_side_0_0_wall_brace_b:
+    rect:
+    - 0.103154
+    - 0.573481
+    - 0.151013
+    - 0.621218
+    geometry: 740cd83ba24121a5
+  wall_side_0_0_wall_head_plate:
     rect:
     - 0.0
-    - 0.950458
-    - 0.024803
-    - 0.975249
-    geometry: ae92d2ed0e6a33b8
-  window_front_0_mullion_h:
+    - 0.67309
+    - 0.038408
+    - 0.711459
+    geometry: b411b48c42c49e35
+  wall_side_0_0_wall_infill_solid:
     rect:
-    - 0.16681
-    - 0.979156
-    - 0.185524
-    - 0.997858
-    geometry: 17ead74989270a02
-  window_front_0_mullion_v:
+    - 0.277965
+    - 0.364775
+    - 0.363485
+    - 0.450298
+    geometry: b65329783b8ebdb9
+  wall_side_0_0_wall_sill_plate:
     rect:
-    - 0.599027
-    - 0.950458
-    - 0.620281
-    - 0.971726
-    geometry: cd850216ebe9c1a8
-  window_front_0_sill:
+    - 0.631979
+    - 0.67309
+    - 0.669849
+    - 0.710902
+    geometry: bbf06196ea9db124
+  wall_side_0_1_wall_brace_a:
     rect:
-    - 0.392654
-    - 0.849345
-    - 0.422078
-    - 0.878779
-    geometry: 2f07dfa0c24852d2
-  window_front_1_glass:
+    - 0.770576
+    - 0.517903
+    - 0.819079
+    - 0.566524
+    geometry: 39f614763b26b618
+  wall_side_0_1_wall_brace_b:
     rect:
-    - 0.109139
-    - 0.849345
-    - 0.140724
-    - 0.880938
-    geometry: f601b658d8e85cf5
-  window_front_1_head:
+    - 0.15492
+    - 0.573481
+    - 0.202768
+    - 0.621207
+    geometry: 8c4c62d8a9471fdd
+  wall_side_0_1_wall_head_plate:
     rect:
-    - 0.155656
-    - 0.919164
-    - 0.182252
-    - 0.945778
-    geometry: 3bafcbd29cf5e01d
-  window_front_1_jamb_left:
+    - 0.935822
+    - 0.62516
+    - 0.97423
+    - 0.66353
+    geometry: d95d2a3f8c8cced5
+  wall_side_0_1_wall_infill_solid:
     rect:
-    - 0.89282
-    - 0.919164
-    - 0.917624
-    - 0.943956
-    geometry: 0e0bb1b1d14124ce
-  window_front_1_jamb_right:
+    - 0.367392
+    - 0.364775
+    - 0.452912
+    - 0.450298
+    geometry: 6bb5ad43ff641fad
+  wall_side_0_1_wall_sill_plate:
     rect:
-    - 0.057419
-    - 0.950458
-    - 0.082222
-    - 0.975249
-    geometry: 7e73392ca113562b
-  window_front_1_mullion_h:
+    - 0.590202
+    - 0.67309
+    - 0.628073
+    - 0.710902
+    geometry: 2a5c9efd089f5cad
+  wall_side_1_0_wall_brace_a:
     rect:
-    - 0.18943
-    - 0.979156
-    - 0.208144
-    - 0.997858
-    geometry: e749cae118844058
-  window_front_1_mullion_v:
+    - 0.822986
+    - 0.517903
+    - 0.871489
+    - 0.566524
+    geometry: 2095d4431c2ed4a0
+  wall_side_1_0_wall_brace_b:
     rect:
-    - 0.674527
-    - 0.950458
-    - 0.695693
-    - 0.971644
-    geometry: 18e33def0673366f
-  window_front_1_sill:
+    - 0.0
+    - 0.62516
+    - 0.044197
+    - 0.669184
+    geometry: 38bd6ca234df0f20
+  wall_side_1_0_wall_head_plate:
     rect:
-    - 0.525977
-    - 0.849345
-    - 0.555401
-    - 0.878779
-    geometry: cb1bcfa78b53302f
+    - 0.084629
+    - 0.67309
+    - 0.123038
+    - 0.711459
+    geometry: e701bf033a672be8
+  wall_side_1_0_wall_infill_solid:
+    rect:
+    - 0.456818
+    - 0.364775
+    - 0.542338
+    - 0.450298
+    geometry: fb3682f1c383fab3
+  wall_side_1_0_wall_sill_plate:
+    rect:
+    - 0.506649
+    - 0.67309
+    - 0.544519
+    - 0.710902
+    geometry: 6adab5ad88b28476
+  wall_side_1_1_wall_brace_a:
+    rect:
+    - 0.875396
+    - 0.517903
+    - 0.9239
+    - 0.566524
+    geometry: 9f6769b61bc6cc63
+  wall_side_1_1_wall_brace_b:
+    rect:
+    - 0.048103
+    - 0.62516
+    - 0.09229
+    - 0.669174
+    geometry: 2eeaa0d5ccbcc434
+  wall_side_1_1_wall_head_plate:
+    rect:
+    - 0.042315
+    - 0.67309
+    - 0.080723
+    - 0.711459
+    geometry: b373a3dd9b934470
+  wall_side_1_1_wall_infill_solid:
+    rect:
+    - 0.546244
+    - 0.364775
+    - 0.631764
+    - 0.450298
+    geometry: 06391063c01c4766
+  wall_side_1_1_wall_sill_plate:
+    rect:
+    - 0.548426
+    - 0.67309
+    - 0.586296
+    - 0.710902
+    geometry: bb5177cb9c4a20f1

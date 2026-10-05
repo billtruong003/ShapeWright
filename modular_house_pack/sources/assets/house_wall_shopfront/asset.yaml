@@ -11,11 +11,14 @@ asset:
 export: {merge: by_material}
 collision: {mode: single_box}
 
+params:
+  seed: {value: 0, doc: jitter seed offset}
+
 parts:
   wall:
     component: house_wall
     with: {span: bay - post, height: panel_h, depth: wall_t, plaster: plaster_t, timber: timber, chamfer: chamfer, wear: wear,
-           opening: 1, op_w: shop_w, op_h: shop_h, op_sill: shop_sill + sink, braces: 0}
+           opening: 1, op_w: shop_w, op_h: shop_h, op_sill: shop_sill + sink, braces: 0, seed: seed}
     materials: {timber: timber, plaster: plaster}
     origin: keep
     position: [0, 0, 0]
@@ -31,4 +34,6 @@ parts:
     with: {length: shop_w + 2 * frame + 0.2, run: 0.62, pitch: 25, t: roof_t * 0.7, st: shingle_t, course: course * 0.8, tile: tile_w, eave: 0.3, rafters: 0, barge_l: 1, barge_r: 1}
     materials: {roof: roof, timber: timber}
     origin: keep
-    position: [0, shop_sill + sink + shop_h + 0.08, wall_t / 2 - 0.027]   # 1.5 cm into the stud face (studs sit 12 mm behind the plates; hand-derived)
+    measure:
+      stud: {bounds: wall_stud_0}
+    position: [0, shop_sill + sink + shop_h + 0.08, stud.max.z - 0.015]   # 1.5 cm into the measured stud face

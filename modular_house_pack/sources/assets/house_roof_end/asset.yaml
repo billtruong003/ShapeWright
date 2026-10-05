@@ -11,10 +11,14 @@ asset:
 export: {merge: by_material}
 collision: {mode: single_hull}
 
+params:
+  deep: {value: 2, min: 1, max: 4, doc: house depth in bays}
+  left: {value: 0, min: 0, max: 1, doc: "0 = barge on the right (+x) end, 1 = on the left; the tile bond aligns to the inner end"}
+
 parts:
   verge:
     component: house_roof
-    with: {length: verge + wall_t / 2, run: bay + wall_t / 2 + eave, pitch: pitch, t: roof_t, st: shingle_t, course: course, tile: tile_w, eave: eave, rafters: 0, barge_r: 1, align: -1}
+    with: {length: verge + wall_t / 2, run: deep * bay / 2 + wall_t / 2 + eave, pitch: pitch, t: roof_t, st: shingle_t, course: course, tile: tile_w, eave: eave, rafters: 0, barge_r: 1 - left, barge_l: left, align: 2 * left - 1}
     materials: {roof: roof, timber: timber}
     origin: keep
     position: [0, 0, 0]

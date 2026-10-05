@@ -827,6 +827,7 @@ class World:
         self.parts: list[Part] = []
         self.base_bounds: dict[str, np.ndarray] = {}
         self.groups: dict[str, list[str]] = {}  # component / asset instance name -> its part names (nested ones too)
+        self.sockets: list[tuple[str, np.ndarray, str]] = []  # sockets of instanced assets: (name, 4x4 frame, doc)
 
     def mesh(self, name: str) -> Mesh | None:
         exact = [p for p in self.parts if p.name == name]
@@ -918,10 +919,12 @@ def measure(raw: dict, env: dict, world: World, ctx: S.Ctx, where: str) -> dict 
 
 
 class _Group:
-    """A placed component instance, replicated like a single mesh (same array/mirror code path)."""
+    """A placed component instance, replicated like a single mesh (same array/mirror code path). `sockets` are the
+    instanced assets' sockets inside it, as (name, 4x4 frame, doc): they move with the parts."""
 
-    def __init__(self, parts: list):
+    def __init__(self, parts: list, sockets: list | None = None):
         self.parts = parts
+        self.sockets = sockets or []
 
     def bounds(self) -> np.ndarray:
         return np.stack([np.min([p.bounds[0] for p in self.parts], 0), np.max([p.bounds[1] for p in self.parts], 0)])
@@ -937,12 +940,33 @@ class _Group:
         for p in self.parts:
             piv = None if p.pivot is None else (M[:3, :3] @ p.pivot + M[:3, 3])
             out.append(dataclasses.replace(p, mesh=p.mesh.transformed(M), pivot=piv, instance=dict(p.instance), tags=list(p.tags)))
-        return _Group(out)
+        return _Group(out, [(n, _move_frame(M, F), d) for n, F, d in self.sockets])
 
     def translated(self, d) -> "_Group":
         M = np.eye(4)
         M[:3, 3] = d
         return self.transformed(M)
+
+
+def _move_frame(M: np.ndarray, F: np.ndarray) -> np.ndarray:
+    """A socket frame moved by M. A mirror (det < 0) keeps the frame right-handed: its rotation is reflected
+    (A R A), so a socket's forward axis turns the way the mirrored geometry does."""
+    out = M @ F
+    A = M[:3, :3]
+    if np.linalg.det(A) < 0:
+        out[:3, :3] = A @ F[:3, :3] @ np.linalg.inv(A)
+    return out
+
+
+def frame_to_euler(F: np.ndarray) -> list[float]:
+    """XYZ Euler angles in degrees of a frame's rotation (inverse of mesh.rotation_matrix: R = Rz Ry Rx)."""
+    R = F[:3, :3] / np.linalg.norm(F[:3, :3], axis=0)
+    ry = np.arcsin(np.clip(-R[2, 0], -1.0, 1.0))
+    if abs(R[2, 0]) < 1 - 1e-9:
+        rx, rz = np.arctan2(R[2, 1], R[2, 2]), np.arctan2(R[1, 0], R[0, 0])
+    else:  # gimbal lock: put everything in z
+        rx, rz = 0.0, np.arctan2(-R[0, 1], R[1, 1])
+    return [round(float(np.degrees(a)), 6) + 0.0 for a in (rx, ry, rz)]
 
 
 def _replicate(name: str, mesh, raw: dict, env: dict, ctx: S.Ctx, where: str, pivot=None) -> list[tuple[str, Mesh, dict]]:
@@ -1261,8 +1285,13 @@ def build_group(u: Unit, world: World, materials: dict, style: dict, asset_dir: 
         u = dataclasses.replace(u, env=env2)
     local = World()
     built: list[Part] = []
+    socks: list = []
     if u.asset_parts is not None:
         built = _import_asset_parts(u, u.asset_parts[0], materials, ctx)
+        for sk in u.asset_parts[0].sockets:  # B5: the instanced asset's sockets come along, named <instance>_<socket>
+            F = rotation_matrix(sk.rotation)
+            F[:3, 3] = sk.position
+            socks.append((f"{u.name}_{sk.name}", F, sk.doc))
         for p in built:
             local.base_bounds[p.base] = p.bounds if p.base not in local.base_bounds else np.stack(
                 [np.minimum(local.base_bounds[p.base][0], p.bounds[0]), np.maximum(local.base_bounds[p.base][1], p.bounds[1])])
@@ -1272,6 +1301,7 @@ def build_group(u: Unit, world: World, materials: dict, style: dict, asset_dir: 
             ps = (build_group if m.is_group else build_part)(m, local, materials, style, asset_dir, ctx)
             local.parts.extend(ps)
             built.extend(ps)
+        socks = list(local.sockets)
     if not built:
         return []
     group_bounds = np.stack([np.min([p.bounds[0] for p in built], 0), np.max([p.bounds[1] for p in built], 0)])
@@ -1298,6 +1328,9 @@ def build_group(u: Unit, world: World, materials: dict, style: dict, asset_dir: 
                 p.mesh = p.mesh.translated(-center).transformed(R).translated(center)
                 if p.pivot is not None:
                     p.pivot = (R[:3, :3] @ (p.pivot - center)) + center
+            T0, T1 = np.eye(4), np.eye(4)
+            T0[:3, 3], T1[:3, 3] = -center, center
+            socks = [(n, T1 @ R @ T0 @ F, d) for n, F, d in socks]
             group_bounds = np.stack([np.min([p.bounds[0] for p in built], 0), np.max([p.bounds[1] for p in built], 0)])
     if keep:
         shift = np.asarray(S.vec(u.raw.get("position", [0, 0, 0]), 3, u.env, f"{u.where}.position", ctx) or [0, 0, 0], dtype=float)
@@ -1309,6 +1342,8 @@ def build_group(u: Unit, world: World, materials: dict, style: dict, asset_dir: 
         p.mesh = p.mesh.translated(shift)
         if p.pivot is not None:
             p.pivot = p.pivot + shift
+    for _, F, _ in socks:
+        F[:3, 3] += shift
         if p.parent is None and u.raw.get("parent"):
             p.parent = u.raw["parent"]
         p.tags = list(dict.fromkeys(p.tags + list(u.raw.get("tags") or [])))
@@ -1321,9 +1356,11 @@ def build_group(u: Unit, world: World, materials: dict, style: dict, asset_dir: 
     world.base_bounds[u.name] = group_bounds + shift
     world.groups[u.name] = [p.name for p in built]
     if "array" not in u.raw and "mirror" not in u.raw:
+        world.sockets.extend(socks)
         return built
     out = []  # replicate the whole placed group: band -> band_left / band_right, parts renamed with the instance
-    for rep_name, group, info in _replicate(u.name, _Group(built), u.raw, u.env, ctx, u.where):
+    for rep_name, group, info in _replicate(u.name, _Group(built, socks), u.raw, u.env, ctx, u.where):
+        world.sockets.extend((rep_name + n[len(u.name):], F, d) for n, F, d in group.sockets)
         for p in group.parts:
             p.name = rep_name + p.name[len(u.name):]
             if p.parent and p.parent.startswith(u.name + "_"):
@@ -1443,6 +1480,11 @@ def _build(path: str | Path, file_roots_var, preloaded: dict | None = None) -> A
             pos = np.asarray(S.vec(raw["position"], 3, env, f"{where}.position", ctx) or [0, 0, 0])
         rot = S.vec(raw.get("rotate", [0, 0, 0]), 3, env, f"{where}.rotate", ctx) or [0, 0, 0]
         sockets.append(Socket(sname, pos, rot, str(raw.get("doc", "")), owner))
+
+    own = {s.name for s in sockets}
+    for n, F, d in world.sockets:  # instanced assets' sockets (B5); the asset's own sockets win a name clash
+        if n not in own:
+            sockets.append(Socket(n, F[:3, 3].copy(), frame_to_euler(F), d, None))
 
     checks = data.get("checks") or []
     if not isinstance(checks, list):

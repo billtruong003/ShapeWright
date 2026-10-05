@@ -1,7 +1,7 @@
 {
  "asset": "house_wall_shopfront",
  "status": "PASS",
- "source_hash": "9d4c58f2c854",
+ "source_hash": "c23d23f50420",
  "counts": {
   "error": 0,
   "warning": 0,
@@ -24,9 +24,9 @@
   "size_m": [
    1.84,
    2.78,
-   1.0804
+   1.0811
   ],
-  "contacts": 40,
+  "contacts": 39,
   "triangles_by_part": {
    "wall_sill_plate": 44,
    "wall_head_plate": 44,
@@ -47,20 +47,21 @@
   "budget_triangles": 3000,
   "materials": 3,
   "draw_calls": 3,
-  "uv_utilization": 0.424,
+  "uv_utilization": 0.406,
   "uv_overlap": 0.0,
   "uv_owners": 17,
-  "texel_density_px_m": 126.1,
+  "texel_density_px_m": 126.0,
   "texel_density_target": 100,
   "texture": {
    "resolution": 1024,
    "target_px_m": 100.0,
-   "achieved_px_m": 126.1,
+   "achieved_px_m": 123.3,
    "memory_kb": 8192,
    "lifecycle": {
     "DERIVED": 17
    }
   },
+  "seam_zfight_pairs": 0,
   "gltf_validator": {
    "numErrors": 0,
    "numWarnings": 0,
@@ -110,17 +111,17 @@
    "msg": "materials declared but unused: glass, iron, planks, stone"
   },
   {
-   "code": "UV_UNLOCKED",
+   "code": "UV_REGION_REGENERATED",
    "severity": "info",
    "layer": "surface",
    "where": "uv",
-   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
-   "hint": "run `sw uv ASSET lock` before texturing or baking"
+   "msg": "geometry changed since the lock; charts regenerated inside their fixed regions: awning_barge_left, awning_barge_right, awning_deck, awning_fascia_board, awning_shingles_even, awning_shingles_odd, wall_head_plate, wall_head_rail",
+   "hint": "textures/bakes for these parts must be redone; other parts are unaffected"
   }
  ],
  "export": {
   "path": "assets/house_wall_shopfront/export/house_wall_shopfront.glb",
-  "bytes": 554924,
+  "bytes": 553212,
   "nodes": 3,
   "meshes": 2,
   "materials": 3,

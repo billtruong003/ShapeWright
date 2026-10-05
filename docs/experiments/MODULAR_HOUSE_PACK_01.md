@@ -351,3 +351,25 @@ Evidence: `renders/stress_houses_textured.png` and `stress_houses_front_clay.png
   - **composition:** nesting components or instancing assets, and measuring across instances;
   - **seam validation:** coplanar overlap between parts.
 - Both are now backed by concrete recorded cases instead of speculation.
+
+## 18. Addendum after Phases 19, 20, 20b and 19b
+
+The limitations of §16 were taken up by the framework phases. State on 2026-10-05:
+
+| §16 limitation | now |
+|---|---|
+| No nesting: houses cannot instance module assets | **closed** (Phase 19): all three houses are made only of module-asset instances: cottage 56, townhouse 66 (was 309), workshop 95 (was 437) non-comment lines; 97 instance lines over 16 modules (`metrics.json` → `module_asset_reuse`, `house_source_lines`) |
+| No cross-instance measurement | **closed** (Phase 19): shutters and awnings are placed by `measure:` on the window frame and the stud face; no hand offsets remain |
+| No seam validator | **closed** (Phase 20, 20b): `SEAM_COPLANAR_OVERLAP`, `OP_FACES_INVERTED`, `ASM_CONTACT_ONLY`; every benchmark asset and every house is seam-clean |
+| One window size | **closed** (Phase 19b): `house_wall_window` `size` 0 small / 1 standard / 2 tall from pack params, one head line; small on the townhouse sides, tall on the tavern front |
+| Instanced assets lose their sockets | **closed** (Phase 19b) |
+| No shared textures, no LODs, coarse collision | open: Phase 21 (track F) |
+| Uneven detail density, no interiors | open: backlog |
+
+The 5-parameter stress test (§15: bay 2.4, storey 3.3, timber 0.22, post 0.32, pitch 55) was re-run on the
+module-built houses: 0 coordinate edits, 0 seam pairs, every house validates (texel density warnings only, as the
+houses grow); render in `docs/phases/phase19b/evidence/stress_bay2.4_storey3.3_pitch55.png`.
+
+Gate 6 ("no normal task requires framework modification") would now be met for this kit: building the three houses
+needed no framework change after Phase 19. Gate 9 (a fresh agent) is still not verified; it is part of release
+acceptance (FRESH_AGENT_12, track E).

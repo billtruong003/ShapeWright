@@ -18,10 +18,10 @@ Nothing is left out. The earlier figures (87 % and 83 %) counted fewer items, wh
 
 | scope | done | remaining | **progress** |
 |---|---|---|---|
-| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 43.5 | 12.25 | **≈ 78 %** |
-| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 43.5 | 16.25 | **≈ 73 %** |
-| **planned roadmap** (+ track G: native character track) | 43.5 | 28.25 | **≈ 61 %** |
-| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 43.5 | ≈ 39.25 | **≈ 53 %** |
+| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 46 | 9.75 | **≈ 83 %** |
+| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 46 | 13.75 | **≈ 77 %** |
+| **planned roadmap** (+ track G: native character track) | 46 | 25.75 | **≈ 64 %** |
+| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 46 | ≈ 36.75 | **≈ 56 %** |
 
 The figures dropped from 80 / 74 / 62 / 54 % because two decisions on 2026-10-05 added work:
 - **Track W** (3 points): the workbench gets a three.js 3D viewer (list, view modes, save, export, click-to-comment).
@@ -42,12 +42,12 @@ Tick `[x]` here in the commit that finishes a task.
 | [x] | A6 | "N info hidden" lists the hidden codes | 0.05 | — | agent |
 | [x] | A7 | `sw.cmd` launcher for Windows clones (same as `./sw`) | 0.05 | — | agent |
 | [x] | A8 | YAML schema errors carry the source line number (HARDENING: open since v0.1) | 0.1 | — | agent |
-| [ ] | B1 | `house_townhouse` from module assets (309 → ≤ 150 lines) | 0.8 | A1, A4 | agent |
-| [ ] | B2 | `house_workshop` from module assets (437 → ≤ 220 lines) | 0.8 | B1 | agent |
-| [ ] | B3 | Stress test of the 3 houses (pack values changed in a copy) | 0.1 | B2 | agent |
-| [ ] | B4 | Rebuild `modular_house_pack/` bundle + metrics | 0.2 | B3 | agent |
-| [ ] | B5 | `asset:` instances import the instanced asset's sockets | 0.1 | — | agent |
-| [ ] | B6 | Window-size family in the kit (`house_wall_window` `win_size` small/standard/tall) | 0.5 | B1 | agent |
+| [x] | B1 | `house_townhouse` from module assets (309 → ≤ 150 lines) | 0.8 | A1, A4 | agent |
+| [x] | B2 | `house_workshop` from module assets (437 → ≤ 220 lines) | 0.8 | B1 | agent |
+| [x] | B3 | Stress test of the 3 houses (pack values changed in a copy) | 0.1 | B2 | agent |
+| [x] | B4 | Rebuild `modular_house_pack/` bundle + metrics | 0.2 | B3 | agent |
+| [x] | B5 | `asset:` instances import the instanced asset's sockets | 0.1 | — | agent |
+| [x] | B6 | Window-size family in the kit (`house_wall_window` `win_size` small/standard/tall) | 0.5 | B1 | agent |
 | [ ] | R1 | `beauty` render mode: 3-point light, shadow map, AO, contact shadow, tone map, 4× AA | 1.0 | — | agent |
 | [ ] | R2 | Turntable GIF/MP4 (`--turntable N`) | 0.25 | R1 | agent |
 | [ ] | R3 | Presentation sheet (`sw sheet --present`): views, details, wireframe, silhouette, palette | 0.5 | R1 | agent |
@@ -91,7 +91,7 @@ Tick `[x]` here in the commit that finishes a task.
 | [ ] | G5 | Procedural clips: idle bob, walk cycle, wave, from the skeleton template | 1.5 | G4 | agent |
 | [ ] | H* | Long-term backlog (§11): plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village, optional Blender/three.js beauty renders | ≈ 11 | — | later |
 
-Done so far (43.5 points):
+Done so far (46 points):
 
 | work | points |
 |---|---|
@@ -106,6 +106,7 @@ Done so far (43.5 points):
 | Phase 20a cross-OS goldens and CI | 1 |
 | docs and README polish | 2 |
 | Phase 20b cleanup (track A) | 1.5 |
+| Phase 19b kit complete (track B) | 2.5 |
 
 ## 2b. Rules for every task
 

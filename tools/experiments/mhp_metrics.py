@@ -42,12 +42,18 @@ def main(out: Path):
 
     # component reuse: instances (array/mirror counted once per instance line) across kit sources
     use_lines, use_assets = Counter(), {}
+    mod_lines, mod_assets = Counter(), {}
     for a in assets:
         raw = yaml.safe_load((ROOT / "assets" / a / "asset.yaml").read_text())
         for part in (raw.get("parts") or {}).values():
             if isinstance(part, dict) and "component" in part:
                 use_lines[part["component"]] += 1
                 use_assets.setdefault(part["component"], set()).add(a)
+            if isinstance(part, dict) and "asset" in part:  # Phase 19: houses instance module assets
+                mod_lines[part["asset"]] += 1
+                mod_assets.setdefault(part["asset"], set()).add(a)
+    source_lines = {a: sum(1 for ln in (ROOT / "assets" / a / "asset.yaml").read_text().splitlines()
+                           if ln.strip() and not ln.strip().startswith("#")) for a in HOUSES}
 
     src = {a: analyze_src(ROOT / "assets" / a / "asset.yaml") for a in assets}
     comp_src = {}
@@ -95,6 +101,8 @@ def main(out: Path):
                    "reused_foreign_components": sorted(set(use_lines) - set(comps)), "pack_params": len(pack_src["params"]),
                    "pack_materials": len(pack_src["materials"])},
         "component_reuse": {c: {"instance_lines": use_lines[c], "assets": len(use_assets.get(c, ()))} for c in sorted(use_lines)},
+        "module_asset_reuse": {m: {"instance_lines": mod_lines[m], "houses": len(mod_assets.get(m, ()))} for m in sorted(mod_lines)},
+        "house_source_lines": source_lines,
         "duplicated_structural_definitions": {
             "exact_duplicate_inline_parts_across_assets": len(pack["exact_duplicate_parts"]),
             "structural_duplicates_(same_shape+ops_in_3+_assets)": {k: len(v) for k, v in pack["structural_duplicates"].items()},

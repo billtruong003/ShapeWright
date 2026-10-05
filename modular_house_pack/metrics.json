@@ -8,66 +8,139 @@
   "reused_foreign_components": [
    "plank_top"
   ],
-  "pack_params": 34,
+  "pack_params": 37,
   "pack_materials": 7
  },
  "component_reuse": {
   "house_chimney": {
-   "instance_lines": 4,
-   "assets": 4
+   "instance_lines": 1,
+   "assets": 1
   },
   "house_door": {
-   "instance_lines": 6,
-   "assets": 5
+   "instance_lines": 2,
+   "assets": 2
   },
   "house_door_frame": {
-   "instance_lines": 6,
-   "assets": 5
+   "instance_lines": 2,
+   "assets": 2
   },
   "house_floor": {
-   "instance_lines": 7,
-   "assets": 5
+   "instance_lines": 2,
+   "assets": 2
   },
   "house_footing": {
-   "instance_lines": 14,
-   "assets": 5
+   "instance_lines": 2,
+   "assets": 2
   },
   "house_gable": {
-   "instance_lines": 5,
-   "assets": 4
+   "instance_lines": 1,
+   "assets": 1
   },
   "house_ridge": {
-   "instance_lines": 5,
-   "assets": 4
+   "instance_lines": 1,
+   "assets": 1
   },
   "house_roof": {
-   "instance_lines": 28,
-   "assets": 7
-  },
-  "house_steps": {
-   "instance_lines": 5,
-   "assets": 4
-  },
-  "house_timber": {
-   "instance_lines": 27,
-   "assets": 8
-  },
-  "house_wall": {
-   "instance_lines": 32,
-   "assets": 10
-  },
-  "house_window_frame": {
-   "instance_lines": 17,
-   "assets": 8
-  },
-  "plank_top": {
    "instance_lines": 4,
    "assets": 4
+  },
+  "house_steps": {
+   "instance_lines": 1,
+   "assets": 1
+  },
+  "house_timber": {
+   "instance_lines": 5,
+   "assets": 5
+  },
+  "house_wall": {
+   "instance_lines": 7,
+   "assets": 7
+  },
+  "house_window_frame": {
+   "instance_lines": 5,
+   "assets": 5
+  },
+  "plank_top": {
+   "instance_lines": 3,
+   "assets": 3
   }
  },
+ "module_asset_reuse": {
+  "house_beam": {
+   "instance_lines": 13,
+   "houses": 3
+  },
+  "house_chimney": {
+   "instance_lines": 3,
+   "houses": 3
+  },
+  "house_corner": {
+   "instance_lines": 7,
+   "houses": 3
+  },
+  "house_floor": {
+   "instance_lines": 5,
+   "houses": 3
+  },
+  "house_footing": {
+   "instance_lines": 7,
+   "houses": 3
+  },
+  "house_gable": {
+   "instance_lines": 4,
+   "houses": 3
+  },
+  "house_post": {
+   "instance_lines": 4,
+   "houses": 2
+  },
+  "house_ridge": {
+   "instance_lines": 4,
+   "houses": 3
+  },
+  "house_roof_end": {
+   "instance_lines": 14,
+   "houses": 3
+  },
+  "house_roof_section": {
+   "instance_lines": 8,
+   "houses": 3
+  },
+  "house_steps": {
+   "instance_lines": 3,
+   "houses": 3
+  },
+  "house_wall_door": {
+   "instance_lines": 5,
+   "houses": 3
+  },
+  "house_wall_plain": {
+   "instance_lines": 8,
+   "houses": 3
+  },
+  "house_wall_shopfront": {
+   "instance_lines": 2,
+   "houses": 2
+  },
+  "house_wall_upper": {
+   "instance_lines": 3,
+   "houses": 2
+  },
+  "house_wall_window": {
+   "instance_lines": 7,
+   "houses": 3
+  }
+ },
+ "house_source_lines": {
+  "house_cottage": 56,
+  "house_townhouse": 66,
+  "house_workshop": 95
+ },
  "duplicated_structural_definitions": {
-  "exact_duplicate_inline_parts_across_assets": 0,
-  "structural_duplicates_(same_shape+ops_in_3+_assets)": {}
+  "exact_duplicate_inline_parts_across_assets": 6,
+  "structural_duplicates_(same_shape+ops_in_3+_assets)": {
+   "?|": 97
+  }
  },
  "materials": {
   "defined_once_in_pack": [
@@ -84,49 +157,49 @@
  },
  "detail_density_tris_per_m2": {
   "modules": {
-   "house_beam": 26.2,
-   "house_beam_vertical": 19.0,
-   "house_brace": 18.4,
-   "house_chimney": 21.4,
-   "house_corner": 35.4,
-   "house_door": 106.9,
-   "house_door_frame": 32.0,
-   "house_floor": 32.8,
+   "house_beam": 26.4,
+   "house_beam_vertical": 18.9,
+   "house_brace": 18.2,
+   "house_chimney": 21.6,
+   "house_corner": 37.6,
+   "house_door": 106.4,
+   "house_door_frame": 32.1,
+   "house_floor": 32.7,
    "house_floor_half": 42.7,
-   "house_footing": 63.4,
+   "house_footing": 53.1,
    "house_gable": 12.4,
    "house_post": 14.3,
    "house_ridge": 75.8,
    "house_roof_eave": 71.3,
-   "house_roof_end": 55.9,
-   "house_roof_section": 40.4,
-   "house_shutter": 201.2,
-   "house_steps": 18.7,
-   "house_wall_door": 36.6,
+   "house_roof_end": 55.5,
+   "house_roof_section": 40.1,
+   "house_shutter": 191.5,
+   "house_steps": 18.8,
+   "house_wall_door": 36.5,
    "house_wall_half": 18.9,
    "house_wall_plain": 10.8,
-   "house_wall_shopfront": 30.2,
-   "house_wall_upper": 28.4,
-   "house_wall_window": 40.7,
-   "house_wall_window_offset": 34.4,
-   "house_window": 56.8
+   "house_wall_shopfront": 30.1,
+   "house_wall_upper": 28.5,
+   "house_wall_window": 40.6,
+   "house_wall_window_offset": 34.3,
+   "house_window": 56.9
   },
-  "spread_max_over_min": 18.63
+  "spread_max_over_min": 17.73
  },
  "parameterization": {
   "modules": {
    "spatial_numbers": {
-    "literal": 39,
+    "literal": 37,
     "zero": 103,
     "constant_expr": 0,
-    "derived": 203,
-    "measured": 0
+    "derived": 198,
+    "measured": 7
    },
-   "parameterization_ratio": 0.839,
+   "parameterization_ratio": 0.847,
    "parts": 36,
    "escape_profile": {
     "component": 36,
-    "measured": 0,
+    "measured": 3,
     "attached": 0,
     "parametric": 0,
     "literal": 0,
@@ -134,76 +207,76 @@
     "mesh_escape": 0
    },
    "abstraction_escape_rate": 0.0,
-   "measure_queries": 0,
+   "measure_queries": 5,
    "attach": 0
   },
   "demo_houses": {
    "spatial_numbers": {
-    "literal": 139,
-    "zero": 433,
+    "literal": 46,
+    "zero": 342,
     "constant_expr": 0,
-    "derived": 1123,
-    "measured": 0
+    "derived": 329,
+    "measured": 1
    },
-   "parameterization_ratio": 0.89,
-   "parts": 124,
+   "parameterization_ratio": 0.878,
+   "parts": 97,
    "escape_profile": {
-    "component": 124,
-    "measured": 0,
+    "component": 0,
+    "measured": 1,
     "attached": 0,
-    "parametric": 0,
-    "literal": 0,
+    "parametric": 52,
+    "literal": 44,
     "composed": 0,
     "mesh_escape": 0
    },
-   "abstraction_escape_rate": 0.0,
-   "measure_queries": 0,
+   "abstraction_escape_rate": 0.454,
+   "measure_queries": 1,
    "attach": 0
   },
   "components": {
    "spatial_numbers": {
     "literal": 60,
-    "zero": 155,
+    "zero": 157,
     "constant_expr": 0,
-    "derived": 314,
+    "derived": 318,
     "measured": 0
    },
-   "parameterization_ratio": 0.84,
-   "parts": 53,
+   "parameterization_ratio": 0.841,
+   "parts": 54,
    "escape_profile": {
     "component": 0,
     "measured": 0,
     "attached": 0,
-    "parametric": 23,
+    "parametric": 24,
     "literal": 30,
     "composed": 3,
     "mesh_escape": 0
    },
-   "abstraction_escape_rate": 0.566,
+   "abstraction_escape_rate": 0.556,
    "measure_queries": 0,
    "attach": 0
   },
   "per_house": {
    "house_cottage": {
-    "parameterization_ratio": 0.888,
-    "literal_numbers": 31,
-    "derived_numbers": 245,
-    "component_instances": 28,
-    "arrays": 18
+    "parameterization_ratio": 0.895,
+    "literal_numbers": 8,
+    "derived_numbers": 67,
+    "component_instances": 0,
+    "arrays": 13
    },
    "house_townhouse": {
-    "parameterization_ratio": 0.876,
-    "literal_numbers": 51,
-    "derived_numbers": 359,
-    "component_instances": 39,
-    "arrays": 26
+    "parameterization_ratio": 0.858,
+    "literal_numbers": 18,
+    "derived_numbers": 109,
+    "component_instances": 0,
+    "arrays": 21
    },
    "house_workshop": {
-    "parameterization_ratio": 0.901,
-    "literal_numbers": 57,
-    "derived_numbers": 519,
-    "component_instances": 57,
-    "arrays": 33
+    "parameterization_ratio": 0.884,
+    "literal_numbers": 20,
+    "derived_numbers": 153,
+    "component_instances": 0,
+    "arrays": 30
    }
   }
  },
@@ -214,9 +287,9 @@
    "median": 272
   },
   "demo_house_triangles": {
-   "house_cottage": 24476,
-   "house_townhouse": 33042,
-   "house_workshop": 45080
+   "house_cottage": 24856,
+   "house_townhouse": 33598,
+   "house_workshop": 45668
   },
   "per_asset": {
    "house_beam": {
@@ -225,9 +298,9 @@
     "materials": 1,
     "draw_calls": 1,
     "parts": 1,
-    "texel_px_m": 647.1,
+    "texel_px_m": 532.3,
     "warnings": 0,
-    "glb_bytes": 57388,
+    "glb_bytes": 45664,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -241,9 +314,9 @@
     "materials": 1,
     "draw_calls": 1,
     "parts": 1,
-    "texel_px_m": 339.0,
+    "texel_px_m": 566.3,
     "warnings": 0,
-    "glb_bytes": 65808,
+    "glb_bytes": 52768,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -257,9 +330,9 @@
     "materials": 1,
     "draw_calls": 1,
     "parts": 1,
-    "texel_px_m": 548.3,
+    "texel_px_m": 581.4,
     "warnings": 0,
-    "glb_bytes": 52576,
+    "glb_bytes": 56324,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -275,7 +348,7 @@
     "parts": 16,
     "texel_px_m": 127.5,
     "warnings": 0,
-    "glb_bytes": 521216,
+    "glb_bytes": 526388,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -285,13 +358,13 @@
    },
    "house_corner": {
     "status": "PASS",
-    "triangles": 150,
+    "triangles": 170,
     "materials": 2,
     "draw_calls": 2,
-    "parts": 3,
-    "texel_px_m": 348.0,
+    "parts": 4,
+    "texel_px_m": 350.3,
     "warnings": 0,
-    "glb_bytes": 128824,
+    "glb_bytes": 138228,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -301,13 +374,13 @@
    },
    "house_cottage": {
     "status": "PASS",
-    "triangles": 24476,
+    "triangles": 24856,
     "materials": 7,
     "draw_calls": 7,
-    "parts": 370,
-    "texel_px_m": 49.6,
+    "parts": 390,
+    "texel_px_m": 48.8,
     "warnings": 0,
-    "glb_bytes": 4824516,
+    "glb_bytes": 4915656,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -323,7 +396,7 @@
     "parts": 10,
     "texel_px_m": 373.2,
     "warnings": 0,
-    "glb_bytes": 187780,
+    "glb_bytes": 190908,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -337,9 +410,9 @@
     "materials": 1,
     "draw_calls": 1,
     "parts": 3,
-    "texel_px_m": 329.8,
+    "texel_px_m": 304.8,
     "warnings": 0,
-    "glb_bytes": 119948,
+    "glb_bytes": 107544,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -353,9 +426,9 @@
     "materials": 2,
     "draw_calls": 2,
     "parts": 9,
-    "texel_px_m": 250.3,
+    "texel_px_m": 249.6,
     "warnings": 0,
-    "glb_bytes": 245392,
+    "glb_bytes": 253568,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -369,9 +442,9 @@
     "materials": 2,
     "draw_calls": 2,
     "parts": 6,
-    "texel_px_m": 286.7,
+    "texel_px_m": 288.1,
     "warnings": 0,
-    "glb_bytes": 164088,
+    "glb_bytes": 167736,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -381,13 +454,13 @@
    },
    "house_footing": {
     "status": "PASS",
-    "triangles": 282,
+    "triangles": 300,
     "materials": 1,
     "draw_calls": 1,
-    "parts": 4,
-    "texel_px_m": 347.4,
+    "parts": 5,
+    "texel_px_m": 311.6,
     "warnings": 0,
-    "glb_bytes": 182236,
+    "glb_bytes": 188384,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -403,7 +476,7 @@
     "parts": 7,
     "texel_px_m": 137.0,
     "warnings": 0,
-    "glb_bytes": 474924,
+    "glb_bytes": 468228,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -417,9 +490,9 @@
     "materials": 1,
     "draw_calls": 1,
     "parts": 1,
-    "texel_px_m": 524.3,
+    "texel_px_m": 520.7,
     "warnings": 0,
-    "glb_bytes": 53432,
+    "glb_bytes": 53368,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -433,9 +506,9 @@
     "materials": 1,
     "draw_calls": 1,
     "parts": 3,
-    "texel_px_m": 598.3,
+    "texel_px_m": 600.5,
     "warnings": 0,
-    "glb_bytes": 45480,
+    "glb_bytes": 46008,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -451,7 +524,7 @@
     "parts": 5,
     "texel_px_m": 415.3,
     "warnings": 0,
-    "glb_bytes": 72632,
+    "glb_bytes": 72692,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -467,7 +540,7 @@
     "parts": 5,
     "texel_px_m": 180.2,
     "warnings": 0,
-    "glb_bytes": 304928,
+    "glb_bytes": 306036,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -483,7 +556,7 @@
     "parts": 8,
     "texel_px_m": 111.4,
     "warnings": 0,
-    "glb_bytes": 533720,
+    "glb_bytes": 539736,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -497,9 +570,9 @@
     "materials": 2,
     "draw_calls": 2,
     "parts": 5,
-    "texel_px_m": 747.0,
+    "texel_px_m": 726.3,
     "warnings": 0,
-    "glb_bytes": 69780,
+    "glb_bytes": 67820,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -513,9 +586,9 @@
     "materials": 1,
     "draw_calls": 1,
     "parts": 2,
-    "texel_px_m": 282.9,
+    "texel_px_m": 296.9,
     "warnings": 0,
-    "glb_bytes": 115440,
+    "glb_bytes": 118756,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -525,13 +598,13 @@
    },
    "house_townhouse": {
     "status": "PASS",
-    "triangles": 33042,
+    "triangles": 33598,
     "materials": 7,
     "draw_calls": 7,
-    "parts": 571,
-    "texel_px_m": 41.9,
+    "parts": 595,
+    "texel_px_m": 41.1,
     "warnings": 0,
-    "glb_bytes": 5852984,
+    "glb_bytes": 5960332,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -540,14 +613,14 @@
     }
    },
    "house_wall_door": {
-    "status": "PASS",
+    "status": "WARN",
     "triangles": 812,
     "materials": 4,
     "draw_calls": 4,
     "parts": 19,
     "texel_px_m": 136.0,
-    "warnings": 0,
-    "glb_bytes": 512300,
+    "warnings": 1,
+    "glb_bytes": 498440,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -563,7 +636,7 @@
     "parts": 5,
     "texel_px_m": 249.8,
     "warnings": 0,
-    "glb_bytes": 179160,
+    "glb_bytes": 178240,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -579,7 +652,7 @@
     "parts": 5,
     "texel_px_m": 187.3,
     "warnings": 0,
-    "glb_bytes": 487016,
+    "glb_bytes": 489588,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -593,9 +666,9 @@
     "materials": 3,
     "draw_calls": 3,
     "parts": 17,
-    "texel_px_m": 126.1,
+    "texel_px_m": 126.0,
     "warnings": 0,
-    "glb_bytes": 554924,
+    "glb_bytes": 553212,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -609,9 +682,9 @@
     "materials": 3,
     "draw_calls": 3,
     "parts": 16,
-    "texel_px_m": 148.8,
+    "texel_px_m": 149.2,
     "warnings": 0,
-    "glb_bytes": 543984,
+    "glb_bytes": 554152,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -625,9 +698,9 @@
     "materials": 4,
     "draw_calls": 4,
     "parts": 24,
-    "texel_px_m": 142.0,
+    "texel_px_m": 141.9,
     "warnings": 0,
-    "glb_bytes": 587556,
+    "glb_bytes": 592204,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -643,7 +716,7 @@
     "parts": 20,
     "texel_px_m": 142.9,
     "warnings": 0,
-    "glb_bytes": 556620,
+    "glb_bytes": 556652,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -659,7 +732,7 @@
     "parts": 7,
     "texel_px_m": 336.5,
     "warnings": 0,
-    "glb_bytes": 146976,
+    "glb_bytes": 147460,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,
@@ -669,13 +742,13 @@
    },
    "house_workshop": {
     "status": "PASS",
-    "triangles": 45080,
+    "triangles": 45668,
     "materials": 7,
     "draw_calls": 7,
-    "parts": 725,
-    "texel_px_m": 33.9,
+    "parts": 756,
+    "texel_px_m": 33.7,
     "warnings": 0,
-    "glb_bytes": 6638912,
+    "glb_bytes": 6877540,
     "khronos": {
      "numErrors": 0,
      "numWarnings": 0,

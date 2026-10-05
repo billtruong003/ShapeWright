@@ -1,7 +1,7 @@
 {
  "asset": "house_ridge",
  "status": "PASS",
- "source_hash": "4492e2f10022",
+ "source_hash": "350a365d3a58",
  "counts": {
   "error": 0,
   "warning": 0,
@@ -22,7 +22,7 @@
   "parts": 3,
   "sliver_triangles": 0,
   "size_m": [
-   2.0027,
+   2.0067,
    0.236,
    0.236
   ],
@@ -34,20 +34,21 @@
   "budget_triangles": 3000,
   "materials": 1,
   "draw_calls": 1,
-  "uv_utilization": 0.523,
+  "uv_utilization": 0.53,
   "uv_overlap": 0.0,
   "uv_owners": 3,
-  "texel_density_px_m": 598.3,
+  "texel_density_px_m": 600.5,
   "texel_density_target": 100,
   "texture": {
    "resolution": 256,
    "target_px_m": 100.0,
-   "achieved_px_m": 149.6,
+   "achieved_px_m": 150.5,
    "memory_kb": 512,
    "lifecycle": {
     "DERIVED": 3
    }
   },
+  "seam_zfight_pairs": 0,
   "gltf_validator": {
    "numErrors": 0,
    "numWarnings": 0,
@@ -64,17 +65,17 @@
    "msg": "materials declared but unused: glass, iron, planks, plaster, stone, timber"
   },
   {
-   "code": "UV_UNLOCKED",
+   "code": "UV_REGION_REGENERATED",
    "severity": "info",
    "layer": "surface",
    "where": "uv",
-   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
-   "hint": "run `sw uv ASSET lock` before texturing or baking"
+   "msg": "geometry changed since the lock; charts regenerated inside their fixed regions: ridge_roll",
+   "hint": "textures/bakes for these parts must be redone; other parts are unaffected"
   }
  ],
  "export": {
   "path": "assets/house_ridge/export/house_ridge.glb",
-  "bytes": 45480,
+  "bytes": 46008,
   "nodes": 3,
   "meshes": 2,
   "materials": 1,

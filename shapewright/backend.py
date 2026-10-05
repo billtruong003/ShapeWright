@@ -651,4 +651,21 @@ def unwrap_charts(mesh: Mesh, resolution: int, padding: int) -> np.ndarray:
         charts.max_chart_area = float(mesh.area()) / 128
     atlas.generate(charts, pack)
     _, idx, uvs = atlas[0]
+    _retire(atlas)
     return np.asarray(uvs, dtype=np.float64)[idx]  # xatlas preserves face order
+
+
+_RETIRED: list = []
+_KEEP_ATLASES = 4
+
+
+def _retire(atlas):
+    """Destroy an xatlas Atlas a few unwraps later, not right after `generate`.
+
+    xatlas' TaskScheduler destructor can lose the wake-up of a worker thread that has just finished its last
+    task and is not yet waiting, and then joins it forever (seen twice in the Phase 20b/19b runs: `sw validate`
+    stuck in xatlas::Destroy -> std::thread::join, 0 % CPU). By the time an atlas is destroyed here its workers
+    have long been asleep, so the wake-up is delivered. Holding a few atlases costs a few idle threads."""
+    _RETIRED.append(atlas)
+    while len(_RETIRED) > _KEEP_ATLASES:
+        _RETIRED.pop(0)

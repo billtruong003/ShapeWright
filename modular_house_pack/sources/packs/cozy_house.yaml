@@ -44,6 +44,9 @@ params:
   win_w:     {value: 0.8, doc: window opening width}
   win_h:     {value: 1.0, doc: window opening height}
   win_sill:  {value: 0.95, doc: window sill height above the floor}
+  win_w_small: {value: 0.6, doc: "small window opening width (house_wall_window size 0)"}
+  win_h_small: {value: 0.75, doc: "small window opening height; its head stays on the standard window's head line"}
+  win_h_tall:  {value: 1.5, doc: "tall window opening height (size 2: shop and tavern fronts); same head line"}
   door_w:    {value: 1.0, doc: door opening width}
   door_h:    {value: 2.05, doc: door opening height}
   shop_w:    {value: 1.36, doc: shopfront opening width}

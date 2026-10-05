@@ -1,7 +1,7 @@
 {
  "asset": "house_window",
  "status": "PASS",
- "source_hash": "947b152fcee2",
+ "source_hash": "d5207cbfcebf",
  "counts": {
   "error": 0,
   "warning": 0,
@@ -22,9 +22,9 @@
   "parts": 7,
   "sliver_triangles": 46,
   "size_m": [
-   0.986,
-   1.0038,
-   0.4448
+   0.9846,
+   1.0028,
+   0.4462
   ],
   "contacts": 15,
   "triangles_by_part": {
@@ -38,7 +38,7 @@
   "budget_triangles": 3000,
   "materials": 2,
   "draw_calls": 2,
-  "uv_utilization": 0.525,
+  "uv_utilization": 0.518,
   "uv_overlap": 0.0,
   "uv_owners": 7,
   "texel_density_px_m": 336.5,
@@ -46,12 +46,13 @@
   "texture": {
    "resolution": 512,
    "target_px_m": 100.0,
-   "achieved_px_m": 168.3,
+   "achieved_px_m": 167.4,
    "memory_kb": 2048,
    "lifecycle": {
     "DERIVED": 7
    }
   },
+  "seam_zfight_pairs": 0,
   "gltf_validator": {
    "numErrors": 0,
    "numWarnings": 0,
@@ -79,17 +80,17 @@
    "msg": "materials declared but unused: iron, planks, plaster, roof, stone"
   },
   {
-   "code": "UV_UNLOCKED",
+   "code": "UV_REGION_REGENERATED",
    "severity": "info",
    "layer": "surface",
    "where": "uv",
-   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
-   "hint": "run `sw uv ASSET lock` before texturing or baking"
+   "msg": "geometry changed since the lock; charts regenerated inside their fixed regions: window_head, window_jamb_left, window_jamb_right, window_sill",
+   "hint": "textures/bakes for these parts must be redone; other parts are unaffected"
   }
  ],
  "export": {
   "path": "assets/house_window/export/house_window.glb",
-  "bytes": 146976,
+  "bytes": 147460,
   "nodes": 3,
   "meshes": 2,
   "materials": 2,

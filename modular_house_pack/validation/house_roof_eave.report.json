@@ -1,11 +1,11 @@
 {
  "asset": "house_roof_eave",
  "status": "PASS",
- "source_hash": "b09b1b354fdc",
+ "source_hash": "e1ff4e84d988",
  "counts": {
   "error": 0,
   "warning": 0,
-  "info": 3
+  "info": 2
  },
  "layers": {
   "source": "PASS",
@@ -48,6 +48,7 @@
     "DERIVED": 5
    }
   },
+  "seam_zfight_pairs": 0,
   "gltf_validator": {
    "numErrors": 0,
    "numWarnings": 0,
@@ -73,19 +74,11 @@
    "layer": "budget",
    "where": "materials",
    "msg": "materials declared but unused: glass, iron, planks, plaster, roof, stone"
-  },
-  {
-   "code": "UV_UNLOCKED",
-   "severity": "info",
-   "layer": "surface",
-   "where": "uv",
-   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
-   "hint": "run `sw uv ASSET lock` before texturing or baking"
   }
  ],
  "export": {
   "path": "assets/house_roof_eave/export/house_roof_eave.glb",
-  "bytes": 72632,
+  "bytes": 72692,
   "nodes": 3,
   "meshes": 2,
   "materials": 1,

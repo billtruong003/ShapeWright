@@ -1,10 +1,10 @@
 {
  "asset": "house_wall_door",
- "status": "PASS",
- "source_hash": "0d9f15364a77",
+ "status": "WARN",
+ "source_hash": "b18c27318bb4",
  "counts": {
   "error": 0,
-  "warning": 0,
+  "warning": 1,
   "info": 9
  },
  "layers": {
@@ -14,19 +14,19 @@
   "budget": "PASS",
   "intent": "PASS",
   "surface": "PASS",
-  "style": "PASS",
+  "style": "WARN",
   "export": "PASS"
  },
  "metrics": {
   "triangles": 812,
   "parts": 19,
-  "sliver_triangles": 145,
+  "sliver_triangles": 148,
   "size_m": [
    1.75,
    2.78,
-   0.3169
+   0.3142
   ],
-  "contacts": 47,
+  "contacts": 49,
   "triangles_by_part": {
    "wall_sill_plate": 44,
    "wall_head_plate": 44,
@@ -44,7 +44,7 @@
   "budget_triangles": 3000,
   "materials": 4,
   "draw_calls": 4,
-  "uv_utilization": 0.392,
+  "uv_utilization": 0.369,
   "uv_overlap": 0.0,
   "uv_owners": 19,
   "texel_density_px_m": 136.0,
@@ -52,12 +52,13 @@
   "texture": {
    "resolution": 1024,
    "target_px_m": 100.0,
-   "achieved_px_m": 136.0,
+   "achieved_px_m": 131.9,
    "memory_kb": 8192,
    "lifecycle": {
     "DERIVED": 19
    }
   },
+  "seam_zfight_pairs": 0,
   "gltf_validator": {
    "numErrors": 0,
    "numWarnings": 0,
@@ -66,6 +67,14 @@
   }
  },
  "issues": [
+  {
+   "code": "STYLE_THIN_FEATURE",
+   "severity": "warning",
+   "layer": "style",
+   "where": "door_brace",
+   "msg": "thinnest dimension 3.0 cm < style minimum 3.0 cm",
+   "hint": "'cozy_timber' wants chunky forms; thicken this part or tag it thin_ok"
+  },
   {
    "code": "GEO_SLIVER_TRIS",
    "severity": "info",
@@ -151,17 +160,17 @@
    "msg": "materials declared but unused: glass, roof, stone"
   },
   {
-   "code": "UV_UNLOCKED",
+   "code": "UV_REGION_REGENERATED",
    "severity": "info",
    "layer": "surface",
    "where": "uv",
-   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
-   "hint": "run `sw uv ASSET lock` before texturing or baking"
+   "msg": "geometry changed since the lock; charts regenerated inside their fixed regions: door_brace, door_frame_head, door_frame_jamb_left, door_frame_jamb_right, door_plank_0, door_plank_1, door_plank_2, door_plank_3",
+   "hint": "textures/bakes for these parts must be redone; other parts are unaffected"
   }
  ],
  "export": {
   "path": "assets/house_wall_door/export/house_wall_door.glb",
-  "bytes": 512300,
+  "bytes": 498440,
   "nodes": 3,
   "meshes": 2,
   "materials": 4,

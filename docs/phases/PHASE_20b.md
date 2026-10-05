@@ -12,7 +12,7 @@ One gate was met in a different way than planned (A1, see below), and one item i
 | A1 | 78 → 0 flagged seam pairs in 15 benchmark assets | VALIDATION GAP + asset fixes | see below |
 | A2 | `tavern_chair.seat_height` min 0.40 → 0.42 (its own check is ≥ 0.42); the variants tutorial uses 0.42 | BUG (asset) | — |
 | A3 | `sw export NAME --preview` → `export/NAME_preview.glb` without collision proxies or LOD files; the docs gallery uses it, `_strip_collision` is deleted | ERGONOMICS | every web viewer draws every mesh |
-| A4 | `house_door` brace ranked 12 mm shallower than the ledges (`seam_probe house_townhouse --tol 0.002`: 0 pairs) | BUG (kit) | depth-rank rule of MODULAR_HOUSE_PACK_01 |
+| A4 | `house_door` brace ranked 8 mm shallower than the ledges (12 mm at first; that made it 26 mm thick, under the style's 30 mm minimum, found in Phase 19b) (`seam_probe house_townhouse --tol 0.002`: 0 pairs) | BUG (kit) | depth-rank rule of MODULAR_HOUSE_PACK_01 |
 | A5 | build products of library examples go to `<project>/.build/library/<name>/` (`paths.out_dir`); `sw materials` builds from memory instead of writing a temp file next to the source | BUG | a pip install puts the library in site-packages |
 | A6 | `(2 info items hidden: UV_UNLOCKED, ASM_CONTACT_ONLY; --verbose to show)` | ERGONOMICS (FA-11) | — |
 | A7 | `sw.cmd` launcher for Windows clones; `.gitattributes` keeps it CRLF; CI runs `sw.cmd doctor` on Windows | ERGONOMICS | — |

@@ -182,3 +182,58 @@ def test_measure_and_pivot_on_a_component_instance(tmp_path, monkeypatch):
     door = next(q for q in a.parts if q.name == "door_post")
     assert abs(door.bounds.mean(0)[2] - 0.1) < 1e-6  # placed on the measured wall face, no hand offset
     assert door.pivot is not None and np.allclose(door.pivot, [-0.45, 0, 0.1])  # bottom_left of the placed group
+
+
+def test_asset_instances_bring_their_sockets(tmp_path):
+    # Phase 19b (B5): a socket of an instanced asset moves, turns, repeats and mirrors with it
+    child = tmp_path / "post"
+    child.mkdir()
+    (child / "asset.yaml").write_text("""shapewright: 0.1
+asset: {name: post}
+materials: {m: {base_color: '#888888'}}
+parts:
+  body: {shape: {type: box, size: [0.2, 1, 0.2]}, material: m, anchor: bottom, position: [0, 0, 0]}
+sockets:
+  hook: {position: [0, 1, 0.1], rotate: [0, 0, 0], doc: hang a lamp here}
+""")
+    host = tmp_path / "fence"
+    host.mkdir()
+    (host / "asset.yaml").write_text("""shapewright: 0.1
+asset: {name: fence}
+materials: {m: {base_color: '#888888'}}
+parts:
+  gate: {asset: ../post/asset.yaml, rotate: [0, 90, 0], position: [5, 0, 0]}
+  row: {asset: ../post/asset.yaml, position: [1, 0, 2], array: {count: 2, offset: [1, 0, 0]}, mirror: z}
+sockets:
+  gate_hook: {position: [9, 9, 9], doc: the host's own socket wins a name clash}
+""")
+    a = build(host)
+    by = {s.name: s for s in a.sockets}
+    assert by["gate_hook"].position.tolist() == [9, 9, 9]
+    assert set(by) >= {"row_0_front_hook", "row_1_front_hook", "row_0_back_hook", "row_1_back_hook"}
+    assert np.allclose(by["row_1_front_hook"].position, [2, 1, 2.1])
+    assert np.allclose(by["row_1_back_hook"].position, [2, 1, -2.1])  # mirrored: the hook faces -z now
+    assert by["row_1_back_hook"].doc == "hang a lamp here"
+
+
+def test_rotated_instance_turns_its_socket(tmp_path):
+    child = tmp_path / "post"
+    child.mkdir()
+    (child / "asset.yaml").write_text("""shapewright: 0.1
+asset: {name: post}
+materials: {m: {base_color: '#888888'}}
+parts:
+  body: {shape: {type: box, size: [0.2, 1, 0.2]}, material: m, anchor: bottom, position: [0, 0, 0]}
+sockets:
+  hook: {position: [0, 1, 0.1], rotate: [0, 0, 0]}
+""")
+    host = tmp_path / "h"
+    host.mkdir()
+    (host / "asset.yaml").write_text("""shapewright: 0.1
+asset: {name: h}
+materials: {m: {base_color: '#888888'}}
+parts:
+  gate: {asset: ../post/asset.yaml, rotate: [0, 90, 0], position: [5, 0, 0]}
+""")
+    s = {s.name: s for s in build(host).sockets}["gate_hook"]
+    assert np.allclose(s.position, [5.1, 1, 0]) and np.allclose(s.rotation, [0, 90, 0])

@@ -405,6 +405,10 @@ sockets:
 Exported as empty nodes `SOCKET_<name>` with `extras.socket`. `attach.to: origin`
 places a socket relative to the asset origin.
 
+An `asset:` instance brings the instanced asset's sockets along as `<instance>_<socket>`: they move, turn,
+repeat (`array`, named like the parts: `row_1_hook`) and mirror (`row_0_back_hook`, its rotation reflected) with
+the instance. A socket of the asset itself with the same name wins.
+
 ## Checks: design intent as tests
 
 ```yaml

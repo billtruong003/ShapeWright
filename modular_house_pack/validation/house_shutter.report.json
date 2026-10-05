@@ -1,7 +1,7 @@
 {
  "asset": "house_shutter",
  "status": "PASS",
- "source_hash": "f762649545e4",
+ "source_hash": "bd879719ef14",
  "counts": {
   "error": 0,
   "warning": 0,
@@ -22,8 +22,8 @@
   "parts": 5,
   "sliver_triangles": 36,
   "size_m": [
-   0.3979,
-   1.0069,
+   0.4118,
+   1.0052,
    0.08
   ],
   "contacts": 6,
@@ -34,20 +34,21 @@
   "budget_triangles": 3000,
   "materials": 2,
   "draw_calls": 2,
-  "uv_utilization": 0.582,
+  "uv_utilization": 0.556,
   "uv_overlap": 0.0,
   "uv_owners": 5,
-  "texel_density_px_m": 747.0,
+  "texel_density_px_m": 726.3,
   "texel_density_target": 100,
   "texture": {
    "resolution": 256,
    "target_px_m": 100.0,
-   "achieved_px_m": 186.8,
+   "achieved_px_m": 177.9,
    "memory_kb": 512,
    "lifecycle": {
     "DERIVED": 5
    }
   },
+  "seam_zfight_pairs": 0,
   "gltf_validator": {
    "numErrors": 0,
    "numWarnings": 0,
@@ -97,17 +98,17 @@
    "msg": "materials declared but unused: glass, iron, plaster, roof, stone"
   },
   {
-   "code": "UV_UNLOCKED",
+   "code": "UV_REGION_REGENERATED",
    "severity": "info",
    "layer": "surface",
    "where": "uv",
-   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
-   "hint": "run `sw uv ASSET lock` before texturing or baking"
+   "msg": "geometry changed since the lock; charts regenerated inside their fixed regions: shutter_batten_left, shutter_batten_right, shutter_plank_0, shutter_plank_1, shutter_plank_2",
+   "hint": "textures/bakes for these parts must be redone; other parts are unaffected"
   }
  ],
  "export": {
   "path": "assets/house_shutter/export/house_shutter.glb",
-  "bytes": 69780,
+  "bytes": 67820,
   "nodes": 3,
   "meshes": 2,
   "materials": 2,

@@ -1,7 +1,7 @@
 {
  "asset": "house_gable",
  "status": "PASS",
- "source_hash": "13f94dd4fd6a",
+ "source_hash": "fb6de463291a",
  "counts": {
   "error": 0,
   "warning": 0,
@@ -22,9 +22,9 @@
   "parts": 7,
   "sliver_triangles": 32,
   "size_m": [
-   0.2664,
+   0.2703,
    2.123,
-   4.2466
+   4.2484
   ],
   "contacts": 16,
   "triangles_by_part": {
@@ -39,7 +39,7 @@
   "budget_triangles": 3000,
   "materials": 2,
   "draw_calls": 2,
-  "uv_utilization": 0.393,
+  "uv_utilization": 0.382,
   "uv_overlap": 0.0,
   "uv_owners": 7,
   "texel_density_px_m": 137.0,
@@ -47,12 +47,13 @@
   "texture": {
    "resolution": 1024,
    "target_px_m": 100.0,
-   "achieved_px_m": 137.0,
+   "achieved_px_m": 135.1,
    "memory_kb": 8192,
    "lifecycle": {
     "DERIVED": 7
    }
   },
+  "seam_zfight_pairs": 0,
   "gltf_validator": {
    "numErrors": 0,
    "numWarnings": 0,
@@ -69,17 +70,17 @@
    "msg": "materials declared but unused: glass, iron, planks, roof, stone"
   },
   {
-   "code": "UV_UNLOCKED",
+   "code": "UV_REGION_REGENERATED",
    "severity": "info",
    "layer": "surface",
    "where": "uv",
-   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
-   "hint": "run `sw uv ASSET lock` before texturing or baking"
+   "msg": "geometry changed since the lock; charts regenerated inside their fixed regions: gable_king_post, gable_tie",
+   "hint": "textures/bakes for these parts must be redone; other parts are unaffected"
   }
  ],
  "export": {
   "path": "assets/house_gable/export/house_gable.glb",
-  "bytes": 474924,
+  "bytes": 468228,
   "nodes": 3,
   "meshes": 2,
   "materials": 2,

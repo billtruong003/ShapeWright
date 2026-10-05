@@ -1,11 +1,11 @@
 {
  "asset": "house_footing",
  "status": "PASS",
- "source_hash": "d1e5b89ba30e",
+ "source_hash": "02c675da2e9c",
  "counts": {
   "error": 0,
   "warning": 0,
-  "info": 3
+  "info": 2
  },
  "layers": {
   "source": "PASS",
@@ -18,36 +18,38 @@
   "export": "PASS"
  },
  "metrics": {
-  "triangles": 282,
-  "parts": 4,
-  "sliver_triangles": 5,
+  "triangles": 300,
+  "parts": 5,
+  "sliver_triangles": 2,
   "size_m": [
-   1.5962,
-   0.4918,
-   0.4224
+   1.606,
+   0.4929,
+   0.4297
   ],
-  "contacts": 3,
+  "contacts": 7,
   "triangles_by_part": {
    "footing_course_low": 132,
-   "footing_course_high": 150
+   "footing_course_high": 156,
+   "footing_mortar": 12
   },
   "budget_triangles": 3000,
   "materials": 1,
   "draw_calls": 1,
-  "uv_utilization": 0.513,
+  "uv_utilization": 0.523,
   "uv_overlap": 0.0,
-  "uv_owners": 4,
-  "texel_density_px_m": 347.4,
+  "uv_owners": 5,
+  "texel_density_px_m": 311.6,
   "texel_density_target": 100,
   "texture": {
    "resolution": 512,
    "target_px_m": 100.0,
-   "achieved_px_m": 173.7,
+   "achieved_px_m": 155.8,
    "memory_kb": 2048,
    "lifecycle": {
-    "DERIVED": 4
+    "DERIVED": 5
    }
   },
+  "seam_zfight_pairs": 0,
   "gltf_validator": {
    "numErrors": 0,
    "numWarnings": 0,
@@ -73,19 +75,11 @@
    "layer": "budget",
    "where": "materials",
    "msg": "materials declared but unused: glass, iron, planks, plaster, roof, timber"
-  },
-  {
-   "code": "UV_UNLOCKED",
-   "severity": "info",
-   "layer": "surface",
-   "where": "uv",
-   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
-   "hint": "run `sw uv ASSET lock` before texturing or baking"
   }
  ],
  "export": {
   "path": "assets/house_footing/export/house_footing.glb",
-  "bytes": 182236,
+  "bytes": 188384,
   "nodes": 3,
   "meshes": 2,
   "materials": 1,

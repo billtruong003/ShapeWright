@@ -1,7 +1,7 @@
 {
  "asset": "house_wall_window_offset",
  "status": "PASS",
- "source_hash": "6a3265ec756d",
+ "source_hash": "ce3a06d18306",
  "counts": {
   "error": 0,
   "warning": 0,
@@ -22,11 +22,11 @@
   "parts": 20,
   "sliver_triangles": 131,
   "size_m": [
-   1.7773,
+   1.7776,
    2.78,
-   0.4448
+   0.4462
   ],
-  "contacts": 51,
+  "contacts": 52,
   "triangles_by_part": {
    "wall_sill_plate": 44,
    "wall_head_plate": 44,
@@ -47,7 +47,7 @@
   "budget_triangles": 3000,
   "materials": 4,
   "draw_calls": 4,
-  "uv_utilization": 0.474,
+  "uv_utilization": 0.464,
   "uv_overlap": 0.0,
   "uv_owners": 20,
   "texel_density_px_m": 142.9,
@@ -55,12 +55,13 @@
   "texture": {
    "resolution": 1024,
    "target_px_m": 100.0,
-   "achieved_px_m": 142.9,
+   "achieved_px_m": 141.4,
    "memory_kb": 8192,
    "lifecycle": {
     "DERIVED": 20
    }
   },
+  "seam_zfight_pairs": 0,
   "gltf_validator": {
    "numErrors": 0,
    "numWarnings": 0,
@@ -121,17 +122,17 @@
    "msg": "materials declared but unused: iron, roof, stone"
   },
   {
-   "code": "UV_UNLOCKED",
+   "code": "UV_REGION_REGENERATED",
    "severity": "info",
    "layer": "surface",
    "where": "uv",
-   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
-   "hint": "run `sw uv ASSET lock` before texturing or baking"
+   "msg": "geometry changed since the lock; charts regenerated inside their fixed regions: shutter_batten_left, shutter_batten_right, shutter_plank_0, shutter_plank_1, shutter_plank_2, wall_head_plate, wall_head_rail, wall_sill_plate",
+   "hint": "textures/bakes for these parts must be redone; other parts are unaffected"
   }
  ],
  "export": {
   "path": "assets/house_wall_window_offset/export/house_wall_window_offset.glb",
-  "bytes": 556620,
+  "bytes": 556652,
   "nodes": 3,
   "meshes": 2,
   "materials": 4,

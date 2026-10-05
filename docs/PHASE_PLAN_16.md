@@ -23,11 +23,12 @@ Every phase follows the same run protocol (§1) and the same record format (§2)
 | MHP-01 (acceptance test) | `test/modular-house-pack` | PARTIAL | docs/experiments/MODULAR_HOUSE_PACK_01.md |
 | 16 packaging + AI docs | `phase/16-packaging` | PASS (Docker not built) | docs/phases/PHASE_16.md |
 | 17 MCP server | `phase/17-mcp` | PARTIAL (no agent MCP client run) | docs/phases/PHASE_17.md |
-| 19 composition | `phase/19-composition` | PARTIAL (1 of 3 houses converted) | docs/phases/PHASE_19.md |
+| 19 composition | `phase/19-composition` | PARTIAL (1 of 3 houses converted; closed by 19b) | docs/phases/PHASE_19.md |
 | 20 seam validation | `phase/20-seams` | PASS (gate restated) | docs/phases/PHASE_20.md |
 | 18 docs site | `phase/18-docs-site` | PARTIAL (deploy not run) | docs/phases/PHASE_18.md |
 | 20a golden across Linux/Windows, CI | `phase/20a-cross-os-golden` | PASS (macOS out of scope) | docs/phases/PHASE_20a.md |
 | 20b cleanup (track A) | `phase/20b-cleanup` | PASS | docs/phases/PHASE_20b.md |
+| 19b kit complete (track B) | `phase/19b-houses` | PASS (closes 19's PARTIAL) | docs/phases/PHASE_19b.md |
 
 The branches are **stacked**: each one contains the ones above it, so `phase/18-docs-site` has everything.
 All of them were fast-forwarded into `main` on 2026-09-30; the branches stay for review.

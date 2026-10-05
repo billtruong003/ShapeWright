@@ -11,10 +11,13 @@ asset:
 export: {merge: by_material}
 collision: {mode: single_box}
 
+params:
+  length: {value: bay, doc: ridge length (default one bay)}
+
 parts:
   ridge:
     component: house_ridge
-    with: {length: bay}
+    with: {length: length}
     materials: {roof: roof}
     origin: keep
     position: [0, 0, 0]

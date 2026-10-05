@@ -35,7 +35,9 @@ parts:
 
   brace:
     doc: Z brace between the ledges (back)
-    shape: {type: strut, from: [-w / 2 + 0.08, h * 0.18 + 0.05, -t / 2 - 0.018], to: [w / 2 - 0.08, h * 0.82 - 0.05, -t / 2 - 0.018], size: [0.1, 0.032],
+    # depth rank: 8 mm shallower than the ledges (back face -t/2 - 0.028 vs -t/2 - 0.036), front 2 mm into the planks;
+    # 30 mm thick (the style's minimum)
+    shape: {type: strut, from: [-w / 2 + 0.08, h * 0.18 + 0.05, -t / 2 - 0.013], to: [w / 2 - 0.08, h * 0.82 - 0.05, -t / 2 - 0.013], size: [0.1, 0.03],
             depth_axis: z, chamfer: 0.008}
     material: timber
 

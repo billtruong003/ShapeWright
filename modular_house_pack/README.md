@@ -58,7 +58,7 @@ modular_house_pack/
 
 | group | modules |
 |---|---|
-| walls | `house_wall_plain`, `house_wall_window`, `house_wall_window_offset`, `house_wall_door`, `house_wall_shopfront`, `house_wall_half` (half bay), `house_wall_upper` (upper storey, window) |
+| walls | `house_wall_plain`, `house_wall_window` (`size` 0 small / 1 standard / 2 tall, same head line), `house_wall_window_offset`, `house_wall_door`, `house_wall_shopfront`, `house_wall_half` (half bay), `house_wall_upper` (upper storey, window) |
 | corners / framing | `house_corner` (post + footing), `house_post`, `house_beam_vertical`, `house_beam` (band beam), `house_brace` |
 | floors / foundation | `house_floor` (1 bay × 1 bay), `house_floor_half`, `house_footing`, `house_steps` |
 | roof | `house_roof_section` (1 bay of slope), `house_roof_end` (verge end), `house_gable` (gable infill + truss), `house_ridge`, `house_roof_eave`, `house_chimney` |
