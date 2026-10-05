@@ -25,6 +25,9 @@ class BuildWithLibrary(build_py):
         for d in LIB_DIRS:
             if (ROOT / d).is_dir():
                 shutil.copytree(ROOT / d, dest / d)
+        for doc in ("VALIDATION.md", "ASSET_FORMAT.md"):  # `sw doc CODE` and `sw doc KEY` read these in installed copies
+            (dest / "docs").mkdir(parents=True, exist_ok=True)
+            shutil.copy(ROOT / "docs" / doc, dest / "docs" / doc)
         for asset in sorted((ROOT / "assets").glob("*/asset.yaml")):
             src = asset.parent
             shutil.copytree(src, dest / "assets" / src.name, ignore=lambda _d, names: [n for n in names if n in SKIP])

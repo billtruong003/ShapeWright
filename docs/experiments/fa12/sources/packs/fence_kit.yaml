@@ -1,0 +1,34 @@
+# Tiny cozy fence kit: the single source of truth for scale and materials.
+# Grid: posts stand on grid nodes every `span` metres along X; a panel or gate
+# module fills the span BETWEEN two posts. Module origins: bottom centre on the
+# grid node (post) or at the middle of the span (panel, gate).
+shapewright: 0.1
+pack: fence_kit
+doc: Stylized cozy wooden picket fence kit (post, panel, gate).
+profile: mobile_mid
+style: stylized_lowpoly
+budget: {triangles: 600, materials: 2}
+
+params:
+  span:     {value: 1.2, min: 0.8, max: 2.0, doc: post centre to post centre (grid step)}
+  post_h:   {value: 1.0, min: 0.7, max: 1.4, doc: post height above the ground}
+  post:     {value: 0.12, min: 0.08, max: 0.18, doc: post section}
+  clear:    {value: span - post, doc: "clear opening between two posts (derived)"}
+  bite:     {value: 0.012, doc: "how deep rails/hinges sink into a post (never a gap, never coplanar)"}
+  rail_h:   {value: 0.07, doc: rail height}
+  rail_t:   {value: 0.045, doc: rail depth}
+  rail_lo:  {value: 0.25, doc: lower rail centre height}
+  rail_hi:  {value: 0.7, doc: upper rail centre height}
+  picket_w: {value: 0.085, doc: picket width}
+  picket_t: {value: 0.032, doc: picket thickness}
+  picket_h: {value: 0.86, doc: picket height (below the post tops)}
+  pickets:  {value: 7, doc: pickets per span}
+  gap_y:    {value: 0.04, doc: gate ground clearance}
+  chamfer:  {value: 0.008, doc: soft edge on every board}
+  wear:     {value: 0.003, doc: hand-made jitter}
+
+materials:
+  post_wood:  {archetype: wood, color: "#6b4528", grain_strength: 0.45, edge_wear: 0.4, edge_color: "#a87c55", seed: 21,
+               doc: "posts, rails, gate frame"}
+  board_wood: {archetype: wood, color: "#d2ae7a", grain_strength: 0.3, edge_wear: 0.5, edge_color: "#efd6ad", seed: 22,
+               doc: "pickets, post caps"}

@@ -337,7 +337,8 @@ def apply_ops(mesh: Mesh, ops: Any, env: dict, ctx: S.Ctx, where: str, asset_dir
             if flipped:  # MODULAR_HOUSE_PACK_01: jitter turned a 1 mm shingle wedge inside out; every layer passed
                 ctx._add(Issue("OP_FACES_INVERTED", "warning", f"{spec.name} turned {flipped} face(s) inside out (the geometry is thinner "
                                "than the displacement)", path, "geometry",
-                               "lower the amount below half the thinnest dimension, or thicken the shape"))
+                               "thicken the shape, lower the amount (below half the thinnest dimension), or try another seed: "
+                               "random displacement can still cross on one face"))
     return mesh
 
 

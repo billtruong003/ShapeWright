@@ -460,7 +460,7 @@ def style_heuristics(asset: Asset, surface: Surface, metrics: dict):
             if t < min_feature and "thin_ok" not in p.tags:
                 thin[p.base] = min(t, thin.get(p.base, 1e9))
         for base, t in thin.items():
-            out.append(_issue("STYLE_THIN_FEATURE", "warning", "style", f"thinnest dimension {t * 100:.1f} cm < style minimum {min_feature * 100:.1f} cm", base,
+            out.append(_issue("STYLE_THIN_FEATURE", "warning", "style", f"thinnest dimension {t * 100:.2f} cm < style minimum {min_feature * 100:.1f} cm", base,
                               f"'{asset.style.get('name')}' wants chunky forms; thicken this part or tag it thin_ok"))
     max_parts = h.get("max_parts")
     if max_parts and len({p.base for p in asset.parts}) > max_parts:

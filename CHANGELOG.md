@@ -2,6 +2,13 @@
 
 Newest first. Generated from the phase records by `tools/site/changelog.py`; each entry links to its record (what shipped, evidence, the gate table and what is not done).
 
+## Release 1.0.0
+
+- **Verdict:** PASS (PyPI waits for the owner)
+- **Branch:** `release/1.0`
+- **Record:** [docs/phases/RELEASE_1.0.md](docs/phases/RELEASE_1.0.md)
+- v1.0 bundles tracks A, B, R, W, C2 and D (see the changelog) and was accepted by a fresh agent from the wheel alone.
+
 ## Phase 18b: docs site completion (track D)
 
 - **Verdict:** PASS (closes 18's open gate)
@@ -82,7 +89,7 @@ Newest first. Generated from the phase records by `tools/site/changelog.py`; eac
 - **Verdict:** PASS (Docker not built)
 - **Branch:** `phase/16-packaging`
 - **Record:** [docs/phases/PHASE_16.md](docs/phases/PHASE_16.md)
-- , with one item not verified: the Docker image was not built, because this environment has no Docker.
+- (The Docker item, not verified at first, was verified at release 1.0: see the gate table.)
 
 ## MODULAR_HOUSE_PACK_01: a modular house kit as a real-user acceptance test
 

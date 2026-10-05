@@ -141,3 +141,32 @@ def test_sw_set_on_a_variant_adds_the_inherited_param(tmp_path, monkeypatch):
     assert yaml.safe_load(f.read_text())["params"]["height"]["value"] == 0.93
     assert "extends:" in f.read_text()
     assert main(["set", "my_barrel", "height=5"]) == 2  # still range-checked against the base's min/max
+
+
+# ---------------------------------------------------------------- FRESH_AGENT_12 findings (release 1.0)
+
+
+def test_pack_by_name_finds_members_in_the_project_and_the_library(tmp_path, monkeypatch, capsys):
+    from shapewright.pack import select
+
+    monkeypatch.chdir(tmp_path)
+    assert main(["init", "."]) == 0
+    monkeypatch.setenv("SW_PROJECT", str(tmp_path))
+    names = {p.parent.name for p in select([], None, pack="cozy_house")}
+    assert {"house_wall_plain", "house_cottage"} <= names  # it crashed: a local list shadowed the paths module
+
+
+def test_doc_explains_codes_and_source_keys(capsys):
+    assert main(["doc", "SEAM_COPLANAR_OVERLAP"]) == 0
+    out = capsys.readouterr().out
+    assert out.startswith("SEAM_COPLANAR_OVERLAP: warning") and "depth ranks" in out
+    assert main(["doc", "pivot"]) == 0 and "part key `pivot`" in capsys.readouterr().out
+    assert main(["doc", "with"]) == 0 and "instance key `with`" in capsys.readouterr().out
+
+
+def test_brief_takes_the_budget_from_the_platform_and_the_engine_as_target(capsys):
+    from shapewright.brief import _profile
+
+    assert _profile("a signpost for a cozy mobile game, exported for Godot", {})[0] == "mobile_mid"
+    assert "--target godot" in _profile("a signpost for a cozy mobile game, exported for Godot", {})[1]
+    assert _profile("a crate for godot", {})[0] == "godot"

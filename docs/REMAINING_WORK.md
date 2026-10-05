@@ -18,10 +18,10 @@ Nothing is left out. The earlier figures (87 % and 83 %) counted fewer items, wh
 
 | scope | done | remaining | **progress** |
 |---|---|---|---|
-| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 52.75 | 3 | **≈ 95 %** |
-| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 52.75 | 7 | **≈ 88 %** |
-| **planned roadmap** (+ track G: native character track) | 52.75 | 19 | **≈ 74 %** |
-| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 52.75 | ≈ 30 | **≈ 64 %** |
+| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 54.5 | 1.25 | **≈ 98 %** |
+| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 54.5 | 5.25 | **≈ 91 %** |
+| **planned roadmap** (+ track G: native character track) | 54.5 | 17.25 | **≈ 76 %** |
+| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 54.5 | ≈ 28.25 | **≈ 66 %** |
 
 The figures dropped from 80 / 74 / 62 / 54 % because two decisions on 2026-10-05 added work:
 - **Track W** (3 points): the workbench gets a three.js 3D viewer (list, view modes, save, export, click-to-comment).
@@ -70,12 +70,12 @@ Tick `[x]` here in the commit that finishes a task.
 | [x] | D5 | README badges (CI, docs) + changelog link | 0.05 | D3 | agent |
 | [x] | D6 | Doc test: a tutorial's exported GLB is byte-identical to the published one (Phase 18 gate) | 0.25 | — | agent |
 | [x] | D7 | Docs use beauty renders (after R4) | 0.15 | R4 | agent |
-| [ ] | E1 | Version 1.0.0; package vs format version documented | 0.1 | all of A–D | agent |
-| [ ] | E2 | `CHANGELOG.md` | 0.1 | D3 | agent |
-| [ ] | E3 | Docker image build + run + `mcp` (closes Phase 16's open gate) | 0.3 | — | **owner** (Docker) |
-| [ ] | E4 | Godot headless import smoke test in CI (ROADMAP Stage 5) | 0.5 | — | agent |
-| [ ] | E5 | Fresh-agent acceptance on the release (FRESH_AGENT_12: a prop + a mini kit) | 0.5 | E1 | agent |
-| [ ] | E6 | Tag `v1.0.0`, GitHub release with wheel + bundle zip | 0.25 | E1–E5 | agent (owner approves) |
+| [x] | E1 | Version 1.0.0; package vs format version documented | 0.1 | all of A–D | agent |
+| [x] | E2 | `CHANGELOG.md` | 0.1 | D3 | agent |
+| [x] | E3 | Docker image build + run + `mcp` (closes Phase 16's open gate) | 0.3 | — | **owner** (Docker) |
+| [x] | E4 | Godot headless import smoke test in CI (ROADMAP Stage 5) | 0.5 | — | agent |
+| [x] | E5 | Fresh-agent acceptance on the release (FRESH_AGENT_12: a prop + a mini kit) | 0.5 | E1 | agent |
+| [x] | E6 | Tag `v1.0.0`, GitHub release with wheel + bundle zip | 0.25 | E1–E5 | agent (owner approves) |
 | [ ] | E7 | PyPI upload | 0.25 | E6 | **owner** (token) |
 | [ ] | F1 | Pack atlas / trim sheet (≥ 60 % less texture memory for the kit) | 1.2 | v1.0 | agent |
 | [ ] | F2 | Vertex-colour / palette material path for one-material stylized props (COLOR_0 already exported; add an archetype and palette validation) | 0.4 | — | agent |
@@ -91,7 +91,7 @@ Tick `[x]` here in the commit that finishes a task.
 | [ ] | G5 | Procedural clips: idle bob, walk cycle, wave, from the skeleton template | 1.5 | G4 | agent |
 | [ ] | H* | Long-term backlog (§11): plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village, optional Blender/three.js beauty renders | ≈ 11 | — | later |
 
-Done so far (52.75 points):
+Done so far (54.5 points):
 
 | work | points |
 |---|---|
@@ -111,6 +111,7 @@ Done so far (52.75 points):
 | Phase 15b web workbench, three.js (track W) | 3 |
 | Phase 17b MCP Inspector (C2) | 0.25 |
 | Phase 18b docs site completion (track D) | 1.25 |
+| Release 1.0.0 (track E, without PyPI) | 1.75 |
 
 ## 2b. Rules for every task
 

@@ -1,0 +1,83 @@
+# Stylized wooden signpost for a cozy mobile game: a chunky square post on a
+# small foot block, a pyramid cap, and two arrow-shaped boards slotted through
+# the post, pointing in different directions (right/front and left/back).
+shapewright: 0.1
+asset:
+  name: signpost
+  kind: prop/sign/signpost
+  description: Cozy stylized wooden signpost with two arrow signs pointing different ways.
+profile: mobile_mid
+style: stylized_lowpoly
+budget: {triangles: 800}
+export: {target: godot}
+
+params:
+  post_h: {value: 1.7, min: 1.3, max: 2.0, doc: post height above ground}
+  post_w: {value: 0.14, min: 0.08, max: 0.16, doc: post width}
+  sign_len: {value: 0.7, min: 0.4, max: 0.8, doc: arrow board length incl. tip}
+  sign_h: {value: 0.19, doc: arrow board height}
+  sign_t: {value: 0.045, doc: arrow board thickness}
+  tip: {value: 0.14, doc: arrow head length}
+  tail: {value: 0.12, doc: how far the board sticks out behind the post}
+  c: {value: "sign_len / 2 - tail", doc: board centre distance from the post axis}
+  a1: {value: -8, doc: upper arrow yaw (degrees)}
+  a2: {value: 32, doc: lower arrow yaw (degrees)}
+  y1: {value: 1.45, doc: upper sign centre height}
+  y2: {value: 1.18, doc: lower sign centre height}
+  wear: 0.004
+
+materials:
+  timber: {archetype: wood, color: "#7a4e2e", grain_strength: 0.4, edge_wear: 0.5, edge_color: "#b48660", seed: 2}
+  board: {archetype: wood, color: "#c89a62", grain_strength: 0.3, edge_wear: 0.6, edge_color: "#e8c89a", seed: 4}
+
+parts:
+  post:
+    doc: main square post
+    shape: {type: chamfer_box, size: [post_w, post_h, post_w], chamfer: 0.015}
+    ops: [{type: jitter, amount: wear, seed: 1}]
+    anchor: bottom
+    position: [0, 0, 0]
+    material: timber
+
+  foot:
+    doc: chunky base block the post stands in
+    shape: {type: chamfer_box, size: [post_w * 2.0, 0.16, post_w * 2.0], chamfer: 0.03}
+    ops: [{type: jitter, amount: wear, seed: 2}]
+    anchor: bottom
+    position: [0, 0, 0]
+    material: timber
+
+  cap:
+    doc: little pyramid roof on top of the post
+    shape: {type: cylinder, radius: post_w * 1.05, radius_top: 0.0, height: 0.12, segments: 4}
+    rotate: [0, 45, 0]
+    anchor: bottom
+    position: [0, post_h - 0.005, 0]
+    material: board
+
+  arrow_right:
+    doc: upper arrow, points right (+X), yawed toward the back
+    shape:
+      type: extrude
+      polygon: [[0, -sign_h / 2], [sign_len - tip, -sign_h / 2], [sign_len, 0], [sign_len - tip, sign_h / 2], [0, sign_h / 2]]
+      depth: sign_t
+      chamfer: 0.006
+    ops: [{type: jitter, amount: wear, seed: 5}]
+    rotate: [0, a1, 3]
+    position: ["c * cos(a1)", y1, "-c * sin(a1)"]
+    material: board
+
+  arrow_left:
+    doc: lower arrow, points left (-X), yawed toward the front
+    shape:
+      type: extrude
+      polygon: [[0, -sign_h / 2], [0, sign_h / 2], [-(sign_len - tip), sign_h / 2], [-sign_len, 0], [-(sign_len - tip), -sign_h / 2]]
+      depth: sign_t
+      chamfer: 0.006
+    ops: [{type: jitter, amount: wear, seed: 6}]
+    rotate: [0, a2, -4]
+    position: ["-c * cos(a2)", y2, "c * sin(a2)"]
+    material: board
+
+checks:
+  - {expr: asset.height, min: 1.5, max: 2.0, doc: post plus cap}

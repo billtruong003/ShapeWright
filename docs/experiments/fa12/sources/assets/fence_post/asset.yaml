@@ -1,0 +1,23 @@
+# Fence post module: stands on a grid node. Origin = bottom centre.
+shapewright: 0.1
+asset: {name: fence_post, kind: prop/fence/post, description: Square fence post with a pyramid cap (fence_kit module).}
+pack: fence_kit
+
+parts:
+  post:
+    doc: square post on the grid node
+    shape: {type: chamfer_box, size: [post, post_h, post], chamfer: chamfer * 1.5}
+    ops: [{type: jitter, amount: wear, seed: 1}]
+    anchor: bottom
+    position: [0, 0, 0]
+    material: post_wood
+  cap:
+    doc: pyramid cap
+    shape: {type: cylinder, radius: post * 0.8, radius_top: 0.0, height: 0.07, segments: 4}
+    rotate: [0, 45, 0]
+    anchor: bottom
+    position: [0, post_h - 0.004, 0]
+    material: board_wood
+
+checks:
+  - {expr: asset.height, min: post_h, max: post_h + 0.1, doc: post plus cap}

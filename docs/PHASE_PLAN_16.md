@@ -33,6 +33,7 @@ Every phase follows the same run protocol (§1) and the same record format (§2)
 | 15b web workbench, three.js (track W) | `phase/15b-web-viewer` | PASS with exceptions (Windows/Edge/Firefox not verified) | docs/phases/PHASE_15b.md |
 | 17b MCP verification (track C) | `phase/17b-mcp-verify` | PARTIAL (C2 done; C1, C3 need the owner) | docs/phases/PHASE_17b.md |
 | 18b docs site completion (track D) | `phase/18b-site` | PASS (closes 18's open gate) | docs/phases/PHASE_18b.md |
+| Release 1.0.0 (track E) | `release/1.0` | PASS (PyPI waits for the owner) | docs/phases/RELEASE_1.0.md |
 
 The branches are **stacked**: each one contains the ones above it, so `phase/18-docs-site` has everything.
 All of them were fast-forwarded into `main` on 2026-09-30; the branches stay for review.

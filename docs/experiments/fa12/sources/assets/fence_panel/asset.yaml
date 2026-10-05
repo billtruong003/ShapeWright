@@ -1,0 +1,30 @@
+# Fence panel module: fills the span between two posts. Origin = bottom centre
+# at the middle of the span; rails bite `bite` into each post.
+shapewright: 0.1
+asset: {name: fence_panel, placement: free, kind: prop/fence/panel, description: Two rails with pointed pickets between two fence posts (fence_kit module).}
+pack: fence_kit
+
+params:
+  picket_bot: {value: 0.06, doc: picket bottom above the ground}
+  pitch: {value: clear / pickets, doc: picket spacing}
+
+parts:
+  rail:
+    doc: horizontal rails, ends buried in the posts
+    shape: {type: chamfer_box, size: [clear + 2 * bite, rail_h, rail_t], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: 3}]
+    position: [0, rail_lo, 0]
+    array: {count: 2, offset: [0, rail_hi - rail_lo, 0]}
+    material: post_wood
+  picket:
+    doc: pointed pickets nailed to the front of the rails (bite 4 mm)
+    shape:
+      type: extrude
+      polygon: [[-picket_w / 2, 0], [picket_w / 2, 0], [picket_w / 2, picket_h - picket_w / 2], [0, picket_h], [-picket_w / 2, picket_h - picket_w / 2]]
+      depth: picket_t
+      chamfer: 0.005
+    ops: [{type: jitter, amount: wear, seed: 10}]
+    anchor: bottom
+    position: [-clear / 2 + pitch / 2, picket_bot, rail_t / 2 + picket_t / 2 - 0.004]
+    array: {count: pickets, offset: [pitch, 0, 0]}
+    material: board_wood

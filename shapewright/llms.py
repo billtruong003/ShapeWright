@@ -15,11 +15,11 @@ HEADER = """\
 
 ## Install
 
-    pip install shapewright            # or: git clone ... && pip install -r requirements.txt && use ./sw
+    pip install "git+https://github.com/billtruong003/ShapeWright"   # or a clone: pip install -r requirements.txt, ./sw
     sw init my_project && cd my_project # optional: a project folder (assets/, packs/, components/)
     sw doctor                          # environment check
 
-Through MCP (Claude Desktop, Cursor, ChatGPT connectors, Claude Code): `pip install "shapewright[mcp]"`,
+Through MCP (Claude Desktop, Cursor, ChatGPT connectors, Claude Code): install with the `[mcp]` extra,
 then register the server command `sw mcp` (see docs/MCP.md). Every CLI step below is also an MCP tool.
 
 ## The loop (do exactly this)
@@ -33,7 +33,10 @@ then register the server command `sw mcp` (see docs/MCP.md). Every CLI step belo
    `sw snapshot NAME -m "what changed" --critique "what you saw"`; `sw compare NAME 1 current`.
 6. Stop when: no validation errors, no significant critique left, constraints met (or 6 revisions).
 7. `sw export NAME [--target godot|unity|unreal]` -> `assets/NAME/export/NAME.glb` (with a target:
-   `NAME_godot.glb` etc.) + `.report.json`. Report tris vs budget, materials, size, path.
+   `NAME_godot.glb` etc.) + `.report.json` (re-import round trip; the Khronos glTF validator too when Node and
+   tools/gltf-validator are installed). Report tris vs budget, materials, size, path.
+   Engine vs budget: the PROFILE sets the budget (mobile_mid for a mobile game); `--target` (or
+   `export: {target: godot}`) only sets the engine packaging, so "mobile, for Godot" = `profile: mobile_mid` + `--target godot`.
 
 ## Rules
 
@@ -48,12 +51,19 @@ then register the server command `sw mcp` (see docs/MCP.md). Every CLI step belo
   `with: {its own params}` (modular kits: build module assets, then houses from them). Instances (component or
   asset) accept `measure:` (place against measured neighbours) and `pivot:` (one hinged node).
   Check a set with `sw pack --pack NAME`.
+- A pack file (`packs/NAME.yaml`): `pack: NAME`, `doc`, `params:` (shared, read-only in members), `materials:`
+  (shared palette, read-only), `profile`, `style`, `budget` (defaults a member may override). Members write
+  `pack: NAME`; `sw doc NAME` prints a library pack as an example.
+- `asset: {placement: floor | wall | ceiling | free}`: floor props rest on y = 0 (default); wall props on the
+  plane z = 0 extending toward +Z; `free` for modules and pieces placed by other assets (no grounding checks).
 - Surfaces: material archetypes (`wood`, `stone`, `metal`, `painted`, `flat`, `authored`) with semantic params;
   `sw doc wood`. Lock UVs before texture work: `sw uv NAME lock`.
 - Try values without editing: `sw validate NAME --set a=1,b=2`; keep one with `sw set NAME a=1`.
 - `ASM_FLOATING_PARTS` means the part really floats: fix the placement; `floating_ok` is only for hovering parts.
 - Every issue has a code and a hint; `sw doc CODE` explains it. `sw doc PROFILE|STYLE|PACK|COMPONENT` prints that file.
-- `extrude` draws the polygon in the XY plane and extrudes along +Z (centred like every shape unless `origin: keep`).
+- `extrude` draws the polygon in the XY plane and extrudes along +Z (centred like every shape unless `origin: keep`);
+  a `chamfer` on an extrude needs a convex outline.
+- `sw doc KEY` explains source keys too (`sw doc pivot`, `sw doc measure`, `sw doc with`).
 - Missing capability: produce a mesh file and use `{type: mesh_file}`, or `sw import FILE NAME`.
 
 ## Minimal asset

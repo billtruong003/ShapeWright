@@ -31,23 +31,35 @@ PACK_ROWS = [("front", "clay"), ("front_right", "material"), ("front_right", "si
 
 
 def select(refs: list[str], tag: str | None, base: Path | None = None, pack: str | None = None) -> list[Path]:
-    paths = [resolve_asset_path(r) for r in refs]
+    from . import paths as P
+
+    found = [resolve_asset_path(r) for r in refs]
+    homes = [base] if base else P.asset_dirs()  # the project's assets first, then the library's
+
+    def candidates():
+        seen = set()
+        for home in homes:
+            for p in sorted(home.glob("*/asset.yaml")):
+                if p.parent.name not in seen:  # a project asset shadows a library one of the same name
+                    seen.add(p.parent.name)
+                    yield p
+
     if pack:
         from .source import read_yaml
 
-        for p in sorted((base or paths.assets_home()).glob("*/asset.yaml")):
+        for p in candidates():
             ref = str(read_yaml(p).get("pack", ""))
-            if ref and (ref == pack or Path(ref).stem == pack) and p.resolve() not in [q.resolve() for q in paths]:
-                paths.append(p)
+            if ref and (ref == pack or Path(ref).stem == pack) and p.resolve() not in [q.resolve() for q in found]:
+                found.append(p)
     if tag:
-        for p in sorted((base or paths.assets_home()).glob("*/asset.yaml")):
+        for p in candidates():
             try:
                 a = build(p)
             except Exception:  # broken assets are reported by `sw bench`, not here
                 continue
-            if tag in ((a.meta or {}).get("tags") or []) and p.resolve() not in [q.resolve() for q in paths]:
-                paths.append(p)
-    return paths
+            if tag in ((a.meta or {}).get("tags") or []) and p.resolve() not in [q.resolve() for q in found]:
+                found.append(p)
+    return found
 
 
 def _surface_area(asset: Asset) -> float:

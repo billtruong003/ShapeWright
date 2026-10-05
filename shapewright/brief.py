@@ -122,16 +122,23 @@ def rank(request: str, examples: list[dict] | None = None) -> list[tuple[float, 
 
 
 def _profile(request: str, profiles: dict) -> tuple[str, str]:
+    """The budget comes from the platform; an engine named alongside a platform is the export target
+    (FRESH_AGENT_12: "mobile ... for Godot" got the 5000-tri godot profile)."""
     low = request.lower()
-    for name in ("godot", "unreal", "unity"):
-        if name in low:
-            return name, f"the {name} profile packages collision, merging and LODs for {name.capitalize()}"
+    engine = next((name for name in ("godot", "unreal", "unity") if name in low), None)
+    platform = None
     if any(w in low for w in ("mobile", "phone", "android", "ios")):
-        return "mobile_mid", "mobile"
-    if " vr" in f" {low}" or "quest" in low:
-        return "vr_standalone", "standalone VR"
-    if "web" in low or "browser" in low:
-        return "web", "web"
+        platform = ("mobile_mid", "mobile")
+    elif " vr" in f" {low}" or "quest" in low:
+        platform = ("vr_standalone", "standalone VR")
+    elif "web" in low or "browser" in low:
+        platform = ("web", "web")
+    if platform and engine:
+        return platform[0], f"{platform[1]} budget; export with `--target {engine}` (or `export: {{target: {engine}}}`) for {engine.capitalize()} packaging"
+    if platform:
+        return platform
+    if engine:
+        return engine, f"the {engine} profile packages collision, merging and LODs for {engine.capitalize()}"
     return "desktop_indie", "no platform named"
 
 

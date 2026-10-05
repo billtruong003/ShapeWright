@@ -1,0 +1,59 @@
+# Fence gate module: fills the span between two posts like a panel, with a
+# swing gap each side; hinge blocks bridge the gap into the left post.
+# Origin = bottom centre at the middle of the span.
+shapewright: 0.1
+asset: {name: fence_gate, placement: free, kind: prop/fence/gate, description: Braced picket gate between two fence posts (fence_kit module).}
+pack: fence_kit
+
+params:
+  swing: {value: 0.02, doc: gap between the gate and each post}
+  gw: {value: clear - 2 * swing, doc: gate leaf width}
+  stile: {value: 0.07, doc: stile width}
+  picket_bot: {value: 0.06, doc: picket bottom above the ground (same line as the panel)}
+  gpickets: {value: 5, doc: pickets on the gate}
+  gph: {value: picket_h - 0.14, doc: gate picket height (the gate dips below the panel picket line so it reads as a gate)}
+  gpitch: {value: (gw - 2 * stile) / gpickets, doc: gate picket spacing}
+
+parts:
+  stile:
+    doc: vertical frame boards on both edges of the leaf
+    shape: {type: chamfer_box, size: [stile, picket_bot + gph + 0.03 - gap_y, rail_t], chamfer: chamfer}
+    ops: [{type: jitter, amount: wear, seed: 5}]
+    anchor: bottom_right
+    position: [gw / 2, gap_y, 0]
+    mirror: x
+    material: post_wood
+  rail:
+    doc: leaf rails between the stiles, in line with the panel rails
+    shape: {type: chamfer_box, size: [gw - 2 * stile + 0.01, rail_h, rail_t * 0.9], chamfer: chamfer}
+    position: [0, rail_lo, 0]
+    array: {count: 2, offset: [0, rail_hi - rail_lo, 0]}
+    material: post_wood
+  brace:
+    doc: diagonal brace from the bottom hinge side up to the top latch side
+    shape:
+      type: strut
+      from: [-(gw / 2 - stile), rail_lo, 0]
+      to: [gw / 2 - stile, rail_hi, 0]
+      size: [0.06, rail_t * 0.8]
+      chamfer: chamfer
+    material: post_wood
+  picket:
+    doc: pointed pickets on the front of the leaf
+    shape:
+      type: extrude
+      polygon: [[-picket_w / 2, 0], [picket_w / 2, 0], [picket_w / 2, gph - picket_w / 2], [0, gph], [-picket_w / 2, gph - picket_w / 2]]
+      depth: picket_t
+      chamfer: 0.005
+    ops: [{type: jitter, amount: wear, seed: 7}]
+    anchor: bottom
+    position: [-gw / 2 + stile + gpitch / 2, picket_bot, rail_t / 2 + picket_t / 2 - 0.004]
+    array: {count: gpickets, offset: [gpitch, 0, 0]}
+    material: board_wood
+  hinge:
+    doc: hinge blocks bridging the swing gap into the left post
+    shape: {type: chamfer_box, size: [swing + bite + 0.05, 0.05, rail_t + 0.012], chamfer: 0.004}
+    anchor: left
+    position: [-clear / 2 - bite, rail_lo, 0]
+    array: {count: 2, offset: [0, rail_hi - rail_lo, 0]}
+    material: post_wood

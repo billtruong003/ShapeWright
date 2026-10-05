@@ -1,0 +1,27 @@
+# A short fence run built from fence_kit modules: posts on every grid node
+# (every `span` along X), two panels and one gate filling the spans between.
+shapewright: 0.1
+asset: {name: fence_run, kind: prop/fence/run, description: Cozy picket fence run (4 posts, 2 panels, 1 gate) assembled from fence_kit modules.}
+pack: fence_kit
+budget: {triangles: 1500, materials: 2}
+uv: {texel_density: 120}   # what a 512px atlas achieves over a 3.7 m run
+
+params:
+  bays: {value: 3, doc: number of spans (panels + gate)}
+  x0: {value: -bays * span / 2, doc: first post (run centred on the origin)}
+
+parts:
+  post:
+    asset: fence_post
+    position: [x0, 0, 0]
+    array: {count: bays + 1, offset: [span, 0, 0]}
+  panel:
+    asset: fence_panel
+    position: [x0 + span / 2, 0, 0]
+    array: {count: 2, offset: [span, 0, 0]}
+  gate:
+    asset: fence_gate
+    position: [x0 + 2.5 * span, 0, 0]
+
+checks:
+  - {expr: asset.width, min: bays * span, max: bays * span + post + 0.02, doc: run spans bays * span plus one post}

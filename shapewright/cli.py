@@ -142,6 +142,17 @@ def cmd_brief(a):
     return 0
 
 
+def _code_row(doc: Path, code: str) -> str:
+    """The row of an issue code in docs/VALIDATION.md's tables, as 'severity | meaning | fix' text."""
+    if not doc.exists():
+        return ""
+    for line in doc.read_text().splitlines():
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if cells and cells[0] == f"`{code}`":
+            return "  |  ".join(c for c in cells[1:] if c)
+    return ""
+
+
 def cmd_doc(a):
     from .caps import manifest
 
@@ -154,12 +165,23 @@ def cmd_doc(a):
     if a.name in m["views"] or a.name in m["modes"]:
         print(m["views"].get(a.name) or m["modes"].get(a.name))
         return 0
+    from . import paths
+
     for v in m["validators"]:
         if a.name in v["codes"] or a.name == v["name"]:
+            row = _code_row(paths.LIB / "docs" / "VALIDATION.md", a.name)
+            if row:  # FRESH_AGENT_12: point at the meaning and the fix, not at a file an installed copy may not have
+                print(f"{a.name}: {row}")
             print(compact_json(v))
-            print("See docs/VALIDATION.md for the meaning and fixes of each code.")
             return 0
-    from . import paths
+    from .source import INSTANCE_KEYS, PART_KEYS, TOP_KEYS
+
+    for label, keys in (("part key", PART_KEYS), ("instance key", INSTANCE_KEYS), ("top-level key", TOP_KEYS)):
+        if a.name in keys and isinstance(keys, dict):
+            print(f"{label} `{a.name}`: {keys[a.name]}")
+            print("Full reference: docs/ASSET_FORMAT.md" + (f" (installed copy: {paths.LIB / 'docs' / 'ASSET_FORMAT.md'})"
+                                                            if (paths.LIB / "docs" / "ASSET_FORMAT.md").exists() else ""))
+            return 0
 
     for kind in ("profiles", "styles", "packs", "components"):
         f = paths.find(kind, a.name)
@@ -292,7 +314,12 @@ def cmd_snapshot(a):
     from .assemble import resolve_asset_path
     from .history import snapshot
 
-    res = snapshot(resolve_asset_path(a.asset), a.message or "", a.critique or "")
+    try:
+        res = snapshot(resolve_asset_path(a.asset), a.message or "", a.critique or "")
+    except SourceError as e:
+        _print_source_error(e, False)
+        print("nothing recorded: the source does not build (fix it, then snapshot)")
+        return 2
     if res.get("unchanged"):
         print(f"unchanged since iteration {res['iteration']} (source hash identical); nothing recorded")
     else:
@@ -433,7 +460,8 @@ def cmd_new(a):
     else:
         text = (ROOT / "templates" / "asset.yaml").read_text().replace("NAME", a.name)
     (d / "asset.yaml").write_text(text)
-    print(f"created {_rel(d / 'asset.yaml')}  next: edit it, then `sw review {_rel(d)}`")
+    name = a.name if d.parent.resolve() == paths.assets_home().resolve() else _rel(d)  # a name where a name works
+    print(f"created {_rel(d / 'asset.yaml')}  next: edit it, then `sw review {name}`")
     return 0
 
 

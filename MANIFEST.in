@@ -4,6 +4,7 @@ graft styles
 graft packs
 graft components
 graft templates
+include docs/VALIDATION.md docs/ASSET_FORMAT.md
 recursive-include assets *.yaml *.glb *.gltf *.obj *.stl *.ply *.png
 prune assets/*/export
 prune assets/*/.build
