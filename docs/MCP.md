@@ -81,3 +81,14 @@ args = ["mcp", "--project", "/ABS/PATH/TO/my_assets"]
   - a real stdio client session: `initialize` → `list_tools` → `new` → `review` (image content) → `read_source` → `write_source` → `export` (Godot GLB on disk).
 - **Streamable HTTP:** checked by hand with an `initialize` request (Phase 17 record).
 - **Supported SDK versions:** works with MCP Python SDK 2.x (`MCPServer`) and 1.x (`FastMCP`).
+
+## Checking the server with the MCP Inspector
+
+```bash
+npx -y @modelcontextprotocol/inspector --cli sw mcp --project my_project --method tools/list
+npx -y @modelcontextprotocol/inspector --cli sw mcp --project my_project --method tools/call --tool-name review --tool-arg name=crate
+```
+
+(From a source checkout without installing, wrap `PYTHONPATH=<checkout> python3 -m shapewright mcp --project ...` in a
+small script and pass the script.) Phase 17b ran it on all 18 tools: schemas are valid, `view`, `mode` and `target`
+are enums, `review` and `render` return `['text', 'image']` (docs/phases/PHASE_17b.md).

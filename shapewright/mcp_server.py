@@ -17,7 +17,9 @@ import os
 import re
 import subprocess
 import sys
+import typing
 from pathlib import Path
+from typing import Literal
 
 from . import paths
 
@@ -27,6 +29,11 @@ VIEWS = ("front", "back", "left", "right", "top", "bottom", "front_right", "fron
 MODES = ("clay", "parts", "material", "wire", "normals", "silhouette", "provenance", "regions", "textured", "albedo",
          "roughness", "metallic", "texel", "seams", "beauty")
 TARGETS = ("generic", "godot", "unity", "unreal")
+# choices as types, so the tool schemas carry enums (MCP Inspector, Phase 17b): clients can offer them
+View = Literal["front", "back", "left", "right", "top", "bottom", "front_right", "front_left", "back_right", "back_left", "low_front"]
+Mode = Literal["clay", "parts", "material", "wire", "normals", "silhouette", "provenance", "regions", "textured", "albedo",
+               "roughness", "metallic", "texel", "seams", "beauty"]
+Target = Literal["", "generic", "godot", "unity", "unreal"]
 TIMEOUT_S = 600
 MAX_SOURCE_BYTES = 512 * 1024
 
@@ -183,7 +190,7 @@ def review(name: str) -> tuple[str, Path | None]:
     return text, sheet if sheet.is_file() else None
 
 
-def render(name: str, view: str = "front_right", mode: str = "textured", part: str = "") -> tuple[str, Path | None]:
+def render(name: str, view: View = "front_right", mode: Mode = "textured", part: str = "") -> tuple[str, Path | None]:
     """One inspection image. view: front, back, left, right, top, bottom, front_right, front_left, back_right, back_left,
     low_front. mode: clay, parts, material, wire, normals, silhouette, textured, albedo, roughness, metallic, texel, seams...;
     beauty = presentation render (shadows, ambient occlusion) for showing a finished asset, not for inspection"""
@@ -218,7 +225,7 @@ def compare(name: str, a: str = "1", b: str = "current") -> tuple[str, Path | No
     return text, _last_png(text)
 
 
-def export(name: str, target: str = "") -> str:
+def export(name: str, target: Target = "") -> str:
     """Validate and write the GLB (+ report): Khronos validation and re-import. target: generic, godot, unity, unreal."""
     _find(name)
     args = ["export", name]
@@ -304,9 +311,12 @@ def build_server():
                 imgs = img if isinstance(img, list) else [img] if img else []
                 return [text, *(Image(path=str(i)) for i in imgs)] if imgs else text
             return out
-        tool.__annotations__ = {k: v for k, v in fn.__annotations__.items() if k != "return"}
+        hints = typing.get_type_hints(fn)  # real types, not the strings of `from __future__ import annotations`
+        tool.__annotations__ = {k: v for k, v in hints.items() if k != "return"}
         del tool.__wrapped__  # the schema comes from the arguments; results are text or [text, image] content
-        tool.__signature__ = inspect.signature(fn).replace(return_annotation=inspect.Signature.empty)
+        sig = inspect.signature(fn)
+        tool.__signature__ = sig.replace(parameters=[q.replace(annotation=hints.get(q.name, q.annotation)) for q in sig.parameters.values()],
+                                         return_annotation=inspect.Signature.empty)
         return tool
 
     for fn in TOOLS:

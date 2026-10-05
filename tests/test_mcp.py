@@ -66,8 +66,13 @@ def test_stdio_server_lists_and_calls_tools(project):
         params = StdioServerParameters(command=sys.executable, args=["-m", "shapewright", "mcp", "--project", str(project)], env=env)
         async with stdio_client(params) as (r, w), ClientSession(r, w) as s:
             await s.initialize()
-            names = {t.name for t in (await s.list_tools()).tools}
-            assert {"brief", "new", "write_source", "review", "render", "export"} <= names
+            tools = {t.name: t for t in (await s.list_tools()).tools}
+            assert {"brief", "new", "write_source", "review", "render", "export", "feedback", "resolve_feedback"} <= set(tools)
+            # choices are enums in the schema (Phase 17b, MCP Inspector finding)
+            def schema(t):  # mcp 1.x: inputSchema, 2.x: input_schema
+                return getattr(t, "inputSchema", None) or getattr(t, "input_schema")
+            assert "beauty" in schema(tools["render"])["properties"]["mode"]["enum"]
+            assert "godot" in schema(tools["export"])["properties"]["target"]["enum"]
             res = await s.call_tool("new", {"name": "crate2", "from_asset": "crate"})
             assert "exit 0" in res.content[0].text
             res = await s.call_tool("review", {"name": "crate2"})
