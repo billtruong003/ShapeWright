@@ -89,7 +89,7 @@ then register the server command `sw mcp` (see docs/MCP.md). Every CLI step belo
 
 ## Capabilities (generated from the code: `sw caps`)
 
-shapewright 0.1.0  (units m, +Y up, front +Z, angles in degrees)
+shapewright 1.0.0  (units m, +Y up, front +Z, angles in degrees)
 
 COMMANDS
   sw brief REQUEST                              start here: closest example asset (with source), profile, rules and vocabulary for a request

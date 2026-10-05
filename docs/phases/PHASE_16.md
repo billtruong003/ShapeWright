@@ -1,6 +1,6 @@
 # Phase 16: packaging + AI docs
 
-**Verdict: PASS**, with one item not verified: the Docker image was not built, because this environment has no Docker.
+**Verdict: PASS.** (The Docker item, not verified at first, was verified at release 1.0: see the gate table.)
 
 Branch `phase/16-packaging`, stacked on `test/modular-house-pack`. It is not merged.
 
@@ -69,4 +69,4 @@ The FA-11 run was lighter (~69k tokens). It is not a like-for-like comparison: i
 |---|---|---|
 | clean install runs `sw doctor`, `brief` → `export` with no clone | **met** | clean venv from the wheel; FA-11 |
 | a fresh agent with only `llms.txt` exports a valid asset | **met** | FA-11 |
-| Docker image builds and runs | **not verified** | no Docker in this environment |
+| Docker image builds and runs | **met** (verified at release 1.0, track E3) | `docker build`, then in the container: `init`, `brief`, `new --from barrel`, `export` (PASS, Khronos validator inside), `doctor`, MCP `initialize` over stdio; image 1.11 GB. The build in the cloud container needed the proxy's CA passed in (not a Dockerfile change) |

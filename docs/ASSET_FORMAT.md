@@ -5,6 +5,12 @@ welcome), parsed with `safe_load`. Unknown keys are errors with "did you mean"
 suggestions. `sw caps --json` lists every shape, op and parameter with types
 and defaults. This document explains the structure.
 
+**Package version vs format version.** The package (`pip show shapewright`, `shapewright.__version__`) is 1.0.0.
+The source format is still `shapewright: 0.1`: every 0.1 source written since the first release builds unchanged,
+because all additions (components, packs, composition, sockets through instances, ...) are new optional keys.
+The format version changes only when a source would have to be rewritten; that release will ship a migration.
+Exported GLBs record both in `extras.shapewright` (`version`) and the source hash.
+
 ## Conventions
 
 | | |

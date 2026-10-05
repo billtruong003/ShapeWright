@@ -1,6 +1,6 @@
 [project]
 name = "shapewright"
-version = "0.1.0"
+version = "1.0.0"
 description = "An agent-native 3D modelling environment: declarative assets, deterministic validation, inspection renders, GLB export."
 readme = "README.md"
 license = { text = "Apache-2.0" }
