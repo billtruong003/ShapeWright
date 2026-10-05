@@ -1,30 +1,37 @@
 name: release
-# On a version tag (v1.0.0): build the wheel and the modular_house_pack zip, run the tests, and publish a GitHub
-# release with them and the changelog. PyPI upload is separate (needs the owner's token: docs/RELEASING.md).
+# Publishes a GitHub release when main carries a package version that has no tag yet (a version bump), on a pushed
+# v* tag, or by hand (workflow_dispatch). It runs the tests, tags the commit v<version> if needed, builds the wheel,
+# the sdist and the modular_house_pack zip, and uses the top changelog entry as notes.
+# PyPI upload is separate (needs the owner's token: docs/RELEASING.md).
 on:
-  push: {tags: ["v*"]}
-  workflow_dispatch:  # from the Actions tab (or the API): tags the current commit with v<package version>
+  push: {branches: [main], tags: ["v*"]}
+  workflow_dispatch:
 permissions: {contents: write}
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
       - uses: actions/setup-python@v5
         with: {python-version: "3.11"}
-      - run: pip install -r requirements.txt build
-      - run: python -m pytest -q -x
-      - run: python -m build --wheel --sdist --outdir dist
       - id: tag
         run: |
-          V="v$(python -c 'import shapewright; print(shapewright.__version__)')"
-          if [ "$GITHUB_REF_TYPE" = "tag" ]; then test "$GITHUB_REF_NAME" = "$V"; else
-            git tag "$V" && git push origin "$V"; fi
+          V="v$(sed -n 's/^__version__ = "\(.*\)"/\1/p' shapewright/__init__.py)"
           echo "name=$V" >> "$GITHUB_OUTPUT"
-      - run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then test "$GITHUB_REF_NAME" = "$V"; echo "go=true" >> "$GITHUB_OUTPUT";
+          elif git rev-parse -q --verify "refs/tags/$V" >/dev/null; then echo "go=false" >> "$GITHUB_OUTPUT";
+          else echo "go=true" >> "$GITHUB_OUTPUT"; fi
+      - if: steps.tag.outputs.go == 'true'
+        run: pip install -r requirements.txt build && python -m pytest -q -x
+      - if: steps.tag.outputs.go == 'true'
+        run: |
+          python -m build --wheel --sdist --outdir dist
           zip -qr "dist/modular_house_pack-${{ steps.tag.outputs.name }}.zip" modular_house_pack
           awk '/^## /{n++} n<=1' CHANGELOG.md > dist/NOTES.md
-      - uses: softprops/action-gh-release@v2
+          if [ "$GITHUB_REF_TYPE" != "tag" ]; then git tag "${{ steps.tag.outputs.name }}" && git push origin "${{ steps.tag.outputs.name }}"; fi
+      - if: steps.tag.outputs.go == 'true'
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.name }}
           name: Shapewright ${{ steps.tag.outputs.name }}
