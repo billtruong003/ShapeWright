@@ -10,6 +10,11 @@ Every phase follows the same run protocol (§1) and the same record format (§2)
 > Phases 22, 24 and 25 therefore become **optional Blender backends** (headless `blender -b` driven
 > from the asset source, results re-imported and validated), not native kernels. Phase 23 stays native.
 > The phase numbers are kept so references stay valid.
+>
+> **Revision 2 (2026-10-05): no Blender at all.** The character track is native (SDF + marching cubes, bone-heat
+> weights with scipy, skinned glTF from the existing exporter), so the user never opens or installs Blender: they
+> prompt, look at review sheets and the three.js workbench viewer, and comment. Phases 22 and 24 below are native;
+> the Blender render path (25b) moved to the backlog. The task-level plan is docs/REMAINING_WORK.md (tracks W and G).
 
 ## Status (updated at the end of the cloud run)
 
@@ -82,15 +87,15 @@ The gate table in `PHASE_NN.md` has one row per gate item, each with a result (m
 
 | # | phase | scope | gate |
 |---|---|---|---|
-| **22** | **Organic modelling (Blender backend)** | a `backend: blender` path: parts marked `blend:` are sent to headless Blender (metaball / voxel remesh / smooth union), the result comes back as a `mesh_file` with provenance and is validated like any part; native fallback: CPU marching-cubes SDF for machines without Blender | a chibi body (head, torso, limbs) is one watertight mesh with blended joints; the remesh has no slivers; triangle budget respected |
+| **22** | **Organic modelling (native)** | parts marked `blend:` become SDF primitives combined by smooth union, meshed by marching cubes on the CPU, decimated and UV'd with xatlas, then validated like any part; no Blender | a chibi body (head, torso, limbs) is one watertight mesh with blended joints; the remesh has no slivers; triangle budget respected |
 | **23** | **Surface detail for characters** | decals / projected texture regions (eyes, mouth, patterns); a per-region palette; toon/flat shading presets | the fox-hoodie concept as a static figurine: judged ≥ 80 % faithful on silhouette and palette by side-by-side review; the face is readable from the front at 256 px |
-| **24** | **Rigging (Blender backend)** | skeleton template fitted from part anchors (native, in the source); weights and skinned GLB via headless Blender (automatic weights); pose test renders; native rigid-part clips (doors, lids, wheels) | the fox character imports rigged into Godot and Unity (by convention) and plays a T-pose → idle test with no candy-wrapper artefacts at elbows/knees; Khronos 0 errors |
+| **24** | **Rigging (native)** | skeleton template fitted from part anchors; bone-heat weights solved with scipy sparse; skinned GLB from the existing exporter; weight validators; pose test renders; rigid-part clips (doors, lids, wheels) | the fox character imports rigged into Godot and Unity (by convention) and plays a T-pose → idle test with no candy-wrapper artefacts at elbows/knees; Khronos 0 errors |
 
 ### Track D: visual quality
 
 | # | phase | scope | gate |
 |---|---|---|---|
-| **25** | **Presentation renderer** | portfolio sheet layout (views + details + wireframe + palette) in the native renderer; Cycles/Eevee path via headless Blender when available (shadows, AO, turntables) | the sheet for 3 existing assets is comparable to a concept sheet layout; the deterministic mode is kept for tests |
+| **25** | **Presentation renderer** | portfolio sheet layout (views + details + wireframe + palette) in the native renderer (shadows, AO, turntables: track R); a Blender path is backlog only | the sheet for 3 existing assets is comparable to a concept sheet layout; the deterministic mode is kept for tests |
 
 ---
 
@@ -225,7 +230,6 @@ Each brief is self-contained. Prepend the run protocol (§1).
   - shadow/AO/rim lighting;
   - turntable output;
   - a concept-sheet layout;
-  - an optional Blender path.
 - *Acceptance:* sheets for the cottage, the treasure chest and the fox, reviewed against a reference sheet; the deterministic test renders are unchanged.
 
 ---

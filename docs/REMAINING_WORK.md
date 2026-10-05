@@ -1,6 +1,6 @@
 # Remaining work: complete task list, plan and progress
 
-Status measured on `main` @ `6094518` (2026-10-05): CI green on Linux and Windows, 433 tests pass, docs site auto-deploys.
+Status measured on `main` @ `c3b5beb` (2026-10-05; revised the same day: track W added, track G made native): CI green on Linux and Windows, 433 tests pass, docs site auto-deploys.
 This file is **the work queue** for long runs: do the tasks in order, tick them here in the same commit that finishes
 them, and update the progress table at the end.
 
@@ -18,10 +18,14 @@ Nothing is left out. The earlier figures (87 % and 83 %) counted fewer items, wh
 
 | scope | done | remaining | **progress** |
 |---|---|---|---|
-| **v1.0** (tracks A, B, R, C, D, E): prop and kit framework, polished, verified, released | 42 | 10.75 | **≈ 80 %** |
-| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 42 | 14.75 | **≈ 74 %** |
-| **planned roadmap** (+ track G: character track and the Blender render path) | 42 | 25.75 | **≈ 62 %** |
-| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 42 | ≈ 35.75 | **≈ 54 %** |
+| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 42 | 13.75 | **≈ 75 %** |
+| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 42 | 17.75 | **≈ 70 %** |
+| **planned roadmap** (+ track G: native character track) | 42 | 29.75 | **≈ 59 %** |
+| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 42 | ≈ 40.75 | **≈ 51 %** |
+
+The figures dropped from 80 / 74 / 62 / 54 % because two decisions on 2026-10-05 added work:
+- **Track W** (3 points): the workbench gets a three.js 3D viewer (list, view modes, save, export, click-to-comment).
+- **Track G is native** (12 points, was 11 with Blender): no Blender anywhere. The Blender render path moved to the backlog.
 
 ## 2. Master checklist (every remaining task)
 
@@ -50,6 +54,12 @@ Tick `[x]` here in the commit that finishes a task.
 | [ ] | R4 | Regenerate README, gallery, home hero and bundle renders in beauty mode | 0.15 | R1–R3, B4 | agent |
 | [ ] | R5 | MCP `render` accepts `beauty`; docs page; llms.txt | 0.1 | R1 | agent |
 | [ ] | R6 | Human-scale silhouette + dimension overlay in orthographic review views (ROADMAP Stage 3) | 0.25 | — | agent |
+| [ ] | W1 | Workbench 3D viewer: three.js vendored in the package, GLB view, orbit, lights, ground grid, 1.75 m scale figure | 0.5 | A3 | agent |
+| [ ] | W2 | Viewer modes: textured, clay, wireframe, normals, UV checker, UV layout (2D), colour by part / material, texel density | 0.75 | W1 | agent |
+| [ ] | W3 | Model list: thumbnail grid, PASS/WARN/FAIL badge, tris, build date, filter (library / project / pack) | 0.25 | W1 | agent |
+| [ ] | W4 | Param sliders → `sw set` → rebuild → GLB reload; save YAML; export per engine + download; screenshot of the current view | 0.5 | W1 | agent |
+| [ ] | W5 | Click-to-comment: pick a point → part name + position + view screenshot → `.build/feedback.json`; MCP tool `feedback`; tests | 0.75 | W4 | agent |
+| [ ] | W6 | Docs gallery uses the same viewer (replaces `<model-viewer>`) | 0.25 | W2, A3 | agent |
 | [ ] | C1 | MCP through a real desktop client (Claude Desktop or Cursor), one unseen prop, Windows launch documented | 0.5 | A5 | **owner** + agent |
 | [ ] | C2 | MCP Inspector run on the tool schemas (Phase 17 gate) | 0.25 | — | agent (needs Node) |
 | [ ] | C3 | Another vendor's agent (Codex CLI or ChatGPT via MCP) does one prop (closes Phase 13's open gate) | 0.5 | C1 | **owner** + agent |
@@ -73,11 +83,13 @@ Tick `[x]` here in the commit that finishes a task.
 | [ ] | F4 | LODs on the kit and the houses (LOD + IoU already exist in export/lod.py: apply, set thresholds, report) | 0.3 | F1 | agent |
 | [ ] | F5 | Multi-hull collision; a walkable doorway in the workshop | 0.7 | — | agent |
 | [ ] | F6 | Lightmap UVs (UV1, non-overlapping) for Unity/Unreal static lighting (ROADMAP Stage 4) | 1.0 | — | agent |
-| [ ] | G1 | Phase 22: Blender backend for organic forms (+ CPU marching-cubes fallback) | 4 | v1.0 | agent (Blender) |
-| [ ] | G2 | Phase 23: character surface (decals, region palettes, toon), reference images in sources (ROADMAP Stage 4) | 2 | G1 | agent |
-| [ ] | G3 | Phase 24: rigging (skeleton from anchors, weights via Blender, rigid clips for doors/lids/wheels) | 4 | G1 | agent (Blender, Godot) |
-| [ ] | G4 | Phase 25b: Blender render path (Cycles/Eevee) for the presentation sheet | 1 | R3, G1 | agent (Blender) |
-| [ ] | H* | Long-term backlog (§11): plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village | ≈ 10 | — | later |
+| [ ] | G0 | Spike: the fox (body, head, cheeks, ears, tail) as SDF primitives, smooth union, marching cubes, sheet next to the concept | 1 | v1.0 | agent |
+| [ ] | G1 | Phase 22: native organic kernel: `blend:` groups, SDF primitives, smooth union, marching cubes, decimate, xatlas UV, validated like any part | 3 | G0 | agent |
+| [ ] | G2 | Phase 23: character surface: projected decals into the atlas (eyes, mouth, patterns), region palettes, toon presets, reference image in the source | 1.5 | G1 | agent |
+| [ ] | G3 | Character review modes: UV checker + layout, mesh density, bone-weight heatmap, pose sheet, side by side with the concept (CPU sheet and the W viewer) | 1.5 | G1, W2 | agent |
+| [ ] | G4 | Phase 24: native rigging: skeleton templates fitted from anchors, bone-heat weights (scipy sparse solve), skinned GLB export, weight validators, rigid clips (doors, lids, wheels) | 3.5 | G1 | agent (Godot for the import check) |
+| [ ] | G5 | Procedural clips: idle bob, walk cycle, wave, from the skeleton template | 1.5 | G4 | agent |
+| [ ] | H* | Long-term backlog (§11): plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village, optional Blender/three.js beauty renders | ≈ 11 | — | later |
 
 Done so far (42 points):
 
@@ -329,6 +341,65 @@ Record: `docs/phases/PHASE_25a.md`.
 
 ---
 
+## 6c. Track W: web workbench with a three.js viewer (`phase/15b-web-viewer`), 3 points
+
+Today the workbench (`sw workbench`, `shapewright/workbench/`) lists assets, edits params, saves YAML and runs `sw`
+commands, but its view is a **static PNG** (`<img id="view">`). The server already serves `.glb` files. This track
+replaces the image with a three.js viewer so a person can look at a model from any side, check UVs and faces, and
+point at problems for the agent.
+
+Rules:
+- **The CPU renderer stays the reference.** Tests, goldens, CI and the images MCP returns to agents keep using it
+  (deterministic). three.js is for human eyes only; its pixels are never asserted on.
+- **The browser never edits geometry.** Every change goes through the YAML source and an `sw` command, the same
+  path an agent uses.
+- **No build step, works offline.** three.js (MIT) is vendored under `shapewright/workbench/vendor/` (module build,
+  `GLTFLoader`, `OrbitControls`, `RoomEnvironment`) and loaded with an import map; added to package-data.
+  Pin the version and record it in the file header.
+
+**W1. Viewer.**
+- `index.html` gets a `<canvas>` viewer: `GLTFLoader` on `/files?path=NAME/export/NAME_preview.glb` (A3), orbit
+  controls, a neutral studio environment, a ground grid in metres, a 1.75 m scale figure (toggle).
+- If the preview GLB is missing or stale, the viewer asks the server to run `sw export NAME --preview`.
+- Falls back to the PNG sheet when WebGL is unavailable.
+
+**W2. View modes** (a toolbar; each one swaps materials, no rebuild):
+- textured, clay (one grey material), wireframe overlay, normals (`MeshNormalMaterial`);
+- **UV checker**: a checker texture on UV0 so stretching and flips show;
+- **UV layout**: a 2D canvas next to the 3D view draws the UV triangles of the selected part, overlaps in red;
+- colour by part (glTF node names) and by material;
+- texel density as a heat colour (texels per metre, from the export report).
+
+**W3. Model list.** A thumbnail grid (existing PNG renders), status badge, triangle count, build date; filter by
+library / project / pack; search by name.
+
+**W4. Edit, save, export.**
+- Param sliders call `sw set`, rebuild, and reload the GLB in place (keep the camera).
+- Save YAML (exists), export per engine (`sw export --target godot|unity|unreal|web`), a download link for the GLB.
+- "Screenshot" saves the current view as PNG under `.build/shots/`.
+
+**W5. Click to comment** (the feedback loop for the agent).
+- Clicking the model raycasts to a point: the record holds part name, world position, normal, camera and a
+  screenshot with a marker. The person types a note ("this gap", "ears too big").
+- Notes are stored in `assets/NAME/.build/feedback.json`; a `sw feedback NAME` command prints them, and an MCP tool
+  `feedback(name)` returns them with the screenshots. The agent marks a note resolved after fixing it.
+- Tests: the feedback file format, the CLI and the MCP tool (the raycast itself is browser-only, not tested in CI;
+  one Playwright smoke test with the bundled Chromium when available).
+
+**W6. Docs gallery.** `tools/site/build_site.py` uses the same viewer module instead of `<model-viewer>`, so the site
+and the workbench look the same; the poster image fallback stays.
+
+Gate:
+- the workbench opens a library and a project asset in 3D on Linux and Windows (Chrome/Edge/Firefox);
+- every view mode works on the cottage and the treasure chest (screenshots in the record);
+- a comment made in the browser reaches an agent through MCP and the agent fixes it (one recorded round);
+- the wheel still installs offline and serves the viewer;
+- deterministic tests unchanged.
+
+Record: `docs/phases/PHASE_15b.md`.
+
+---
+
 ## 7. Track E: release v1.0 (`release/1.0`), 2 points
 
 1. **Version.**
@@ -396,41 +467,88 @@ Record: `docs/phases/PHASE_21.md`. Milestone **M2, kit-grade**: re-run the MODUL
 
 ---
 
-## 9. Track G: character track (optional, after v1.0), 11 points
+## 9. Track G: native character track (after v1.0), 12 points
 
-The revision note at the top of docs/PHASE_PLAN_16.md applies: Blender is an optional headless backend, and Shapewright stays the source of truth.
+Decision of 2026-10-05: **no Blender**. Everything runs inside Shapewright (Python, numpy, scipy), so it stays
+headless, deterministic and installable with pip. The person's job is only: prompt, look at the review sheet or the
+W viewer (views, UV, faces, weights, poses), comment, and let the agent fix the source.
 
-| phase | tasks (summary) | gate |
-|---|---|---|
-| 22 Blender backend for organic forms (4, G1) | `blend:` groups → `blender -b -P` smooth union / voxel remesh → `mesh_file` with provenance; CPU marching-cubes fallback; reproducibility hash per Blender version | chibi body is one watertight mesh with blended joints, within budget |
-| 23 Character surface (2, G2) | projected decals (eyes, mouth), region palettes, toon presets; **reference images in sources** shown next to matching views (ROADMAP Stage 4) | fox-hoodie figurine vs the concept, rubric scored |
-| 24 Rigging (4, G3) | skeleton from anchors (native), weights and a skinned GLB via Blender, pose renders, rigid clips (doors, lids, wheels) | rigged fox in Godot, no deformation artefacts |
-| 25b Blender render path (1, G4) | Cycles/Eevee renders of the same sheet layout when Blender is present (the native beauty mode from Track R stays the default) | the same 4 assets rendered both ways; native output unchanged |
+New dependencies: `scipy` (sparse solves) and either `scikit-image` (marching cubes) or an own marching-cubes /
+surface-nets implementation (about 200 lines). Prefer the own implementation if it keeps the install small.
+
+**G0. Spike** (1 point, do first; it decides whether G1–G5 go ahead as planned).
+- The fox concept as 6–10 SDF primitives (ellipsoids, capsules, rounded cones) blended with a smooth union,
+  meshed by marching cubes, decimated to a budget, UV'd with xatlas.
+- A sheet next to the concept image. Measure: time to mesh, watertight, triangle count, how many params the agent
+  needed. Record what looked wrong.
+
+**G1. Native organic kernel** (Phase 22, 3 points).
+- Source: a `blend:` group on parts, e.g. `blend: {group: body, radius: 0.04}`; parts in one group become SDF
+  primitives (sphere, ellipsoid, capsule, rounded box, rounded cone, torus) combined by smooth union /
+  subtraction / intersection.
+- Mesh: sample on a grid sized from `resolution` (or the profile), marching cubes, then smoothing, decimate to the
+  budget (`fast-simplification`), xatlas UV. Symmetry: mirror the field, not the mesh.
+- The result is a normal part: all 8 validation layers apply; goldens use the tolerant signature.
+- Gate: a chibi body and 2 creatures (slime, mushroom) are each one watertight mesh, no slivers, within budget,
+  deterministic; under 10 s each.
+
+**G2. Character surface** (Phase 23, 1.5 points).
+- Projected decals (eyes, mouth, nose, patterns) painted into the part's atlas from a direction or an anchor.
+- Region palettes (colour by SDF primitive or by a height/region mask), toon presets.
+- `reference: concept/fox.png` in the source: review sheets put it next to the matching view.
+- Gate: the fox figurine vs the concept, rubric scored (silhouette, proportions, palette, face, details); the face
+  reads from the front at 256 px.
+
+**G3. Character review modes** (1.5 points).
+- CPU sheet: UV checker, UV layout, mesh density, bone-weight heatmap per bone, pose sheet (T, A, sit, wave),
+  concept side by side.
+- W viewer: skeleton overlay, weight heatmap per selected bone, a pose slider.
+- MCP `review` returns the character sheet.
+
+**G4. Native rigging** (Phase 24, 3.5 points).
+- Skeleton templates (`humanoid_chibi`, `quadruped`, `tail_chain`) fitted from anchors in the source.
+- Weights by bone heat (the Pinocchio method Blender's automatic weights also use): solve
+  `(L + H) w = H p` per bone with scipy sparse; at most 4 influences, normalised.
+- Export: glTF `skin`, joints, inverse bind matrices, `JOINTS_0` / `WEIGHTS_0` in the existing exporter.
+- Validators: unweighted vertices, weight sums, > 4 influences, bones with no vertices, mirrored weight symmetry.
+- Rigid clips (doors, lids, wheels) as node animations.
+- Gate: the rigged fox imports into Godot headless with the skeleton intact; the pose sheet shows no
+  candy-wrapper artefacts at elbows and knees; Khronos 0 errors.
+
+**G5. Procedural clips** (1.5 points).
+- Idle bob, walk cycle, wave, generated from the skeleton template with params (speed, stride, bounce).
+- Gate: clips play in Godot; a turntable/pose GIF in the record.
+
+Expected result, said plainly: stylised and low-poly characters (chibi, creatures, mascots) reach game quality.
+Marching-cubes topology is even triangles, not hand-made quad loops, so realistic characters that need clean
+deformation loops are out of scope.
 
 ---
 
 ## 10. Order and milestones
 
 ```
-20b cleanup (A) ──► 19b houses (B) ──► 25a render (R) ──► 18b site (D) ──► release v1.0 (E) ──► 21 (F) ──► 22 ► 23 ► 24, 25b (G)
+20b cleanup (A) ──► 19b houses (B) ──► 25a render (R) ──► 15b web viewer (W) ──► 18b site (D) ──► release v1.0 (E)
+    ──► 21 (F) ──► G0 spike ──► 22 organic (G1) ──► 23 surface (G2), review modes (G3) ──► 24 rigging (G4) ──► clips (G5)
       └── 17b MCP verify (C): when the owner has a desktop client ready; C3 after C1
 ```
 
 | milestone | after | v1.0 progress | full planned roadmap (A–G) |
 |---|---|---|---|
-| today | — | 80 % | 62 % |
-| defects cleared | A | 82 % | 64 % |
-| kit complete (3 houses from modules, window family, bundle rebuilt) | B | 87 % | 68 % |
-| presentation renders | R | 91 % | 71 % |
+| today | — | 75 % | 59 % |
+| defects cleared | A | 78 % | 61 % |
+| kit complete (3 houses from modules, window family, bundle rebuilt) | B | 83 % | 64 % |
+| presentation renders | R | 87 % | 67 % |
+| web viewer (three.js workbench, click-to-comment) | W | 92 % | 71 % |
 | MCP verified, other vendor tried | C | 94 % | 73 % |
 | docs complete (beauty renders, changelog, Windows notes) | D | 96 % | 75 % |
 | **v1.0 released** | E | **100 %** | 78 % |
-| kit-grade runtime (M2) | F | — | 84 % |
+| kit-grade runtime (M2) | F | — | 83 % |
 | characters (M3) | G | — | 100 % (planned roadmap) |
 
-Track H (backlog) is outside these figures; counting it as well, the project is ≈ 54 % of everything ever listed.
+Track H (backlog) is outside these figures; counting it as well, the project is ≈ 51 % of everything ever listed.
 
-## 11. Track H: long-term backlog (not scheduled, ≈ 10 points)
+## 11. Track H: long-term backlog (not scheduled, ≈ 11 points)
 
 Every item comes from a recorded source. Pick one up only with a recorded failing case (the run protocol).
 
@@ -448,4 +566,5 @@ Every item comes from a recorded source. Pick one up only with a recorded failin
 | Kit interiors: interior walls, stairs, upper floor openings | MODULAR_HOUSE_PACK_01 §16 | the next kit test |
 | Detail-density balance across a kit (18.6× spread) | MODULAR_HOUSE_PACK_01 §8 | a `sw pack` density warning, then rebalance |
 | MCP over HTTP with built-in auth | docs/MCP.md | a reverse proxy covers it today |
+| Optional beauty renders through Blender (Cycles/Eevee) or headless three.js | was G4 (Phase 25b) | only if the native beauty mode (R1) is judged not enough; never a required dependency |
 | North star: "a stylized fishing village pack for a cozy mobile game" end to end | ROADMAP Stage 6 | the final acceptance test |

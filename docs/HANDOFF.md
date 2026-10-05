@@ -22,7 +22,6 @@ Docs site:  https://billtruong003.github.io/ShapeWright/        (built from webs
   ./sw doctor                       # Windows: python -m shapewright doctor
   python3 -m pytest -q              # baseline: all pass (433 tests, ~5 min; Linux and Windows). If not, STOP and report.
   ruff check .                      # baseline: clean
-  (optional) blender --version      # Phases 22/24/25 use headless Blender if present
 
 Commit rules for this repository:
   - Commits are authored by billthedev (configured above). Do NOT add Co-Authored-By or session trailers.
@@ -34,7 +33,7 @@ Commit rules for this repository:
   1. README.md                         what the product is, feature map, links
   2. AGENTS.md                         the operating manual for agents using Shapewright (the loop, the rules)
   3. llms.txt                          the one-page brief (generated: ./sw caps --llms). Proves you know the vocabulary.
-  4. docs/PHASE_PLAN_16.md             THE PLAN: revision note (Blender backends), status table, RUN PROTOCOL (section 1),
+  4. docs/PHASE_PLAN_16.md             THE PLAN: revision notes (no Blender), status table, RUN PROTOCOL (section 1),
                                        record format (section 2), phase table, dependency graph, phase briefs (section 5)
   5. docs/phases/PHASE_16.md, PHASE_17.md, PHASE_19.md, PHASE_20.md, PHASE_18.md, PHASE_20a.md
                                        what shipped, each gate table, every PARTIAL and why, "not done" lists
@@ -74,13 +73,13 @@ Commit rules for this repository:
   Read docs/REMAINING_WORK.md fully (after the reading list above). Its section 2 is the MASTER CHECKLIST of every
   remaining task (IDs A1..G4, points, dependencies, who); later sections give the exact how-to and gates. Do the tracks
   in its order:
-    A phase/20b-cleanup -> B phase/19b-houses -> R phase/25a-render -> D phase/18b-site -> E release/1.0
-    -> F phase/21-shared-surfaces
+    A phase/20b-cleanup -> B phase/19b-houses -> R phase/25a-render -> W phase/15b-web-viewer (three.js workbench)
+    -> D phase/18b-site -> E release/1.0 -> F phase/21-shared-surfaces
     (C phase/17b-mcp-verify: C2 any time; C1 and C3 need the owner's desktop client / another vendor's agent)
   Tasks marked owner (C1, C3, E3 Docker, E7 PyPI token): prepare everything, then ask the owner and continue with
   the next agent task instead of waiting.
   When a task is done: tick it in docs/REMAINING_WORK.md and update its progress table in the same commit.
-  Track G (characters, Phases 22-25) only after the owner confirms, following the same file.
+  Track G (native characters, G0 spike first; no Blender anywhere) only after the owner confirms, following the same file.
   Status at hand-off: main @ d9877eb, CI green on Linux + Windows, 433 tests pass. macOS is out of scope.
 
 ==================================================================================================
@@ -89,7 +88,7 @@ Commit rules for this repository:
   - A gate turns out to be wrong or unmeasurable -> propose a corrected gate, do not quietly change it.
   - More than 3 unplanned framework changes inside one phase.
   - An asset-format change that would break existing sources without a migration.
-  - A needed tool is missing (Blender, Godot, an MCP client) -> record "not verified" and continue with the
+  - A needed tool is missing (Godot, Node, an MCP client) -> record "not verified" and continue with the
     next item that does not need it.
   - After track E (v1.0 released) and after track F: stop and report (they change what the next phases should be).
 
@@ -115,6 +114,6 @@ Commit rules for this repository:
 ## Notes for you (the person)
 
 - **GitHub Pages:** `.github/workflows/docs.yml` publishes to the `gh-pages` branch on every push to `main`. If the site does not appear, open *Settings → Pages* and set *Source: Deploy from a branch → `gh-pages` / root*.
-- **Order:** tracks A, B, R, D, E (docs/REMAINING_WORK.md) finish v1.0. F is Phase 21. G is the optional character track.
+- **Order:** tracks A, B, R, W, D, E (docs/REMAINING_WORK.md) finish v1.0. F is Phase 21. G is the native character track (no Blender).
 - **Stopping:** the agent stops by itself after E (v1.0 released) and after F, so you can look at the results before the expensive phases.
 - **Your part:** track C needs Claude Desktop or Cursor on your machine; the release (E) may need your PyPI token; Docker verification needs Docker.
