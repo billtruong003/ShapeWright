@@ -100,7 +100,7 @@ def coplanar_pairs(parts, tol: float = TOL_PLANE, min_area: float = MIN_TRI_AREA
     order = np.lexsort(keys.T[::-1])
     ks = keys[order]
     breaks = np.flatnonzero(np.any(ks[1:] != ks[:-1], axis=1)) + 1
-    found = defaultdict(lambda: {"same": 0.0, "opposite": 0.0, "samples": [], "at": None})
+    found = defaultdict(lambda: {"same": 0.0, "opposite": 0.0, "samples": []})
     for grp in np.split(order, breaks):
         if len(grp) < 2 or len(np.unique(owner[grp])) < 2:
             continue
@@ -136,28 +136,28 @@ def coplanar_pairs(parts, tol: float = TOL_PLANE, min_area: float = MIN_TRI_AREA
                 key = tuple(sorted((int(pi), int(owner[j]))))
                 found[key]["same" if dot > 0 else "opposite"] += area
                 if dot > 0:
-                    found[key]["samples"].append((q + ni * 0.002, area))
-                    if found[key]["at"] is None:
-                        found[key]["at"] = (q, ni)
+                    found[key]["samples"].append((q + ni * 0.002, area, q, ni))
     rows = []
     bounds = [p.mesh.bounds() for p in parts]
     for (a_, b_), v in found.items():
-        hidden = 0.0
-        for pt, ar in v["samples"]:
-            if abs(pt[1] + 0.002) <= TOL_PLANE and pt[1] < 0:  # a face lying on the ground plane, facing down: the floor hides it
-                hidden += ar
-                continue
+        hidden, at = 0.0, None
+        for pt, ar, q, ni in v["samples"]:
+            buried = abs(pt[1] + 0.002) <= TOL_PLANE and pt[1] < 0  # a face lying on the ground plane, facing down: the floor hides it
             for k, p in enumerate(parts):
+                if buried:
+                    break
                 if k in (a_, b_) or not (np.all(pt >= bounds[k][0] - 1e-6) and np.all(pt <= bounds[k][1] + 1e-6)):
                     continue
-                if winding(pt[None], p.mesh.V, p.mesh.F)[0] > 0.5:
-                    hidden += ar
-                    break
+                buried = winding(pt[None], p.mesh.V, p.mesh.F)[0] > 0.5
+            if buried:
+                hidden += ar
+            elif at is None:
+                at = (q, ni)  # where to look: a visible spot
         row = {"parts": [parts[a_].name, parts[b_].name], "same_facing_m2": round(v["same"] - hidden, 6),
                "same_facing_hidden_m2": round(hidden, 6), "back_to_back_m2": round(v["opposite"], 6)}
-        if v["at"] is not None:  # one point of the shared surface and its facing, to find it in a render
-            row["at"] = [round(float(x), 4) for x in v["at"][0]]
-            row["normal"] = [round(float(x), 3) + 0.0 for x in v["at"][1]]
+        if at is not None:  # one visible point of the shared surface and its facing, to find it in a render
+            row["at"] = [round(float(x), 4) for x in at[0]]
+            row["normal"] = [round(float(x), 3) + 0.0 for x in at[1]]
         rows.append(row)
     rows.sort(key=lambda r: -(r["same_facing_m2"] * 1000 + r["back_to_back_m2"]))
     return rows

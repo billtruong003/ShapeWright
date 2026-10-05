@@ -98,3 +98,12 @@ def test_the_final_kit_houses_are_seam_clean(name):
     rows = coplanar_pairs(a.parts)
     assert not [r for r in rows if r["same_facing_m2"] >= 5e-5]
     assert np.isfinite(sum(r["back_to_back_m2"] for r in rows))
+
+
+def test_the_reported_spot_is_a_visible_one(tmp_path):
+    # Phase 18b: the first overlap sample was a hidden one (on the ground), so `near (...)` pointed at the floor
+    a, rep = _asset(tmp_path, """  wall: {shape: {type: box, size: [1.0, 1.2, 0.2]}, material: m, anchor: bottom, position: [0, 0, 0]}
+  plinth: {shape: {type: box, size: [0.3, 0.4, 0.2]}, material: m, anchor: bottom_left, position: [-0.5, 0, -0.1]}
+""")
+    hit = [i for i in rep["issues"] if i["code"] == "SEAM_COPLANAR_OVERLAP"][0]
+    assert hit["data"]["normal"] == [-1.0, 0.0, 0.0] and "facing -x" in hit["msg"]

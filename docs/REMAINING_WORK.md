@@ -18,10 +18,10 @@ Nothing is left out. The earlier figures (87 % and 83 %) counted fewer items, wh
 
 | scope | done | remaining | **progress** |
 |---|---|---|---|
-| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 51.5 | 4.25 | **≈ 92 %** |
-| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 51.5 | 8.25 | **≈ 86 %** |
-| **planned roadmap** (+ track G: native character track) | 51.5 | 20.25 | **≈ 72 %** |
-| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 51.5 | ≈ 31.25 | **≈ 62 %** |
+| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 52.75 | 3 | **≈ 95 %** |
+| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 52.75 | 7 | **≈ 88 %** |
+| **planned roadmap** (+ track G: native character track) | 52.75 | 19 | **≈ 74 %** |
+| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 52.75 | ≈ 30 | **≈ 64 %** |
 
 The figures dropped from 80 / 74 / 62 / 54 % because two decisions on 2026-10-05 added work:
 - **Track W** (3 points): the workbench gets a three.js 3D viewer (list, view modes, save, export, click-to-comment).
@@ -63,13 +63,13 @@ Tick `[x]` here in the commit that finishes a task.
 | [ ] | C1 | MCP through a real desktop client (Claude Desktop or Cursor), one unseen prop, Windows launch documented | 0.5 | A5 | **owner** + agent |
 | [x] | C2 | MCP Inspector run on the tool schemas (Phase 17 gate) | 0.25 | — | agent (needs Node) |
 | [ ] | C3 | Another vendor's agent (Codex CLI or ChatGPT via MCP) does one prop (closes Phase 13's open gate) | 0.5 | C1 | **owner** + agent |
-| [ ] | D1 | Tutorial: composition (nested components, `asset:`, measure/pivot on instances) | 0.3 | B1 | agent |
-| [ ] | D2 | Concept page: seams (codes, fixes, before/after renders) | 0.2 | A1 | agent |
-| [ ] | D3 | Changelog page generated from the phase records | 0.2 | — | agent |
-| [ ] | D4 | Windows notes in every quickstart | 0.1 | A7 | agent |
-| [ ] | D5 | README badges (CI, docs) + changelog link | 0.05 | D3 | agent |
-| [ ] | D6 | Doc test: a tutorial's exported GLB is byte-identical to the published one (Phase 18 gate) | 0.25 | — | agent |
-| [ ] | D7 | Docs use beauty renders (after R4) | 0.15 | R4 | agent |
+| [x] | D1 | Tutorial: composition (nested components, `asset:`, measure/pivot on instances) | 0.3 | B1 | agent |
+| [x] | D2 | Concept page: seams (codes, fixes, before/after renders) | 0.2 | A1 | agent |
+| [x] | D3 | Changelog page generated from the phase records | 0.2 | — | agent |
+| [x] | D4 | Windows notes in every quickstart | 0.1 | A7 | agent |
+| [x] | D5 | README badges (CI, docs) + changelog link | 0.05 | D3 | agent |
+| [x] | D6 | Doc test: a tutorial's exported GLB is byte-identical to the published one (Phase 18 gate) | 0.25 | — | agent |
+| [x] | D7 | Docs use beauty renders (after R4) | 0.15 | R4 | agent |
 | [ ] | E1 | Version 1.0.0; package vs format version documented | 0.1 | all of A–D | agent |
 | [ ] | E2 | `CHANGELOG.md` | 0.1 | D3 | agent |
 | [ ] | E3 | Docker image build + run + `mcp` (closes Phase 16's open gate) | 0.3 | — | **owner** (Docker) |
@@ -91,7 +91,7 @@ Tick `[x]` here in the commit that finishes a task.
 | [ ] | G5 | Procedural clips: idle bob, walk cycle, wave, from the skeleton template | 1.5 | G4 | agent |
 | [ ] | H* | Long-term backlog (§11): plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village, optional Blender/three.js beauty renders | ≈ 11 | — | later |
 
-Done so far (51.5 points):
+Done so far (52.75 points):
 
 | work | points |
 |---|---|
@@ -110,6 +110,7 @@ Done so far (51.5 points):
 | Phase 25a presentation renders (track R) | 2.25 |
 | Phase 15b web workbench, three.js (track W) | 3 |
 | Phase 17b MCP Inspector (C2) | 0.25 |
+| Phase 18b docs site completion (track D) | 1.25 |
 
 ## 2b. Rules for every task
 

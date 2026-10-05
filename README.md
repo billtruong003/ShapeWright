@@ -2,12 +2,18 @@
 
 **3D game assets written like code, built by AI agents, checked like code.**
 
+[![ci](https://github.com/billtruong003/ShapeWright/actions/workflows/ci.yml/badge.svg)](https://github.com/billtruong003/ShapeWright/actions/workflows/ci.yml)
+[![docs](https://github.com/billtruong003/ShapeWright/actions/workflows/docs.yml/badge.svg)](https://billtruong003.github.io/ShapeWright/)
+![platforms](https://img.shields.io/badge/platforms-Linux%20%7C%20Windows-informational)
+[![license](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+
 [Documentation](https://billtruong003.github.io/ShapeWright/) ·
 [Quickstart](https://billtruong003.github.io/ShapeWright/quickstart/) ·
 [Gallery](https://billtruong003.github.io/ShapeWright/gallery/) ·
 [`llms.txt`](llms.txt) ·
 [MCP server](docs/MCP.md) ·
-[Roadmap](docs/PHASE_PLAN_16.md)
+[Roadmap](docs/PHASE_PLAN_16.md) ·
+[Changelog](CHANGELOG.md)
 
 ![Three houses built from one 26-module kit](docs/images/readme_houses.png)
 

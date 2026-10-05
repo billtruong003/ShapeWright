@@ -179,3 +179,28 @@ def test_pivot_at_a_point_in_asset_coordinates(make_asset):
     assert np.allclose(a.part("lid").pivot, [0, 0.41, -0.25])
     b = build(make_asset(base.replace("pivot: bottom_back", "pivot: [0, -1, -0.5 * 2]"), "hinge2"))
     assert np.allclose(b.part("lid").pivot, chest(make_asset, name="c3").part("lid").pivot)
+
+
+@pytest.mark.skipif(not os.environ.get("SW_GODOT"), reason="set SW_GODOT to a Godot 4 binary to run the engine import check")
+@pytest.mark.parametrize("name", ["barrel", "house_cottage", "ornate_fountain"])
+def test_godot_imports_the_example_assets(name, tmp_path):
+    # release smoke test (track E4): what CI's `godot` job runs, with Godot 4.3 headless
+    import sys
+    from pathlib import Path
+
+    from shapewright.assemble import ROOT
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools" / "engine"))
+    from godot_check import check
+
+    a = build(ROOT / "assets" / name)
+    a._export_target = "godot"
+    out = tmp_path / f"{name}_godot.glb"
+    write_glb(a, build_surface(a), out)
+    r = check([out], os.environ["SW_GODOT"])[str(out)]
+    assert "error" not in r, r
+    assert r["meshes"] >= 1 and r["materials"]
+    if name != "barrel":  # the textured assets: their baked atlas resolved in the engine
+        assert any(m.get("albedo_texture") for m in r["materials"].values())
+    assert r["bodies"] >= 1 and set(r["shapes"]) <= {"ConvexPolygonShape3D", "BoxShape3D", "ConcavePolygonShape3D"}
+    assert abs(r["min_y"]) < 1e-3

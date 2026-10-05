@@ -56,3 +56,45 @@ def test_tutorial_blocks_run_as_written(page, tmp_path):
                 assert res.returncode == 0, f"{page.name}: `{line.strip()}` exited {res.returncode}\n{res.stdout[-1500:]}{res.stderr[-800:]}"
             ran += 1
     assert ran, f"{page.name} has runnable blocks but none ran"
+
+
+def test_changelog_is_current():
+    # Phase 18b (D3): CHANGELOG.md is generated from the phase records; regenerate with tools/site/changelog.py
+    sys.path.insert(0, str(ROOT / "tools" / "site"))
+    from changelog import changelog_markdown
+
+    assert (ROOT / "CHANGELOG.md").read_text() == changelog_markdown(), "run: python tools/site/changelog.py"
+
+
+def _tutorial_asset(page: str, path: str) -> str:
+    """The text a tutorial writes to `path` (its `# file:` block plus any `# append:` blocks)."""
+    text = ""
+    for _, body in FENCE.findall((ROOT / "website" / page).read_text()):
+        head, _, rest = body.partition("\n")
+        if head.strip() == f"# file: {path}":
+            text = rest
+        elif head.strip() == f"# append: {path}":
+            text += rest
+    return text
+
+
+def test_a_reader_reproduces_the_tutorial_glb(tmp_path):
+    # Phase 18 gate, closed in 18b (D6): the prop tutorial's asset exports to the same bytes in two fresh projects,
+    # so a reader following the page gets the published file
+    import hashlib
+
+    src = _tutorial_asset("use-cases/prop.md", "assets/mailbox/asset.yaml")
+    assert "mailbox" in src
+    out = []
+    for k in (1, 2):
+        proj = tmp_path / f"p{k}"
+        (proj / "assets" / "mailbox").mkdir(parents=True)
+        (proj / "shapewright.yaml").write_text("shapewright: 0.1\n")
+        (proj / "assets" / "mailbox" / "asset.yaml").write_text(src)
+        env = {**os.environ, "SW_PROJECT": str(proj), "PYTHONPATH": str(ROOT)}
+        res = subprocess.run([sys.executable, "-m", "shapewright", "export", "mailbox"], cwd=proj, env=env,
+                             capture_output=True, text=True, timeout=600)
+        assert res.returncode == 0, res.stdout[-1500:]
+        out.append((proj / "assets" / "mailbox" / "export" / "mailbox.glb").read_bytes())
+    assert out[0] == out[1]
+    assert len(hashlib.sha256(out[0]).hexdigest()) == 64

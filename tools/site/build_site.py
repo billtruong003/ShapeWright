@@ -121,6 +121,10 @@ def gallery():
 def main():
     reference()
     gallery()
+    sys.path.insert(0, str(Path(__file__).parent))
+    from changelog import changelog_markdown
+
+    (SITE / "changelog.md").write_text(changelog_markdown(site=True))
     if "--build" in sys.argv:
         subprocess.run([sys.executable, "-m", "mkdocs", "build", "--strict"], cwd=ROOT, check=True)
 

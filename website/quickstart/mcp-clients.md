@@ -1,7 +1,7 @@
 # Claude Desktop, Cursor, Codex and other MCP clients
 
 ```bash
-pip install "shapewright[mcp]"
+pip install "shapewright[mcp] @ git+https://github.com/billtruong003/ShapeWright"
 sw init ~/my_assets
 ```
 
@@ -10,6 +10,11 @@ Register the server command `sw mcp --project /ABS/PATH/my_assets`. For example,
 ```json
 { "mcpServers": { "shapewright": { "command": "sw", "args": ["mcp", "--project", "/ABS/PATH/my_assets"] } } }
 ```
+
+!!! note "On Windows"
+    Desktop apps do not always see the `sw` on your PATH. Use the Python of the venv you installed into, with
+    double backslashes in JSON:
+    `{ "command": "C:\\path\\to\\.venv\\Scripts\\python.exe", "args": ["-m", "shapewright", "mcp", "--project", "C:\\path\\to\\my_assets"] }`
 
 For Codex, in `~/.codex/config.toml`:
 

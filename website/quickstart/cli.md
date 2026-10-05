@@ -10,4 +10,8 @@ sw export my_barrel --target godot
 sw workbench --open                            # a local page: every button runs, and shows, one sw command
 ```
 
+!!! note "On Windows"
+    The commands are the same. `sw` exists after `pip install`; in a clone without installing use `sw.cmd`
+    (or `python -m shapewright`). Paths in commands can use `\` or `/`.
+
 `sw caps` lists the whole vocabulary. `sw doc NAME` explains any shape, op, profile, pack, component or issue code.

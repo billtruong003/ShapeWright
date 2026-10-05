@@ -34,16 +34,19 @@ nav:
   - Use cases:
       - A game prop in one session: use-cases/prop.md
       - A modular kit and buildings from it: use-cases/modular-kit.md
+      - Composition (components, asset instances): use-cases/composition.md
       - One design, many variants: use-cases/variants.md
       - Import and repair an existing model: use-cases/import-repair.md
       - Tight budgets (VR, mobile, web): use-cases/budgets.md
       - Assets in CI: use-cases/ci.md
       - Presentation renders: use-cases/presentation.md
   - Gallery: gallery.md
+  - Changelog: changelog.md
   - Concepts:
       - The loop: concepts/loop.md
       - Validation layers: concepts/validation.md
       - Reuse and composition: concepts/composition.md
+      - Seams: concepts/seams.md
   - Reference:
       - Shapes and ops: reference/vocabulary.md
       - Issue codes: reference/codes.md

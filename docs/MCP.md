@@ -3,7 +3,7 @@
 `sw mcp` exposes the whole Shapewright loop as MCP tools. Any MCP client can model, review and export assets with no shell access: Claude Code, Claude Desktop, Cursor, Codex, ChatGPT connectors and others.
 
 ```bash
-pip install "shapewright[mcp]"      # or, in a clone: pip install -r requirements.txt "mcp>=1.10"
+pip install "shapewright[mcp] @ git+https://github.com/billtruong003/ShapeWright"   # or, in a clone: pip install -r requirements.txt "mcp>=1.10"
 sw init ~/my_assets                 # optional: a project folder for your assets
 sw mcp --project ~/my_assets        # stdio server (what desktop clients launch)
 sw mcp --transport streamable-http --port 8000 --project ~/my_assets   # HTTP server at http://127.0.0.1:8000/mcp

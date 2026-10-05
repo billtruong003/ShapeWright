@@ -15,4 +15,5 @@ dist/
 website/reference/
 website/gallery/
 website/gallery.md
+website/changelog.md
 .venv/
