@@ -68,14 +68,15 @@ sw export my_barrel --target godot           # -> assets/my_barrel/export/my_bar
 
 | Area | Features | Read |
 |---|---|---|
-| **Modelling** | 17 shapes (chamfer_box, extrude with holes, lathe, tube sweep, strut, random_hull, …); 20 ops (booleans, bend, twist, taper, jitter, noise, subdivide, decimate, clean, …); arcs, helices and lines inside point lists | [vocabulary](https://billtruong003.github.io/ShapeWright/reference/vocabulary/) · [ASSET_FORMAT](docs/ASSET_FORMAT.md) |
+| **Modelling** | 18 shapes (chamfer_box, extrude with holes, lathe, tube sweep, strut, random_hull, `blend` for organic forms, …); 20 ops (booleans, bend, twist, taper, jitter, noise, subdivide, decimate, clean, …); arcs, helices and lines inside point lists | [vocabulary](https://billtruong003.github.io/ShapeWright/reference/vocabulary/) · [ASSET_FORMAT](docs/ASSET_FORMAT.md) |
 | **Placement** | anchors and `attach`, `measure:` queries on real geometry (section, gap, bounds, anchor, ray), arrays with per-instance expressions, mirror, pivots | [RELATIONSHIPS](docs/RELATIONSHIPS.md) |
 | **Reuse and kits** | components (they nest), **asset instances** (`asset: house_wall_window`), packs of shared params and materials, `extends` variants and families, seeded variants | [composition](https://billtruong003.github.io/ShapeWright/concepts/composition/) · [FAMILIES](docs/FAMILIES.md) |
-| **Surfaces** | material archetypes (wood, stone, metal, painted, flat, authored) baked to base colour + ORM atlases; stable UVs (`uv.lock.yaml`) | [SURFACES](docs/SURFACES.md) · [UV](docs/UV.md) |
+| **Surfaces** | material archetypes (wood, stone, metal, painted, flat, vertex colour, authored) baked to base colour + ORM atlases; one shared trim sheet per pack; stable UVs (`uv.lock.yaml`); lightmap UVs | [SURFACES](docs/SURFACES.md) · [UV](docs/UV.md) |
 | **Validation** | 8 layers (source, geometry, assembly, budget, intent, surface, style, export) with stable issue codes and hints; **z-fighting between parts**, displacement that inverts faces, floating or contact-only parts | [codes](https://billtruong003.github.io/ShapeWright/reference/codes/) · [VALIDATION](docs/VALIDATION.md) |
-| **Inspection** | deterministic CPU renderer, 11 views, 14 modes (clay, parts, textured, wire, texel, seams, …), contact sheets, iteration snapshots and compare images | [AGENT_WORKFLOW](docs/AGENT_WORKFLOW.md) |
+| **Inspection** | deterministic CPU renderer, 11 views, 16 modes (clay, parts, textured, wire, texel, seams, density, joint weights, …), contact sheets, iteration snapshots and compare images | [AGENT_WORKFLOW](docs/AGENT_WORKFLOW.md) |
 | **Presentation** | `beauty` mode (key/fill/rim light, shadows, ambient occlusion, contact shadow, tone mapping), turntable GIF, presentation sheet, 1.75 m scale reference; CPU-only and deterministic | [Presentation renders](https://billtruong003.github.io/ShapeWright/use-cases/presentation/) |
-| **Export** | GLB with named nodes, pivots, sockets, collision proxies and LODs; merge by material for draw calls; Godot, Unity and Unreal targets; 8 budget profiles (mobile, VR, web, desktop) | [PRODUCTION](docs/PRODUCTION.md) · [profiles](https://billtruong003.github.io/ShapeWright/reference/profiles/) |
+| **Export** | GLB with named nodes, pivots, sockets, collision proxies (multi-hull keeps doorways open) and LODs; skins and animations; merge by material for draw calls; Godot, Unity and Unreal targets; 8 budget profiles (mobile, VR, web, desktop) | [PRODUCTION](docs/PRODUCTION.md) · [profiles](https://billtruong003.github.io/ShapeWright/reference/profiles/) |
+| **Characters** | organic forms from blended SDF items, painted regions and decals (eyes, spots, mouths), skeleton templates with bone-heat weights, procedural idle / walk / wave clips, a character review sheet; Godot imports them rigged | [Characters](https://billtruong003.github.io/ShapeWright/use-cases/characters/) |
 | **Import** | GLB, OBJ, STL and PLY with materials and textures kept; `clean` repair; UV-preserving `decimate` | [IMPORT](docs/IMPORT.md) |
 | **Agents** | `sw brief` (closest example + rules), `llms.txt`, MCP server, Claude Code skill, workbench for people | [AGENTS.md](AGENTS.md) |
 
@@ -87,6 +88,7 @@ sw export my_barrel --target godot           # -> assets/my_barrel/export/my_bar
 - [Import and repair an existing model](https://billtruong003.github.io/ShapeWright/use-cases/import-repair/)
 - [Tight budgets: VR, mobile, web](https://billtruong003.github.io/ShapeWright/use-cases/budgets/)
 - [Assets in CI](https://billtruong003.github.io/ShapeWright/use-cases/ci/)
+- [Characters and creatures](https://billtruong003.github.io/ShapeWright/use-cases/characters/)
 
 ## An asset source, abridged
 
@@ -116,14 +118,15 @@ checks:                        # design intent as tests
 
 ## Shapewright or Blender MCP?
 
-Use Blender for sculpting, rigging and hero renders. Use Shapewright when you need **sets of game-ready assets** that an agent can build, check and change reliably:
+Use Blender for sculpting, hand-made topology and hero renders. Use Shapewright when you need **sets of game-ready assets** that an agent can build, check and change reliably:
 - a diffable source instead of a `.blend`;
 - deterministic builds;
 - validation with issue codes instead of screenshots only;
 - packs and kits that stay consistent;
 - headless runs in cloud and CI.
 
-Characters (organic forms, rigging) are planned natively too, with no Blender dependency ([plan](docs/REMAINING_WORK.md)).
+Stylised characters and creatures are native too (blended organic forms, decals, bone-heat rigging, procedural
+clips), with no Blender dependency. Realistic characters that need hand-made edge loops are out of scope.
 
 ## How it was built and tested
 
