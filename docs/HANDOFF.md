@@ -80,7 +80,7 @@ Commit rules for this repository:
   the next agent task instead of waiting.
   When a task is done: tick it in docs/REMAINING_WORK.md and update its progress table in the same commit.
   Track G (native characters, G0 spike first; no Blender anywhere) only after the owner confirms, following the same file.
-  Status at hand-off: main @ d9877eb, CI green on Linux + Windows, 433 tests pass. macOS is out of scope.
+  Status (2026-10-05, after tracks F and G): main green on Linux + Windows + Godot, 515 tests pass. Left: owner items C1, C3, E7, G2b (concept image); backlog H. macOS is out of scope.
 
 ==================================================================================================
 4. STOP CONDITIONS  (stop, push what you have, write the record, report)

@@ -1,0 +1,37 @@
+# cozy_house kit sub-assembly: the ground course of a rectangular house, nx x nz bays.
+# Stone footings on every perimeter grid line, a corner node (node stone + ground-storey post) on every
+# perimeter grid node, the ground-floor deck over every cell, and entrance steps in front of one front bay.
+# Origin: plan centre of the footprint at ground level (the same origin the demo houses use), so a house
+# places it with `position: [0, 0, 0]` and passes its own nx / nz.
+# Used by house_cottage and house_townhouse (the instance lines they used to repeat).
+# No sockets here on purpose: an instanced asset's sockets are copied into the house (as foundation_<name>),
+# which would duplicate the house's own `entrance` socket.
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_foundation
+  kind: environment/modular/foundation
+  description: Footings, corner nodes, ground deck and entrance steps for an nx x nz bay house (cozy_house kit).
+  tags: [cozy_house, module, foundation]
+  placement: floor
+budget: {triangles: 15000, materials: 4, texture_size: 2048, draw_calls: 4}
+export: {merge: by_material}
+collision: {mode: single_box}
+
+params:
+  nx:       {value: 3, min: 1, max: 6, doc: bays along x (the front is at z = +nz * bay / 2)}
+  nz:       {value: 2, min: 2, max: 6, doc: "bays along z (>= 2: side nodes between the corners are arrayed nz - 1 times)"}
+  door_bay: {value: 1, min: 0, max: 5, doc: front bay (0 = leftmost) whose door the entrance steps serve}
+  W:  nx * bay
+  D:  nz * bay
+  x0: -W / 2
+  z0: -D / 2
+
+parts:
+  footing_fb:   {asset: house_footing, position: [x0 + bay / 2, 0, D / 2], array: [{count: nx, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]}
+  footing_side: {asset: house_footing, rotate: [0, 90, 0], position: [x0, 0, z0 + bay / 2], array: [{count: nz, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]}
+  node_fb:      {asset: house_corner, position: [x0, 0, D / 2], array: [{count: nx + 1, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]}
+  node_side:    {asset: house_corner, position: [x0, 0, z0 + bay], array: [{count: nz - 1, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]}
+  deck:         {asset: house_floor, position: [x0 + bay / 2, base_h - floor_t, z0 + bay / 2], array: [{count: nx, offset: [bay, 0, 0]}, {count: nz, offset: [0, 0, bay]}]}
+  steps:        {asset: house_steps, position: [x0 + (door_bay + 0.5) * bay, 0, D / 2 + footing_d / 2]}
+

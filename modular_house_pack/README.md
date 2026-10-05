@@ -131,13 +131,13 @@ There are seven shared materials, defined once in the pack and read-only everywh
 
 ## Known limitations
 
-- **Houses cannot place the module assets.** The houses are assembled from the same components as the modules, not from the module GLBs. Shapewright components cannot nest, so a house cannot instantiate "the wall_window module".
+- ~~Houses cannot place the module assets.~~ Closed in Phase 19: every house is built from module-asset instances (`asset: house_wall_window`); since FRESH_AGENT_13 the shared base is `house_foundation`.
 - **Some offsets are hand-derived.** Shutters and the shop awning are positioned by hand-derived offsets (`wall_t/2 + 0.024`, `wall_t/2 − 0.027`), because an instance cannot measure another instance. They are pack-param expressions, but they had to be repaired once after the wall's stud depth changed.
 - **Atlases are per asset, not a shared trim sheet.** A game using many modules pays per-module texture memory.
 - **No interior.** There is no interior geometry or interior collision, and upper floors have no stairs.
 - **Seam checking is an experiment tool.** The standard validator does not check z-fighting or coplanar overlaps. `tools/experiments/seam_probe.py` is used instead.
 - **Unequal detail density.** Density varies 18× between modules (shutter vs plain wall).
-- **No LODs.** LODs were not produced for the houses.
+- ~~No LODs.~~ Closed in Phase 21: the houses export LOD1/LOD2 (`lods: [0.5, 0.25]`, silhouette 0.945–0.996), and the kit shares one trim sheet.
 
 ## Reproduce
 

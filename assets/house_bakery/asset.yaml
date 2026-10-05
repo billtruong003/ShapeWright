@@ -1,0 +1,90 @@
+# Demo house D (cozy_house kit): a two-storey bakery, 3 x 2 bays, gable roof along x.
+# Ground floor front: shopfront (the counter) on the left bay, door in the middle, a tall window on the
+# right bay. Upper floor: upper-wall bays with small windows. Oven chimney on the left gable.
+# Built only from the kit's MODULE ASSETS placed by their origins with grid arithmetic on pack params
+# (same pattern as house_cottage for the plan and the roof, house_workshop's main block for the 2nd storey).
+# Orientation rule for wall modules (outer face is local +z):
+#   front z = +D/2: rotate 0 | back z = -D/2: rotate 180 | right x = +W/2: rotate 90 | left x = -W/2: rotate -90
+shapewright: 0.1
+pack: cozy_house
+asset:
+  name: house_bakery
+  kind: environment/building/house
+  description: Two-storey half-timbered bakery with a ground-floor shopfront, assembled from the cozy_house kit.
+  tags: [cozy_house, demo_house]
+  placement: floor
+budget: {triangles: 50000, materials: 7, texture_size: 2048, draw_calls: 7}
+uv: {texel_density: 36}
+export: {merge: by_material, lods: [0.5, 0.25]}
+collision: {mode: single_box}
+
+params:
+  nx: {value: 3, doc: bays along x (street frontage; ridge direction)}
+  nz: {value: 2, doc: bays along z (depth)}
+  W:  nx * bay
+  D:  nz * bay
+  x0: -W / 2
+  z0: -D / 2
+  y0: base_h - sink                     # ground storey walls/posts start
+  y1: lv1 - sink                        # upper storey walls/posts start
+  y_top: lv2 - sink                     # top of upper posts and top band = roof bearing
+  run: D / 2 + wall_t / 2 + eave
+  y_roof: y_top - eave * tan(pitch)
+  ridge_y: y_roof + run * tan(pitch) + roof_t / cos(pitch) + shingle_t * 0.35
+  verge_x: W / 2 + (verge + wall_t / 2) / 2
+  band_off: wall_t / 4                  # the floor band fills the OUTER half of the wall line
+
+parts:
+  # ---------------------------------------------------------------- footing, corners (stone + ground post), upper posts, decks
+  footing_fb:   {asset: house_footing, position: [x0 + bay / 2, 0, D / 2], array: [{count: nx, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]}
+  footing_side: {asset: house_footing, rotate: [0, 90, 0], position: [x0, 0, z0 + bay / 2], array: [{count: nz, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]}
+  node_fb:      {asset: house_corner, position: [x0, 0, D / 2], array: [{count: nx + 1, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]}
+  node_side:    {asset: house_corner, position: [x0, 0, z0 + bay], array: [{count: nz - 1, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]}
+  post_fb:      {asset: house_post, position: [x0, y1, D / 2], array: [{count: nx + 1, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]}
+  post_side:    {asset: house_post, position: [x0, y1, z0 + bay], array: [{count: nz - 1, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]}
+  deck_ground:  {asset: house_floor, position: [x0 + bay / 2, base_h - floor_t, z0 + bay / 2], array: [{count: nx, offset: [bay, 0, 0]}, {count: nz, offset: [0, 0, bay]}]}
+  deck_upper:   {asset: house_floor, position: [x0 + bay / 2, lv1 - floor_t, z0 + bay / 2], array: [{count: nx, offset: [bay, 0, 0]}, {count: nz, offset: [0, 0, bay]}]}
+
+  # ---------------------------------------------------------------- band beams: floor band (outer half of the wall line), top band
+  floor_band_fb:   {asset: house_beam, with: {depth: wall_t / 2, seed: 5}, position: [x0 + bay / 2, lv1 - floor_t + band_h / 2, D / 2 + band_off], array: [{count: nx, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D - 2 * band_off]}]}
+  floor_band_side: {asset: house_beam, with: {depth: wall_t / 2, seed: 7}, rotate: [0, 90, 0], position: [x0 - band_off, lv1 - floor_t + band_h / 2, z0 + bay / 2], array: [{count: nz, offset: [0, 0, bay]}, {count: 2, offset: [W + 2 * band_off, 0, 0]}]}
+  top_band_fb:     {asset: house_beam, with: {seed: 8}, position: [x0 + bay / 2, y_top - band_h / 2, D / 2], array: [{count: nx, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]}
+  top_band_side:   {asset: house_beam, with: {seed: 9}, rotate: [0, 90, 0], position: [x0, y_top - band_h / 2, z0 + bay / 2], array: [{count: nz, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]}
+
+  # ---------------------------------------------------------------- ground floor: shop counter, door, tall window to the street
+  shop:         {asset: house_wall_shopfront, with: {seed: 1}, position: [x0 + bay / 2, y0, D / 2]}
+  door_wall:    {asset: house_wall_door, with: {seed: 2}, position: [x0 + 1.5 * bay, y0, D / 2]}
+  front_window: {asset: house_wall_window, with: {shutters: 0, size: 2, seed: 3}, position: [x0 + 2.5 * bay, y0, D / 2]}
+  ground_back:  {asset: house_wall_window, with: {shutters: 0, seed: 4}, rotate: [0, 180, 0], position: [x0 + bay / 2, y0, -D / 2], array: {count: nx, offset: [bay, 0, 0], skip: [0]}}
+  ground_back_oven: {doc: "plain wall behind the shop hatch (the oven side); a window here showed through the hatch like a second frame", asset: house_wall_plain, with: {seed: 7}, rotate: [0, 180, 0], position: [x0 + bay / 2, y0, -D / 2]}
+  ground_left:  {asset: house_wall_plain, with: {seed: 5}, rotate: [0, -90, 0], position: [x0, y0, z0 + bay / 2], array: {count: nz, offset: [0, 0, bay]}}
+  ground_right: {asset: house_wall_window, with: {shutters: 0, size: 0, seed: 6}, rotate: [0, 90, 0], position: [W / 2, y0, z0 + bay / 2], array: {count: nz, offset: [0, 0, bay]}}
+
+  # ---------------------------------------------------------------- upper floor: windows all round except the chimney gable
+  upper_front: {asset: house_wall_upper, with: {seed: 11}, position: [x0 + bay / 2, y1, D / 2], array: {count: nx, offset: [bay, 0, 0]}}
+  upper_back:  {asset: house_wall_window, with: {seed: 12}, rotate: [0, 180, 0], position: [x0 + bay / 2, y1, -D / 2], array: {count: nx, offset: [bay, 0, 0]}}
+  upper_left:  {asset: house_wall_plain, with: {seed: 13}, rotate: [0, -90, 0], position: [x0, y1, z0 + bay / 2], array: {count: nz, offset: [0, 0, bay]}}
+  upper_right: {asset: house_wall_upper, with: {seed: 14}, rotate: [0, 90, 0], position: [W / 2, y1, z0 + bay / 2], array: {count: nz, offset: [0, 0, bay]}}
+
+  # ---------------------------------------------------------------- roof: ridge along x, gables left and right
+  roof_front: {asset: house_roof_section, with: {deep: nz}, position: [x0 + bay / 2, y_roof, 0], array: {count: nx, offset: [bay, 0, 0]}}
+  roof_back:  {asset: house_roof_section, with: {deep: nz}, rotate: [0, 180, 0], position: [x0 + bay / 2, y_roof, 0], array: {count: nx, offset: [bay, 0, 0]}}
+  verge:        {asset: house_roof_end, with: {deep: nz}, position: [verge_x, y_roof, 0]}
+  verge_back:   {asset: house_roof_end, with: {deep: nz, left: 1}, rotate: [0, 180, 0], position: [verge_x, y_roof, 0]}
+  verge_l:      {asset: house_roof_end, with: {deep: nz, left: 1}, position: [-verge_x, y_roof, 0]}
+  verge_l_back: {asset: house_roof_end, with: {deep: nz}, rotate: [0, 180, 0], position: [-verge_x, y_roof, 0]}
+  gable: {asset: house_gable, with: {deep: nz}, position: [x0, y_top, 0], array: {count: 2, offset: [W, 0, 0]}}
+  ridge: {asset: house_ridge, with: {length: W + 2 * verge + wall_t}, position: [0, ridge_y - 0.03, 0]}
+
+  # ---------------------------------------------------------------- extras
+  chimney:
+    doc: the bake oven's stack, outside the left gable wall; passes the verge and clears the ridge
+    asset: house_chimney
+    with: {height: ridge_y + 0.7, shoulder: y1 - 0.3}
+    rotate: [0, 90, 0]
+    position: [x0 - wall_t / 2 - 0.35, 0, 0]
+  steps: {asset: house_steps, position: [x0 + 1.5 * bay, 0, D / 2 + footing_d / 2]}
+
+sockets:
+  entrance: {attach: {to: origin, offset: [x0 + 1.5 * bay, base_h, D / 2 + 0.6]}, doc: in front of the door}
+  shop_counter: {attach: {to: origin, offset: [x0 + bay / 2, base_h + shop_sill, D / 2 + 0.3]}, doc: customers stand here}

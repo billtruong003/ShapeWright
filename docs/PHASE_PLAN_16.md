@@ -40,7 +40,7 @@ Every phase follows the same run protocol (§1) and the same record format (§2)
 | 23 character surface (G2) | `phase/22-organic` | PARTIAL (painted regions, decals, reference sheet; rubric needs the concept image) | docs/phases/PHASE_23.md |
 | 24 native rigging + clips (G4, G5) | `phase/22-organic` | PASS (Godot: skeleton, skin, clips; Khronos 0/0) | docs/phases/PHASE_24.md |
 | 24b character review modes (G3) | `phase/22-organic` | PASS (CPU sheet, workbench skeleton/weights/clips, MCP review) | docs/phases/PHASE_24b.md |
-| M2 kit gates re-run (F7) | `phase/22-organic` | PASS (9 of 10; gate 9 met in part) | docs/experiments/MODULAR_HOUSE_PACK_02.md |
+| M2 kit gates re-run (F7) | `phase/22-organic` | PASS (all 10; gate 9 by FRESH_AGENT_13) | docs/experiments/MODULAR_HOUSE_PACK_02.md |
 
 The branches are **stacked**: each one contains the ones above it, so `phase/18-docs-site` has everything.
 All of them were fast-forwarded into `main` on 2026-09-30; the branches stay for review.

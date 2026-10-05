@@ -4,10 +4,10 @@ Newest first. Generated from the phase records by `tools/site/changelog.py`; eac
 
 ## MODULAR_HOUSE_PACK_02: the kit gates re-run (milestone M2)
 
-- **Verdict:** PASS (9 of 10; gate 9 met in part)
+- **Verdict:** PASS (all 10; gate 9 by FRESH_AGENT_13)
 - **Branch:** `phase/22-organic`
 - **Record:** [docs/experiments/MODULAR_HOUSE_PACK_02.md](docs/experiments/MODULAR_HOUSE_PACK_02.md)
-- It is not the "strong PASS" M2 hoped for: - a fresh agent editing this kit would close gate 9 (one fresh-agent task); - a shared `foundation` asset would remove the one remaining duplication.
+- The first pass left gate 9 met in part. A fresh agent then edited this kit (FRESH_AGENT_13, below), which closes gate 9. Its shared `house_foundation` module also removes the one duplication noted under gate 3.
 
 ## Phase 24b: character review modes (track G, G3)
 

@@ -33,11 +33,7 @@ params:
 
 parts:
   # ---------------------------------------------------------------- footing, corners, deck
-  footing_fb:   {asset: house_footing, position: [x0 + bay / 2, 0, D / 2], array: [{count: nx, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]}
-  footing_side: {asset: house_footing, rotate: [0, 90, 0], position: [x0, 0, z0 + bay / 2], array: [{count: nz, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]}
-  node_fb:      {asset: house_corner, position: [x0, 0, D / 2], array: [{count: nx + 1, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]}
-  node_side:    {asset: house_corner, position: [x0, 0, z0 + bay], array: [{count: nz - 1, offset: [0, 0, bay]}, {count: 2, offset: [W, 0, 0]}]}
-  deck:         {asset: house_floor, position: [x0 + bay / 2, base_h - floor_t, z0 + bay / 2], array: [{count: nx, offset: [bay, 0, 0]}, {count: nz, offset: [0, 0, bay]}]}
+  foundation:   {asset: house_foundation, with: {nx: nx, nz: nz, door_bay: 1}, position: [0, 0, 0]}   # footings, corner nodes, ground deck, entrance steps
 
   # ---------------------------------------------------------------- top band (wall plate) between posts
   band_fb:   {asset: house_beam, position: [x0 + bay / 2, y_top - band_h / 2, D / 2], array: [{count: nx, offset: [bay, 0, 0]}, {count: 2, offset: [0, 0, -D]}]}
@@ -68,7 +64,6 @@ parts:
       gable_r: {bounds: gable_1}
     rotate: [0, -90, 0]
     position: [gable_r.max.x + 0.35, 0, 0]
-  steps: {asset: house_steps, position: [x0 + 1.5 * bay, 0, D / 2 + footing_d / 2]}
 
 sockets:
   entrance: {attach: {to: origin, offset: [x0 + 1.5 * bay, base_h, D / 2 + 0.6]}, doc: in front of the door}
