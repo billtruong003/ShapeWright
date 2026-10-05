@@ -17,3 +17,5 @@ website/gallery/
 website/gallery.md
 website/changelog.md
 .venv/
+# the vendored three.js keeps its own folder name
+!shapewright/workbench/vendor/three/build/
