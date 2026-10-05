@@ -18,10 +18,10 @@ Nothing is left out. The earlier figures (87 % and 83 %) counted fewer items, wh
 
 | scope | done | remaining | **progress** |
 |---|---|---|---|
-| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 58.25 | 1.25 | **≈ 98 %** |
-| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 58.25 | 1.5 | **≈ 97 %** |
-| **planned roadmap** (+ track G: native character track) | 58.25 | 13.5 | **≈ 81 %** |
-| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 58.25 | ≈ 24.5 | **≈ 70 %** |
+| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 59.25 | 1.25 | **≈ 98 %** |
+| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 59.25 | 1.5 | **≈ 98 %** |
+| **planned roadmap** (+ track G: native character track) | 59.25 | 12.5 | **≈ 83 %** |
+| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 59.25 | ≈ 23.5 | **≈ 72 %** |
 
 The figures dropped from 80 / 74 / 62 / 54 % because two decisions on 2026-10-05 added work:
 - **Track W** (3 points): the workbench gets a three.js 3D viewer (list, view modes, save, export, click-to-comment).
@@ -84,7 +84,7 @@ Tick `[x]` here in the commit that finishes a task.
 | [x] | F5 | Multi-hull collision; a walkable doorway in the workshop | 0.7 | — | agent |
 | [x] | F6 | Lightmap UVs (UV1, non-overlapping) for Unity/Unreal static lighting (ROADMAP Stage 4) | 1.0 | — | agent |
 | [ ] | F7 | M2 milestone: re-run the 10 MODULAR_HOUSE_PACK gates on the trim-sheet kit (Phase 21 measured only the gates it changed) | 0.25 | F1–F6 | agent |
-| [ ] | G0 | Spike: the fox (body, head, cheeks, ears, tail) as SDF primitives, smooth union, marching cubes, sheet next to the concept | 1 | v1.0 | agent |
+| [x] | G0 | Spike: the fox (body, head, cheeks, ears, tail) as SDF primitives, smooth union, marching cubes, sheet next to the concept | 1 | v1.0 | agent |
 | [ ] | G1 | Phase 22: native organic kernel: `blend:` groups, SDF primitives, smooth union, marching cubes, decimate, xatlas UV, validated like any part | 3 | G0 | agent |
 | [ ] | G2 | Phase 23: character surface: projected decals into the atlas (eyes, mouth, patterns), region palettes, toon presets, reference image in the source | 1.5 | G1 | agent |
 | [ ] | G3 | Character review modes: UV checker + layout, mesh density, bone-weight heatmap, pose sheet, side by side with the concept (CPU sheet and the W viewer) | 1.5 | G1, W2 | agent |
@@ -92,7 +92,7 @@ Tick `[x]` here in the commit that finishes a task.
 | [ ] | G5 | Procedural clips: idle bob, walk cycle, wave, from the skeleton template | 1.5 | G4 | agent |
 | [ ] | H* | Long-term backlog (§11): plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village, optional Blender/three.js beauty renders | ≈ 11 | — | later |
 
-Done so far (58.25 points):
+Done so far (59.25 points):
 
 | work | points |
 |---|---|
@@ -114,6 +114,7 @@ Done so far (58.25 points):
 | Phase 18b docs site completion (track D) | 1.25 |
 | Release 1.0.0 (track E, without PyPI) | 1.75 |
 | Phase 21 shared surfaces (track F; the M2 kit re-run is left, 0.25) | 3.75 |
+| G0 spike: native organic mesh (track G) | 1 |
 
 ## 2b. Rules for every task
 

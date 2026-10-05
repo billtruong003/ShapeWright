@@ -1,0 +1,31 @@
+{
+ "grid": [
+  91,
+  140,
+  107
+ ],
+ "voxel_m": 0.008,
+ "primitives": 11,
+ "primitives_mirrored": 4,
+ "numbers_in_model": 81,
+ "raw_triangles": 191872,
+ "triangles": 5984,
+ "watertight": true,
+ "winding_consistent": true,
+ "volume_m3": 0.07536,
+ "uv_charts_ok": true,
+ "region_faces": {
+  "hoodie": 3308,
+  "fur": 2276,
+  "white": 378,
+  "black": 22
+ },
+ "height_m": 1.038,
+ "seconds": {
+  "field": 2.3,
+  "mesh": 1.65,
+  "decimate": 0.68,
+  "uv": 0.25,
+  "total": 4.87
+ }
+}

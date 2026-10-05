@@ -35,6 +35,7 @@ Every phase follows the same run protocol (§1) and the same record format (§2)
 | 18b docs site completion (track D) | `phase/18b-site` | PASS (closes 18's open gate) | docs/phases/PHASE_18b.md |
 | Release 1.0.0 (track E) | `release/1.0` | PASS (PyPI waits for the owner) | docs/phases/RELEASE_1.0.md |
 | 21 shared surfaces (track F) | `phase/21-shared-surfaces` | PASS with exceptions (module texel density lower, 218 hulls; M2 re-run left) | docs/phases/PHASE_21.md |
+| G0 spike, native organic mesh (track G) | `phase/22-organic` | GO (3 plan changes; concept image not in the repo) | docs/phases/G0_SPIKE.md |
 
 The branches are **stacked**: each one contains the ones above it, so `phase/18-docs-site` has everything.
 All of them were fast-forwarded into `main` on 2026-09-30; the branches stay for review.

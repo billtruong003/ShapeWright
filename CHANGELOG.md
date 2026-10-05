@@ -2,6 +2,13 @@
 
 Newest first. Generated from the phase records by `tools/site/changelog.py`; each entry links to its record (what shipped, evidence, the gate table and what is not done).
 
+## G0 spike: a native organic mesh (track G)
+
+- **Verdict:** GO (3 plan changes; concept image not in the repo)
+- **Branch:** `phase/22-organic`
+- **Record:** [docs/phases/G0_SPIKE.md](docs/phases/G0_SPIKE.md)
+- A chibi fox in a hoodie built from 11 SDF primitives is one watertight, consistently wound mesh of 6 k triangles in under 5 s. It uses no new dependency and no Blender. It reads as a fox in a hoodie. The face and the colour boundaries are not game quality yet; G2's work is what fixes them.
+
 ## Phase 21: shared surfaces and runtime (track F)
 
 - **Verdict:** PASS with exceptions (module texel density lower, 218 hulls; M2 re-run left)
