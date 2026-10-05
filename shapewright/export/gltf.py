@@ -75,7 +75,8 @@ class _Builder:
         self.bin.extend(raw)
         return len(self.views) - 1
 
-    def mesh_primitive(self, positions, indices, normals=None, uvs=None, material=None, colors=None, tangents: bool = False) -> dict:
+    def mesh_primitive(self, positions, indices, normals=None, uvs=None, material=None, colors=None, tangents: bool = False,
+                       uvs1=None) -> dict:
         attrs = {"POSITION": self.add(positions.astype(np.float32), FLOAT, "VEC3", ARRAY_BUFFER, minmax=True)}
         if normals is not None:
             attrs["NORMAL"] = self.add(normals.astype(np.float32), FLOAT, "VEC3", ARRAY_BUFFER)
@@ -87,6 +88,8 @@ class _Builder:
             attrs["TEXCOORD_0"] = self.add(uv_file.astype(np.float32), FLOAT, "VEC2", ARRAY_BUFFER)
             if tangents and normals is not None:  # normal-mapped materials (Phase 12): tangent space from the file's UVs
                 attrs["TANGENT"] = self.add(_tangents(positions, normals, uv_file, indices).astype(np.float32), FLOAT, "VEC4", ARRAY_BUFFER)
+        if uvs1 is not None:  # lightmap UVs (Phase 21): same v flip as TEXCOORD_0
+            attrs["TEXCOORD_1"] = self.add(np.stack([uvs1[:, 0], 1.0 - uvs1[:, 1]], 1).astype(np.float32), FLOAT, "VEC2", ARRAY_BUFFER)
         if colors is not None:
             attrs["COLOR_0"] = self.add(colors.astype(np.float32), FLOAT, "VEC4", ARRAY_BUFFER)
         flat = indices.reshape(-1)
@@ -123,7 +126,8 @@ def _tangents(P: np.ndarray, N: np.ndarray, UV: np.ndarray, F: np.ndarray) -> np
 
 
 def _collision_meshes(asset: Asset, groups: dict | None = None) -> list[tuple[str | None, np.ndarray, np.ndarray]]:
-    """Convex collision proxies: none | single_box | single_hull | box | hull (per part); `parts:` limits which parts.
+    """Convex collision proxies: none | single_box | single_hull | box | hull (per part) | hulls (a few merged hulls, `max`,
+    `exclude`); `parts:` limits which parts.
     With rigid groups (merged export) the single modes give one proxy per group, so a hinged lid's collision
     moves with the lid (FRESH_AGENT_08); each proxy carries its group key."""
     cfg = asset.collision or {}
@@ -139,19 +143,33 @@ def _collision_meshes(asset: Asset, groups: dict | None = None) -> list[tuple[st
     for k, parts in buckets.items():
         if not parts:
             continue
+        if mode == "hulls":  # Phase 21: a few hulls that follow the shape (export/collision.py)
+            from .collision import decompose
+
+            for pts in decompose(parts, int(cfg.get("max", 24)), cfg.get("exclude")):
+                t = backend.collision_hull(pts)
+                out.append((k, t.V, t.F))
+            continue
         if mode in ("single_box", "single_hull"):
             V = np.concatenate([p.mesh.V for p in parts])
-            t = backend.box_bounds(np.stack([V.min(0), V.max(0)])) if mode == "single_box" else backend.convex_hull(V)
+            t = backend.box_bounds(np.stack([V.min(0), V.max(0)])) if mode == "single_box" else backend.collision_hull(V)
             out.append((k, t.V, t.F))
             continue
         for p in parts:
             V = p.mesh.V
-            t = backend.box_bounds(np.stack([V.min(0), V.max(0)])) if mode == "box" else backend.convex_hull(V)
+            t = backend.box_bounds(np.stack([V.min(0), V.max(0)])) if mode == "box" else backend.collision_hull(V)
             out.append((k, t.V, t.F))
     return out
 
 
-COLLISION_MODES = ("none", "single_box", "single_hull", "box", "hull")
+def collision_proxies(asset: Asset) -> list[tuple[str | None, np.ndarray, np.ndarray]]:
+    """The collision proxies write_glb would make for this asset (LOD files reuse LOD0's, so collision is the same at
+    every LOD and the multi-hull decomposition runs once)."""
+    merged = export_settings(asset)["merge"] == "by_material"
+    return _collision_meshes(asset, rigid_groups(asset) if merged else None)
+
+
+COLLISION_MODES = ("none", "single_box", "single_hull", "box", "hull", "hulls")
 
 
 def _recipe(m: dict) -> dict:
@@ -214,15 +232,18 @@ def _merged_primitives(b: _Builder, surface, parts, mat_index: dict, normal_mapp
             groups.setdefault(g, []).append((p.name, sp, used, remap[faces]))
     prims, ranges = [], []
     for g, items in groups.items():
-        P, N, U, C, F = [], [], [], [], []
+        P, N, U, U1, C, F = [], [], [], [], [], []
         base, first = 0, 0
         has_uv = all(sp.uvs is not None for _, sp, _, _ in items)
+        has_uv1 = all(sp.uvs1 is not None for _, sp, _, _ in items)
         has_col = any(sp.colors is not None for _, sp, _, _ in items)
         for name, sp, used, faces in items:
             P.append(sp.positions[used] - (np.zeros(3, np.float32) if pivot is None else np.asarray(pivot, np.float32)))
             N.append(sp.normals[used])
             if has_uv:
                 U.append(sp.uvs[used])
+            if has_uv1:
+                U1.append(sp.uvs1[used])
             if has_col:
                 C.append(sp.colors[used] if sp.colors is not None else np.ones((len(used), 4), np.float32))
             F.append(faces + base)
@@ -232,7 +253,7 @@ def _merged_primitives(b: _Builder, surface, parts, mat_index: dict, normal_mapp
         mi = mat_index.get(g)
         prims.append(b.mesh_primitive(np.concatenate(P), np.concatenate(F).astype(np.uint32), np.concatenate(N),
                                       np.concatenate(U) if has_uv else None, mi, np.concatenate(C) if has_col else None,
-                                      tangents=mi in normal_mapped))
+                                      tangents=mi in normal_mapped, uvs1=np.concatenate(U1) if has_uv1 else None))
     return prims, ranges
 
 
@@ -243,7 +264,8 @@ def _primitives(b: _Builder, sp, part, pivot, mat_index: dict, normal_mapped=fro
     pos = sp.positions - pivot.astype(np.float32)
     if len(groups) == 1:
         mi = mat_index.get(groups[0])
-        return [b.mesh_primitive(pos, sp.indices, sp.normals, sp.uvs, mi, sp.colors, tangents=mi in normal_mapped)]
+        return [b.mesh_primitive(pos, sp.indices, sp.normals, sp.uvs, mi, sp.colors, tangents=mi in normal_mapped,
+                                 uvs1=sp.uvs1)]
     prims = []
     for g in groups:
         faces = sp.indices[eff == g]
@@ -252,23 +274,28 @@ def _primitives(b: _Builder, sp, part, pivot, mat_index: dict, normal_mapped=fro
         remap[used] = np.arange(len(used))
         prims.append(b.mesh_primitive(pos[used], remap[faces].astype(np.uint32), sp.normals[used],
                                       None if sp.uvs is None else sp.uvs[used], mat_index.get(g),
-                                      None if sp.colors is None else sp.colors[used], tangents=mat_index.get(g) in normal_mapped))
+                                      None if sp.colors is None else sp.colors[used], tangents=mat_index.get(g) in normal_mapped,
+                                      uvs1=None if sp.uvs1 is None else sp.uvs1[used]))
     return prims
 
 
-def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str = "UNKNOWN", textures=None, collision: bool = True) -> dict:
+def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str = "UNKNOWN", textures=None, collision=True) -> dict:
     """textures: a baked atlas to use instead of baking (LOD files share LOD0's atlas).
-    collision: False leaves out the collision proxies (a preview file for web viewers, which draw every mesh)."""
+    collision: False leaves out the collision proxies (a preview file for web viewers, which draw every mesh); a list
+    from collision_proxies() uses those (LOD files)."""
     from ..bake import textures_for, to_png_bytes
 
     b = _Builder()
     tex = textures if textures is not None else textures_for(asset, surface)
     images, textures, samplers = [], [], []
     if tex is not None:
+        trim = getattr(tex, "trim", None)  # Phase 21: the pack's shared trim sheet, same bytes in every member
+        prefix = f"{trim['pack']}_trim_{trim['key'][:8]}" if trim else asset.name
         for label, arr in (("base_color", tex.base), ("orm", tex.orm)):
-            images.append({"name": f"{asset.name}_{label}", "mimeType": "image/png", "bufferView": b.add_bytes(to_png_bytes(arr))})
+            images.append({"name": f"{prefix}_{label}", "mimeType": "image/png", "bufferView": b.add_bytes(to_png_bytes(arr))})
             textures.append({"source": len(images) - 1, "sampler": 0})
-        samplers.append({"magFilter": 9729, "minFilter": 9987, "wrapS": 33071, "wrapT": 33071})
+        # a trim sheet repeats along U (10497 REPEAT); per-asset atlases clamp (33071)
+        samplers.append({"magFilter": 9729, "minFilter": 9987, "wrapS": 10497 if trim else 33071, "wrapT": 33071})
     materials, mat_index = [], {}
     image_of: dict = {}  # authored image path -> texture index (each file embedded once, bytes unchanged)
 
@@ -317,6 +344,9 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
             continue
         mat = {"name": name, "pbrMetallicRoughness": {"baseColorFactor": [round(float(v), 6) for v in base],
                                                         "metallicFactor": float(m["metallic"]), "roughnessFactor": float(m["roughness"])}}
+        if tex is None and m.get("archetype") == "vertex":  # the colour is in COLOR_0 (Phase 21)
+            mat["pbrMetallicRoughness"]["baseColorFactor"] = [1.0, 1.0, 1.0, round(float(base[3]), 6)]
+            mat["extras"] = {"shapewright_material": _recipe(m)}
         if tex is not None:  # every material samples the shared baked atlas; its recipe travels in extras
             mat["pbrMetallicRoughness"] = {"baseColorFactor": [1.0, 1.0, 1.0, round(float(base[3]), 6)],
                                            "baseColorTexture": {"index": 0}, "metallicRoughnessTexture": {"index": 1},
@@ -376,7 +406,9 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
         nodes[0]["children"].append(len(nodes) - 1)
     placed = group_nodes if settings["merge"] == "by_material" else None
     counter: dict = {}
-    for key, V, F in (_collision_meshes(asset, rigid_groups(asset) if placed is not None else None) if collision else []):
+    proxies = collision if isinstance(collision, list) else (
+        _collision_meshes(asset, rigid_groups(asset) if placed is not None else None) if collision else [])
+    for key, V, F in proxies:
         owner, owner_name, pivot = (0, asset.name, np.zeros(3)) if placed is None else placed[key]
         idx = counter[owner_name] = counter.get(owner_name, -1) + 1
         name = settings["target"].collision_name(owner_name, idx, convex=True)

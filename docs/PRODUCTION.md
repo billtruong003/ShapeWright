@@ -55,7 +55,7 @@ documented import conventions and are **not** tested here.
   Lengyel's method, with handedness w).
 - **LODs**: `export.lods: [0.5, 0.25]` writes decimated LOD files (decimation keeps UVs since
   Phase 11) and reports each LOD's silhouette agreement with LOD0 (IoU from 4 views).
-  `LOD_SILHOUETTE` warns below 0.9.
+  `LOD_SILHOUETTE` warns below 0.95 for LOD1 and 0.9 for further LODs.
 - **Origin policy**: unchanged, already enforced (`placement: floor | wall | free`,
   `ASM_ORIGIN_OFFSET`). Godot confirmed floor props arrive grounded and centred.
 

@@ -14,7 +14,7 @@ asset:
   placement: floor
 budget: {triangles: 30000, materials: 7, texture_size: 2048, draw_calls: 7}
 uv: {texel_density: 48}
-export: {merge: by_material}
+export: {merge: by_material, lods: [0.5, 0.25]}   # Phase 21: LOD1 ~50 %, LOD2 ~25 % of the triangles
 collision: {mode: single_box}
 
 params:

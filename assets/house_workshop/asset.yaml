@@ -15,8 +15,8 @@ asset:
   placement: floor
 budget: {triangles: 60000, materials: 7, texture_size: 2048, draw_calls: 7}
 uv: {texel_density: 30}
-export: {merge: by_material}
-collision: {mode: single_hull}
+export: {merge: by_material, lods: [0.5, 0.25]}   # Phase 21: LOD1 ~50 %, LOD2 ~25 % of the triangles
+collision: {mode: hulls, max: 24, exclude: ['*_door_door_*']}   # Phase 21: walkable doors (the door leaves swing open), solid walls
 
 params:
   nm: {value: 3, doc: main block bays along x}

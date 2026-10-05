@@ -1,3 +1,4 @@
 doc: Unity target (glTF import, e.g. glTFast). Static parts merged per material; *_collider nodes flagged with extras.collision (glTF importers do not create colliders; read the extras in an import script); LOD files. Conventions documented, not tested in Unity.
 budget: {triangles: 5000, materials: 3, draw_calls: 6, texture_size: 1024, texel_density: 512}
 export: {target: unity}
+uv: {lightmap: true}  # Phase 21: TEXCOORD_1 for baked lighting (static lightmaps)

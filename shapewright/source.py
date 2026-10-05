@@ -35,7 +35,8 @@ TOP_KEYS = {
     "sockets": "named attachment points exported as empty nodes",
     "checks": "design-intent assertions evaluated after build",
     "uv": "UV generation settings",
-    "collision": "collision proxies: {mode: none | single_box | single_hull | box | hull, parts: [...]}",
+    "collision": "collision proxies: {mode: none | single_box | single_hull | box | hull | hulls, parts: [...]}; hulls: a few "
+                 "convex hulls following the shape {max: 24, exclude: [door_*]} (openings stay open)",
     "export": "engine packaging: {target: generic | godot | unity | unreal, merge: none | by_material, lods: [0.5, 0.25]}",
     "notes": "free text for humans and agents",
     "interface": "family contract for variants: {params: [public names], doc} (see docs/FAMILIES.md)",
@@ -48,6 +49,7 @@ PACK_KEYS = {
     "materials": "shared palette (read-only in member assets)",
     "profile": "production profile for every member", "style": "style for every member",
     "budget": "default budget (members may tighten or override individual keys)", "notes": "free text",
+    "atlas": "one shared trim sheet for every member: {size: 2048, density: 128 (px/m), materials: [order]} (Phase 21)",
 }
 
 PART_KEYS = {
@@ -332,6 +334,9 @@ def apply_pack(data: dict, asset_path: Path) -> dict:
             out[k] = pack[k]
     out["budget"] = {**(pack.get("budget") or {}), **(data.get("budget") or {})}
     out["_pack"] = str(pack.get("pack") or pack_path.stem)
+    if pack.get("atlas"):
+        out["_pack_atlas"] = dict(pack["atlas"])
+        out["_pack_materials"] = list(pack.get("materials") or {})
     return out
 
 

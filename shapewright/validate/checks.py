@@ -33,7 +33,7 @@ def _components(F: np.ndarray, n: int) -> int:
 
 
 @validator("mesh_integrity", "geometry", "Per-part closed-manifold checks: open/non-manifold edges, winding, inverted, degenerate, duplicate faces, fragments.",
-           ("GEO_NONFINITE", "GEO_DEGENERATE_FACES", "GEO_DUPLICATE_FACES", "GEO_OPEN_EDGES", "GEO_NONMANIFOLD_EDGES",
+           ("GEO_NONFINITE", "GEO_DEGENERATE_FACES", "GEO_DUPLICATE_FACES", "GEO_DUPLICATE_SURFACE", "GEO_OPEN_EDGES", "GEO_NONMANIFOLD_EDGES",
             "GEO_WINDING_INCONSISTENT", "GEO_INVERTED", "GEO_PART_FRAGMENTED", "GEO_SLIVER_TRIS"))
 def mesh_integrity(asset: Asset, surface: Surface, metrics: dict):
     out = []
@@ -53,6 +53,15 @@ def mesh_integrity(asset: Asset, surface: Surface, metrics: dict):
         dup = len(sf) - len(np.unique(sf, axis=0))
         if dup:
             out.append(_issue("GEO_DUPLICATE_FACES", "error", "geometry", f"{dup} duplicate faces", w, count=dup))
+        # Phase 21: the same surface twice with different vertices (an unwelded copy, typical of imports)
+        q = np.round(m.V / 1e-5).astype(np.int64)  # 0.01 mm grid
+        vkey = np.unique(q, axis=0, return_inverse=True)[1].reshape(-1)  # one id per distinct position
+        pos = np.sort(vkey[m.F], axis=1)
+        pdup = len(pos) - len(np.unique(pos, axis=0)) - dup
+        if pdup > 0:
+            out.append(_issue("GEO_DUPLICATE_SURFACE", "warning", "geometry", f"{pdup} faces repeat another face's position with their own "
+                              "vertices (an unwelded copy of the surface: z-fighting, doubled triangles)", w,
+                              "ops: [{type: clean, weld_distance: 0.0005}] welds and removes the copies", count=pdup))
         directed = np.concatenate([m.F[:, [0, 1]], m.F[:, [1, 2]], m.F[:, [2, 0]]])
         und = np.sort(directed, axis=1)
         _, counts = np.unique(und, axis=0, return_counts=True)
@@ -363,6 +372,18 @@ def uv_layout(asset: Asset, surface: Surface, metrics: dict):
         out.append(_issue("UV_MISSING", "warning", "surface", "no UVs generated" + (f" ({surface.uv_error})" if surface.uv_error else ""), "uv",
                           "set uv.method: auto (requires the xatlas package)"))
         return out
+    if surface.uv_method == "trim":  # Phase 21: faces map onto the pack's shared trim sheet; overlap and U > 1 are by design
+        dens_t = surface.trim_density
+        target = surface.trim["density"]
+        metrics["texel_density_px_m"] = round(float(np.median(list(dens_t.values()))), 1) if dens_t else target
+        metrics["uv_overlap"] = 0.0
+        metrics["trim_sheet"] = surface.trim["pack"]
+        low = sorted(k for k, d in dens_t.items() if d < 0.6 * target)
+        if low:
+            out.append(_issue("UV_TEXEL_DENSITY", "warning", "surface", f"{len(low)} part(s) taller than their trim strip were scaled down "
+                              f"(lowest {min(dens_t[k] for k in low):.0f} px/m of {target:.0f}): {', '.join(low[:6])}", low[0],
+                              "fewer materials in the pack atlas (taller strips), a larger atlas, or split the tall face"))
+        return out
     res = min(surface.uv_resolution, 1024)
     dens = {}
     oob = []
@@ -442,6 +463,67 @@ def uv_layout(asset: Asset, surface: Surface, metrics: dict):
         if target:
             metrics["texel_density_target"] = target
     return out
+
+
+@validator("lightmap_uv", "surface", "Lightmap UVs (TEXCOORD_1, Phase 21): present when the profile asks for them, inside 0..1, no overlap.",
+           ("LIGHTMAP_UV_MISSING", "LIGHTMAP_UV_OVERLAP", "LIGHTMAP_UV_DENSITY"))
+def lightmap_uv(asset: Asset, surface: Surface, metrics: dict):
+    from ..surface import lightmap_enabled
+
+    if not lightmap_enabled(asset):
+        return []
+    tris = [surface.parts[p.name].corner_uv1 for p in asset.parts if surface.parts[p.name].corner_uv1 is not None]
+    missing = [p.name for p in asset.parts if surface.parts[p.name].corner_uv1 is None]
+    out = []
+    if missing:
+        out.append(_issue("LIGHTMAP_UV_MISSING", "error", "surface", f"no lightmap UVs on: {', '.join(missing[:6])}", missing[0],
+                          "lightmap UVs are generated for LOD0 builds; LOD files reuse LOD0's atlas and carry none"))
+    if not tris:
+        return out
+    res = min(int(getattr(surface, "lightmap_resolution", 1024)), 1024)
+    uv = np.concatenate(tris)
+    count, _ = coverage(np.stack([uv[..., 0] * res, (1 - uv[..., 1]) * res], -1), res, res)
+    covered = int((count > 0).sum())
+    ratio = int((count > 1).sum()) / max(covered, 1)
+    metrics["lightmap_uv_utilization"] = round(covered / res / res, 3)
+    metrics["lightmap_uv_overlap"] = round(ratio, 4)
+    dens = {}
+    for p in asset.parts:
+        c = surface.parts[p.name].corner_uv1
+        if c is None:
+            continue
+        a2 = 0.5 * np.abs((c[:, 1, 0] - c[:, 0, 0]) * (c[:, 2, 1] - c[:, 0, 1]) - (c[:, 2, 0] - c[:, 0, 0]) * (c[:, 1, 1] - c[:, 0, 1]))
+        a3 = p.mesh.face_normals()[1].sum()
+        if a3 > 1e-6:
+            dens[p.name] = float(np.sqrt(a2.sum() / a3))
+    if dens:
+        spread = max(dens.values()) / max(min(dens.values()), 1e-12)
+        metrics["lightmap_texel_ratio"] = round(spread, 2)
+        if spread > 2.0:
+            lo = min(dens, key=dens.get)
+            out.append(_issue("LIGHTMAP_UV_DENSITY", "warning", "surface", f"lightmap texel density varies {spread:.1f}x across parts "
+                              f"(lowest: {lo})", lo, "small parts get a minimum chart size; usually harmless, else raise uv.lightmap_resolution"))
+    oob = uv.min() < -1e-6 or uv.max() > 1 + 1e-6
+    if ratio > 0.002 or oob:
+        out.append(_issue("LIGHTMAP_UV_OVERLAP", "error", "surface", f"{ratio:.1%} of the lightmap UV area overlaps"
+                          + (" (and UVs leave 0..1)" if oob else ""), "uv",
+                          "baked lighting bleeds between faces that share lightmap texels; raise uv.lightmap_resolution or report it",
+                          ratio=round(ratio, 4)))
+    return out
+
+
+@validator("vertex_colour_materials", "surface", "`archetype: vertex` materials (Phase 21): mixed with textured materials they lose their point.",
+           ("VERTEX_COLOR_MIXED",))
+def vertex_colour_materials(asset: Asset, surface: Surface, metrics: dict):
+    vert = sorted(n for n, m in asset.materials.items() if m.get("archetype") == "vertex")
+    tex = sorted(n for n, m in asset.materials.items() if m.get("textured"))
+    if vert:
+        metrics["vertex_colour_materials"] = len(vert)
+    if vert and tex:
+        return [_issue("VERTEX_COLOR_MIXED", "warning", "surface", f"vertex-colour material(s) {', '.join(vert)} next to textured {', '.join(tex)}: "
+                       "the asset still bakes an atlas, so the vertex colours only carry the shade", vert[0],
+                       "make every material `archetype: vertex` (no atlas, no UVs to manage) or none of them")]
+    return []
 
 
 # ---------------------------------------------------------------- style

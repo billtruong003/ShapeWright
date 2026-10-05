@@ -36,8 +36,10 @@ materials: {...}
 parts: {...}
 sockets: {...}
 checks: [...]
-uv: {method: regions, resolution: 512, padding_px: 4}   # regions (default) | atlas (v0.1) | none
-collision: {mode: none | single_box | single_hull | box | hull, parts: [seat, legs]}   # convex proxies
+uv: {method: regions, resolution: 512, padding_px: 4}   # regions (default) | atlas (v0.1) | trim (pack sheet) | none
+                                 # lightmap: true adds TEXCOORD_1 (on by default in the unity/unreal profiles)
+collision: {mode: none | single_box | single_hull | box | hull | hulls, parts: [seat, legs]}   # convex proxies
+                                 # hulls: a few merged hulls that keep openings open; max: 24, exclude: ['*_door_door_*']
 export: {target: generic | godot | unity | unreal, merge: none | by_material, lods: [0.5]}
 interface: {params: [...]}       # optional: family contract for variants (docs/FAMILIES.md)
 pack: blacksmith                 # optional: member of packs/blacksmith.yaml (shared params/materials; read-only here)
@@ -92,7 +94,9 @@ converted to linear on export.
 A material can name an **archetype**: a procedural recipe with semantic params
 (`sw doc wood` lists them with ranges and an example; `sw caps` lists all
 archetypes). Available: `flat` (default, untextured), `wood`, `metal`, `stone`,
-`painted`.
+`painted`, and `vertex` (no texture: the colour goes into `COLOR_0`, shaded darker towards each part's
+bottom by `bottom_shade` and varied per part by `variation`; for mobile and low profiles. Mixing it with
+textured materials in one asset is `VERTEX_COLOR_MIXED`).
 
 ```yaml
 materials:
@@ -242,7 +246,8 @@ materials:
 - Ops that rebuild topology (booleans) drop authored UVs (`TEX_AUTHORED_UV_MISSING`).
 - `decimate` and `clean` keep them.
 - Repair ops for imported geometry: `{type: clean}` welds vertices, drops zero-area and duplicate
-  faces, fixes winding, and can `fill_holes: true`.
+  faces, fixes winding, and can `fill_holes: true`. `weld_distance: 0.0005` also merges vertices closer than
+  that (an unwelded copy left by an export, `GEO_DUPLICATE_SURFACE`).
 
 See docs/IMPORT.md.
 
@@ -252,6 +257,12 @@ See docs/IMPORT.md.
 writes `pack: NAME` (or a relative `.yaml` path). The pack's params and materials are merged in and are
 **read-only**: redefining one is `PACK_OVERRIDE`. The profile and style are the pack's; budget keys are
 defaults a member may override. `sw pack --pack NAME` reviews all members together at a common scale.
+
+**Shared trim sheet.** `atlas: {size: 2048, density: 128}` in the pack gives every member one shared texture
+instead of an atlas each. Each pack material owns a horizontal strip; members' faces map onto their material's
+strip, U along the part's long axis at `density` px/m (it wraps), V across the strip. Every member exports the
+same image bytes, so an engine stores one copy (the cozy_house kit: −84 % texture memory, Phase 21). A face taller
+than its strip is scaled down and reported (`UV_TEXEL_DENSITY`). A member opts out with its own `uv: {method: regions}`.
 
 ### Replicating component instances
 

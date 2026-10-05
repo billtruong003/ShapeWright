@@ -150,7 +150,7 @@ SHAPES
 
 OPS
   bend          (axis, toward, angle)  Bend along `axis` toward `toward` by `angle` degrees (circular arc). Needs vertices along 
-  clean         (weld, degenerate, duplicates, winding, fill_holes)  Repair imported/baked geometry: weld coincident vertices, drop zero-area and duplicate fac
+  clean         (weld, weld_distance, degenerate, duplicates, winding, fill_holes)  Repair imported/baked geometry: weld coincident vertices, drop zero-area and duplicate fac
   decimate      (ratio)  Reduce triangles with quadric simplification.
   flat_bottom   (fraction, at)  Cut everything below a height to create a flat base: a fraction of the local height from t
   inflate       (amount*)  Push vertices along their normals (positive grows, negative shrinks).
@@ -178,7 +178,7 @@ PROFILES  desktop_indie godot mobile_low mobile_mid unity unreal vr_standalone w
 STYLES    cozy_timber realistic_clean stylized_lowpoly
 COMPONENTS fantasy_mushroom house_chimney house_door house_door_frame house_floor house_footing house_gable house_ridge house_roof house_steps house_timber house_wall house_window_frame iron_band leg_frame plank_top smith_hammer   (components/NAME.yaml; use with `component:` in a part)
 PACKS     blacksmith cozy_house   (packs/NAME.yaml: shared params/materials; `pack: NAME` in an asset)
-MATERIALS authored flat metal painted stone wood   (material `archetype:` + semantic params; `sw doc wood`; docs/SURFACES.md)
+MATERIALS authored flat metal painted stone vertex wood   (material `archetype:` + semantic params; `sw doc wood`; docs/SURFACES.md)
 MEASURE   section gap bounds anchor ray   (part-level `measure:` queries; docs/RELATIONSHIPS.md)
 POINTS    arc helix line   (items inside any point list: polygon, holes, profile, path; `sw doc arc`)
 PARTS     array mirror origin rotate_about component asset   (`sw doc array`: per-instance each/skip/start, nested arrays)

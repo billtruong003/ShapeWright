@@ -205,9 +205,38 @@ def decimate(m, a, b):
     return out
 
 
+def _weld_within(m: Mesh, dist: float) -> Mesh:
+    """Merge vertices closer than `dist` (union of all near pairs; each cluster takes its lowest-index vertex).
+    Faces that collapse to fewer than 3 distinct vertices are removed; the rest keep UVs and labels."""
+    pairs = backend.close_vertex_pairs(m.V, dist)
+    if not len(pairs):
+        return m
+    parent = np.arange(len(m.V))
+
+    def root(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    for i, j in pairs:
+        ri, rj = root(int(i)), root(int(j))
+        if ri != rj:
+            parent[max(ri, rj)] = min(ri, rj)
+    rep = np.array([root(i) for i in range(len(m.V))])
+    F = rep[m.F]
+    keep = (F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])
+    out = m.copy()
+    out.F = F
+    out = out.subset(np.flatnonzero(keep))
+    return out.compacted()
+
+
 @op("clean", "Repair imported/baked geometry: weld coincident vertices, drop zero-area and duplicate faces, make winding "
     "consistent (outward for closed shells), optionally fill holes. Kept faces keep their UVs and labels.",
     [Param("weld", "bool", True, "weld coincident vertices"),
+     Param("weld_distance", "num", 0.0, "also merge vertices closer than this (metres; e.g. 0.0005 for imports whose seams "
+           "are not exactly coincident). 0 = exact only", min=0, max=0.05),
      Param("degenerate", "bool", True, "remove zero-area faces"),
      Param("duplicates", "bool", True, "remove faces that repeat another face's vertices"),
      Param("winding", "bool", True, "flip faces so each shell has consistent (outward) winding"),
@@ -216,6 +245,8 @@ def decimate(m, a, b):
 def clean(m, a, b):
     if a["weld"]:
         m = m.merged()
+    if a["weld_distance"] > 0 and len(m.V):
+        m = _weld_within(m, a["weld_distance"])
     if a["degenerate"]:  # collapse (not delete) zero-area faces, so closed surfaces stay closed
         m = backend.collapse_needles(m)
     keep = np.ones(m.n_tris, dtype=bool)

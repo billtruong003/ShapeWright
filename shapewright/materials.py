@@ -198,6 +198,18 @@ def wood(a, s: Samples) -> Channels:
     return Channels(base, np.clip(rough, 0, 1), np.zeros(k))
 
 
+@archetype("vertex", "Colour per vertex, no texture (Phase 21): the colour goes into the mesh (glTF COLOR_0) with a soft shade "
+           "toward the bottom of each part and an optional per-part variation. For one-material stylized props on mobile/web "
+           "profiles: no atlas, no UVs to manage, one draw call.", [
+    Param("bottom_shade", "num", 0.25, "0..1 how much darker the bottom of each part is than its top (fake ambient light)", min=0, max=1),
+    Param("variation", "num", 0.0, "0..1 per-part brightness variation (seeded by the part name), so copies are not identical", min=0, max=1),
+    Param("metallic", "num", 0.0, "0 = dielectric, 1 = metal", min=0, max=1)],
+    example="{archetype: vertex, color: '#c98b4a', bottom_shade: 0.3, variation: 0.1}")
+def vertex(a, s: Samples) -> Channels:  # previews; exports carry the colour per vertex
+    k = len(s.P)
+    return Channels(np.tile(np.asarray(a["color"]), (k, 1)), _const(k, a["roughness"]), _const(k, a["metallic"]))
+
+
 @archetype("metal", "Stylized metal: subtle brushed variation, brighter worn edges, optional rust patches.", [
     Param("variation", "num", 0.15, "0..1 tonal variation", min=0, max=1),
     Param("rust", "num", 0.0, "0..1 rust coverage (rust is non-metallic and rough)", min=0, max=1),
@@ -271,7 +283,7 @@ def authored(a, s: Samples) -> Channels:  # preview only; authored parts are nev
 
 def is_textured(mat: dict) -> bool:
     """Needs the asset's baked atlas (authored materials bring their own textures)."""
-    if mat.get("archetype") == "authored":
+    if mat.get("archetype") in ("authored", "vertex"):
         return False
     args = mat.get("args", {})
     return mat.get("archetype", "flat") != "flat" or bool(mat.get("layers")) or args.get("edge_wear", 0) > 0 or args.get("grime", 0) > 0

@@ -410,7 +410,10 @@ def cmd_export(a):
     suffix = f"_{a.target}" if a.target else ""
     suffix += "_preview" if a.preview else ""
     out = Path(a.out) if a.out else asset.out_dir / "export" / f"{asset.name}{suffix}.glb"
-    info = write_glb(asset, surface, out, report["status"], collision=not a.preview)
+    from .export.gltf import collision_proxies
+
+    proxies = [] if a.preview else collision_proxies(asset)  # computed once: LOD files reuse LOD0's collision
+    info = write_glb(asset, surface, out, report["status"], collision=proxies)
     issues, extra = khronos_validate(out)
     issues += roundtrip(asset, out)
     from .export.targets import export_settings
@@ -421,9 +424,9 @@ def cmd_export(a):
         from .export.lod import write_lods
         from .report import Issue
 
-        lods = write_lods(asset, surface, out, settings["lods"], report["status"])
+        lods = write_lods(asset, surface, out, settings["lods"], report["status"], proxies)
         for lod in lods:
-            if lod["silhouette_iou"] < 0.9:
+            if lod["silhouette_iou"] < (0.95 if lod["lod"] == 1 else 0.9):  # Phase 21 gate: LOD1 >= 0.95, further LODs >= 0.90
                 issues.append(Issue("LOD_SILHOUETTE", "warning", f"LOD{lod['lod']} ({lod['triangles']} tris) keeps only "
                                     f"{lod['silhouette_iou']:.0%} of LOD0's silhouette in its worst view", f"export.lods[{lod['lod'] - 1}]",
                                     "export", "use a milder ratio for this LOD"))

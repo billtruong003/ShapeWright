@@ -49,6 +49,8 @@ class SurfacePart:
     colors: np.ndarray | None = None  # (k, 4) float32 linear RGBA
     uv_owner: str = ""
     authored: bool = False  # UVs are the part's own (authored material), not an atlas region
+    uvs1: np.ndarray | None = None  # (k, 2) lightmap UVs (TEXCOORD_1), unique and non-overlapping across the asset
+    corner_uv1: np.ndarray | None = None  # (m, 3, 2)
 
 
 @dataclass
@@ -181,9 +183,11 @@ def _part_resolution(resolution: int, area: float, total: float) -> int:
     return int(min(resolution, max(64, 2 ** int(np.ceil(np.log2(max(est, 1.0)))))))
 
 
-def compute_layout(asset: Asset, resolution: int, padding: int):
-    asset = atlas_view(asset)
-    owners = uv_owners(asset)
+def compute_layout(asset: Asset, resolution: int, padding: int, unique: bool = False):
+    """unique: every part instance gets its own charts (lightmaps: no two surfaces may share texels)."""
+    if not unique:
+        asset = atlas_view(asset)
+    owners = {p.name: p.name for p in asset.parts} if unique else uv_owners(asset)
     first = {}
     for p in asset.parts:
         first.setdefault(owners[p.name], p)
@@ -271,6 +275,47 @@ def _unwrap_atlas(asset: Asset, resolution: int, padding: int) -> dict[str, np.n
     return out
 
 
+def _vertex_material_colors(asset: Asset, part, pos: np.ndarray) -> np.ndarray | None:
+    """(m,3,4) linear RGBA per corner for faces whose material is `archetype: vertex` (white elsewhere), or None.
+    Colour x a shade toward the part's bottom x a seeded per-part variation. When the asset also bakes an atlas,
+    the colour itself comes from the atlas and only the shade goes to the vertices."""
+    import zlib
+
+    from .bake import needs_textures
+    from .export.gltf import srgb_to_linear
+
+    mats = [m if m else part.material for m in part.mesh.label_values("material")]
+    vert = {m for m in set(mats) if (asset.materials.get(m or "") or {}).get("archetype") == "vertex"}
+    if not vert:
+        return None
+    out = np.ones((len(mats), 3, 4))
+    y = pos[..., 1]
+    lo, hi = float(y.min()), float(y.max())
+    t = (y - lo) / max(hi - lo, 1e-6)  # 0 at the bottom of the part, 1 at the top
+    textured = needs_textures(asset)
+    for m in vert:
+        mat = asset.materials[m]
+        a = mat["args"]
+        sel = np.array([x == m for x in mats])
+        rnd = zlib.crc32(part.base.encode()) / 2**32 - 0.5
+        k = (1.0 - float(a.get("bottom_shade", 0.25)) * (1 - t[sel])) * (1.0 + float(a.get("variation", 0.0)) * rnd)
+        base = np.ones(3) if textured else np.asarray(srgb_to_linear(mat["base_color"][:3]))
+        out[sel, :, :3] = np.clip(k[..., None] * base, 0, 1)
+    return out
+
+
+def lightmap_uvs(asset: Asset, resolution: int, padding: int) -> dict[str, np.ndarray]:
+    """Phase 21: a second UV set for baked lighting (Unity/Unreal static lightmaps): every part, authored ones
+    included, charted on its own and packed without overlap, regions sized by area (uniform lightmap density)."""
+    _, first, charts, rects = compute_layout(asset, resolution, padding, unique=True)
+    return {o: _fit(c, rects[o]) for o, c in charts.items()}
+
+
+def lightmap_enabled(asset: Asset) -> bool:
+    uv_cfg = asset.uv or {}
+    return bool(uv_cfg.get("lightmap", (asset.profile.get("uv") or {}).get("lightmap", False)))
+
+
 # ------------------------------------------------------------------ build
 
 
@@ -282,10 +327,20 @@ def build_surface(asset: Asset, corner_uvs_given: dict | None = None) -> Surface
         method = "regions"
     resolution = int(uv_cfg.get("resolution", asset.budget.get("texture_size", 1024)))
     padding = int(uv_cfg.get("padding_px", (asset.profile.get("uv") or {}).get("padding_px", 4)))
+    from . import trim
+
+    trim_cfg = trim.config(asset)
+    if trim_cfg and corner_uvs_given is None:
+        method, resolution = "trim", trim_cfg["size"]
     surface = Surface({}, method, resolution, padding)
     corner_uvs: dict = dict(corner_uvs_given or {})
     if corner_uvs_given is not None:
         pass
+    elif method == "trim":  # Phase 21: the pack's shared trim sheet
+        surface.trim = trim_cfg
+        surface.trim_density = {}
+        for p in atlas_view(asset).parts:
+            corner_uvs[p.name], surface.trim_density[p.name] = trim.corner_uvs(p, trim_cfg)
     elif method in ("regions", "atlas"):
         try:
             corner_uvs = (_unwrap_regions(asset, resolution, padding, surface) if method == "regions"
@@ -294,6 +349,11 @@ def build_surface(asset: Asset, corner_uvs_given: dict | None = None) -> Surface
             surface.uv_error = str(e)
             surface.uv_method = "none"
             corner_uvs = {}
+    uv1 = {}
+    if lightmap_enabled(asset) and corner_uvs_given is None:
+        lm_res = int((asset.uv or {}).get("lightmap_resolution", 1024))
+        uv1 = lightmap_uvs(asset, lm_res, max(4, padding))
+        surface.lightmap_resolution = lm_res
     for p in asset.parts:
         auth = is_authored(asset, p)
         if auth:  # authored textures map through the part's own UVs, unchanged
@@ -305,8 +365,16 @@ def build_surface(asset: Asset, corner_uvs_given: dict | None = None) -> Surface
         cols = [pos.reshape(-1, 3), nrm.reshape(-1, 3)]
         if cuv is not None:
             cols.append(cuv.reshape(-1, 2))
+        c1 = uv1.get(p.name)
+        if c1 is not None:
+            cols.append(c1.reshape(-1, 2))
         col = p.mesh.vattr.get("color")
-        if col is not None:
+        vcol = _vertex_material_colors(asset, p, pos)
+        if vcol is not None:  # Phase 21: `archetype: vertex` materials bake into COLOR_0
+            corner = col[p.mesh.F] if col is not None else np.ones((len(p.mesh.F), 3, 4))
+            cols.append((corner * vcol).reshape(-1, 4))
+            col = np.ones((len(p.mesh.V), 4))  # marks "has colours" below; the per-corner values are in cols
+        elif col is not None:
             cols.append(col[p.mesh.F].reshape(-1, 4))
         key = np.round(np.concatenate(cols, axis=1), 6)
         _, first, inverse = np.unique(key, axis=0, return_index=True, return_inverse=True)
@@ -322,8 +390,10 @@ def build_surface(asset: Asset, corner_uvs_given: dict | None = None) -> Surface
             rank[inverse.reshape(-1)].reshape(-1, 3).astype(np.uint32),
             cuv,
             mats,
-            col[p.mesh.F].reshape(-1, 4)[sel].astype(np.float32) if col is not None else None,
+            cols[-1][sel].astype(np.float32) if col is not None else None,
             surface.owners.get(p.name, p.name),
             auth,
+            cols[3 if cuv is not None else 2][sel].astype(np.float32) if c1 is not None else None,
+            c1,
         )
     return surface

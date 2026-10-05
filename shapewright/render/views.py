@@ -202,7 +202,7 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
         base, rgh, mtl = _surface_samples(asset, surface, parts, pid[hit], uv, tex)
         if tex is not None:
             r = tex.resolution
-            tx = np.clip((uv[:, 0] * r).astype(int), 0, r - 1)
+            tx = np.clip((uv[:, 0] * r).astype(int), 0, r - 1) if surface.uv_method != "trim" else (np.floor(uv[:, 0] * r).astype(int) % r)  # trim sheets repeat in U
             ty = np.clip(((1 - uv[:, 1]) * r).astype(int), 0, r - 1)
         if mode == "roughness":
             col = np.repeat(rgh[:, None], 3, 1)
@@ -474,7 +474,7 @@ def _surface_samples(asset: Asset, surface: Surface, parts, pid: np.ndarray, uv:
     base, rgh, mtl = np.zeros((k, 3)), np.full(k, 0.8), np.zeros(k)
     if tex is not None:
         r = tex.resolution
-        tx = np.clip((uv[:, 0] * r).astype(int), 0, r - 1)
+        tx = np.clip((uv[:, 0] * r).astype(int), 0, r - 1) if surface.uv_method != "trim" else (np.floor(uv[:, 0] * r).astype(int) % r)  # trim sheets repeat in U
         ty = np.clip(((1 - uv[:, 1]) * r).astype(int), 0, r - 1)
         base, rgh, mtl = tex.base[ty, tx].copy(), tex.orm[ty, tx, 1].copy(), tex.orm[ty, tx, 2].copy()
     for i, p in enumerate(parts):

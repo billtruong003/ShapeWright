@@ -218,7 +218,65 @@ def _resolution(asset: Asset, surface: Surface, target: float) -> tuple[int, int
     return res, needed, float(res * np.sqrt(uv_area / max(area3d, 1e-12)))
 
 
+def evaluate_material(asset: Asset, mname: str, mat: dict, P, N, dist, cdist, height, axis, center, part_seed: int, images: dict,
+                      tex: "Textures", mesh=None, bary=None, faces=None, part_name: str | None = None):
+    """One material's recipe (archetype, grime, layers) at surface samples -> (Samples, Channels, base colour).
+    Shared by the per-asset atlas bake and the pack trim sheet (Phase 21)."""
+    arch = M.ARCHETYPES[mat["archetype"]]
+    from .source import parse_color_value
+
+    a = {pp.name: (parse_color_value(pp.default) if pp.kind == "color" else pp.default) for pp in arch.params}
+    a.update(mat["args"])
+    a["color"] = np.asarray(mat["base_color"][:3])
+    s = M.Samples(P, N, np.clip(1 - dist / a["edge_width"], 0, 1), axis, center, part_seed,
+                  cavity=np.clip(1 - cdist / (2 * a["edge_width"]), 0, 1), height=height)
+    ch = M.apply_grime(a, s, arch.fn(a, s))
+    col = ch.base
+    for li, lay in enumerate(mat["layers"]):
+        where = f"materials.{mname}.layers[{li}]"
+        if lay["vertex_color"] and mesh is not None and "color" in mesh.vattr:
+            vc = np.einsum("kc,kcd->kd", bary, mesh.vattr["color"][mesh.F][faces])[:, :3]
+            layer_col = col * vc
+        elif lay["image"]:
+            try:
+                img = images.get(lay["image"])
+                if img is None:
+                    img = images[lay["image"]] = _load_image(asset.dir, lay["image"], asset.file_roots)
+            except (ValueError, OSError) as e:
+                tex.issues.append(("TEX_IMAGE_INVALID", "error", str(e), where, "PNG/JPEG inside the asset directory, within size limits"))
+                continue
+            if lay["projection"] == "uv":
+                if mesh is not None and "uv" in mesh.cattr and "uv" not in mesh.invalidated:
+                    uvs = np.einsum("kc,kcd->kd", bary, mesh.cattr["uv"][faces])
+                    layer_col = _sample(img, uvs[:, 0], uvs[:, 1])
+                    tex.lifecycle[part_name] = "VALID"
+                else:
+                    if part_name is not None:
+                        tex.lifecycle[part_name] = "INVALID"
+                    tex.issues.append(("TEX_UV_SOURCE_MISSING", "warning", f"'{part_name}' has no authored UVs; image projected triplanar instead",
+                                       where, "use projection: triplanar, or a mesh_file part with UVs"))
+                    layer_col = _triplanar(img, P, N, lay["scale"])
+            else:
+                layer_col = _triplanar(img, P, N, lay["scale"])
+            if lay["tint"] is not None:
+                layer_col = layer_col * np.asarray(lay["tint"][:3])
+        else:
+            continue
+        w = np.full(len(P), lay["opacity"])
+        edge_w = s.edge
+        if lay["mask"] == "edge":
+            w = w * edge_w
+        elif lay["mask"] == "inverse_edge":
+            w = w * (1 - edge_w)
+        col = col + (layer_col - col) * w[:, None]
+    return s, ch, col
+
+
 def bake(asset: Asset, surface: Surface) -> Textures | None:
+    if surface.uv_method == "trim":  # Phase 21: every member of the pack shares one trim sheet
+        from . import trim
+
+        return trim.bake(asset, surface.trim)
     if not needs_textures(asset) or surface.uv_method == "none":
         return None
     target = float((asset.uv or {}).get("texel_density") or asset.budget.get("texel_density", 256))
@@ -259,52 +317,8 @@ def bake(asset: Asset, surface: Surface) -> Textures | None:
                 base[texel[sel]] = [0.8, 0.8, 0.8]
                 orm[texel[sel], 1] = 0.8
                 continue
-            arch = M.ARCHETYPES[mat["archetype"]]
-            from .source import parse_color_value
-
-            a = {pp.name: (parse_color_value(pp.default) if pp.kind == "color" else pp.default) for pp in arch.params}
-            a.update(mat["args"])
-            a["color"] = np.asarray(mat["base_color"][:3])
-            s = M.Samples(P[sel], N[sel], np.clip(1 - dist[sel] / a["edge_width"], 0, 1), axis, mesh.center(), part_seed,
-                          cavity=np.clip(1 - cdist[sel] / (2 * a["edge_width"]), 0, 1), height=height[sel])
-            ch = M.apply_grime(a, s, arch.fn(a, s))
-            col = ch.base
-            for li, lay in enumerate(mat["layers"]):
-                where = f"materials.{mname}.layers[{li}]"
-                if lay["vertex_color"] and "color" in mesh.vattr:
-                    vc = np.einsum("kc,kcd->kd", bary[sel], mesh.vattr["color"][mesh.F][fid[sel]])[:, :3]
-                    layer_col = col * vc
-                elif lay["image"]:
-                    try:
-                        img = images.get(lay["image"])
-                        if img is None:
-                            img = images[lay["image"]] = _load_image(asset.dir, lay["image"], asset.file_roots)
-                    except (ValueError, OSError) as e:
-                        tex.issues.append(("TEX_IMAGE_INVALID", "error", str(e), where, "PNG/JPEG inside the asset directory, within size limits"))
-                        continue
-                    if lay["projection"] == "uv":
-                        if "uv" in mesh.cattr and "uv" not in mesh.invalidated:
-                            uvs = np.einsum("kc,kcd->kd", bary[sel], mesh.cattr["uv"][fid[sel]])
-                            layer_col = _sample(img, uvs[:, 0], uvs[:, 1])
-                            tex.lifecycle[p.name] = "VALID"
-                        else:
-                            tex.lifecycle[p.name] = "INVALID"
-                            tex.issues.append(("TEX_UV_SOURCE_MISSING", "warning", f"'{p.name}' has no authored UVs; image projected triplanar instead",
-                                               where, "use projection: triplanar, or a mesh_file part with UVs"))
-                            layer_col = _triplanar(img, P[sel], N[sel], lay["scale"])
-                    else:
-                        layer_col = _triplanar(img, P[sel], N[sel], lay["scale"])
-                    if lay["tint"] is not None:
-                        layer_col = layer_col * np.asarray(lay["tint"][:3])
-                else:
-                    continue
-                w = np.full(sel.sum(), lay["opacity"])
-                edge_w = s.edge
-                if lay["mask"] == "edge":
-                    w = w * edge_w
-                elif lay["mask"] == "inverse_edge":
-                    w = w * (1 - edge_w)
-                col = col + (layer_col - col) * w[:, None]
+            s, ch, col = evaluate_material(asset, mname, mat, P[sel], N[sel], dist[sel], cdist[sel], height[sel], axis, mesh.center(),
+                                           part_seed, images, tex, mesh=mesh, bary=bary[sel], faces=fid[sel], part_name=p.name)
             base[texel[sel]] = np.clip(col, 0, 1)
             orm[texel[sel], 1] = np.clip(ch.roughness, 0, 1)
             orm[texel[sel], 2] = np.clip(ch.metallic, 0, 1)

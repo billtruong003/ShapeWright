@@ -43,16 +43,18 @@ def silhouette_iou(a0: Asset, s0: Surface, a1: Asset, s1: Surface, size: int = 2
     return float(min(ious))
 
 
-def write_lods(asset: Asset, surface: Surface, out: Path, ratios, status: str = "UNKNOWN") -> list[dict]:
+def write_lods(asset: Asset, surface: Surface, out: Path, ratios, status: str = "UNKNOWN", proxies=None) -> list[dict]:
     from ..bake import textures_for
-    from .gltf import write_glb
+    from .gltf import collision_proxies, write_glb
 
     tex = textures_for(asset, surface)
+    if proxies is None:
+        proxies = collision_proxies(asset)  # LOD0's collision in every LOD file
     report = []
     for n, r in enumerate(ratios, start=1):
         a, s = lod_asset(asset, surface, float(r))
         path = out.with_name(f"{out.stem}_LOD{n}.glb")
-        info = write_glb(a, s, path, status, textures=tex)
+        info = write_glb(a, s, path, status, textures=tex, collision=proxies)
         iou = silhouette_iou(asset, surface, a, s)
         report.append({"lod": n, "ratio": float(r), "path": str(path), "triangles": a.n_tris, "silhouette_iou": round(iou, 3),
                        "bytes": info["bytes"]})

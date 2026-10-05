@@ -230,6 +230,34 @@ def is_closed_manifold(mesh: Mesh) -> bool:
         return False
 
 
+def close_vertex_pairs(V: np.ndarray, dist: float) -> np.ndarray:
+    """(k,2) index pairs of points closer than `dist` (merge by distance)."""
+    from scipy.spatial import cKDTree
+
+    return cKDTree(np.asarray(V, dtype=np.float64)).query_pairs(dist, output_type="ndarray")
+
+
+def hull_planes(points) -> tuple[np.ndarray, np.ndarray, float] | None:
+    """Convex hull of a point set as (hull vertices, plane equations (k,4) with outward normals, volume);
+    None for flat or degenerate sets."""
+    from scipy.spatial import ConvexHull, QhullError
+
+    P = np.asarray(points, dtype=np.float64)
+    try:
+        h = ConvexHull(P)
+    except (QhullError, ValueError):
+        return None
+    return P[h.vertices], h.equations, float(h.volume)
+
+
+def closed_volume(mesh: Mesh) -> float | None:
+    """Enclosed volume of a watertight mesh, None when it is open."""
+    import trimesh
+
+    m = trimesh.Trimesh(mesh.V, mesh.F, process=False)
+    return abs(float(m.volume)) if m.is_watertight else None
+
+
 # ---------------------------------------------------------------- generators (policy: generate)
 
 
@@ -238,6 +266,31 @@ def convex_hull(points) -> Mesh:
 
     h = trimesh.convex.convex_hull(np.asarray(points, dtype=np.float64))
     return Mesh(h.vertices, h.faces)
+
+
+def collision_hull(points) -> Mesh:
+    """A convex collision proxy: Qhull directly, faces wound outward. (trimesh.convex.convex_hull repairs winding
+    through networkx, which is not a dependency: some hulls crashed the export, Phase 21.) Modelling keeps
+    convex_hull, so golden geometry is unchanged."""
+    from scipy.spatial import ConvexHull, QhullError
+
+    P = np.asarray(points, dtype=np.float64)
+    try:
+        h = ConvexHull(P)
+    except (QhullError, ValueError):
+        try:  # flat or nearly flat set: joggled input still gives a closed hull
+            h = ConvexHull(P, qhull_options="QJ")
+        except (QhullError, ValueError):  # too few points: a 1 mm thick box around them
+            lo, hi = P.min(0), P.max(0)
+            pad = np.maximum(0.0005 - (hi - lo) / 2, 0.0)
+            return box_bounds(np.stack([lo - pad, hi + pad]))
+    F = h.simplices.copy()
+    T = P[F]
+    n = np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0])
+    flip = np.einsum("ij,ij->i", n, h.equations[:, :3]) < 0  # Qhull's plane normals point outward
+    F[flip] = F[flip][:, ::-1]
+    used, F = np.unique(F, return_inverse=True)
+    return Mesh(P[used], F.reshape(-1, 3))
 
 
 def box(extents) -> Mesh:

@@ -2,6 +2,13 @@
 
 Newest first. Generated from the phase records by `tools/site/changelog.py`; each entry links to its record (what shipped, evidence, the gate table and what is not done).
 
+## Phase 21: shared surfaces and runtime (track F)
+
+- **Verdict:** PASS with exceptions (module texel density lower, 218 hulls; M2 re-run left)
+- **Branch:** `phase/21-shared-surfaces`
+- **Record:** [docs/phases/PHASE_21.md](docs/phases/PHASE_21.md)
+- All six tasks shipped with tests (`tests/test_shared_surfaces.py`). The memory (−83.8 %), LOD, doorway and lightmap gates are met. Texel density went up on the houses but down on 20 of the 26 small modules, and the workshop collider has 218 hulls, not 8 or 24.
+
 ## Release 1.0.0
 
 - **Verdict:** PASS (PyPI waits for the owner)

@@ -200,7 +200,7 @@ def render_beauty(asset: Asset, surface: Surface, view: str | View = "front_righ
     if tex is not None:
         uv = buf.extra[hp][:, :2]
         r = tex.resolution
-        tx = np.clip((uv[:, 0] * r).astype(int), 0, r - 1)
+        tx = np.clip((uv[:, 0] * r).astype(int), 0, r - 1) if surface.uv_method != "trim" else (np.floor(uv[:, 0] * r).astype(int) % r)  # trim sheets repeat in U
         ty = np.clip(((1 - uv[:, 1]) * r).astype(int), 0, r - 1)
         atlas = np.array([not surface.parts[parts[i].name].authored for i in pid[hp]])
         baked_ao = np.where(atlas, tex.orm[ty, tx, 0], 1.0)

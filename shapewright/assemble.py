@@ -242,6 +242,7 @@ def build_geometry(raw: Any, env: dict, ctx: S.Ctx, where: str, asset_dir: Path 
 
     keep_origin: ops still run about the centre, but the result is moved back to where the
     generator put it (authoring coordinates: tube paths, strut ends)."""
+    load_builtin()  # callable on its own (the registry is otherwise filled by build())
     spec = S.shape_spec(raw, where, ctx)
     if spec is None:
         return None

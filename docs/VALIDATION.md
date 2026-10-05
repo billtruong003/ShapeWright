@@ -61,6 +61,7 @@ warnings. It never produces errors, because style is a judgement call.
 | `GEO_INVERTED` | error | closed surface with inward normals |
 | `GEO_DEGENERATE_FACES` | error | zero-area triangles |
 | `GEO_DUPLICATE_FACES` | error | the same triangle twice |
+| `GEO_DUPLICATE_SURFACE` | warning | faces repeating another face's position with their own vertices (an unwelded copy, typical of imports): z-fighting, doubled triangles. Fix: `{type: clean, weld_distance: 0.0005}` |
 | `GEO_PART_FRAGMENTED` | info | a part consists of several disconnected shells (expected for `combine`, `repeat`, multi-shell files) |
 | `GEO_CUT_SPLIT` | warning | a subtract/intersect/boolean/flat_bottom cut split a piece into several (reported at the op) |
 | `GEO_SLIVER_TRIS` | info | more than 25% very thin triangles (shading artefacts) |
@@ -102,7 +103,11 @@ warnings. It never produces errors, because style is a judgement call.
 | `UV_MISSING` | warning | no UVs (`uv.method: none` or xatlas unavailable) |
 | `UV_OUT_OF_BOUNDS` | error | UVs outside 0..1 |
 | `UV_OVERLAP` | error | more than 0.2% of used UV area covered twice (rasterized at up to 1024²) |
-| `UV_TEXEL_DENSITY` | warning | texel density differs by more than 1.5x between parts |
+| `UV_TEXEL_DENSITY` | warning | texel density differs by more than 1.5x between parts (on a pack trim sheet: a face taller than its strip was scaled down) |
+| `LIGHTMAP_UV_MISSING` | error | lightmaps are on (`uv.lightmap` or the profile) but a part has no `TEXCOORD_1` |
+| `LIGHTMAP_UV_OVERLAP` | error | more than 0.2% of the used lightmap UV area is covered twice, or lightmap UVs leave 0..1 |
+| `LIGHTMAP_UV_DENSITY` | warning | lightmap texel density differs by more than 2x between parts |
+| `VERTEX_COLOR_MIXED` | warning | `archetype: vertex` materials next to textured ones: the asset still needs a texture |
 | `NRM_FLIPPED` | error | vertex normals oppose their face |
 | `UV_LOCK_STALE` | warning | `uv.lock.yaml` does not match the parts; regions recomputed (re-lock) |
 | `UV_REGION_REGENERATED` | info | these parts changed since the lock; their charts were regenerated inside their fixed regions |
@@ -111,7 +116,7 @@ warnings. It never produces errors, because style is a judgement call.
 
 | `BUDGET_DRAW_CALLS` | warning | primitives in the exported file exceed `budget.draw_calls` (see `export.merge`) |
 | `COLLISION_PROXIES` | warning | more than 32 per-part collision proxies; use `single_hull` or `collision.parts` |
-| `LOD_SILHOUETTE` | warning | an LOD file keeps < 90% of LOD0's silhouette in its worst view (export layer) |
+| `LOD_SILHOUETTE` | warning | an LOD file keeps less of LOD0's silhouette than it should in its worst view: LOD1 < 95 %, further LODs < 90 % (export layer) |
 | `OP_DECIMATE_LIMITED` / `OP_DECIMATE_OPENED` | warning | decimate stalled above its target / opened a closed surface |
 | `TEX_AUTHORED_IMAGE_INVALID` | error | an authored (imported) texture is missing, outside the asset directory or too large |
 | `TEX_AUTHORED_UV_MISSING` | error | a part with an authored material lost its UVs (a boolean dropped them) |
