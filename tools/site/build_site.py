@@ -68,7 +68,7 @@ def reference():
 
 def gallery():
     from shapewright.assemble import build
-    from shapewright.render.views import render
+    from shapewright.render.beauty import render_beauty
     from shapewright.surface import build_surface
 
     models, img = SITE / "gallery" / "models", SITE / "gallery" / "img"
@@ -85,7 +85,7 @@ def gallery():
             print(f"skip {name}: {res.stdout[-200:]}")
             continue
         a = build(ROOT / "assets" / name)
-        render(a, build_surface(a), "front_right", "textured", 480).save(img / f"{name}.png")
+        render_beauty(a, build_surface(a), "front_right", 480).save(img / f"{name}.png")  # poster: presentation render
         # the page is served at /gallery/, next to gallery/models and gallery/img; the <img> in the poster slot is also
         # what readers see when the model-viewer script cannot load
         page += [f'<figure markdown><model-viewer src="models/{name}.glb" camera-controls '

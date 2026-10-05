@@ -86,6 +86,7 @@ def main(out: Path):
         if a in HOUSES:
             for v in ("front_right", "back_left", "front"):
                 render(asset, surf, v, "textured", 900).save(out / "renders" / f"{a}_{v}.png")
+                render(asset, surf, v, "beauty", 900).save(out / "renders" / f"{a}_{v}_beauty.png")
 
     # ---- contact sheets per module group
     for g, names in GROUPS.items():

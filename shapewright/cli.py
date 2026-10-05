@@ -225,7 +225,17 @@ def cmd_render(a):
             return 2
     paths = []
     suffix = ("_" + "_".join(focus)) if focus else ""
-    if a.sheet:
+    if a.turntable or a.present:
+        from .render import beauty
+
+        if a.turntable:
+            paths += beauty.save_turntable(beauty.turntable(asset, surface, max(4, min(a.turntable, 72)), min(size, 512)),
+                                           out_dir / "turntable.gif")
+        if a.present:
+            p = out_dir / "present.png"
+            beauty.present_sheet(asset, surface, max(size // 2, 256), focus).save(p)
+            paths.append(p)
+    elif a.sheet:
         p = out_dir / f"sheet{suffix}.png"
         contact_sheet(asset, surface, tile=max(size // 2, 192), focus=focus).save(p)
         paths.append(p)
@@ -242,7 +252,7 @@ def cmd_render(a):
                 if v == "uv" or m == "uv":
                     img, p = render_uv(asset, surface, size, focus), out_dir / f"uv{suffix}.png"
                 else:
-                    img = render(asset, surface, v, m, size, focus=focus, isolate=a.isolate)
+                    img = render(asset, surface, v, m, size, focus=focus, isolate=a.isolate, scale_ref=a.scale_ref)
                     p = out_dir / f"{v}_{m}{suffix}{'_iso' if a.isolate else ''}.png"
                 img.save(p)
                 paths.append(p)
@@ -649,7 +659,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--verbose", "-v", action="store_true")
     p = add("render", cmd_render, "inspection images")
     p.add_argument("--view", action="append", help="front back left right top bottom front_right front_left back_right back_left low_front uv")
-    p.add_argument("--mode", action="append", help="clay parts material wire normals silhouette provenance regions textured albedo roughness metallic texel seams")
+    p.add_argument("--mode", action="append", help="clay parts material wire normals silhouette provenance regions textured albedo roughness metallic texel seams; "
+                   "beauty = presentation render (shadows, AO; for README/portfolio images)")
+    p.add_argument("--turntable", type=int, metavar="N", help="N beauty frames around the asset -> renders/turntable.gif (+ .mp4 with imageio-ffmpeg)")
+    p.add_argument("--present", action="store_true", help="presentation sheet -> renders/present.png (beauty views, details: --part, wireframe, palette)")
+    p.add_argument("--scale-ref", action="store_true", help="orthographic side views: a 1.75 m human figure and overall dimension lines")
     p.add_argument("--part", action="append", help="highlight part(s): source or instance names; repeat or comma-separate")
     p.add_argument("--isolate", action="store_true", help="render only the --part parts")
     p.add_argument("--sheet", action="store_true", help="contact sheet of standard views")

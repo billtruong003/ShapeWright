@@ -15,7 +15,7 @@
 
 An asset is a short YAML file of **named parts, parameters and design checks**. Shapewright turns it into a mesh, **validates** it in 8 layers, **renders** inspection sheets that the agent looks at, and **exports** a game-ready GLB for Godot, Unity, Unreal or the web. It needs no GPU, no display and no Blender, and the same source always gives the same bytes.
 
-![Assets made with Shapewright](docs/images/readme_gallery.png)
+![Assets made with Shapewright (beauty renders)](docs/images/readme_gallery.png)
 
 ---
 
@@ -68,6 +68,7 @@ sw export my_barrel --target godot           # -> assets/my_barrel/export/my_bar
 | **Surfaces** | material archetypes (wood, stone, metal, painted, flat, authored) baked to base colour + ORM atlases; stable UVs (`uv.lock.yaml`) | [SURFACES](docs/SURFACES.md) · [UV](docs/UV.md) |
 | **Validation** | 8 layers (source, geometry, assembly, budget, intent, surface, style, export) with stable issue codes and hints; **z-fighting between parts**, displacement that inverts faces, floating or contact-only parts | [codes](https://billtruong003.github.io/ShapeWright/reference/codes/) · [VALIDATION](docs/VALIDATION.md) |
 | **Inspection** | deterministic CPU renderer, 11 views, 14 modes (clay, parts, textured, wire, texel, seams, …), contact sheets, iteration snapshots and compare images | [AGENT_WORKFLOW](docs/AGENT_WORKFLOW.md) |
+| **Presentation** | `beauty` mode (key/fill/rim light, shadows, ambient occlusion, contact shadow, tone mapping), turntable GIF, presentation sheet, 1.75 m scale reference; CPU-only and deterministic | [Presentation renders](https://billtruong003.github.io/ShapeWright/use-cases/presentation/) |
 | **Export** | GLB with named nodes, pivots, sockets, collision proxies and LODs; merge by material for draw calls; Godot, Unity and Unreal targets; 8 budget profiles (mobile, VR, web, desktop) | [PRODUCTION](docs/PRODUCTION.md) · [profiles](https://billtruong003.github.io/ShapeWright/reference/profiles/) |
 | **Import** | GLB, OBJ, STL and PLY with materials and textures kept; `clean` repair; UV-preserving `decimate` | [IMPORT](docs/IMPORT.md) |
 | **Agents** | `sw brief` (closest example + rules), `llms.txt`, MCP server, Claude Code skill, workbench for people | [AGENTS.md](AGENTS.md) |
@@ -116,7 +117,7 @@ Use Blender for sculpting, rigging and hero renders. Use Shapewright when you ne
 - packs and kits that stay consistent;
 - headless runs in cloud and CI.
 
-The plan is to add headless Blender as an optional backend for remeshing, rigging and renders ([plan](docs/PHASE_PLAN_16.md)).
+Characters (organic forms, rigging) are planned natively too, with no Blender dependency ([plan](docs/REMAINING_WORK.md)).
 
 ## How it was built and tested
 

@@ -41,6 +41,7 @@ nav:
       - Import and repair an existing model: use-cases/import-repair.md
       - Tight budgets (VR, mobile, web): use-cases/budgets.md
       - Assets in CI: use-cases/ci.md
+      - Presentation renders: use-cases/presentation.md
   - Gallery: gallery.md
   - Concepts:
       - The loop: concepts/loop.md

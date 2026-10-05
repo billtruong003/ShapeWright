@@ -72,6 +72,7 @@ MODES = {
     "metallic": "baked metallic as grey (white = metal)",
     "texel": "checker at 8x8 texels: stretching and texel-density differences show as uneven squares",
     "seams": "base colour with UV chart borders in red (seam placement)",
+    "beauty": "presentation render: key/fill/rim light, shadows, ambient occlusion, contact shadow, tone mapping (README/portfolio images, not inspection)",
 }
 TEXTURE_MODES = {"textured", "albedo", "roughness", "metallic", "texel", "seams"}
 FOV = 30.0
@@ -140,7 +141,11 @@ def _srgb(c):
 
 def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode: str = "clay", size: int = 512,
            focus: list[str] | None = None, isolate: bool = False, frame: np.ndarray | None = None,
-           supersample: int = 2, annotate: bool = True, label: str = "") -> Image.Image:
+           supersample: int = 2, annotate: bool = True, label: str = "", scale_ref: bool = False) -> Image.Image:
+    if mode == "beauty":
+        from .beauty import render_beauty
+
+        return render_beauty(asset, surface, view_name, size, frame=frame, label=label if annotate else "")
     view = VIEWS[view_name]
     W = H = size * supersample
     parts = asset.parts
@@ -150,6 +155,9 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
     if isolate and focus_set:
         parts = [p for p in parts if p.name in focus_set]
     bounds = frame if frame is not None else (np.stack([np.min([p.bounds[0] for p in parts], 0), np.max([p.bounds[1] for p in parts], 0)]))
+    figure = None
+    if scale_ref and view.name in ("front", "back", "left", "right"):
+        figure, bounds = _scale_figure(view, bounds)
     cam = Camera(view, bounds, W, H)
 
     tex = None
@@ -301,6 +309,8 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
     out = Image.fromarray((np.clip(img, 0, 1) * 255 + 0.5).astype(np.uint8)).resize((size, size), Image.LANCZOS)
     if annotate:
         _annotate(out, asset, cam, parts, view, mode, focus_set, supersample, label)
+    if figure is not None:
+        _draw_scale_ref(out, cam, figure, supersample)
         if mode in ("provenance", "regions") and legend:
             d = ImageDraw.Draw(out)
             y = 36 if focus_set else 22
@@ -309,6 +319,63 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
                 d.text((20, y), name[-48:], fill=(30, 30, 30), font=_font(max(10, size // 42)))
                 y += max(13, size // 34)
     return out
+
+
+HUMAN_M = 1.75
+
+
+def _scale_figure(view: View, bounds: np.ndarray):
+    """Where a 1.75 m human figure stands beside the asset in an orthographic side view, and the framing that includes it."""
+    d = np.asarray(view.direction, dtype=float)
+    right = np.cross(-d, np.asarray(view.up, dtype=float))
+    right /= np.linalg.norm(right)
+    c = (bounds[0] + bounds[1]) / 2
+    corners = np.array([[bounds[i][0], bounds[j][1], bounds[k][2]] for i in (0, 1) for j in (0, 1) for k in (0, 1)])
+    ext = np.abs((corners - c) @ right).max()
+    ground = min(float(bounds[0][1]), 0.0)
+    foot = np.array([c[0], ground, c[2]]) + right * (ext + 0.15 + 0.25)
+    pts = np.array([foot - right * 0.3, foot + right * 0.3, foot + [0, HUMAN_M, 0]])
+    framed = np.stack([np.minimum(bounds[0], pts.min(0)), np.maximum(bounds[1], pts.max(0))])
+    return {"foot": foot, "right": right, "asset": bounds, "ground": ground}, framed
+
+
+def _draw_scale_ref(img: Image.Image, cam: "Camera", fig: dict, ss: int):
+    """A neutral 1.75 m figure and the asset's overall width and height as dimension lines."""
+    d = ImageDraw.Draw(img)
+    size = img.size[0]
+    font = _font(max(10, size // 42))
+    r, f = fig["right"], fig["foot"]
+
+    def sp(P):
+        xy, _ = cam.project(np.asarray(P, dtype=float)[None])
+        return tuple(xy[0] / ss)
+    up = np.array([0, 1.0, 0])
+    body = [f + r * -0.09, f + r * -0.11 + up * 0.85, f + r * -0.21 + up * 1.42, f + r * -0.07 + up * 1.5, f + r * 0.07 + up * 1.5,
+            f + r * 0.21 + up * 1.42, f + r * 0.11 + up * 0.85, f + r * 0.09]
+    grey = (125, 125, 125)
+    d.polygon([sp(P) for P in body], fill=grey)
+    hc, hr = sp(f + up * 1.635), abs(sp(f + up * 1.635 + r * 0.08)[0] - sp(f + up * 1.635)[0])
+    d.ellipse([hc[0] - hr, hc[1] - hr * 1.4, hc[0] + hr, hc[1] + hr * 1.4], fill=grey)
+    d.text((sp(f + up * HUMAN_M)[0] - 14, sp(f + up * HUMAN_M)[1] - 16), f"{HUMAN_M:.2f} m", fill=(90, 90, 90), font=font)
+    b = fig["asset"]
+    corners = np.array([[b[i][0], b[j][1], b[k][2]] for i in (0, 1) for j in (0, 1) for k in (0, 1)])
+    c = (b[0] + b[1]) / 2
+    along = (corners - c) @ r
+    lo, hi = c + r * along.min(), c + r * along.max()
+    gy = np.array([0, fig["ground"] - 0.04 * max(b[1][1] - b[0][1], 0.2), 0])
+    a1, a2 = sp(np.array([lo[0], 0, lo[2]]) + gy), sp(np.array([hi[0], 0, hi[2]]) + gy)
+    ink = (60, 90, 150)
+    d.line([a1, a2], fill=ink, width=1)
+    for q in (a1, a2):
+        d.line([(q[0], q[1] - 4), (q[0], q[1] + 4)], fill=ink, width=1)
+    w = float(along.max() - along.min())
+    d.text(((a1[0] + a2[0]) / 2 - 18, a1[1] + 3), f"{w:.2f} m", fill=ink, font=font)
+    lx = c - r * (abs(along.min()) + 0.04 * max(w, 0.2))
+    h1, h2 = sp(np.array([lx[0], b[0][1], lx[2]])), sp(np.array([lx[0], b[1][1], lx[2]]))
+    d.line([h1, h2], fill=ink, width=1)
+    for q in (h1, h2):
+        d.line([(q[0] - 4, q[1]), (q[0] + 4, q[1])], fill=ink, width=1)
+    d.text((h1[0] - 46, (h1[1] + h2[1]) / 2 - 6), f"{b[1][1] - b[0][1]:.2f} m", fill=ink, font=font)
 
 
 def _annotate(img: Image.Image, asset: Asset, cam: Camera, parts, view: View, mode: str, focus_set, ss: int, label: str):

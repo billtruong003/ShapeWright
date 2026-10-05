@@ -18,10 +18,10 @@ Nothing is left out. The earlier figures (87 % and 83 %) counted fewer items, wh
 
 | scope | done | remaining | **progress** |
 |---|---|---|---|
-| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 46 | 9.75 | **≈ 83 %** |
-| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 46 | 13.75 | **≈ 77 %** |
-| **planned roadmap** (+ track G: native character track) | 46 | 25.75 | **≈ 64 %** |
-| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 46 | ≈ 36.75 | **≈ 56 %** |
+| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 48.25 | 7.5 | **≈ 87 %** |
+| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 48.25 | 11.5 | **≈ 81 %** |
+| **planned roadmap** (+ track G: native character track) | 48.25 | 23.5 | **≈ 67 %** |
+| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 48.25 | ≈ 34.5 | **≈ 58 %** |
 
 The figures dropped from 80 / 74 / 62 / 54 % because two decisions on 2026-10-05 added work:
 - **Track W** (3 points): the workbench gets a three.js 3D viewer (list, view modes, save, export, click-to-comment).
@@ -48,12 +48,12 @@ Tick `[x]` here in the commit that finishes a task.
 | [x] | B4 | Rebuild `modular_house_pack/` bundle + metrics | 0.2 | B3 | agent |
 | [x] | B5 | `asset:` instances import the instanced asset's sockets | 0.1 | — | agent |
 | [x] | B6 | Window-size family in the kit (`house_wall_window` `win_size` small/standard/tall) | 0.5 | B1 | agent |
-| [ ] | R1 | `beauty` render mode: 3-point light, shadow map, AO, contact shadow, tone map, 4× AA | 1.0 | — | agent |
-| [ ] | R2 | Turntable GIF/MP4 (`--turntable N`) | 0.25 | R1 | agent |
-| [ ] | R3 | Presentation sheet (`sw sheet --present`): views, details, wireframe, silhouette, palette | 0.5 | R1 | agent |
-| [ ] | R4 | Regenerate README, gallery, home hero and bundle renders in beauty mode | 0.15 | R1–R3, B4 | agent |
-| [ ] | R5 | MCP `render` accepts `beauty`; docs page; llms.txt | 0.1 | R1 | agent |
-| [ ] | R6 | Human-scale silhouette + dimension overlay in orthographic review views (ROADMAP Stage 3) | 0.25 | — | agent |
+| [x] | R1 | `beauty` render mode: 3-point light, shadow map, AO, contact shadow, tone map, 4× AA | 1.0 | — | agent |
+| [x] | R2 | Turntable GIF/MP4 (`--turntable N`) | 0.25 | R1 | agent |
+| [x] | R3 | Presentation sheet (`sw sheet --present`): views, details, wireframe, silhouette, palette | 0.5 | R1 | agent |
+| [x] | R4 | Regenerate README, gallery, home hero and bundle renders in beauty mode | 0.15 | R1–R3, B4 | agent |
+| [x] | R5 | MCP `render` accepts `beauty`; docs page; llms.txt | 0.1 | R1 | agent |
+| [x] | R6 | Human-scale silhouette + dimension overlay in orthographic review views (ROADMAP Stage 3) | 0.25 | — | agent |
 | [ ] | W1 | Workbench 3D viewer: three.js vendored in the package, GLB view, orbit, lights, ground grid, 1.75 m scale figure | 0.5 | A3 | agent |
 | [ ] | W2 | Viewer modes: textured, clay, wireframe, normals, UV checker, UV layout (2D), colour by part / material, texel density | 0.75 | W1 | agent |
 | [ ] | W3 | Model list: thumbnail grid, PASS/WARN/FAIL badge, tris, build date, filter (library / project / pack) | 0.25 | W1 | agent |
@@ -91,7 +91,7 @@ Tick `[x]` here in the commit that finishes a task.
 | [ ] | G5 | Procedural clips: idle bob, walk cycle, wave, from the skeleton template | 1.5 | G4 | agent |
 | [ ] | H* | Long-term backlog (§11): plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village, optional Blender/three.js beauty renders | ≈ 11 | — | later |
 
-Done so far (46 points):
+Done so far (48.25 points):
 
 | work | points |
 |---|---|
@@ -107,6 +107,7 @@ Done so far (46 points):
 | docs and README polish | 2 |
 | Phase 20b cleanup (track A) | 1.5 |
 | Phase 19b kit complete (track B) | 2.5 |
+| Phase 25a presentation renders (track R) | 2.25 |
 
 ## 2b. Rules for every task
 

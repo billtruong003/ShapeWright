@@ -25,7 +25,7 @@ NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_\-]{0,63}$")
 PARAM_SETS = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=[^,;&|`$<>]+(,[A-Za-z_][A-Za-z0-9_]*=[^,;&|`$<>]+)*$")
 VIEWS = ("front", "back", "left", "right", "top", "bottom", "front_right", "front_left", "back_right", "back_left", "low_front")
 MODES = ("clay", "parts", "material", "wire", "normals", "silhouette", "provenance", "regions", "textured", "albedo",
-         "roughness", "metallic", "texel", "seams")
+         "roughness", "metallic", "texel", "seams", "beauty")
 TARGETS = ("generic", "godot", "unity", "unreal")
 TIMEOUT_S = 600
 MAX_SOURCE_BYTES = 512 * 1024
@@ -185,7 +185,8 @@ def review(name: str) -> tuple[str, Path | None]:
 
 def render(name: str, view: str = "front_right", mode: str = "textured", part: str = "") -> tuple[str, Path | None]:
     """One inspection image. view: front, back, left, right, top, bottom, front_right, front_left, back_right, back_left,
-    low_front. mode: clay, parts, material, wire, normals, silhouette, textured, albedo, roughness, metallic, texel, seams..."""
+    low_front. mode: clay, parts, material, wire, normals, silhouette, textured, albedo, roughness, metallic, texel, seams...;
+    beauty = presentation render (shadows, ambient occlusion) for showing a finished asset, not for inspection"""
     _find(name)
     if view not in VIEWS or mode not in MODES:
         raise ToolError(f"view must be one of {VIEWS}; mode one of {MODES}")
