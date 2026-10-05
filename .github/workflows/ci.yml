@@ -1,6 +1,6 @@
 name: ci
 on:
-  push: {branches: [main]}
+  push: {branches: [main, "phase/**", "release/**"]}
   pull_request:
 jobs:
   lint:
@@ -26,6 +26,9 @@ jobs:
         with: {python-version: "3.11"}
       - run: pip install -r requirements.txt "mcp>=1.10"
       - run: python -m pytest -q
+      - if: runner.os == 'Windows'
+        shell: cmd
+        run: sw.cmd doctor
       # this OS's exact golden hashes, for `python tests/update_golden.py --merge` (tests/golden.py)
       - if: always()
         run: python tests/update_golden.py

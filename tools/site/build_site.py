@@ -9,7 +9,6 @@ Writes (all git-ignored, regenerated in CI):
 
 from __future__ import annotations
 
-import json
 import subprocess
 import sys
 from pathlib import Path
@@ -67,26 +66,6 @@ def reference():
     (SITE / "reference" / "profiles.md").write_text("\n".join(prof) + "\n")
 
 
-def _strip_collision(src: Path, dst: Path):
-    """Web viewers draw every mesh; engines hide collision proxies by name. Drop COL_/UCX_/-colonly nodes from the scene."""
-    import struct
-
-    data = src.read_bytes()
-    jlen = struct.unpack("<I", data[12:16])[0]
-    doc = json.loads(data[20:20 + jlen])
-    bad = {i for i, n in enumerate(doc.get("nodes", [])) if str(n.get("name", "")).startswith(("COL_", "UCX_"))
-           or str(n.get("name", "")).endswith(("-colonly", "-convcolonly"))}
-    for holder in doc.get("scenes", []) + doc.get("nodes", []):
-        key = "nodes" if "nodes" in holder else "children"
-        if key in holder:
-            holder[key] = [c for c in holder[key] if c not in bad]
-    js = json.dumps(doc, separators=(",", ":")).encode()
-    js += b" " * (-len(js) % 4)
-    rest = data[20 + jlen:]
-    total = 12 + 8 + len(js) + len(rest)
-    dst.write_bytes(data[:8] + struct.pack("<I", total) + struct.pack("<I", len(js)) + b"JSON" + js + rest)
-
-
 def gallery():
     from shapewright.assemble import build
     from shapewright.render.views import render
@@ -98,16 +77,13 @@ def gallery():
     page = ["# Gallery", "", "Every asset below was written as source by an agent and exported by `sw export`. Drag to orbit; the "
             "source link opens its `asset.yaml`.", "", '<div class="grid" markdown>', ""]
     for name, caption in GALLERY:
-        glb = ROOT / "assets" / name / "export" / f"{name}.glb"
-        bundled = ROOT / "modular_house_pack" / "demo_houses" / f"{name}.glb"
-        src = glb if glb.exists() else bundled if bundled.exists() else None
-        if src is None:
-            res = subprocess.run([sys.executable, "-m", "shapewright", "export", name], cwd=ROOT, capture_output=True, text=True)
-            src = glb if glb.exists() else None
-            if src is None:
-                print(f"skip {name}: {res.stdout[-200:]}")
-                continue
-        _strip_collision(src, models / f"{name}.glb")
+        dst = models / f"{name}.glb"  # web viewers draw every mesh: the preview export has no collision proxies
+        res = subprocess.run([sys.executable, "-m", "shapewright", "export", name, "--preview", "--out", str(dst)],
+                             cwd=ROOT, capture_output=True, text=True)
+        dst.with_suffix(".report.json").unlink(missing_ok=True)
+        if not dst.exists():
+            print(f"skip {name}: {res.stdout[-200:]}")
+            continue
         a = build(ROOT / "assets" / name)
         render(a, build_surface(a), "front_right", "textured", 480).save(img / f"{name}.png")
         # the page is served at /gallery/, next to gallery/models and gallery/img; the <img> in the poster slot is also

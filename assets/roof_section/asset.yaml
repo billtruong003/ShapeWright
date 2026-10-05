@@ -62,7 +62,7 @@ parts:
     doc: beam along each eave that the rafters bear on (the roof's contact with the wall tops, y = 0)
     shape: {type: chamfer_box, size: [module_w - 0.002, plate_h, plate_w], chamfer: 0.012}
     anchor: bottom_front
-    position: [0, 0, half]
+    position: [0, 0, half - 0.004]          # rafter feet overhang the plate face by 4 mm (no shared face)
     mirror: z
     material: timber
 

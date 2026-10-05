@@ -121,9 +121,14 @@ class Asset:
         return self.path.parent
 
     @property
+    def out_dir(self) -> Path:
+        """Where build products go (paths.out_dir: library examples write into the project, not the library)."""
+        return paths.out_dir(self.dir)
+
+    @property
     def build_dir(self) -> Path:
-        d = self.dir / ".build"
-        d.mkdir(exist_ok=True)
+        d = self.out_dir / ".build"
+        d.mkdir(parents=True, exist_ok=True)
         return d
 
 
@@ -1341,10 +1346,16 @@ def build(path: str | Path, data: dict | None = None) -> Asset:
     from .ops.sources import FILE_ROOTS
 
     token = FILE_ROOTS.set(())
+    src = Path(path) / "asset.yaml" if Path(path).is_dir() else Path(path)
     try:
-        return _build(path, FILE_ROOTS, data)
+        asset = _build(path, FILE_ROOTS, data)
+    except SourceError as e:
+        S.locate(e.issues, src)
+        raise
     finally:
         FILE_ROOTS.reset(token)
+    S.locate(asset.issues, src)
+    return asset
 
 
 def _build(path: str | Path, file_roots_var, preloaded: dict | None = None) -> Asset:

@@ -59,7 +59,7 @@ parts:
     material: wood_dark
 
   cross_stretcher:
-    shape: {type: chamfer_box, size: [length - 0.24, 0.05, 0.05], chamfer: 0.008}
+    shape: {type: chamfer_box, size: [length - 0.24, 0.044, 0.044], chamfer: 0.008}   # 3 mm slimmer than the stretchers it joins
     position: [0, 0.14, 0]
     material: wood_dark
 

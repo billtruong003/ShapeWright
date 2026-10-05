@@ -328,7 +328,7 @@ parts:
         - [0.3, bowl2_y + 0.14]
         - [0, bowl2_y + 0.12]
       ops:
-        - {type: intersect, shape: *wedge, position: [0, 0, 1.599]}   # apex 1 mm past the axis: avoids a non-manifold pole edge
+        - {type: intersect, shape: *wedge, position: [0, 0, 1.6005]}   # apex 0.5 mm short of the axis: no pole edge, and neighbours do not overlap (z-fight)
     origin: keep
     array: {count: n_stone, radial: y, center: [0, 0, 0]}
     uv: {share_instances: true}

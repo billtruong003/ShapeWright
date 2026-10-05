@@ -105,7 +105,7 @@ parts:
     doc: iron axles joining each wheel pair
     measure:
       w: {bounds: wheel_front_right}
-    shape: {type: cylinder, radius: axle_r + 0.004, height: 2 * w.max.x, segments: 8}
+    shape: {type: cylinder, radius: axle_r + 0.004, height: 2 * w.max.x + 0.006, segments: 8}   # ends 3 mm proud of the hubs
     rotate: [0, 0, 90]
     position: [0, w.center.y, w.center.z]
     mirror: z

@@ -26,7 +26,9 @@ from .validate.run import run_validation
 
 
 def history_dir(asset_path: Path) -> Path:
-    return asset_path.parent / "history"
+    from . import paths
+
+    return paths.out_dir(asset_path.parent) / "history"
 
 
 def iterations(asset_path: Path) -> list[Path]:
@@ -66,7 +68,7 @@ def restore(asset_path: Path, n: int) -> Path:
     d = history_dir(asset_path) / f"{n:03d}"
     if not d.exists():
         raise FileNotFoundError(f"iteration {n} not found")
-    backup = asset_path.parent / ".build" / "asset.before_restore.yaml"
+    backup = asset_path.parent / ".build" / "asset.before_restore.yaml"  # restore edits the source: it is never a library example
     backup.parent.mkdir(exist_ok=True)
     shutil.copy(asset_path, backup)
     shutil.copy(d / "source.yaml", asset_path)

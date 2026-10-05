@@ -6,6 +6,9 @@ other platforms fall back to the signature check until someone runs this script 
 
   python tests/update_golden.py --merge golden-*.json   take other platforms' hashes (CI artifacts `golden-<os>`)
                                                         where their signatures agree; nothing is rebuilt
+  python tests/update_golden.py --changed a,b          these assets changed on purpose: drop the other platforms'
+                                                        hashes even when the signature does not notice (a 3 mm
+                                                        edit inside the bounds) - otherwise they stay stale
 """
 
 import sys
@@ -27,10 +30,13 @@ if sys.argv[1:2] == ["--merge"]:
     save(golden)
     sys.exit(0)
 
+changed = set(sys.argv[sys.argv.index("--changed") + 1].split(",")) if "--changed" in sys.argv else set()
 old, plat, new, counts = load(), platform_key(), {}, {}
 for p in sorted((ROOT / "assets").glob("*/asset.yaml")):
     mesh = concat([q.mesh for q in build(p).parts])
-    new[p.parent.name], what = record(old.get(p.parent.name), geometry_hash(mesh), geometry_signature(mesh), plat)
+    prev = None if p.parent.name in changed else old.get(p.parent.name)
+    new[p.parent.name], what = record(prev, geometry_hash(mesh), geometry_signature(mesh), plat)
+    what = "changed" if p.parent.name in changed else what
     counts.setdefault(what, []).append(p.parent.name)
 save(new)
 print(f"platform {plat}")

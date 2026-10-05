@@ -18,10 +18,10 @@ Nothing is left out. The earlier figures (87 % and 83 %) counted fewer items, wh
 
 | scope | done | remaining | **progress** |
 |---|---|---|---|
-| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 42 | 13.75 | **≈ 75 %** |
-| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 42 | 17.75 | **≈ 70 %** |
-| **planned roadmap** (+ track G: native character track) | 42 | 29.75 | **≈ 59 %** |
-| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 42 | ≈ 40.75 | **≈ 51 %** |
+| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 43.5 | 12.25 | **≈ 78 %** |
+| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 43.5 | 16.25 | **≈ 73 %** |
+| **planned roadmap** (+ track G: native character track) | 43.5 | 28.25 | **≈ 61 %** |
+| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 43.5 | ≈ 39.25 | **≈ 53 %** |
 
 The figures dropped from 80 / 74 / 62 / 54 % because two decisions on 2026-10-05 added work:
 - **Track W** (3 points): the workbench gets a three.js 3D viewer (list, view modes, save, export, click-to-comment).
@@ -34,14 +34,14 @@ Tick `[x]` here in the commit that finishes a task.
 
 | ✓ | ID | task | pts | depends | who |
 |---|---|---|---|---|---|
-| [ ] | A1 | Fix z-fighting in 15 benchmark assets (78 pairs) | 0.6 | — | agent |
-| [ ] | A2 | tavern_chair `seat_height` min 0.40 → 0.42 (agree with its check) | 0.05 | — | agent |
-| [ ] | A3 | `sw export --preview`: GLB without collision proxies; site uses it | 0.3 | — | agent |
-| [ ] | A4 | Townhouse door brace ↔ ledges: 12 mm depth rank | 0.05 | — | agent |
-| [ ] | A5 | Library examples never write into the library (`.build`/`export` go to the project) | 0.3 | — | agent |
-| [ ] | A6 | "N info hidden" lists the hidden codes | 0.05 | — | agent |
-| [ ] | A7 | `sw.cmd` launcher for Windows clones (same as `./sw`) | 0.05 | — | agent |
-| [ ] | A8 | YAML schema errors carry the source line number (HARDENING: open since v0.1) | 0.1 | — | agent |
+| [x] | A1 | Fix z-fighting in 15 benchmark assets (78 pairs) | 0.6 | — | agent |
+| [x] | A2 | tavern_chair `seat_height` min 0.40 → 0.42 (agree with its check) | 0.05 | — | agent |
+| [x] | A3 | `sw export --preview`: GLB without collision proxies; site uses it | 0.3 | — | agent |
+| [x] | A4 | Townhouse door brace ↔ ledges: 12 mm depth rank | 0.05 | — | agent |
+| [x] | A5 | Library examples never write into the library (`.build`/`export` go to the project) | 0.3 | — | agent |
+| [x] | A6 | "N info hidden" lists the hidden codes | 0.05 | — | agent |
+| [x] | A7 | `sw.cmd` launcher for Windows clones (same as `./sw`) | 0.05 | — | agent |
+| [x] | A8 | YAML schema errors carry the source line number (HARDENING: open since v0.1) | 0.1 | — | agent |
 | [ ] | B1 | `house_townhouse` from module assets (309 → ≤ 150 lines) | 0.8 | A1, A4 | agent |
 | [ ] | B2 | `house_workshop` from module assets (437 → ≤ 220 lines) | 0.8 | B1 | agent |
 | [ ] | B3 | Stress test of the 3 houses (pack values changed in a copy) | 0.1 | B2 | agent |
@@ -91,7 +91,7 @@ Tick `[x]` here in the commit that finishes a task.
 | [ ] | G5 | Procedural clips: idle bob, walk cycle, wave, from the skeleton template | 1.5 | G4 | agent |
 | [ ] | H* | Long-term backlog (§11): plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village, optional Blender/three.js beauty renders | ≈ 11 | — | later |
 
-Done so far (42 points):
+Done so far (43.5 points):
 
 | work | points |
 |---|---|
@@ -105,6 +105,7 @@ Done so far (42 points):
 | Phase 20 seams | 2 |
 | Phase 20a cross-OS goldens and CI | 1 |
 | docs and README polish | 2 |
+| Phase 20b cleanup (track A) | 1.5 |
 
 ## 2b. Rules for every task
 

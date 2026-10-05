@@ -309,12 +309,14 @@ def cmd_log(a):
 
 
 def cmd_compare(a):
+    from . import paths
     from .assemble import resolve_asset_path
     from .history import compare
 
     path = resolve_asset_path(a.asset)
     metrics, img = compare(path, a.a, a.b, size=a.size)
-    out = path.parent / ".build" / f"compare_{a.a}_{a.b}.png"
+    out = paths.out_dir(path.parent) / ".build" / f"compare_{a.a}_{a.b}.png"
+    out.parent.mkdir(parents=True, exist_ok=True)
     img.save(out)
     metrics["image"] = _rel(out)
     print(compact_json(metrics))
@@ -344,15 +346,17 @@ def cmd_export(a):
         print(format_text(report))
         print("\nexport refused: fix the errors above (or pass --force for a debug export)")
         return 1
-    out = Path(a.out) if a.out else asset.dir / "export" / (f"{asset.name}_{a.target}.glb" if a.target else f"{asset.name}.glb")
-    info = write_glb(asset, surface, out, report["status"])
+    suffix = f"_{a.target}" if a.target else ""
+    suffix += "_preview" if a.preview else ""
+    out = Path(a.out) if a.out else asset.out_dir / "export" / f"{asset.name}{suffix}.glb"
+    info = write_glb(asset, surface, out, report["status"], collision=not a.preview)
     issues, extra = khronos_validate(out)
     issues += roundtrip(asset, out)
     from .export.targets import export_settings
 
     settings = export_settings(asset)
     lods = []
-    if settings["lods"] and settings["target"].lod_files:
+    if settings["lods"] and settings["target"].lod_files and not a.preview:
         from .export.lod import write_lods
         from .report import Issue
 
@@ -668,6 +672,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--target", choices=["generic", "godot", "unity", "unreal"],
                    help="engine packaging for this export (default: the profile's); writes export/NAME_TARGET.glb")
     p.add_argument("--out")
+    p.add_argument("--preview", action="store_true",
+                   help="a file for web viewers: no collision proxies, no LOD files; writes export/NAME_preview.glb")
     p.add_argument("--force", action="store_true")
     p.add_argument("--json", action="store_true")
     p = sub.add_parser("new", help="scaffold a new asset")

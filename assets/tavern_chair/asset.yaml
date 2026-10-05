@@ -16,7 +16,7 @@ interface:
 params:
   seat_width:     {value: 0.48, min: 0.34, max: 0.60, doc: seat size along x}
   seat_depth:     {value: 0.44, min: 0.32, max: 0.56, doc: seat size along z}
-  seat_height:    {value: 0.46, min: 0.40, max: 0.50, doc: top of the seat above the ground}
+  seat_height:    {value: 0.46, min: 0.42, max: 0.50, doc: top of the seat above the ground}
   seat_thickness: {value: 0.07, doc: chunky board}
   leg:            {value: 0.07, min: 0.05, max: 0.1, doc: leg cross-section}
   back_height:    {value: 0.98, doc: top of the backrest posts above the ground}

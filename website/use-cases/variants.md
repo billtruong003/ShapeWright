@@ -23,6 +23,6 @@ sw variants rock --count 3 --seed 7
 
 ```bash
 # run
-sw validate tavern_chair --set seat_height=0.43
+sw validate tavern_chair --set seat_height=0.42
 sw validate tavern_chair --set seat_height=0.50
 ```

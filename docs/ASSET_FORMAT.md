@@ -45,7 +45,7 @@ notes: free text
 
 ```yaml
 params:
-  seat_height: {value: 0.46, min: 0.40, max: 0.50, doc: top of the seat, vary: [0.44, 0.48]}
+  seat_height: {value: 0.46, min: 0.42, max: 0.50, doc: top of the seat, vary: [0.44, 0.48]}
   leg: 0.07                               # shorthand for {value: 0.07}
   leg_x: seat_width / 2 - leg_inset - leg / 2   # derived (expression)
 ```

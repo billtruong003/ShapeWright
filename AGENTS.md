@@ -63,7 +63,8 @@ understand -> plan -> write asset.yaml -> sw review -> LOOK at the sheet -> crit
 9. **Export.** `./sw export my_asset` writes `assets/my_asset/export/my_asset.glb`
    and a report (Khronos validation plus re-import round-trip). Report the final
    metrics to the user: triangles vs budget, size, materials, validation
-   status, file path.
+   status, file path. `./sw export my_asset --preview` writes a copy without collision
+   proxies or LOD files, for web viewers (they draw every mesh).
 
 ## Rules that save you time
 

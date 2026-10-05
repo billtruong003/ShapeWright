@@ -5,7 +5,8 @@ cottage, all PASS in the other layers). For every pair of triangles from differe
 same plane (normals within ~1 degree, plane offsets within `TOL_PLANE`), the overlap is clipped exactly in
 that plane. Same-facing overlap renders twice in the same place: z-fighting. It is reported only where it is
 visible: a point just in front of the overlap that lies inside a third closed part (generalised winding
-number) is buried, e.g. two plank ends that both stop inside a beam. Back-to-back overlap is ordinary hidden
+number) is buried, e.g. two plank ends that both stop inside a beam; so is a downward face lying on the ground
+plane (y = 0), which the floor covers. Back-to-back overlap is ordinary hidden
 contact (a wall butting a post) and is not reported.
 """
 
@@ -99,7 +100,7 @@ def coplanar_pairs(parts, tol: float = TOL_PLANE, min_area: float = MIN_TRI_AREA
     order = np.lexsort(keys.T[::-1])
     ks = keys[order]
     breaks = np.flatnonzero(np.any(ks[1:] != ks[:-1], axis=1)) + 1
-    found = defaultdict(lambda: {"same": 0.0, "opposite": 0.0, "samples": []})
+    found = defaultdict(lambda: {"same": 0.0, "opposite": 0.0, "samples": [], "at": None})
     for grp in np.split(order, breaks):
         if len(grp) < 2 or len(np.unique(owner[grp])) < 2:
             continue
@@ -136,21 +137,38 @@ def coplanar_pairs(parts, tol: float = TOL_PLANE, min_area: float = MIN_TRI_AREA
                 found[key]["same" if dot > 0 else "opposite"] += area
                 if dot > 0:
                     found[key]["samples"].append((q + ni * 0.002, area))
+                    if found[key]["at"] is None:
+                        found[key]["at"] = (q, ni)
     rows = []
     bounds = [p.mesh.bounds() for p in parts]
     for (a_, b_), v in found.items():
         hidden = 0.0
         for pt, ar in v["samples"]:
+            if abs(pt[1] + 0.002) <= TOL_PLANE and pt[1] < 0:  # a face lying on the ground plane, facing down: the floor hides it
+                hidden += ar
+                continue
             for k, p in enumerate(parts):
                 if k in (a_, b_) or not (np.all(pt >= bounds[k][0] - 1e-6) and np.all(pt <= bounds[k][1] + 1e-6)):
                     continue
                 if winding(pt[None], p.mesh.V, p.mesh.F)[0] > 0.5:
                     hidden += ar
                     break
-        rows.append({"parts": [parts[a_].name, parts[b_].name], "same_facing_m2": round(v["same"] - hidden, 6),
-                     "same_facing_hidden_m2": round(hidden, 6), "back_to_back_m2": round(v["opposite"], 6)})
+        row = {"parts": [parts[a_].name, parts[b_].name], "same_facing_m2": round(v["same"] - hidden, 6),
+               "same_facing_hidden_m2": round(hidden, 6), "back_to_back_m2": round(v["opposite"], 6)}
+        if v["at"] is not None:  # one point of the shared surface and its facing, to find it in a render
+            row["at"] = [round(float(x), 4) for x in v["at"][0]]
+            row["normal"] = [round(float(x), 3) + 0.0 for x in v["at"][1]]
+        rows.append(row)
     rows.sort(key=lambda r: -(r["same_facing_m2"] * 1000 + r["back_to_back_m2"]))
     return rows
+
+
+def _where(r) -> str:
+    if not r.get("at"):
+        return ""
+    names = {(1, 0, 0): "+x", (-1, 0, 0): "-x", (0, 1, 0): "top", (0, -1, 0): "bottom", (0, 0, 1): "front", (0, 0, -1): "back"}
+    facing = names.get(tuple(int(round(c)) for c in r["normal"]) if max(abs(c) for c in r["normal"]) > 0.999 else None, "slanted")
+    return f" (near {tuple(r['at'])}, facing {facing})"
 
 
 def seam_issues(asset, metrics: dict) -> list[Issue]:
@@ -163,10 +181,11 @@ def seam_issues(asset, metrics: dict) -> list[Issue]:
     for r in bad[:12]:
         a, b = r["parts"]
         out.append(Issue("SEAM_COPLANAR_OVERLAP", "warning",
-                         f"{a} and {b} share {r['same_facing_m2'] * 1e4:.2f} cm² of the same surface facing the same way: it will z-fight",
+                         f"{a} and {b} share {r['same_facing_m2'] * 1e4:.2f} cm² of the same surface facing the same way"
+                         f"{_where(r)}: it will z-fight",
                          a, "assembly",
                          "offset one face by a few mm (depth ranks), end one part inside the other (embed past the jitter), "
-                         "or cut one; `sw render ASSET --part NAME` to find the spot", {"parts": [a, b], "area_m2": r["same_facing_m2"]}))
+                         "or cut one; `sw render ASSET --part NAME` to find the spot", {"parts": [a, b], "area_m2": r["same_facing_m2"], "at": r.get("at"), "normal": r.get("normal")}))
     if len(bad) > 12:
         out.append(Issue("SEAM_COPLANAR_OVERLAP", "warning", f"... and {len(bad) - 12} more part pairs z-fight", "", "assembly"))
     return out

@@ -179,7 +179,7 @@ def review(name: str) -> tuple[str, Path | None]:
     """Validate + contact sheet (orthographic views with scale bars, 3/4 views, parts, wireframe, UVs) + style checklist."""
     d = _find(name)
     text = _sw("review", name)
-    sheet = d / ".build" / "sheet.png"
+    sheet = paths.out_dir(d) / ".build" / "sheet.png"
     return text, sheet if sheet.is_file() else None
 
 

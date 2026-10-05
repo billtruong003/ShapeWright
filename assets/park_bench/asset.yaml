@@ -86,7 +86,7 @@ parts:
 
   seat_rail:
     doc: horizontal rail under the seat slats
-    shape: {type: strut, from: [frame_x, seat_y - bar_d / 2, seat_front + 0.02], to: [frame_x, seat_y - bar_d / 2, seat_back - 0.02], size: [bar, bar_d], chamfer: 0.008}
+    shape: {type: strut, from: [frame_x, seat_y - bar_d / 2, seat_front + 0.02], to: [frame_x, seat_y - bar_d / 2, seat_back - 0.02], size: [bar, bar_d - 0.012], chamfer: 0.008}
     mirror: x
     material: cast_iron
 
@@ -96,7 +96,7 @@ parts:
       type: strut
       from: [frame_x, post_y0, post_z0]
       to: [frame_x, back_top, "post_z0 - (back_top - post_y0) * tan(lean)"]
-      size: [bar, bar_d]
+      size: [bar, bar_d - 0.003]   # leg, post and rail differ in width so their side faces never coincide
       chamfer: 0.008
     mirror: x
     material: cast_iron

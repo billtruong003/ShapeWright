@@ -147,7 +147,7 @@ parts:
       hinge pin on the hinge axis (behind the back face, at the body top); root of the lid group.
       Its centre is the pivot, so every lid point stays at or above/in front of the axis and the
       lid clears the body when it rotates open about local X
-    shape: {type: cylinder, radius: 0.007, height: 2 * strap_x + 0.1, segments: 6, rotate: [0, 0, 90]}
+    shape: {type: cylinder, radius: 0.007, height: 2 * strap_x + 0.106, segments: 6, rotate: [0, 0, 90]}   # pin ends 3 mm past the knuckles
     position: [0, H, -D / 2 - strap_t]
     pivot: center
     shading: flat

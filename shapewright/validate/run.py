@@ -72,9 +72,10 @@ def format_text(report: dict, verbose: bool = False) -> str:
         where = f" [{i['where']}]" if i.get("where") else ""
         hint = f"  -> {i['hint']}" if i.get("hint") else ""
         lines.append(f"  {i['severity'].upper():7} {i['code']}{where}: {i['msg']}{hint}")
-    hidden = sum(1 for i in report["issues"] if i["severity"] == "info")
+    hidden = [i["code"] for i in report["issues"] if i["severity"] == "info"]
     if hidden and not verbose:
-        lines.append(f"  ({hidden} info items hidden; --verbose to show)")
+        codes = ", ".join(dict.fromkeys(hidden))
+        lines.append(f"  ({len(hidden)} info items hidden: {codes}; --verbose to show)")
     return "\n".join(lines)
 
 

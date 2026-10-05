@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import copy
 
-import yaml
 from PIL import Image
 
 from .assemble import Asset, build
@@ -29,13 +28,9 @@ def material_sheet(asset: Asset, tile: int = 256):
                                "position": [x, 0, -0.25], "material": n, "shading": "smooth"}
     src["parts"] = parts
     src["uv"] = {**(src.get("uv") or {}), "method": "regions"}
-    tmp = asset.dir / ".materials_preview.yaml"
-    tmp.write_text(yaml.safe_dump(src, sort_keys=False))
-    try:
-        a = build(tmp)
-        s = build_surface(a)
-    finally:
-        tmp.unlink(missing_ok=True)
+    src["_file_roots"] = [str(r) for r in asset.file_roots]
+    a = build(asset.path, data=src)  # built in the asset's folder (relative textures resolve), nothing written there
+    s = build_surface(a)
     sheet = Image.new("RGB", (tile * len(names), tile * 2), (255, 255, 255))
     notes = []
     for i, n in enumerate(names):

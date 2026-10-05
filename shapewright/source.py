@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import re
 from pathlib import Path
 from typing import Any
 
@@ -149,7 +150,64 @@ def read_yaml(path: Path) -> dict:
         raise SourceError([Issue("SRC_PARSE", "error", f"YAML parse error: {msg}", str(path), "source", hint)]) from None
     if not isinstance(data, dict):
         raise SourceError([Issue("SRC_PARSE", "error", "top level must be a mapping", str(path), "source")])
+    _LINES[str(Path(path).resolve())] = _key_lines(raw)
     return _rejoin_mapping_splits(data)
+
+
+_LINES: dict[str, dict[str, int]] = {}  # source file -> {"parts.leg.shape.size": line} (1-based), filled by read_yaml
+
+
+def _key_lines(raw: bytes) -> dict[str, int]:
+    """Line of every mapping key and list item, by the dotted path issues use as `where`."""
+    out: dict[str, int] = {}
+
+    def walk(node, prefix):
+        if isinstance(node, yaml.MappingNode):
+            for k, v in node.value:
+                if isinstance(k, yaml.ScalarNode):
+                    key = f"{prefix}.{k.value}" if prefix else str(k.value)
+                    out.setdefault(key, k.start_mark.line + 1)
+                    walk(v, key)
+        elif isinstance(node, yaml.SequenceNode):
+            for i, v in enumerate(node.value):
+                key = f"{prefix}[{i}]"
+                out.setdefault(key, v.start_mark.line + 1)
+                walk(v, key)
+
+    try:
+        walk(yaml.compose(raw, Loader=yaml.SafeLoader), "")
+    except yaml.YAMLError:
+        pass
+    return out
+
+
+def locate(issues: list[Issue], path: Path):
+    """Give source issues the file:line of their `where` (the asset file, then the base files it extends).
+    A path that does not exist as written (an unknown key's parent, an array instance) uses its nearest ancestor."""
+    files = [Path(path).resolve()]
+    while len(files) < 8:
+        try:
+            ext = read_yaml(files[-1]).get("extends")
+        except (SourceError, OSError):
+            break
+        if not ext:
+            break
+        b = (files[-1].parent / str(ext)).resolve()
+        files.append(b / "asset.yaml" if b.is_dir() else b)
+    for i in issues:
+        if i.src or not i.where or i.layer not in ("source", "") or "<" in i.where:
+            continue
+        w = re.sub(r"_(\d+)(?=\.|$)", "", i.where)  # array instance `rung_3` -> its definition `rung`
+        candidates = [i.where, w]
+        for c in list(candidates):
+            parts = re.split(r"(?=\.)|(?=\[)", c)
+            candidates += ["".join(parts[:n]) for n in range(len(parts) - 1, 0, -1)]
+        for f in files:
+            lines = _LINES.get(str(f)) or {}
+            hit = next((c for c in candidates if c in lines), None)
+            if hit:
+                i.src = f"{f.parent.name}/{f.name}:{lines[hit]}"
+                break
 
 
 def _rejoin_mapping_splits(node):

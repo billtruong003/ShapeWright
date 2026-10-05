@@ -12,7 +12,7 @@ checks: plank.max.y=0.76, plank.max.y - 0.46=0.3
 
 `--json` prints the full structure, and it is always written to
 `.build/report.json`:
-`{asset, status, source_hash, counts, layers, metrics, issues:[{code, severity, layer, where, msg, hint, data}]}`.
+`{asset, status, source_hash, counts, layers, metrics, issues:[{code, severity, layer, where, src, msg, hint, data}]}`. `src` is the file and line of a source issue (`my_asset/asset.yaml:42`; a variant's issue points into the variant, then its base); text output shows it as `[my_asset/asset.yaml:42 parts.leg.shape.size]`.
 Exit code: 0 for PASS/WARN, 1 for FAIL, 2 if the source cannot be built.
 
 ## Deterministic vs perceptual
@@ -78,7 +78,7 @@ warnings. It never produces errors, because style is a judgement call.
 | `ASM_HIDDEN_PART` | warning | a part is (almost) entirely inside other parts: wasted triangles (see-through `alpha_mode` BLEND/MASK parts, e.g. lantern glass, do not count as hiding) |
 | `ASM_SCALE_SUSPICIOUS` | warning | size suggests a units mistake (< 1 cm or > 200 m) |
 | `ASM_CONTACT_ONLY` | info | parts touch their neighbours only face to face, with no overlap. Fine for parts that rest; mounted pieces should embed 1–5 mm past the jitter so no hairline shows after rounding or export |
-| `SEAM_COPLANAR_OVERLAP` | warning | two parts share at least 0.5 cm² of the same surface, facing the same way, within 1 mm: it z-fights in an engine. Overlap buried inside a third closed part (generalised winding number) and back-to-back contact are not reported. Data: `parts`, `area_m2`. Fix: depth ranks (offset one face by a few mm), end one part inside the other, or cut one |
+| `SEAM_COPLANAR_OVERLAP` | warning | two parts share at least 0.5 cm² of the same surface, facing the same way, within 1 mm: it z-fights in an engine. Overlap buried inside a third closed part (generalised winding number), downward faces lying on the ground plane (y = 0, covered by the floor) and back-to-back contact are not reported. The message says where: a point of the shared surface and its facing. Data: `parts`, `area_m2`, `at`, `normal`. Fix: depth ranks (offset one face by a few mm), end one part inside the other, or cut one |
 | `SEAM_SKIPPED` | info | the seam check is skipped above 400k triangles |
 
 ### budget (production profile)

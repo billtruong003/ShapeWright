@@ -22,9 +22,10 @@ class Issue:
     layer: str = ""
     hint: str = ""
     data: dict[str, Any] = field(default_factory=dict)
+    src: str = ""  # file:line of `where` in the source, when known (e.g. "asset.yaml:42")
 
     def to_dict(self) -> dict:
-        d = {"code": self.code, "severity": self.severity, "layer": self.layer, "where": self.where, "msg": self.message}
+        d = {"code": self.code, "severity": self.severity, "layer": self.layer, "where": self.where, "msg": self.message, "src": self.src}
         if self.hint:
             d["hint"] = self.hint
         if self.data:
@@ -32,7 +33,7 @@ class Issue:
         return {k: v for k, v in d.items() if v not in ("", None)}
 
     def line(self) -> str:
-        where = f" [{self.where}]" if self.where else ""
+        where = f" [{self.src} {self.where}]" if self.src and self.where else f" [{self.where}]" if self.where else ""
         hint = f"  -> {self.hint}" if self.hint else ""
         return f"{self.severity.upper():7} {self.code}{where}: {self.message}{hint}"
 

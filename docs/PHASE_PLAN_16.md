@@ -27,6 +27,7 @@ Every phase follows the same run protocol (§1) and the same record format (§2)
 | 20 seam validation | `phase/20-seams` | PASS (gate restated) | docs/phases/PHASE_20.md |
 | 18 docs site | `phase/18-docs-site` | PARTIAL (deploy not run) | docs/phases/PHASE_18.md |
 | 20a golden across Linux/Windows, CI | `phase/20a-cross-os-golden` | PASS (macOS out of scope) | docs/phases/PHASE_20a.md |
+| 20b cleanup (track A) | `phase/20b-cleanup` | PASS | docs/phases/PHASE_20b.md |
 
 The branches are **stacked**: each one contains the ones above it, so `phase/18-docs-site` has everything.
 All of them were fast-forwarded into `main` on 2026-09-30; the branches stay for review.

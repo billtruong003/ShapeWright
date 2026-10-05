@@ -83,3 +83,21 @@ def assets_home() -> Path:
 
 def build_dir() -> Path:
     return (project() or LIB) / ".build"
+
+
+def out_dir(asset_dir: Path) -> Path:
+    """Where an asset's build products (.build/, export/, history/) go. Next to its source, except for a library
+    example seen from another project: those go to `<project>/.build/library/<name>/` (the library may be a
+    read-only site-packages folder, and is shared by every project). Without a project, a library example that
+    cannot be written to uses the user cache."""
+    asset_dir = Path(asset_dir).resolve()
+    lib_assets = (LIB / "assets").resolve()
+    if asset_dir.parent != lib_assets:
+        return asset_dir
+    proj = project()
+    if proj is not None and proj.resolve() != LIB.resolve():
+        return proj / ".build" / "library" / asset_dir.name
+    if proj is None and not os.access(asset_dir, os.W_OK):
+        cache = Path(os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache") / "shapewright" / "library"
+        return cache / asset_dir.name
+    return asset_dir

@@ -256,8 +256,9 @@ def _primitives(b: _Builder, sp, part, pivot, mat_index: dict, normal_mapped=fro
     return prims
 
 
-def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str = "UNKNOWN", textures=None) -> dict:
-    """textures: a baked atlas to use instead of baking (LOD files share LOD0's atlas)."""
+def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str = "UNKNOWN", textures=None, collision: bool = True) -> dict:
+    """textures: a baked atlas to use instead of baking (LOD files share LOD0's atlas).
+    collision: False leaves out the collision proxies (a preview file for web viewers, which draw every mesh)."""
     from ..bake import textures_for, to_png_bytes
 
     b = _Builder()
@@ -375,7 +376,7 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
         nodes[0]["children"].append(len(nodes) - 1)
     placed = group_nodes if settings["merge"] == "by_material" else None
     counter: dict = {}
-    for key, V, F in _collision_meshes(asset, rigid_groups(asset) if placed is not None else None):
+    for key, V, F in (_collision_meshes(asset, rigid_groups(asset) if placed is not None else None) if collision else []):
         owner, owner_name, pivot = (0, asset.name, np.zeros(3)) if placed is None else placed[key]
         idx = counter[owner_name] = counter.get(owner_name, -1) + 1
         name = settings["target"].collision_name(owner_name, idx, convex=True)
