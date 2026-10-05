@@ -26,7 +26,7 @@ build-backend = "setuptools.build_meta"
 include = ["shapewright*"]
 
 [tool.setuptools.package-data]
-"shapewright.workbench" = ["index.html"]
+"shapewright.workbench" = ["index.html", "viewer.js", "vendor/three/LICENSE", "vendor/three/build/*.js", "vendor/three/examples/jsm/*/*.js"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

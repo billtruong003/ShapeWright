@@ -300,6 +300,30 @@ def cmd_snapshot(a):
     return 0
 
 
+def cmd_feedback(a):
+    from . import feedback
+    from .assemble import resolve_asset_path
+
+    d = resolve_asset_path(a.asset).parent
+    try:
+        if a.action == "add":
+            n = feedback.add(d, " ".join(a.text), a.part, a.at, a.normal, a.view, a.image)
+            print(f"note #{n['id']} added -> {_rel(feedback.path_for(d))}")
+        elif a.action == "resolve":
+            if not a.text or not a.text[0].isdigit():
+                print("usage: sw feedback ASSET resolve ID [--reply TEXT]")
+                return 2
+            n = feedback.resolve(d, int(a.text[0]), a.reply or "")
+            print(f"note #{n['id']} resolved")
+        else:
+            notes = feedback.load(d)
+            print(json.dumps(notes, indent=1) if a.json else feedback.format_notes(notes, a.all))
+    except ValueError as e:
+        print(str(e))
+        return 2
+    return 0
+
+
 def cmd_log(a):
     from .assemble import resolve_asset_path
     from .history import log
@@ -347,7 +371,7 @@ def cmd_export(a):
     from .export.verify import khronos_validate, roundtrip
     from .validate.run import collect, dump, format_text, make_report
 
-    asset, surface = _load(a.asset)
+    asset, surface = _load(a.asset, a.set)
     if a.target:  # one asset, several engines (FRESH_AGENT_08 needed a variant per engine)
         asset._export_target = a.target
     found, metrics = collect(asset, surface)  # validators run once (Phase 10: export used to run them twice)
@@ -633,7 +657,7 @@ def build_parser() -> argparse.ArgumentParser:
         p = sub.add_parser(name, help=help_)
         if asset:
             p.add_argument("asset", help="asset directory, asset.yaml path, or name under assets/")
-            if name in ("stats", "validate", "render", "review", "materials"):
+            if name in ("stats", "validate", "render", "review", "materials", "export"):
                 p.add_argument("--set", action="append", metavar="PARAM=VALUE[,..]",
                                help="try param values without editing the source (e.g. --set steps=14,rise=0.2)")
         p.set_defaults(fn=fn)
@@ -706,6 +730,17 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--z-up", action="store_true", help="file is Z-up")
     p.add_argument("--dir", help="parent directory (default: ./assets)")
     p.set_defaults(fn=cmd_import)
+    p = add("feedback", cmd_feedback, "notes a person pinned on the model (workbench): list, add, resolve")
+    p.add_argument("action", nargs="?", default="list", choices=["list", "add", "resolve"])
+    p.add_argument("text", nargs="*", help="add: the note; resolve: the note id")
+    p.add_argument("--part", help="add: the part the note is about")
+    p.add_argument("--at", help="add: the point x,y,z (metres, asset coordinates)")
+    p.add_argument("--normal", help="add: the surface normal at the point x,y,z")
+    p.add_argument("--view", help="add: where it was seen from (a view name or 'orbit')")
+    p.add_argument("--image", help="add: a screenshot path (relative to the asset's .build/)")
+    p.add_argument("--reply", help="resolve: what was changed")
+    p.add_argument("--all", action="store_true", help="list resolved notes too")
+    p.add_argument("--json", action="store_true")
     p = add("uv", cmd_uv, "UV regions: `sw uv ASSET lock` writes uv.lock.yaml; `show` lists regions")
     p.add_argument("action", choices=("lock", "show"))
     p = add("family", cmd_family, "validate a base asset and all its variants")

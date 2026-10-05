@@ -53,7 +53,7 @@ sw export my_barrel --target godot           # -> assets/my_barrel/export/my_bar
 | Where you work | How | Guide |
 |---|---|---|
 | **Claude Code** (cloud or local) | clone the repo: `CLAUDE.md` → `AGENTS.md` and the `.claude/skills/shapewright` skill load automatically | [cloud](https://billtruong003.github.io/ShapeWright/quickstart/claude-code-cloud/) · [local](https://billtruong003.github.io/ShapeWright/quickstart/claude-code-local/) |
-| **Claude Desktop, Cursor, Codex, any MCP client** | `sw mcp`: 16 tools; review and render return **images** | [MCP clients](https://billtruong003.github.io/ShapeWright/quickstart/mcp-clients/) · [docs/MCP.md](docs/MCP.md) |
+| **Claude Desktop, Cursor, Codex, any MCP client** | `sw mcp`: 18 tools; review, render and workbench feedback return **images** | [MCP clients](https://billtruong003.github.io/ShapeWright/quickstart/mcp-clients/) · [docs/MCP.md](docs/MCP.md) |
 | **ChatGPT or any chat** | paste [`llms.txt`](llms.txt) (one page, generated from the code) | [chat](https://billtruong003.github.io/ShapeWright/quickstart/chat/) |
 | **People** | the CLI, or `sw workbench --open` (a local page where every button runs an `sw` command) | [by hand](https://billtruong003.github.io/ShapeWright/quickstart/cli/) |
 | **Docker** | `docker build -t shapewright .` then `docker run --rm -v "$PWD:/work" shapewright brief "..."` | [Dockerfile](Dockerfile) |

@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shapewright Workbench</title>
+<link rel="icon" href="data:,">
+<script type="importmap">{"imports": {"three": "/vendor/three/build/three.module.min.js", "three/addons/": "/vendor/three/examples/jsm/"}}</script>
 <style>
 :root {
   --bg: #f4f3ef; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6a66; --line: #dddbd4;
@@ -28,9 +30,21 @@ button { background: var(--accent); color: var(--accent-ink); border: 0; border-
 button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
 button:disabled { opacity: .5; cursor: wait; }
 select, input[type=text], input[type=number], textarea { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; }
-#assets { list-style: none; margin: 0; padding: 0; max-height: 70vh; overflow: auto; }
-#assets li { padding: 4px 6px; border-radius: 5px; cursor: pointer; display: flex; justify-content: space-between; gap: 6px; }
-#assets li:hover, #assets li.on { background: var(--bg); }
+#assets { list-style: none; margin: 0; padding: 0; max-height: 72vh; overflow: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+#assets li { padding: 4px; border-radius: 6px; cursor: pointer; border: 1px solid var(--line); font-size: 11px; min-width: 0; }
+#assets li img, #assets li .noimg { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; background: var(--bg); display: block; }
+#assets li .nm { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; margin-top: 3px; }
+#assets li .meta { display: flex; justify-content: space-between; color: var(--muted); }
+#assets li:hover, #assets li.on { background: var(--bg); border-color: var(--accent); }
+#viewer3d { width: 100%; height: 58vh; border-radius: 6px; background: var(--bg); overflow: hidden; }
+.tabs button.on { background: var(--accent); color: var(--accent-ink); }
+.tabs button { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+#uvpanel { display: none; gap: 8px; align-items: flex-start; margin-top: 8px; }
+#uvcanvas { width: 256px; height: 256px; border-radius: 4px; }
+#pick { font-size: 12px; background: var(--bg); border-radius: 6px; padding: 6px 8px; margin-top: 8px; }
+#notes { font-size: 12px; max-height: 22vh; overflow: auto; }
+#notes div { padding: 3px 0; border-bottom: 1px solid var(--line); }
+#notes .resolved { color: var(--muted); text-decoration: line-through; }
 .st { font-size: 11px; font-weight: 600; }
 .PASS { color: var(--pass); } .WARN { color: var(--warn); } .FAIL { color: var(--fail); }
 .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
@@ -59,6 +73,8 @@ select, input[type=text], input[type=number], textarea { background: var(--bg); 
 <main>
   <section>
     <h2>Assets</h2>
+    <div class="row"><input id="search" type="text" placeholder="search" style="flex:1;min-width:0">
+      <select id="stfilter"><option value="">all</option><option>PASS</option><option>WARN</option><option>FAIL</option><option value="none">not built</option></select></div>
     <ul id="assets"></ul>
   </section>
 
@@ -69,6 +85,29 @@ select, input[type=text], input[type=number], textarea { background: var(--bg); 
       <span style="flex:1"></span>
       <button id="btn-review" disabled>Review</button>
     </div>
+    <div class="row tabs"><button id="tab-3d" class="on">3D</button><button id="tab-img">Images</button>
+      <span style="flex:1"></span><span id="glbinfo" class="note"></span></div>
+    <div id="pane-3d">
+      <div class="row">
+        <select id="mode3d"><option value="textured">textured</option><option value="clay">clay</option><option value="material">material colours</option>
+          <option value="parts">colour by part</option><option value="normals">normals</option><option value="uv_checker">UV checker</option><option value="texel">texel density</option></select>
+        <label><input id="wire3d" type="checkbox"> wireframe</label>
+        <label><input id="grid3d" type="checkbox" checked> grid (1 m)</label>
+        <label><input id="fig3d" type="checkbox"> 1.75 m figure</label>
+        <label><input id="uv3d" type="checkbox"> UV layout</label>
+        <span style="flex:1"></span>
+        <button id="btn-frame" class="ghost">Frame</button>
+        <button id="btn-shot" class="ghost" disabled title="saves .build/shots/shot_N.png">Screenshot</button>
+      </div>
+      <div id="viewer3d"></div>
+      <div id="uvpanel"><canvas id="uvcanvas" width="512" height="512"></canvas><span id="uvinfo" class="note"></span></div>
+      <div id="pick"><span class="note">Click the model to pick a part and pin a note for the agent (it reads them with <code>sw feedback</code> or the MCP tool <code>feedback</code>).</span>
+        <div id="pickinfo"></div>
+        <div class="row" style="margin:6px 0 0"><input id="note" type="text" placeholder="what is wrong here / what should change" style="flex:1">
+          <button id="btn-note" disabled>Pin note</button></div>
+      </div>
+    </div>
+    <div id="pane-img" style="display:none">
     <img id="view" alt="render of the selected asset">
     <div class="row" style="margin-top:8px">
       <label>Orbit <input id="orbit" type="range" min="0" max="7" step="1" value="1" style="width:160px"></label>
@@ -76,6 +115,7 @@ select, input[type=text], input[type=number], textarea { background: var(--bg); 
       <select id="extraview"><option value="">around</option><option>top</option><option>low_front</option><option>uv</option></select>
       <button id="btn-render" class="ghost" disabled>Render</button>
       <button id="btn-sheet" class="ghost" disabled>Sheet</button>
+    </div>
     </div>
     <h2>Issues</h2>
     <ul id="issues"></ul>
@@ -101,7 +141,10 @@ select, input[type=text], input[type=number], textarea { background: var(--bg); 
     <div class="row">
       <select id="target"><option value="">profile default</option><option>generic</option><option>godot</option><option>unity</option><option>unreal</option></select>
       <button id="btn-export" disabled>Export GLB</button>
+      <a id="download" href="#" style="display:none" download>download</a>
     </div>
+    <h2>Notes for the agent</h2>
+    <div id="notes"><span class="note">none</span></div>
     <h2>History</h2>
     <div id="history"></div>
   </section>
@@ -117,9 +160,10 @@ select, input[type=text], input[type=number], textarea { background: var(--bg); 
     </section>
   </div>
 </main>
-<script>
+<script type="module">
+import { createViewer } from "/viewer.js";
 const AROUND = ["front", "front_right", "right", "back_right", "back", "back_left", "left", "front_left"];
-const MODES = ["clay", "textured", "parts", "material", "wire", "normals", "silhouette", "albedo", "roughness", "metallic", "texel", "seams"];
+const MODES = ["clay", "textured", "beauty", "parts", "material", "wire", "normals", "silhouette", "albedo", "roughness", "metallic", "texel", "seams"];
 let cur = null, info = null;
 const $ = (id) => document.getElementById(id);
 MODES.forEach(m => $("mode").append(new Option(m, m)));
@@ -148,25 +192,36 @@ async function run(req) {
     return res;
   } finally { busy(false); }
 }
+let assetList = [];
 async function loadAssets() {
-  const list = await api("/api/assets");
+  assetList = await api("/api/assets");
+  drawAssets();
+}
+function drawAssets() {
+  const q = $("search").value.trim().toLowerCase(), f = $("stfilter").value;
   $("assets").innerHTML = "";
-  list.forEach(a => {
+  assetList.filter(a => (!q || a.name.toLowerCase().includes(q)) && (!f || (f === "none" ? !a.status : a.status === f))).forEach(a => {
     const li = document.createElement("li"); li.dataset.name = a.name;
-    li.innerHTML = `<span></span><span class="st ${a.status || ""}">${a.status || ""}</span>`;
-    li.firstChild.textContent = a.name;
+    li.innerHTML = (a.thumb ? `<img loading="lazy" alt="">` : `<div class="noimg"></div>`) +
+      `<span class="nm"></span><span class="meta"><span class="st ${a.status || ""}">${a.status || "-"}</span><span>${a.triangles ? a.triangles.toLocaleString() + " tris" : ""}</span></span>`;
+    if (a.thumb) li.querySelector("img").src = "/files?path=" + encodeURIComponent(a.thumb);
+    li.querySelector(".nm").textContent = a.name;
+    li.title = a.name + (a.built ? "  built " + new Date(a.built * 1000).toLocaleString() : "");
     li.onclick = () => select(a.name);
     if (a.name === cur) li.classList.add("on");
     $("assets").append(li);
   });
 }
+$("search").oninput = drawAssets; $("stfilter").onchange = drawAssets;
 async function select(name) {
   cur = name; $("title").textContent = name;
   document.querySelectorAll("#assets li").forEach(li => li.classList.toggle("on", li.dataset.name === name));
   await refresh(true);
   busy(false);
   const sheet = (info.images || []).find(p => p.endsWith("/sheet.png"));
-  if (sheet) show(sheet); else await run({cmd: "review"});
+  if (sheet) show(sheet);
+  await load3d({});
+  if (!info.report) await run({cmd: "review"});
 }
 async function refresh(resetParams) {
   info = await api("/api/asset?name=" + encodeURIComponent(cur));
@@ -188,6 +243,7 @@ async function refresh(resetParams) {
   });
   if (resetParams) { $("source").value = info.source; renderParams(); }
   loadAssets();
+  loadNotes();
 }
 function renderParams() {
   const box = $("params"); box.innerHTML = "";
@@ -216,21 +272,87 @@ function changedParams() {
 }
 function viewName() { return $("extraview").value || AROUND[Number($("orbit").value)]; }
 
+// ---------------------------------------------------------------- 3D view (three.js, the sw export --preview GLB)
+let pick = null;
+const viewer = createViewer($("viewer3d"), {onPick: p => {
+  pick = p;
+  $("pickinfo").textContent = `part ${p.part || "?"} at (${p.point.map(v => v.toFixed(3)).join(", ")}) m, facing (${p.normal.map(v => v.toFixed(2)).join(", ")})`;
+  $("btn-note").disabled = !cur;
+  if ($("uv3d").checked) drawUV();
+}});
+async function load3d(set) {
+  $("glbinfo").textContent = "exporting preview...";
+  busy(true);
+  try {
+    const res = await api("/api/run", {asset: cur, cmd: "glb", set});
+    log(res);
+    const rel = (res.glbs || []).find(p => p.endsWith("_preview.glb"));
+    if (res.rc > 1 || !rel) { $("glbinfo").textContent = "no 3D preview (see the command output)"; return; }
+    await viewer.load("/files?path=" + encodeURIComponent(rel) + "&t=" + Date.now());
+    $("glbinfo").textContent = rel;
+    if ($("uv3d").checked) drawUV();
+  } finally { busy(false); }
+}
+function drawUV() {
+  const n = viewer.uvLayout($("uvcanvas"), pick ? pick.part : null);
+  $("uvinfo").textContent = `${pick ? "part " + pick.part : "all parts"}: ${n} triangles (darker = overlap). Click the model to pick a part.`;
+}
+$("tab-3d").onclick = () => { $("pane-3d").style.display = ""; $("pane-img").style.display = "none"; $("tab-3d").classList.add("on"); $("tab-img").classList.remove("on"); };
+$("tab-img").onclick = () => { $("pane-3d").style.display = "none"; $("pane-img").style.display = ""; $("tab-img").classList.add("on"); $("tab-3d").classList.remove("on"); };
+$("mode3d").onchange = () => { const info3 = viewer.setMode($("mode3d").value); $("glbinfo").textContent = info3 || $("glbinfo").textContent; };
+$("wire3d").onchange = () => viewer.setWire($("wire3d").checked);
+$("grid3d").onchange = () => viewer.setGrid($("grid3d").checked);
+$("fig3d").onchange = () => viewer.setFigure($("fig3d").checked);
+$("uv3d").onchange = () => { $("uvpanel").style.display = $("uv3d").checked ? "flex" : "none"; if ($("uv3d").checked) drawUV(); };
+$("btn-frame").onclick = () => viewer.reframe();
+async function shot() {
+  const res = await api("/api/shot", {asset: cur, png: viewer.screenshot()});
+  if (res.error) { log(res); return null; }
+  log({command: "(screenshot)", output: ".build/" + res.image});
+  return res.image;
+}
+$("btn-shot").onclick = shot;
+$("btn-note").onclick = async () => {
+  const note = $("note").value.trim();
+  if (!note || !pick) return;
+  const image = await shot();
+  const res = await api("/api/run", {asset: cur, cmd: "feedback_add", note, part: pick.part, at: pick.point, normal: pick.normal, view: "orbit", image});
+  log(res);
+  $("note").value = "";
+  await loadNotes();
+};
+async function loadNotes() {
+  const res = await api("/api/run", {asset: cur, cmd: "feedback"});
+  let notes = [];
+  try { notes = JSON.parse(res.output.split("\n(feedback")[0]); } catch (e) { notes = []; }
+  $("notes").innerHTML = notes.length ? "" : '<span class="note">none</span>';
+  notes.slice().reverse().forEach(n => {
+    const d = document.createElement("div");
+    d.className = n.status;
+    d.textContent = `#${n.id} ${n.note}${n.part ? " [" + n.part + "]" : ""}${n.reply ? " -> " + n.reply : ""}`;
+    $("notes").append(d);
+  });
+}
+
 $("btn-review").onclick = () => run({cmd: "review"});
 $("btn-sheet").onclick = () => run({cmd: "review", set: changedParams()});
 $("btn-render").onclick = () => run({cmd: "render", view: viewName(), mode: $("mode").value, set: changedParams()});
 $("orbit").onchange = () => { $("extraview").value = ""; run({cmd: "render", view: viewName(), mode: $("mode").value, set: changedParams()}); };
-$("btn-preview").onclick = () => run({cmd: "review", set: changedParams()});
+$("btn-preview").onclick = async () => { const set = changedParams(); await run({cmd: "review", set}); await load3d(set); };
 $("btn-apply").onclick = async () => {
   const set = changedParams(); if (!Object.keys(set).length) return;
   const res = await run({cmd: "set", set});
-  if (res.rc === 0) { await refresh(true); await run({cmd: "review"}); }
+  if (res.rc === 0) { await refresh(true); await run({cmd: "review"}); await load3d({}); }
 };
 $("btn-reset").onclick = () => renderParams();
 $("btn-snap").onclick = () => run({cmd: "snapshot", message: $("msg").value || "workbench edit", critique: $("crit").value});
 $("btn-compare").onclick = () => run({cmd: "compare", a: "1", b: "current"});
 $("btn-uv").onclick = () => run({cmd: "uv_lock"});
-$("btn-export").onclick = () => run({cmd: "export", target: $("target").value || undefined});
+$("btn-export").onclick = async () => {
+  const res = await run({cmd: "export", target: $("target").value || undefined});
+  const rel = (res.glbs || []).find(p => !p.endsWith("_preview.glb"));
+  if (rel) { const a = $("download"); a.href = "/files?path=" + encodeURIComponent(rel); a.style.display = ""; a.download = rel.split("/").pop(); a.textContent = "download " + rel.split("/").pop(); }
+};
 $("btn-save").onclick = async () => {
   busy(true);
   try { const res = await api("/api/source", {asset: cur, text: $("source").value}); log(res); await refresh(true); }

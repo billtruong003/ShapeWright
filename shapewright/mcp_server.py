@@ -236,6 +236,28 @@ def pack_review(pack: str) -> tuple[str, Path | None]:
     return text, _last_png(text)
 
 
+def feedback(name: str) -> tuple[str, list[Path]]:
+    """Notes the person pinned on the model in the workbench (click a point, type what is wrong): the part, the point
+    (asset coordinates, metres), the view, and a screenshot with the spot marked. Act on each, then resolve_feedback."""
+    from . import feedback as fb
+
+    d = _find(name)
+    notes = fb.load(d)
+    shots = []
+    for n in notes:
+        if n.get("status") == "open" and n.get("image"):
+            img = fb.path_for(d).parent / n["image"]
+            if img.is_file() and len(shots) < 4:
+                shots.append(img)
+    return fb.format_notes(notes), shots
+
+
+def resolve_feedback(name: str, note_id: int, reply: str = "") -> str:
+    """Mark a workbench note resolved after changing the source; reply says what changed (the person sees it)."""
+    _find(name)
+    return _sw("feedback", name, "resolve", str(int(note_id)), "--reply", reply or "done")
+
+
 def _last_png(text: str) -> Path | None:
     base = paths.project() or Path.cwd()
     for m in reversed(re.findall(r"([^\s\"']+\.png)", text)):
@@ -246,7 +268,7 @@ def _last_png(text: str) -> Path | None:
 
 
 TOOLS = [guide, brief, doc, list_assets, read_source, write_source, new, set_params, validate, stats, review, render,
-         snapshot, compare, export, pack_review]
+         snapshot, compare, export, pack_review, feedback, resolve_feedback]
 
 
 # ---------------------------------------------------------------- MCP binding
@@ -279,7 +301,8 @@ def build_server():
                 return f"error: {e}"
             if isinstance(out, tuple):
                 text, img = out
-                return [text, Image(path=str(img))] if img else text
+                imgs = img if isinstance(img, list) else [img] if img else []
+                return [text, *(Image(path=str(i)) for i in imgs)] if imgs else text
             return out
         tool.__annotations__ = {k: v for k, v in fn.__annotations__.items() if k != "return"}
         del tool.__wrapped__  # the schema comes from the arguments; results are text or [text, image] content

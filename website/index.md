@@ -6,8 +6,16 @@ An asset is a short YAML file of named parts, parameters and design checks. Shap
 
 It needs no GPU, no display and no Blender. The same command gives the same bytes on a laptop, in CI and in a cloud agent container.
 
-<model-viewer src="gallery/models/house_cottage.glb" camera-controls auto-rotate shadow-intensity="1" exposure="1.1"
-  style="width:100%;height:420px;background:#ecebe7;border-radius:8px" alt="A cozy half-timbered cottage built from a 26-module kit"><img slot="poster" src="gallery/img/house_cottage.png" alt="" style="width:100%;height:100%;object-fit:contain"></model-viewer>
+<div class="sw-3d" data-src="gallery/models/house_cottage.glb" style="position:relative;overflow:hidden;height:420px;background:#ecebe7;border-radius:8px"><img src="gallery/img/house_cottage.png" alt="A cozy half-timbered cottage built from a 26-module kit" style="width:100%;height:100%;object-fit:contain"><button class="md-button" style="display:none">3D</button></div>
+
+<script type="importmap">{"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<script type="module">
+import { createViewer } from "./gallery/viewer.js";
+document.querySelectorAll(".sw-3d").forEach(box => {
+  const v = createViewer(box, {background: 0xecebe7});
+  v.load(box.dataset.src).then(() => box.querySelectorAll("img, button").forEach(e => e.remove())).catch(() => box.querySelector("canvas")?.remove());
+});
+</script>
 
 *Built from a 26-module kit by an agent. Drag to orbit. The source of every piece is in the repository.*
 

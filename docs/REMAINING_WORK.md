@@ -18,10 +18,10 @@ Nothing is left out. The earlier figures (87 % and 83 %) counted fewer items, wh
 
 | scope | done | remaining | **progress** |
 |---|---|---|---|
-| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 48.25 | 7.5 | **≈ 87 %** |
-| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 48.25 | 11.5 | **≈ 81 %** |
-| **planned roadmap** (+ track G: native character track) | 48.25 | 23.5 | **≈ 67 %** |
-| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 48.25 | ≈ 34.5 | **≈ 58 %** |
+| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 51.25 | 4.5 | **≈ 92 %** |
+| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 51.25 | 8.5 | **≈ 86 %** |
+| **planned roadmap** (+ track G: native character track) | 51.25 | 20.5 | **≈ 71 %** |
+| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 51.25 | ≈ 31.5 | **≈ 62 %** |
 
 The figures dropped from 80 / 74 / 62 / 54 % because two decisions on 2026-10-05 added work:
 - **Track W** (3 points): the workbench gets a three.js 3D viewer (list, view modes, save, export, click-to-comment).
@@ -54,12 +54,12 @@ Tick `[x]` here in the commit that finishes a task.
 | [x] | R4 | Regenerate README, gallery, home hero and bundle renders in beauty mode | 0.15 | R1–R3, B4 | agent |
 | [x] | R5 | MCP `render` accepts `beauty`; docs page; llms.txt | 0.1 | R1 | agent |
 | [x] | R6 | Human-scale silhouette + dimension overlay in orthographic review views (ROADMAP Stage 3) | 0.25 | — | agent |
-| [ ] | W1 | Workbench 3D viewer: three.js vendored in the package, GLB view, orbit, lights, ground grid, 1.75 m scale figure | 0.5 | A3 | agent |
-| [ ] | W2 | Viewer modes: textured, clay, wireframe, normals, UV checker, UV layout (2D), colour by part / material, texel density | 0.75 | W1 | agent |
-| [ ] | W3 | Model list: thumbnail grid, PASS/WARN/FAIL badge, tris, build date, filter (library / project / pack) | 0.25 | W1 | agent |
-| [ ] | W4 | Param sliders → `sw set` → rebuild → GLB reload; save YAML; export per engine + download; screenshot of the current view | 0.5 | W1 | agent |
-| [ ] | W5 | Click-to-comment: pick a point → part name + position + view screenshot → `.build/feedback.json`; MCP tool `feedback`; tests | 0.75 | W4 | agent |
-| [ ] | W6 | Docs gallery uses the same viewer (replaces `<model-viewer>`) | 0.25 | W2, A3 | agent |
+| [x] | W1 | Workbench 3D viewer: three.js vendored in the package, GLB view, orbit, lights, ground grid, 1.75 m scale figure | 0.5 | A3 | agent |
+| [x] | W2 | Viewer modes: textured, clay, wireframe, normals, UV checker, UV layout (2D), colour by part / material, texel density | 0.75 | W1 | agent |
+| [x] | W3 | Model list: thumbnail grid, PASS/WARN/FAIL badge, tris, build date, filter (library / project / pack) | 0.25 | W1 | agent |
+| [x] | W4 | Param sliders → `sw set` → rebuild → GLB reload; save YAML; export per engine + download; screenshot of the current view | 0.5 | W1 | agent |
+| [x] | W5 | Click-to-comment: pick a point → part name + position + view screenshot → `.build/feedback.json`; MCP tool `feedback`; tests | 0.75 | W4 | agent |
+| [x] | W6 | Docs gallery uses the same viewer (replaces `<model-viewer>`) | 0.25 | W2, A3 | agent |
 | [ ] | C1 | MCP through a real desktop client (Claude Desktop or Cursor), one unseen prop, Windows launch documented | 0.5 | A5 | **owner** + agent |
 | [ ] | C2 | MCP Inspector run on the tool schemas (Phase 17 gate) | 0.25 | — | agent (needs Node) |
 | [ ] | C3 | Another vendor's agent (Codex CLI or ChatGPT via MCP) does one prop (closes Phase 13's open gate) | 0.5 | C1 | **owner** + agent |
@@ -91,7 +91,7 @@ Tick `[x]` here in the commit that finishes a task.
 | [ ] | G5 | Procedural clips: idle bob, walk cycle, wave, from the skeleton template | 1.5 | G4 | agent |
 | [ ] | H* | Long-term backlog (§11): plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village, optional Blender/three.js beauty renders | ≈ 11 | — | later |
 
-Done so far (48.25 points):
+Done so far (51.25 points):
 
 | work | points |
 |---|---|
@@ -108,6 +108,7 @@ Done so far (48.25 points):
 | Phase 20b cleanup (track A) | 1.5 |
 | Phase 19b kit complete (track B) | 2.5 |
 | Phase 25a presentation renders (track R) | 2.25 |
+| Phase 15b web workbench, three.js (track W) | 3 |
 
 ## 2b. Rules for every task
 

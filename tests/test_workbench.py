@@ -33,7 +33,7 @@ def test_workbench_imports_nothing_but_the_cli():
     internal = {m for m in mods if m.startswith(".")}
     assert internal == {"..:cli,paths"}, internal  # paths only locates the project/library (Phase 16); it builds nothing
     external = {m.split(".")[0] for m in mods - internal}
-    assert external <= {"__future__", "contextlib", "io", "json", "re", "shlex", "time", "http", "pathlib", "urllib", "yaml", "webbrowser"}
+    assert external <= {"__future__", "base64", "contextlib", "io", "json", "re", "shlex", "time", "http", "pathlib", "urllib", "yaml", "webbrowser"}
 
 
 def test_argv_whitelist(tmp_path, monkeypatch):
@@ -124,3 +124,105 @@ def test_browser_session(workbench, tmp_path):
     cmds = json.loads(out.stdout.strip().splitlines()[-1])
     assert any("sw set" in c for c in cmds) and any("sw export" in c for c in cmds)
     _same_as_cli(gui, cli, "seat_height 0.48 from the workbench", "checked in the browser")
+
+
+# ---------------------------------------------------------------- Phase 15b: 3D view, screenshots, notes for the agent
+
+
+def test_3d_and_feedback_commands_are_sw_commands(tmp_path, monkeypatch):
+    from shapewright.workbench import server
+
+    shutil.copytree(ROOT / "assets" / "crate", tmp_path / "crate")
+    monkeypatch.setattr(server, "ASSETS", tmp_path)
+    ref = str(tmp_path / "crate")
+    assert server.argv_for({"asset": "crate", "cmd": "glb", "set": {"w": 1}}) == \
+        ["export", ref, "--preview", "--target", "generic", "--set", "w=1"]
+    argv = server.argv_for({"asset": "crate", "cmd": "feedback_add", "note": "lid too thin", "part": "lid",
+                            "at": [0, 0.5, 0.1], "normal": [0, 1, 0], "view": "orbit", "image": "shots/shot_3.png"})
+    assert argv == ["feedback", ref, "add", "lid too thin", "--part", "lid", "--at", "0,0.5,0.1", "--normal", "0,1,0",
+                    "--view", "orbit", "--image", "shots/shot_3.png"]
+    for bad in ({"cmd": "feedback_add", "note": ""}, {"cmd": "feedback_add", "note": "x", "part": "a/b"},
+                {"cmd": "feedback_add", "note": "x", "at": [1, 2]}, {"cmd": "feedback_add", "note": "x", "image": "../../etc/passwd"}):
+        with pytest.raises((ValueError, TypeError)):
+            server.argv_for({"asset": "crate", **bad})
+    assert server.argv_for({"asset": "crate", "cmd": "feedback_resolve", "id": 2, "reply": "wider"}) == \
+        ["feedback", ref, "resolve", "2", "--reply", "wider"]
+
+
+def test_screenshots_are_pngs_inside_the_asset(tmp_path, monkeypatch):
+    import base64
+
+    from shapewright.workbench import server
+
+    shutil.copytree(ROOT / "assets" / "crate", tmp_path / "crate")
+    monkeypatch.setattr(server, "ASSETS", tmp_path)
+    png = (ROOT / "docs" / "images" / "readme_gallery.png").read_bytes()
+    rel = server.save_shot("crate", "data:image/png;base64," + base64.b64encode(png).decode())
+    assert rel == "shots/shot_1.png" and (tmp_path / "crate" / ".build" / rel).read_bytes() == png
+    assert server.save_shot("crate", "data:image/png;base64," + base64.b64encode(png).decode()) == "shots/shot_2.png"
+    with pytest.raises(ValueError):
+        server.save_shot("crate", "data:image/png;base64," + base64.b64encode(b"not a png").decode())
+    with pytest.raises(ValueError):
+        server.save_shot("../crate", "data:image/png;base64,")
+
+
+def test_feedback_round_trip_cli_and_mcp(tmp_path, monkeypatch):
+    from shapewright import mcp_server as M
+
+    monkeypatch.chdir(tmp_path)
+    assert main(["init", "."]) == 0
+    monkeypatch.setenv("SW_PROJECT", str(tmp_path))
+    assert main(["new", "box"]) == 0
+    shots = tmp_path / "assets" / "box" / ".build" / "shots"
+    shots.mkdir(parents=True)
+    (shots / "shot_1.png").write_bytes((ROOT / "docs" / "images" / "readme_gallery.png").read_bytes())
+    assert main(["feedback", "box", "add", "make", "it", "taller", "--part", "body", "--at", "0,0.5,0", "--image", "shots/shot_1.png"]) == 0
+    text, imgs = M.feedback("box")
+    assert "#1 [open] make it taller" in text and "part body" in text and imgs and imgs[0].name == "shot_1.png"
+    out = M.resolve_feedback("box", 1, "height 0.8")
+    assert "exit 0" in out
+    text, imgs = M.feedback("box")
+    assert "no open notes (1 resolved)" in text and not imgs
+    assert main(["feedback", "box", "resolve", "7"]) == 2
+
+
+@pytest.mark.skipif(not CHROMIUM.exists(), reason="needs the bundled Chromium")
+def test_browser_3d_view_and_pinned_note(tmp_path):
+    sync_api = pytest.importorskip("playwright.sync_api")
+    shutil.copytree(ROOT / "assets" / "crate", tmp_path / "crate", ignore=shutil.ignore_patterns(".build", "export"))
+    port = _free_port()
+    proc = subprocess.Popen([sys.executable, "-m", "shapewright", "workbench", "--port", str(port), "--assets", str(tmp_path)],
+                            cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    try:
+        url = f"http://127.0.0.1:{port}/"
+        for _ in range(100):
+            try:
+                urllib.request.urlopen(url + "api/assets", timeout=1)
+                break
+            except OSError:
+                time.sleep(0.1)
+        with sync_api.sync_playwright() as p:
+            b = p.chromium.launch(executable_path=str(CHROMIUM), args=["--use-gl=angle", "--use-angle=swiftshader",
+                                                                      "--enable-unsafe-swiftshader", "--no-proxy-server"])
+            pg = b.new_page(viewport={"width": 1400, "height": 1000})
+            errors = []
+            pg.on("pageerror", lambda e: errors.append(str(e)))
+            pg.goto(url)
+            pg.click('#assets li[data-name="crate"]')
+            pg.wait_for_function("document.getElementById('glbinfo').textContent.endsWith('.glb')", timeout=300000)
+            for m in ("clay", "parts", "uv_checker", "texel", "normals", "textured"):
+                pg.select_option("#mode3d", m)
+            box = pg.locator("#viewer3d").bounding_box()
+            pg.mouse.click(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+            pg.wait_for_function("document.getElementById('pickinfo').textContent.startsWith('part ')", timeout=10000)
+            pg.fill("#note", "corner posts thicker")
+            pg.click("#btn-note")
+            pg.wait_for_function("document.getElementById('notes').textContent.includes('corner posts')", timeout=60000)
+            b.close()
+        assert not errors, errors
+        notes = json.loads((tmp_path / "crate" / ".build" / "feedback.json").read_text())["notes"]
+        assert notes[0]["note"] == "corner posts thicker" and notes[0]["part"] and len(notes[0]["at"]) == 3
+        assert (tmp_path / "crate" / ".build" / notes[0]["image"]).is_file()
+    finally:
+        proc.terminate()
+        proc.wait(10)

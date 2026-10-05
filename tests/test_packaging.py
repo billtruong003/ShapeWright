@@ -86,6 +86,8 @@ def test_the_wheel_bundles_the_library_without_build_products(tmp_path):
     names = zipfile.ZipFile(next(tmp_path.glob("*.whl"))).namelist()
     for need in ("shapewright/_lib/profiles/mobile_mid.yaml", "shapewright/_lib/packs/cozy_house.yaml",
                  "shapewright/_lib/components/house_wall.yaml", "shapewright/_lib/templates/asset.yaml",
-                 "shapewright/_lib/assets/barrel/asset.yaml", "shapewright/workbench/index.html"):
+                 "shapewright/_lib/assets/barrel/asset.yaml", "shapewright/workbench/index.html", "shapewright/workbench/viewer.js",
+                 "shapewright/workbench/vendor/three/build/three.module.min.js",
+                 "shapewright/workbench/vendor/three/examples/jsm/loaders/GLTFLoader.js"):
         assert need in names, need
     assert not [n for n in names if "/export/" in n and "_lib" in n or "/history/" in n or "/.build/" in n]

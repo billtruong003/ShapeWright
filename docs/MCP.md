@@ -26,6 +26,8 @@ sw mcp --transport streamable-http --port 8000 --project ~/my_assets   # HTTP se
 | `snapshot(name, message, critique?)`, `compare(name, a, b)` | `sw snapshot`, `sw compare` | text (+ comparison image) |
 | `export(name, target?)` | `sw export` | GLB path + validation summary |
 | `pack_review(pack)` | `sw pack --pack` | consistency report + pack sheet image |
+| `feedback(name)` | `sw feedback NAME` | notes a person pinned on the model in the workbench (part, point, view) + their screenshots |
+| `resolve_feedback(name, note_id, reply)` | `sw feedback NAME resolve ID --reply ...` | marks a note done after the source changed |
 
 Every tool runs the matching `sw` command as a subprocess, under the CLI's own time limit (`TIMEOUT_S` = 600 s). The answer always starts with the exact command (`$ sw review crate   (exit 0)`), so a person can repeat any step in a terminal.
 

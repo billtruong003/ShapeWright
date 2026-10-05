@@ -19,7 +19,7 @@ command = "sw"
 args = ["mcp", "--project", "/ABS/PATH/my_assets"]
 ```
 
-The client gets 16 tools: `guide`, `brief`, `doc`, `list_assets`, `read_source`, `write_source`, `new`, `set_params`, `validate`, `stats`, `review`, `render`, `snapshot`, `compare`, `export`, `pack_review`.
+The client gets 18 tools: `guide`, `brief`, `doc`, `list_assets`, `read_source`, `write_source`, `new`, `set_params`, `validate`, `stats`, `review`, `render`, `snapshot`, `compare`, `export`, `pack_review`, and `feedback` / `resolve_feedback` (notes a person pinned on the model in the workbench, with screenshots).
 - `review`, `render`, `compare` and `pack_review` return **images**, so the model sees what it made.
 - Tools take asset names, never paths. Writes stay in the project's `assets/`, and library examples are read-only until copied.
 

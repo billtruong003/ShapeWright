@@ -39,7 +39,7 @@ CLI first (`sw set`), and the workbench uses it. Nothing is added to the workben
   - `sw set` (params);
   - saving the source text. The text is validated by building it; if the build fails with a source error,
     the previous text is restored.
-- **UI.** One static HTML page, no external scripts. It works offline and holds no business logic:
+- **UI.** One static HTML page, no external scripts (three.js is vendored, Phase 15b). It works offline and holds no business logic:
   - asset list;
   - image panel (view/mode, sheet);
   - issues;
@@ -72,6 +72,27 @@ CLI first (`sw set`), and the workbench uses it. Nothing is added to the workben
 | W2 | `sw set` must preserve comments and formatting, since sources are hand-authored. Mapping-form params (`{value: 3, min: ...}`) are the tricky case |
 | W3 | The 8 named views as an orbit are enough to judge form; a real-time 3D viewer is not needed for the gate, and its absence is stated |
 | W4 | A person needs the same review sheet an agent sees; no new render mode is needed |
+
+## Phase 15b: the 3D view and notes for the agent
+
+The image panel became a **3D view** (three.js r169, vendored under `shapewright/workbench/vendor/`, MIT; loaded
+with an import map, so the page still works offline and needs no build step). It shows the GLB of
+`sw export ASSET --preview --target generic` (per-part nodes, no collision proxies), rebuilt after Preview/Apply.
+
+- **View modes** (materials swapped in the browser, no rebuild): textured, clay, material colours, colour by part,
+  normals, UV checker (stretching and flipped charts show), texel density (blue = half the median px/m, red = double);
+  wireframe overlay, 1 m grid, a 1.75 m figure; **UV layout** of the picked part (zoomed to its charts) or of all parts.
+- **Model list**: thumbnails (the newest beauty/textured render or the sheet), status, triangles, build time; search
+  and a status filter.
+- **Export**: a download link for the GLB just written. **Screenshot** saves the 3D view to `.build/shots/`.
+- **Notes for the agent**: click the model to pick a part (name, point in asset coordinates, surface normal), type
+  what is wrong, *Pin note*. The page saves a screenshot with the spot marked and runs `sw feedback ASSET add ...`.
+  The agent reads open notes with `sw feedback ASSET` or the MCP tool `feedback` (text + screenshots), fixes the
+  source and runs `sw feedback ASSET resolve ID --reply "..."`; the page shows the reply.
+
+The rules above still hold: the 3D view is for people (the CPU renderer stays the reference for agents, tests and
+goldens), the browser never edits geometry, and every action is an `sw` command (screenshots are the one extra write,
+under `.build/shots/`).
 
 ## Result: gate PASS (by construction and by test); human usability not yet tested with people
 

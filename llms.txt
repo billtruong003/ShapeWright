@@ -93,20 +93,21 @@ shapewright 0.1.0  (units m, +Y up, front +Z, angles in degrees)
 
 COMMANDS
   sw brief REQUEST                              start here: closest example asset (with source), profile, rules and vocabulary for a request
-  sw workbench [--port N]                       local browser workbench for people over these same commands (127.0.0.1 only)
+  sw workbench [--port N]                       local browser workbench for people over these same commands (127.0.0.1 only): 3D view (three.js), view modes, notes for the agent
   sw caps                                       list capabilities (this manifest); --json for everything; --llms for the one-page agent brief (llms.txt)
   sw doc NAME                                   details and example for one shape, op, view, mode, issue code, profile, style, pack or component
   sw new NAME [--from ASSET]                    scaffold assets/NAME/asset.yaml (optionally as a variant of ASSET)
   sw set ASSET NAME=VALUE                       write param values into the source file, keeping comments (what --set previews)
   sw stats ASSET                                per-part triangles, sizes, positions, materials; sockets; params
   sw validate ASSET                             layered deterministic validation (exit 1 on errors); --json
-  sw render ASSET                               images: --view V --mode M --part P [--isolate] or --sheet
+  sw render ASSET                               images: --view V --mode M --part P [--isolate] [--scale-ref] or --sheet; --mode beauty, --turntable N, --present for presentation
   sw review ASSET                               validate + contact sheet + style checklist: the inspection step of the loop
   sw snapshot ASSET -m NOTE [--critique TEXT]   record an iteration (source + metrics + critique)
   sw log ASSET                                  list iterations
   sw compare ASSET A B                          diff two iterations (numbers or 'current'): image + metrics
   sw restore ASSET N                            put iteration N's source back (current source is backed up)
-  sw export ASSET                               validate, write GLB, verify with Khronos validator + re-import
+  sw export ASSET                               validate, write GLB, verify with Khronos validator + re-import; --preview: no collision/LODs (web viewers)
+  sw feedback ASSET [add|resolve]               notes a person pinned on the model in the workbench (part, point, screenshot): read them, fix, resolve ID --reply
   sw variants ASSET --count N                   derive seeded variants from params that declare `vary`
   sw import FILE NAME [--split]                 create an asset from GLB/OBJ/STL/PLY (parts per node/piece; geometry stays in the file)
   sw uv ASSET lock|show                         lock UV regions (uv.lock.yaml) so edits never move other parts' UVs

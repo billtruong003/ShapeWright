@@ -9,6 +9,7 @@ Writes (all git-ignored, regenerated in CI):
 
 from __future__ import annotations
 
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -66,6 +67,24 @@ def reference():
     (SITE / "reference" / "profiles.md").write_text("\n".join(prof) + "\n")
 
 
+THREE_CDN = "https://cdn.jsdelivr.net/npm/three@0.169.0"  # the version vendored in shapewright/workbench/vendor
+# a `.sw-3d` box holds a poster <img> and a button; the module swaps in the three.js viewer (auto: at load)
+VIEWER_BOOT = (
+    '<script type="importmap">{{"imports": {{"three": "' + THREE_CDN + '/build/three.module.min.js", '
+    '"three/addons/": "' + THREE_CDN + '/examples/jsm/"}}}}</script>\n'
+    '<script type="module">\n'
+    'import {{ createViewer }} from "{viewer}";\n'
+    'function open(box) {{\n'
+    '  const v = createViewer(box, {{background: 0xecebe7}});\n'
+    '  v.load(box.dataset.src).then(() => {{ box.querySelectorAll("img, button").forEach(e => e.remove()); }})\n'
+    '   .catch(() => {{ box.querySelector("canvas")?.remove(); }});\n'
+    '}}\n'
+    'document.querySelectorAll(".sw-3d").forEach(box => {{\n'
+    '  if ({auto}) open(box); else box.querySelector("button").onclick = () => open(box);\n'
+    '}});\n'
+    '</script>')
+
+
 def gallery():
     from shapewright.assemble import build
     from shapewright.render.beauty import render_beauty
@@ -74,7 +93,7 @@ def gallery():
     models, img = SITE / "gallery" / "models", SITE / "gallery" / "img"
     models.mkdir(parents=True, exist_ok=True)
     img.mkdir(parents=True, exist_ok=True)
-    page = ["# Gallery", "", "Every asset below was written as source by an agent and exported by `sw export`. Drag to orbit; the "
+    page = ["# Gallery", "", "Every asset below was written as source by an agent and exported by `sw export`. Press 3D to orbit the model; the "
             "source link opens its `asset.yaml`.", "", '<div class="grid" markdown>', ""]
     for name, caption in GALLERY:
         dst = models / f"{name}.glb"  # web viewers draw every mesh: the preview export has no collision proxies
@@ -86,15 +105,17 @@ def gallery():
             continue
         a = build(ROOT / "assets" / name)
         render_beauty(a, build_surface(a), "front_right", 480).save(img / f"{name}.png")  # poster: presentation render
-        # the page is served at /gallery/, next to gallery/models and gallery/img; the <img> in the poster slot is also
-        # what readers see when the model-viewer script cannot load
-        page += [f'<figure markdown><model-viewer src="models/{name}.glb" camera-controls '
-                 f'style="width:100%;height:300px;background:#ecebe7;border-radius:8px" alt="{caption}">'
-                 f'<img slot="poster" src="img/{name}.png" alt="{caption}" style="width:100%;height:300px;object-fit:contain"></model-viewer>',
+        # the page is served at /gallery/, next to gallery/models and gallery/img; the poster is what readers see until
+        # they open the 3D view (and if WebGL or the CDN is unavailable)
+        page += [f'<figure markdown><div class="sw-3d" data-src="models/{name}.glb" style="position:relative;overflow:hidden;height:300px;background:#ecebe7;border-radius:8px">'
+                 f'<img src="img/{name}.png" alt="{caption}" style="width:100%;height:300px;object-fit:contain">'
+                 '<button class="md-button" style="position:absolute;right:8px;bottom:8px;padding:2px 10px">3D</button></div>',
                  f'<figcaption>{caption}. <a href="https://github.com/billtruong003/ShapeWright/blob/main/assets/{name}/asset.yaml">source</a>'
                  '</figcaption></figure>', ""]
-    page += ["</div>", ""]
+    page += ["</div>", "", VIEWER_BOOT.format(viewer="./viewer.js", auto="false"), ""]
     (SITE / "gallery.md").write_text("\n".join(page))
+    # the workbench's viewer, so the site and the workbench show models the same way
+    shutil.copy(ROOT / "shapewright" / "workbench" / "viewer.js", SITE / "gallery" / "viewer.js")
 
 
 def main():

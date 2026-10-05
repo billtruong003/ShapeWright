@@ -30,6 +30,7 @@ Every phase follows the same run protocol (§1) and the same record format (§2)
 | 20b cleanup (track A) | `phase/20b-cleanup` | PASS | docs/phases/PHASE_20b.md |
 | 19b kit complete (track B) | `phase/19b-houses` | PASS (closes 19's PARTIAL) | docs/phases/PHASE_19b.md |
 | 25a presentation renders (track R) | `phase/25a-render` | PARTIAL (25 s, not 10 s; owner review pending) | docs/phases/PHASE_25a.md |
+| 15b web workbench, three.js (track W) | `phase/15b-web-viewer` | PASS with exceptions (Windows/Edge/Firefox not verified) | docs/phases/PHASE_15b.md |
 
 The branches are **stacked**: each one contains the ones above it, so `phase/18-docs-site` has everything.
 All of them were fast-forwarded into `main` on 2026-09-30; the branches stay for review.

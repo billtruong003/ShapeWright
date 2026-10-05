@@ -4,8 +4,11 @@ Rules this module keeps (checked in tests/test_architecture.py):
 - every action is an `sw` command line, run in-process through `cli.main(argv)`, and every response
   echoes that command, so anything done here can be repeated, scripted or reviewed by an agent;
 - it imports no geometry, validation, surface or export code: it reads files the commands write
-  (asset.yaml, .build/*.png, .build/report.json, history/*/summary.json) and nothing else;
-- the only writes are `sw set` and saving the source text (restored if it no longer builds);
+  (asset.yaml, .build/*.png, .build/report.json, export/*.glb, history/*/summary.json) and nothing else;
+- the only writes are `sw set`, saving the source text (restored if it no longer builds) and viewer
+  screenshots under .build/shots/ (notes pinned on the model go through `sw feedback`);
+- the 3D view (Phase 15b) is three.js in the browser, vendored under workbench/vendor/: it shows the
+  `sw export --preview` GLB; the CPU renderer stays the reference for agents and tests;
 - it binds to 127.0.0.1 and serves files only from inside assets/.
 
 Requests are handled one at a time on the main thread (the CLI's build timeout uses SIGALRM), so two
@@ -31,9 +34,14 @@ from .. import cli, paths
 ROOT = paths.LIB
 ASSETS = paths.assets_home()
 PAGE = Path(__file__).with_name("index.html")
+VIEWER = Path(__file__).with_name("viewer.js")
+VENDOR = Path(__file__).with_name("vendor")
 NAME = re.compile(r"^[A-Za-z0-9_\-]+$")
 VIEWS = ("front", "front_right", "right", "back_right", "back", "back_left", "left", "front_left", "top", "low_front", "uv")
-MODES = ("clay", "parts", "material", "wire", "normals", "silhouette", "textured", "albedo", "roughness", "metallic", "texel", "seams")
+MODES = ("clay", "parts", "material", "wire", "normals", "silhouette", "textured", "albedo", "roughness", "metallic", "texel", "seams",
+         "beauty")
+NUM = re.compile(r"^-?\d+(\.\d+)?(e-?\d+)?$")
+MAX_SHOT_BYTES = 8_000_000
 
 
 def ref(name: str) -> str:
@@ -83,6 +91,38 @@ def argv_for(req: dict) -> list[str]:
         return ["export", name] + (["--target", t] if t else [])
     if cmd == "uv_lock":
         return ["uv", name, "lock"]
+    if cmd == "glb":  # the 3D view: per-part nodes (generic target), no collision proxies
+        return ["export", name, "--preview", "--target", "generic", *set_args]
+    if cmd == "feedback":
+        return ["feedback", name, "--json", "--all"]
+    if cmd == "feedback_add":
+        note = str(req.get("note") or "").strip()
+        if not note:
+            raise ValueError("a note needs text")
+        argv = ["feedback", name, "add", note[:2000]]
+        part = str(req.get("part") or "")
+        if part:
+            if not NAME.match(part):
+                raise ValueError("bad part name")
+            argv += ["--part", part]
+        for key in ("at", "normal"):
+            v = req.get(key)
+            if v is not None:
+                vals = [f"{round(float(x), 5):g}" for x in v][:3]
+                if len(vals) != 3 or not all(NUM.match(x) for x in vals):
+                    raise ValueError(f"{key} must be three numbers")
+                argv += [f"--{key}", ",".join(vals)]
+        view = str(req.get("view") or "")
+        if view:
+            argv += ["--view", view if view in VIEWS else "orbit"]
+        image = str(req.get("image") or "")
+        if image:
+            if not re.match(r"^shots/shot_\d+\.png$", image):
+                raise ValueError("bad screenshot path")
+            argv += ["--image", image]
+        return argv
+    if cmd == "feedback_resolve":
+        return ["feedback", name, "resolve", str(int(req.get("id"))), "--reply", str(req.get("reply") or "done")[:2000]]
     if cmd in ("log", "materials"):
         return [cmd, name]
     raise ValueError(f"'{cmd}' is not a workbench command")
@@ -102,6 +142,13 @@ def run(argv: list[str]) -> dict:
 def images(name: str, since: float = 0.0) -> list[str]:
     b = ASSETS / name / ".build"
     found = [p for p in b.rglob("*.png") if p.stat().st_mtime >= since] if b.exists() else []
+    return [str(p.relative_to(ASSETS)) for p in sorted(found, key=lambda p: -p.stat().st_mtime)]
+
+
+def glbs(name: str, since: float = 0.0) -> list[str]:
+    """GLB files a command just wrote (paths for /files), newest first."""
+    e = ASSETS / name / "export"
+    found = [p for p in e.glob("*.glb") if p.stat().st_mtime >= since] if e.exists() else []
     return [str(p.relative_to(ASSETS)) for p in sorted(found, key=lambda p: -p.stat().st_mtime)]
 
 
@@ -125,14 +172,38 @@ def asset_info(name: str) -> dict:
             "images": images(name), "extends": "extends" in src}
 
 
+THUMBS = (".build/renders/front_right_beauty.png", ".build/renders/front_right_textured.png", ".build/renders/front_right_clay.png",
+          ".build/sheet.png")
+
+
 def list_assets() -> list[dict]:
     out = []
     for d in sorted(ASSETS.iterdir()):
         if (d / "asset.yaml").exists():
             rep = d / ".build" / "report.json"
-            status = json.loads(rep.read_text()).get("status") if rep.exists() else None
-            out.append({"name": d.name, "status": status})
+            report = json.loads(rep.read_text()) if rep.exists() else {}
+            m = report.get("metrics") or {}
+            thumb = next((f"{d.name}/{t}" for t in THUMBS if (d / t).is_file()), None)
+            out.append({"name": d.name, "status": report.get("status"), "triangles": m.get("triangles"),
+                        "built": int(rep.stat().st_mtime) if rep.exists() else None, "thumb": thumb})
     return out
+
+
+def save_shot(name: str, data_url: str) -> str:
+    """A viewer screenshot (PNG data URL) -> .build/shots/shot_N.png; returns the path relative to .build/."""
+    import base64
+
+    prefix = "data:image/png;base64,"
+    if not data_url.startswith(prefix):
+        raise ValueError("expected a PNG data URL")
+    raw = base64.b64decode(data_url[len(prefix):], validate=True)
+    if len(raw) > MAX_SHOT_BYTES or not raw.startswith(b"\x89PNG"):
+        raise ValueError("not a PNG, or too large")
+    d = asset_dir(name) / ".build" / "shots"
+    d.mkdir(parents=True, exist_ok=True)
+    n = 1 + max([int(p.stem.split("_")[1]) for p in d.glob("shot_*.png")] + [0])
+    (d / f"shot_{n}.png").write_bytes(raw)
+    return f"shots/shot_{n}.png"
 
 
 def save_source(name: str, text: str) -> dict:
@@ -174,25 +245,36 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(asset_info(q.get("name", "")))
             if u.path == "/files":
                 p = (ASSETS / q.get("path", "")).resolve()
-                if not p.is_relative_to(ASSETS.resolve()) or p.suffix.lower() not in (".png", ".glb", ".json") or not p.is_file():
+                if not p.is_relative_to(ASSETS.resolve()) or p.suffix.lower() not in (".png", ".glb", ".json", ".gif") or not p.is_file():
                     return self._json({"error": "not found"}, 404)
-                ctype = {".png": "image/png", ".glb": "model/gltf-binary", ".json": "application/json"}[p.suffix.lower()]
+                ctype = {".png": "image/png", ".glb": "model/gltf-binary", ".json": "application/json", ".gif": "image/gif"}[p.suffix.lower()]
                 return self._send(200, p.read_bytes(), ctype)
+            if u.path == "/viewer.js":
+                return self._send(200, VIEWER.read_bytes(), "text/javascript; charset=utf-8")
+            if u.path.startswith("/vendor/"):  # three.js, vendored (offline, no CDN)
+                p = (VENDOR / u.path[len("/vendor/"):]).resolve()
+                if not p.is_relative_to(VENDOR.resolve()) or p.suffix != ".js" or not p.is_file():
+                    return self._json({"error": "not found"}, 404)
+                return self._send(200, p.read_bytes(), "text/javascript; charset=utf-8")
             return self._json({"error": "not found"}, 404)
         except ValueError as e:
             return self._json({"error": str(e)}, 400)
 
     def do_POST(self):
         n = int(self.headers.get("Content-Length") or 0)
-        if n > 1_000_000:
+        if n > (MAX_SHOT_BYTES * 4 // 3 + 4096 if self.path == "/api/shot" else 1_000_000):
             return self._json({"error": "request too large"}, 413)
         try:
             req = json.loads(self.rfile.read(n) or b"{}")
             if self.path == "/api/run":
                 argv = argv_for(req)
                 res = run(argv)
-                res["images"] = images(req["asset"], res.pop("started") - 0.05)
+                started = res.pop("started") - 0.05
+                res["images"] = images(req["asset"], started)
+                res["glbs"] = glbs(req["asset"], started)
                 return self._json(res)
+            if self.path == "/api/shot":
+                return self._json({"image": save_shot(req.get("asset", ""), str(req.get("png", "")))})
             if self.path == "/api/source":
                 res = save_source(req.get("asset", ""), str(req.get("text", "")))
                 res.pop("started", None)
