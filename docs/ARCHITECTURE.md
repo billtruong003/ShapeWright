@@ -344,7 +344,7 @@ untrusted: asset sources written by agents in the loop, imported files (future)
   overlap, hidden part, schema errors, cycles, unsafe expressions).
 - **Golden geometry:** a hash of every benchmark's geometry (rounded) per platform, plus a tolerant signature
   (triangles, bounds, area, volume) checked on every platform, in `tests/golden.json` (`tests/golden.py`).
-  A refactor cannot silently change modelling behaviour; CI runs on Linux, Windows and macOS.
+  A refactor cannot silently change modelling behaviour; CI runs on Linux and Windows (macOS is not a supported platform yet; docs/phases/PHASE_20a.md).
   Intentional changes regenerate the golden file (`python tests/update_golden.py`)
   and show up in review.
 - **Determinism:** GLB bytes are identical across builds, and there is a

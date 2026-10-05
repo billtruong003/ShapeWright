@@ -1,4 +1,4 @@
-"""Phase 20a: builds must not depend on the platform (CI runs Linux, Windows and macOS)."""
+"""Phase 20a: builds must not depend on the platform (CI runs Linux and Windows)."""
 
 import os
 

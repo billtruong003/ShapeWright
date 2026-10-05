@@ -21,6 +21,7 @@ Every phase follows the same run protocol (§1) and the same record format (§2)
 | 19 composition | `phase/19-composition` | PARTIAL (1 of 3 houses converted) | docs/phases/PHASE_19.md |
 | 20 seam validation | `phase/20-seams` | PASS (gate restated) | docs/phases/PHASE_20.md |
 | 18 docs site | `phase/18-docs-site` | PARTIAL (deploy not run) | docs/phases/PHASE_18.md |
+| 20a golden across Linux/Windows, CI | `phase/20a-cross-os-golden` | PASS (macOS out of scope) | docs/phases/PHASE_20a.md |
 
 The branches are **stacked**: each one contains the ones above it, so `phase/18-docs-site` has everything.
 All of them were fast-forwarded into `main` on 2026-09-30; the branches stay for review.
