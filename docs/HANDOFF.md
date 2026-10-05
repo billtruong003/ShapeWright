@@ -71,11 +71,14 @@ Commit rules for this repository:
 ==================================================================================================
 3. WORK QUEUE  ->  docs/REMAINING_WORK.md is the single source of truth
 ==================================================================================================
-  Read docs/REMAINING_WORK.md fully (after the reading list above). It has every remaining task with the exact
-  how-to, files, commands, gates, effort points and the progress table. Do the tracks in its order:
+  Read docs/REMAINING_WORK.md fully (after the reading list above). Its section 2 is the MASTER CHECKLIST of every
+  remaining task (IDs A1..G4, points, dependencies, who); later sections give the exact how-to and gates. Do the tracks
+  in its order:
     A phase/20b-cleanup -> B phase/19b-houses -> R phase/25a-render -> D phase/18b-site -> E release/1.0
     -> F phase/21-shared-surfaces
-    (C phase/17b-mcp-verify needs the owner's desktop client: do it when the owner says the client is ready)
+    (C phase/17b-mcp-verify: C2 any time; C1 and C3 need the owner's desktop client / another vendor's agent)
+  Tasks marked owner (C1, C3, E3 Docker, E7 PyPI token): prepare everything, then ask the owner and continue with
+  the next agent task instead of waiting.
   When a task is done: tick it in docs/REMAINING_WORK.md and update its progress table in the same commit.
   Track G (characters, Phases 22-25) only after the owner confirms, following the same file.
   Status at hand-off: main @ d9877eb, CI green on Linux + Windows, 433 tests pass. macOS is out of scope.

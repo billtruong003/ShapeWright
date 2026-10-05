@@ -1,6 +1,6 @@
 # Remaining work: complete task list, plan and progress
 
-Status measured on `main` @ `d9877eb` (2026-10-05): CI green on Linux and Windows, 433 tests pass, docs site auto-deploys.
+Status measured on `main` @ `6094518` (2026-10-05): CI green on Linux and Windows, 433 tests pass, docs site auto-deploys.
 This file is **the work queue** for long runs: do the tasks in order, tick them here in the same commit that finishes
 them, and update the progress table at the end.
 
@@ -8,11 +8,76 @@ them, and update the progress table at the end.
 
 Progress is counted in effort points. One point is about one medium agent session (one small phase).
 
+**What is counted.** The figures below count **every** open item found by a full sweep of the repository on 2026-10-05:
+- every phase record's "not done", "not verified" and "left for later" lists;
+- the ROADMAP stages and HARDENING's open items;
+- MODULAR_HOUSE_PACK_01's limitations;
+- the Phase 13–18 open gates.
+
+Nothing is left out. The earlier figures (87 % and 83 %) counted fewer items, which is why these are lower.
+
 | scope | done | remaining | **progress** |
 |---|---|---|---|
-| **v1.0: prop and kit framework, polished and released** (tracks A–E and R below) | 42 | 8.5 | **≈ 83 %** |
-| **v1.0 + Phase 21** (kit-grade runtime: shared atlas, LOD, collision) | 42 | 11.5 | **≈ 79 %** |
-| **Full roadmap** (+ the character track and the Blender render path) | 42 | 22.5 | **≈ 65 %** |
+| **v1.0** (tracks A, B, R, C, D, E): prop and kit framework, polished, verified, released | 42 | 10.75 | **≈ 80 %** |
+| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 42 | 14.75 | **≈ 74 %** |
+| **planned roadmap** (+ track G: character track and the Blender render path) | 42 | 25.75 | **≈ 62 %** |
+| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 42 | ≈ 35.75 | **≈ 54 %** |
+
+## 2. Master checklist (every remaining task)
+
+`who`: **agent** means an agent can do it alone; **owner** needs you (a desktop app, a token, Docker, your eyes).
+Tick `[x]` here in the commit that finishes a task.
+
+| ✓ | ID | task | pts | depends | who |
+|---|---|---|---|---|---|
+| [ ] | A1 | Fix z-fighting in 15 benchmark assets (78 pairs) | 0.6 | — | agent |
+| [ ] | A2 | tavern_chair `seat_height` min 0.40 → 0.42 (agree with its check) | 0.05 | — | agent |
+| [ ] | A3 | `sw export --preview`: GLB without collision proxies; site uses it | 0.3 | — | agent |
+| [ ] | A4 | Townhouse door brace ↔ ledges: 12 mm depth rank | 0.05 | — | agent |
+| [ ] | A5 | Library examples never write into the library (`.build`/`export` go to the project) | 0.3 | — | agent |
+| [ ] | A6 | "N info hidden" lists the hidden codes | 0.05 | — | agent |
+| [ ] | A7 | `sw.cmd` launcher for Windows clones (same as `./sw`) | 0.05 | — | agent |
+| [ ] | A8 | YAML schema errors carry the source line number (HARDENING: open since v0.1) | 0.1 | — | agent |
+| [ ] | B1 | `house_townhouse` from module assets (309 → ≤ 150 lines) | 0.8 | A1, A4 | agent |
+| [ ] | B2 | `house_workshop` from module assets (437 → ≤ 220 lines) | 0.8 | B1 | agent |
+| [ ] | B3 | Stress test of the 3 houses (pack values changed in a copy) | 0.1 | B2 | agent |
+| [ ] | B4 | Rebuild `modular_house_pack/` bundle + metrics | 0.2 | B3 | agent |
+| [ ] | B5 | `asset:` instances import the instanced asset's sockets | 0.1 | — | agent |
+| [ ] | B6 | Window-size family in the kit (`house_wall_window` `win_size` small/standard/tall) | 0.5 | B1 | agent |
+| [ ] | R1 | `beauty` render mode: 3-point light, shadow map, AO, contact shadow, tone map, 4× AA | 1.0 | — | agent |
+| [ ] | R2 | Turntable GIF/MP4 (`--turntable N`) | 0.25 | R1 | agent |
+| [ ] | R3 | Presentation sheet (`sw sheet --present`): views, details, wireframe, silhouette, palette | 0.5 | R1 | agent |
+| [ ] | R4 | Regenerate README, gallery, home hero and bundle renders in beauty mode | 0.15 | R1–R3, B4 | agent |
+| [ ] | R5 | MCP `render` accepts `beauty`; docs page; llms.txt | 0.1 | R1 | agent |
+| [ ] | R6 | Human-scale silhouette + dimension overlay in orthographic review views (ROADMAP Stage 3) | 0.25 | — | agent |
+| [ ] | C1 | MCP through a real desktop client (Claude Desktop or Cursor), one unseen prop, Windows launch documented | 0.5 | A5 | **owner** + agent |
+| [ ] | C2 | MCP Inspector run on the tool schemas (Phase 17 gate) | 0.25 | — | agent (needs Node) |
+| [ ] | C3 | Another vendor's agent (Codex CLI or ChatGPT via MCP) does one prop (closes Phase 13's open gate) | 0.5 | C1 | **owner** + agent |
+| [ ] | D1 | Tutorial: composition (nested components, `asset:`, measure/pivot on instances) | 0.3 | B1 | agent |
+| [ ] | D2 | Concept page: seams (codes, fixes, before/after renders) | 0.2 | A1 | agent |
+| [ ] | D3 | Changelog page generated from the phase records | 0.2 | — | agent |
+| [ ] | D4 | Windows notes in every quickstart | 0.1 | A7 | agent |
+| [ ] | D5 | README badges (CI, docs) + changelog link | 0.05 | D3 | agent |
+| [ ] | D6 | Doc test: a tutorial's exported GLB is byte-identical to the published one (Phase 18 gate) | 0.25 | — | agent |
+| [ ] | D7 | Docs use beauty renders (after R4) | 0.15 | R4 | agent |
+| [ ] | E1 | Version 1.0.0; package vs format version documented | 0.1 | all of A–D | agent |
+| [ ] | E2 | `CHANGELOG.md` | 0.1 | D3 | agent |
+| [ ] | E3 | Docker image build + run + `mcp` (closes Phase 16's open gate) | 0.3 | — | **owner** (Docker) |
+| [ ] | E4 | Godot headless import smoke test in CI (ROADMAP Stage 5) | 0.5 | — | agent |
+| [ ] | E5 | Fresh-agent acceptance on the release (FRESH_AGENT_12: a prop + a mini kit) | 0.5 | E1 | agent |
+| [ ] | E6 | Tag `v1.0.0`, GitHub release with wheel + bundle zip | 0.25 | E1–E5 | agent (owner approves) |
+| [ ] | E7 | PyPI upload | 0.25 | E6 | **owner** (token) |
+| [ ] | F1 | Pack atlas / trim sheet (≥ 60 % less texture memory for the kit) | 1.2 | v1.0 | agent |
+| [ ] | F2 | Vertex-colour / palette material path for one-material stylized props (COLOR_0 already exported; add an archetype and palette validation) | 0.4 | — | agent |
+| [ ] | F3 | Merge-by-distance with tolerance + partial-duplicate detection for imports | 0.4 | — | agent |
+| [ ] | F4 | LODs on the kit and the houses (LOD + IoU already exist in export/lod.py: apply, set thresholds, report) | 0.3 | F1 | agent |
+| [ ] | F5 | Multi-hull collision; a walkable doorway in the workshop | 0.7 | — | agent |
+| [ ] | F6 | Lightmap UVs (UV1, non-overlapping) for Unity/Unreal static lighting (ROADMAP Stage 4) | 1.0 | — | agent |
+| [ ] | G1 | Phase 22: Blender backend for organic forms (+ CPU marching-cubes fallback) | 4 | v1.0 | agent (Blender) |
+| [ ] | G2 | Phase 23: character surface (decals, region palettes, toon), reference images in sources (ROADMAP Stage 4) | 2 | G1 | agent |
+| [ ] | G3 | Phase 24: rigging (skeleton from anchors, weights via Blender, rigid clips for doors/lids/wheels) | 4 | G1 | agent (Blender, Godot) |
+| [ ] | G4 | Phase 25b: Blender render path (Cycles/Eevee) for the presentation sheet | 1 | R3, G1 | agent (Blender) |
+| [ ] | H* | Long-term backlog (§11): plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village | ≈ 10 | — | later |
 
 Done so far (42 points):
 
@@ -29,7 +94,7 @@ Done so far (42 points):
 | Phase 20a cross-OS goldens and CI | 1 |
 | docs and README polish | 2 |
 
-## 2. Rules for every task
+## 2b. Rules for every task
 
 These are the same rules as docs/PHASE_PLAN_16.md section 1 and docs/HANDOFF.md.
 
@@ -107,11 +172,21 @@ Gate: the gallery still renders the real models; Khronos 0 errors on the preview
 
 **A6. Small ergonomics from FA-11.** The "N info items hidden" line lists the codes it hides (e.g. `(2 info hidden: UV_UNLOCKED, ASM_CONTACT_ONLY; --verbose)`).
 
+**A7. Windows launcher.**
+- Add `sw.cmd` next to `sw`: `@python -m shapewright %*` with the repo on `PYTHONPATH`, as `sw` does.
+- Test on Windows CI: `sw.cmd doctor` exits 0.
+
+**A8. Line numbers in source errors.**
+- Load YAML with a loader that records the line of every mapping key (a `SafeLoader` subclass storing `node.start_mark.line`).
+- `Ctx.error(where=...)` maps `parts.leg.shape.size[0]` to `asset.yaml:42`.
+- The text output shows `asset.yaml:42 parts.leg...`.
+- Test: a typo on a known line reports that line.
+
 Record: `docs/phases/PHASE_20b.md`.
 
 ---
 
-## 4. Track B: finish the kit (`phase/19b-houses`), 2 points
+## 4. Track B: finish the kit (`phase/19b-houses`), 2.5 points
 
 **B1. Rebuild `house_townhouse` from module assets.**
 - Today it has 309 non-comment lines and 1 module instance. The target is ≤ 150 lines.
@@ -152,11 +227,17 @@ Gate: 0 coordinate edits needed, 0 seam pairs.
 - Import them as `<instance>_<socket>`, transformed with the instance and replicated with array and mirror.
 - Test with the cottage's `entrance` socket placed through a wrapper asset.
 
+**B6. Window-size family.**
+- MODULAR_HOUSE_PACK_01 §16 reported "one window size".
+- Add pack params `win_w_small`, `win_h_tall` and a `house_wall_window` param `size: 0 small | 1 standard | 2 tall` that picks the opening, frame and shutter sizes.
+- Use the small size on the townhouse upper floor and the tall size on the workshop's tavern front.
+- Gate: all three sizes validate, seam-clean, shutters measured (no offsets).
+
 Record: `docs/phases/PHASE_19b.md`. This also closes Phase 19's PARTIAL.
 
 ---
 
-## 5. Track C: verify MCP with a real client (`phase/17b-mcp-verify`), 0.5 point
+## 5. Track C: verify MCP with real clients and another vendor (`phase/17b-mcp-verify`), 1.25 points
 
 1. On the owner's machine, register the server in Claude Desktop or Cursor: `pip install -e ".[mcp]"`, then `sw mcp --project <scratch folder>` (docs/MCP.md).
 2. Run an unseen request through MCP tools only, for example *"a stylized wooden signpost with two arrow signs, mobile, under 800 tris, export for Godot"*.
@@ -166,9 +247,18 @@ Record: `docs/phases/PHASE_19b.md`. This also closes Phase 19's PARTIAL.
 
 Gate: the asset exports PASS through MCP only. The gate table in docs/phases/PHASE_17.md is updated to PASS or PARTIAL with the reason.
 
+**C2. MCP Inspector.**
+- Run `npx @modelcontextprotocol/inspector sw mcp --project <dir>`, list the tools and call `guide`, `brief`, `review`.
+- Record schema warnings and fix them.
+
+**C3. Another vendor's agent** (closes Phase 13's open gate "a run by another vendor's agent").
+- Use Codex CLI (config in docs/MCP.md) or ChatGPT with a connector to an HTTPS tunnel of `sw mcp --transport streamable-http`.
+- Give it the same unseen prop.
+- Record it as `docs/experiments/FRESH_AGENT_13.md`: calls, success, friction, whether it looked at the sheet.
+
 ---
 
-## 6. Track D: docs site completion (`phase/18b-site`), 1 point
+## 6. Track D: docs site completion (`phase/18b-site`), 1.25 points
 
 **D1. Composition tutorial.** Add `website/use-cases/composition.md`: a nested component, an `asset:` instance with `with:`, `measure:` and `pivot:` on an instance. Every block is `# run`, built in a fresh project (tests/test_site_docs.py runs it).
 
@@ -183,11 +273,17 @@ Gate: the asset exports PASS through MCP only. The gate table in docs/phases/PHA
 
 **D5. README badges** (CI, docs) and a link to the changelog.
 
+**D6. Reproducibility test** (Phase 18 gate, "a reader reproduces the published GLB").
+- A test exports the prop tutorial's asset twice in fresh projects and compares the GLB bytes with each other.
+- On Linux it also compares them with a committed reference hash.
+
+**D7. Beauty renders in the docs.** After R4, home, gallery, tutorials and README use the beauty renders; the site rebuilds.
+
 Gate: `mkdocs build --strict` passes, the doc tests pass, the docs workflow is green, and the new pages are linked from the nav and the README.
 
 ---
 
-## 6b. Track R: presentation renders (`phase/25a-render`), 2 points
+## 6b. Track R: presentation renders (`phase/25a-render`), 2.25 points
 
 The native renderer is built for *inspection*: Lambert key + fill, specular, outlines, 2× supersampling, deterministic. It has no shadows, no ambient occlusion and no presentation layout. README, docs and portfolio images need more. This track is native: no GPU, no Blender. The deterministic inspection modes must stay **byte-identical**, so all existing render tests stay unchanged.
 
@@ -223,13 +319,17 @@ Gate:
 - A docs page "Presentation renders" with examples.
 - llms.txt regenerated.
 
+**R6. Scale reference in review views** (ROADMAP Stage 3).
+- In orthographic `review` and `render` views, add an optional 1.75 m human silhouette next to the asset (`--scale-ref`), plus dimension lines for overall width, height and depth.
+- Off by default in deterministic test renders.
+
 Gate for the track: side-by-side before/after for 4 assets in the record (a prop, a textured chest, a house, the fountain). The owner judges them better at a glance. Determinism and the speed budget hold.
 
 Record: `docs/phases/PHASE_25a.md`.
 
 ---
 
-## 7. Track E: release v1.0 (`release/1.0`), 1.5 points
+## 7. Track E: release v1.0 (`release/1.0`), 2 points
 
 1. **Version.**
    - `pyproject.toml` version `1.0.0`.
@@ -244,6 +344,10 @@ Record: `docs/phases/PHASE_25a.md`.
    - In a clean venv: `pip install git+https://github.com/billtruong003/ShapeWright@v1.0.0`.
    - A fresh agent gets only `llms.txt` and two unseen requests: a prop, and a 3-module mini kit that uses `asset:` instances.
    - Record it as `docs/experiments/FRESH_AGENT_12.md`.
+5a. **Godot smoke test in CI** (ROADMAP Stage 5; Phase 12 verified Godot only by hand).
+   - A CI job (ubuntu) downloads Godot 4.3 headless and imports the cottage, the barrel and the fountain `_godot.glb`.
+   - It asserts the node count, the materials and that the collision bodies exist.
+   - Cache the Godot download.
 5. **Tag and GitHub release.**
    - `git tag v1.0.0 && git push origin v1.0.0`.
    - Create a GitHub release with the wheel (`pip wheel --no-deps -w dist .`), the `modular_house_pack` zip, and the changelog.
@@ -257,7 +361,7 @@ Gate: the tag exists, the release has assets, the fresh agent succeeds on both r
 
 ---
 
-## 8. Track F: Phase 21, shared surfaces and runtime (`phase/21-shared-surfaces`), 3 points
+## 8. Track F: Phase 21, shared surfaces and runtime (`phase/21-shared-surfaces`), 4 points
 
 This is the plan's brief in docs/PHASE_PLAN_16.md §5, broken into tasks.
 
@@ -282,6 +386,12 @@ This is the plan's brief in docs/PHASE_PLAN_16.md §5, broken into tasks.
    - The workshop gets a walkable doorway.
    - Godot import check: a collider count, and a ray through the door passes.
 
+6. **F6. Lightmap UVs** (ROADMAP Stage 4).
+   - A second UV set (`TEXCOORD_1`), non-overlapping and with padding, via xatlas.
+   - Enabled per profile (`unity`, `unreal`) or with `uv: {lightmap: true}`.
+   - Validator: overlap 0, texel ratio within 2× across parts.
+   - Gate: imported in Godot, UV1 present; Unity and Unreal by convention.
+
 Record: `docs/phases/PHASE_21.md`. Milestone **M2, kit-grade**: re-run the MODULAR_HOUSE_PACK gates and aim for a strong PASS.
 
 ---
@@ -292,34 +402,50 @@ The revision note at the top of docs/PHASE_PLAN_16.md applies: Blender is an opt
 
 | phase | tasks (summary) | gate |
 |---|---|---|
-| 22 Blender backend for organic forms (4) | `blend:` groups → `blender -b -P` smooth union / voxel remesh → `mesh_file` with provenance; CPU marching-cubes fallback; reproducibility hash per Blender version | chibi body is one watertight mesh with blended joints, within budget |
-| 23 Character surface (2) | projected decals (eyes, mouth), region palettes, toon presets | fox-hoodie figurine vs the concept, rubric scored |
-| 24 Rigging (4) | skeleton from anchors (native), weights and a skinned GLB via Blender, pose renders, rigid clips (doors, lids, wheels) | rigged fox in Godot, no deformation artefacts |
-| 25b Blender render path (1) | Cycles/Eevee renders of the same sheet layout when Blender is present (the native beauty mode from Track R stays the default) | the same 4 assets rendered both ways; native output unchanged |
+| 22 Blender backend for organic forms (4, G1) | `blend:` groups → `blender -b -P` smooth union / voxel remesh → `mesh_file` with provenance; CPU marching-cubes fallback; reproducibility hash per Blender version | chibi body is one watertight mesh with blended joints, within budget |
+| 23 Character surface (2, G2) | projected decals (eyes, mouth), region palettes, toon presets; **reference images in sources** shown next to matching views (ROADMAP Stage 4) | fox-hoodie figurine vs the concept, rubric scored |
+| 24 Rigging (4, G3) | skeleton from anchors (native), weights and a skinned GLB via Blender, pose renders, rigid clips (doors, lids, wheels) | rigged fox in Godot, no deformation artefacts |
+| 25b Blender render path (1, G4) | Cycles/Eevee renders of the same sheet layout when Blender is present (the native beauty mode from Track R stays the default) | the same 4 assets rendered both ways; native output unchanged |
 
 ---
 
 ## 10. Order and milestones
 
 ```
-20b cleanup ──► 19b houses ──► 25a render ──► 18b site ──► release v1.0 ──► 21 shared surfaces ──► (22 ► 23 ► 24, 25b)
-      └── 17b MCP verify (any time, needs the owner's desktop client)
+20b cleanup (A) ──► 19b houses (B) ──► 25a render (R) ──► 18b site (D) ──► release v1.0 (E) ──► 21 (F) ──► 22 ► 23 ► 24, 25b (G)
+      └── 17b MCP verify (C): when the owner has a desktop client ready; C3 after C1
 ```
 
-| milestone | after | progress (v1.0 scope) |
+| milestone | after | v1.0 progress | full planned roadmap (A–G) |
+|---|---|---|---|
+| today | — | 80 % | 62 % |
+| defects cleared | A | 82 % | 64 % |
+| kit complete (3 houses from modules, window family, bundle rebuilt) | B | 87 % | 68 % |
+| presentation renders | R | 91 % | 71 % |
+| MCP verified, other vendor tried | C | 94 % | 73 % |
+| docs complete (beauty renders, changelog, Windows notes) | D | 96 % | 75 % |
+| **v1.0 released** | E | **100 %** | 78 % |
+| kit-grade runtime (M2) | F | — | 84 % |
+| characters (M3) | G | — | 100 % (planned roadmap) |
+
+Track H (backlog) is outside these figures; counting it as well, the project is ≈ 54 % of everything ever listed.
+
+## 11. Track H: long-term backlog (not scheduled, ≈ 10 points)
+
+Every item comes from a recorded source. Pick one up only with a recorded failing case (the run protocol).
+
+| item | source | note |
 |---|---|---|
-| defects cleared | A | 86 % |
-| kit complete (3 houses from modules, bundle rebuilt) | B | 90 % |
-| presentation renders | R | 94 % |
-| MCP verified | C | 95 % |
-| docs complete (with the new renders) | D | 97 % |
-| **v1.0 released** | E | **100 %** |
-| kit-grade runtime (M2) | F | full roadmap ≈ 82 % |
-| characters (M3) | G | full roadmap 100 % |
-
-## 11. Not planned (recorded so nobody re-discovers them)
-
-- **macOS support.** It needs a Mac. The likely fix is to build `chamfer_box` directly instead of through a hull (PHASE_20a.md).
-- **MCP over HTTP with authentication.** Use a reverse proxy (docs/MCP.md).
-- **Near-float check (1–5 mm gaps to a second surface).** Not seen in practice since Phase 20. Revisit only with a real case.
-- **The workbench tested by people (Phase 15).** It needs human testers.
+| Plugin packages (entry points) for third-party shapes, ops and validators | ROADMAP Stage 5 | `[project.entry-points."shapewright.plugins"]`; listed by `sw caps` |
+| Curves: `loft` between profiles, `follow_curve` | ROADMAP Stage 4 | `tube` covers sweeps today |
+| Selectors (`faces: {normal: +y}`) + `bevel` on selected edges | ROADMAP Stage 3, DESIGN_REVIEW | chamfer_box covers boxes today |
+| Cross-part booleans (cut a window through several parts) | HARDENING (open) | components cut inside themselves today |
+| YAML loops/functions (beyond arrays, components, `enabled`) | HARDENING (partial) | arrays with `each` cover most cases |
+| Phase 14 cost gate (total agent cost down 30 % on held-out tasks) | ROADMAP Phase 14 ✗ | re-measure after v1.0 with `tools/experiments/cost_breakdown.py` |
+| Workbench tried by people | Phase 15 | needs human testers |
+| Near-float check (1–5 mm off a second surface) | PHASE_20 not done | no real case since |
+| macOS support | PHASE_20a | build `chamfer_box` explicitly (no hull); needs a Mac |
+| Kit interiors: interior walls, stairs, upper floor openings | MODULAR_HOUSE_PACK_01 §16 | the next kit test |
+| Detail-density balance across a kit (18.6× spread) | MODULAR_HOUSE_PACK_01 §8 | a `sw pack` density warning, then rebalance |
+| MCP over HTTP with built-in auth | docs/MCP.md | a reverse proxy covers it today |
+| North star: "a stylized fishing village pack for a cozy mobile game" end to end | ROADMAP Stage 6 | the final acceptance test |
