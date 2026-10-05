@@ -73,7 +73,8 @@ Commit rules for this repository:
 ==================================================================================================
   Read docs/REMAINING_WORK.md fully (after the reading list above). It has every remaining task with the exact
   how-to, files, commands, gates, effort points and the progress table. Do the tracks in its order:
-    A phase/20b-cleanup -> B phase/19b-houses -> D phase/18b-site -> E release/1.0 -> F phase/21-shared-surfaces
+    A phase/20b-cleanup -> B phase/19b-houses -> R phase/25a-render -> D phase/18b-site -> E release/1.0
+    -> F phase/21-shared-surfaces
     (C phase/17b-mcp-verify needs the owner's desktop client: do it when the owner says the client is ready)
   When a task is done: tick it in docs/REMAINING_WORK.md and update its progress table in the same commit.
   Track G (characters, Phases 22-25) only after the owner confirms, following the same file.
@@ -111,6 +112,6 @@ Commit rules for this repository:
 ## Notes for you (the person)
 
 - **GitHub Pages:** `.github/workflows/docs.yml` publishes to the `gh-pages` branch on every push to `main`. If the site does not appear, open *Settings → Pages* and set *Source: Deploy from a branch → `gh-pages` / root*.
-- **Order:** tracks A–E (docs/REMAINING_WORK.md) finish v1.0. F is Phase 21. G is the optional character track.
+- **Order:** tracks A, B, R, D, E (docs/REMAINING_WORK.md) finish v1.0. F is Phase 21. G is the optional character track.
 - **Stopping:** the agent stops by itself after E (v1.0 released) and after F, so you can look at the results before the expensive phases.
 - **Your part:** track C needs Claude Desktop or Cursor on your machine; the release (E) may need your PyPI token; Docker verification needs Docker.

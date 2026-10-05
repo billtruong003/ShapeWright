@@ -10,9 +10,9 @@ Progress is counted in effort points. One point is about one medium agent sessio
 
 | scope | done | remaining | **progress** |
 |---|---|---|---|
-| **v1.0: prop and kit framework, polished and released** (milestones M1 and M2-lite: everything except Phase 21 and the character track) | 42 | 6.5 (tracks A–E below) | **≈ 87 %** |
-| **v1.0 + Phase 21** (kit-grade runtime: shared atlas, LOD, collision) | 42 | 9.5 | **≈ 82 %** |
-| **Full roadmap** (+ Phases 22–25: Blender backend, character surface, rigging, presentation) | 42 | 21.5 | **≈ 66 %** |
+| **v1.0: prop and kit framework, polished and released** (tracks A–E and R below) | 42 | 8.5 | **≈ 83 %** |
+| **v1.0 + Phase 21** (kit-grade runtime: shared atlas, LOD, collision) | 42 | 11.5 | **≈ 79 %** |
+| **Full roadmap** (+ the character track and the Blender render path) | 42 | 22.5 | **≈ 65 %** |
 
 Done so far (42 points):
 
@@ -187,6 +187,48 @@ Gate: `mkdocs build --strict` passes, the doc tests pass, the docs workflow is g
 
 ---
 
+## 6b. Track R: presentation renders (`phase/25a-render`), 2 points
+
+The native renderer is built for *inspection*: Lambert key + fill, specular, outlines, 2× supersampling, deterministic. It has no shadows, no ambient occlusion and no presentation layout. README, docs and portfolio images need more. This track is native: no GPU, no Blender. The deterministic inspection modes must stay **byte-identical**, so all existing render tests stay unchanged.
+
+**R1. A `beauty` render mode** (`sw render NAME --mode beauty`):
+- three-point lighting: key, fill, and rim for silhouette separation;
+- **shadows** from a shadow map of the key light;
+- **ambient occlusion**: screen-space, or per vertex from the baked ORM occlusion when present;
+- **a ground contact shadow** under floor props;
+- tone mapping and a soft background gradient;
+- 4× supersampling.
+
+Gate:
+- a test that the inspection modes are unchanged (hash of `clay` and `textured` renders);
+- `beauty` is deterministic: same bytes twice;
+- under 10 s for a 33k-tri house at 1024 px.
+
+**R2. Turntable output.** `sw render NAME --turntable 24 --mode beauty` writes a GIF, plus an MP4 when `imageio-ffmpeg` is installed. Frames are deterministic.
+
+**R3. Presentation sheet.** `sw sheet NAME --present` lays the asset out like a concept-art sheet:
+- front / side / back / 3/4 in beauty mode;
+- detail close-ups of 4 named parts, chosen automatically (largest or most complex) or from `present: {details: [...]}`;
+- a wireframe row and a silhouette row;
+- the palette swatches from its materials;
+- triangle and material counts in the footer.
+
+**R4. Use them everywhere.**
+- `tools/site/build_site.py`: gallery posters and the home hero in beauty mode, plus one turntable GIF.
+- README images regenerated (`docs/images/readme_*.png`).
+- `modular_house_pack/renders/` gets beauty versions.
+
+**R5. MCP and docs.**
+- MCP `render` accepts `mode: beauty`.
+- A docs page "Presentation renders" with examples.
+- llms.txt regenerated.
+
+Gate for the track: side-by-side before/after for 4 assets in the record (a prop, a textured chest, a house, the fountain). The owner judges them better at a glance. Determinism and the speed budget hold.
+
+Record: `docs/phases/PHASE_25a.md`.
+
+---
+
 ## 7. Track E: release v1.0 (`release/1.0`), 1.5 points
 
 1. **Version.**
@@ -244,7 +286,7 @@ Record: `docs/phases/PHASE_21.md`. Milestone **M2, kit-grade**: re-run the MODUL
 
 ---
 
-## 9. Track G: character track (optional, after v1.0), 12 points
+## 9. Track G: character track (optional, after v1.0), 11 points
 
 The revision note at the top of docs/PHASE_PLAN_16.md applies: Blender is an optional headless backend, and Shapewright stays the source of truth.
 
@@ -253,25 +295,26 @@ The revision note at the top of docs/PHASE_PLAN_16.md applies: Blender is an opt
 | 22 Blender backend for organic forms (4) | `blend:` groups → `blender -b -P` smooth union / voxel remesh → `mesh_file` with provenance; CPU marching-cubes fallback; reproducibility hash per Blender version | chibi body is one watertight mesh with blended joints, within budget |
 | 23 Character surface (2) | projected decals (eyes, mouth), region palettes, toon presets | fox-hoodie figurine vs the concept, rubric scored |
 | 24 Rigging (4) | skeleton from anchors (native), weights and a skinned GLB via Blender, pose renders, rigid clips (doors, lids, wheels) | rigged fox in Godot, no deformation artefacts |
-| 25 Presentation (2) | portfolio sheet layout; Cycles/Eevee path when Blender is present | sheets for 3 assets; deterministic test renders unchanged |
+| 25b Blender render path (1) | Cycles/Eevee renders of the same sheet layout when Blender is present (the native beauty mode from Track R stays the default) | the same 4 assets rendered both ways; native output unchanged |
 
 ---
 
 ## 10. Order and milestones
 
 ```
-20b cleanup ──► 19b houses ──► 18b site ──► release v1.0 ──► 21 shared surfaces ──► (22 ► 23 ► 24, 25)
+20b cleanup ──► 19b houses ──► 25a render ──► 18b site ──► release v1.0 ──► 21 shared surfaces ──► (22 ► 23 ► 24, 25b)
       └── 17b MCP verify (any time, needs the owner's desktop client)
 ```
 
 | milestone | after | progress (v1.0 scope) |
 |---|---|---|
-| defects cleared | A | 89 % |
-| kit complete (3 houses from modules, bundle rebuilt) | B | 93 % |
-| MCP verified | C | 94 % |
-| docs complete | D | 96 % |
+| defects cleared | A | 86 % |
+| kit complete (3 houses from modules, bundle rebuilt) | B | 90 % |
+| presentation renders | R | 94 % |
+| MCP verified | C | 95 % |
+| docs complete (with the new renders) | D | 97 % |
 | **v1.0 released** | E | **100 %** |
-| kit-grade runtime (M2) | F | full roadmap ≈ 81 % |
+| kit-grade runtime (M2) | F | full roadmap ≈ 82 % |
 | characters (M3) | G | full roadmap 100 % |
 
 ## 11. Not planned (recorded so nobody re-discovers them)
