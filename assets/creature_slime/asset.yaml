@@ -1,0 +1,37 @@
+# Slime: a squashed drop with a wide melting base, two drips, glossy eye domes and a mouth (Phase 22, `blend`).
+# Eyes in carved sockets were tried first: at 2600 triangles the sockets' narrow rims pinched (GEO_BLEND_PINCHED).
+shapewright: 0.1
+asset:
+  name: creature_slime
+  kind: character/creature/slime
+  description: Cute slime creature, one blended organic mesh.
+  tags: [creature, organic, slime]
+  placement: floor
+profile: desktop_indie
+budget: {triangles: 4000, materials: 3}
+
+params:
+  w: {value: 0.32, doc: half-width of the body}
+  h: {value: 0.26, doc: body height above the base}
+
+materials:
+  jelly: {base_color: '#5fbf6a', roughness: 0.25}
+  eye:   {base_color: '#1d1f24', roughness: 0.15}
+  mouth: {base_color: '#24402a', roughness: 0.6}
+
+parts:
+  body:
+    material: jelly
+    origin: keep
+    shape:
+      type: blend
+      radius: 0.06
+      triangles: 3400
+      ground: true
+      items:
+        - {sdf: ellipsoid, center: [0, h * 0.62, 0], radii: [w * 0.82, h * 0.62, w * 0.72], doc: dome}
+        - {sdf: ellipsoid, center: [0, 0.05, 0], radii: [w, 0.05, w * 0.9], doc: melting base}
+        - {sdf: sphere, center: [0.2, 0.055, 0.2], radius: 0.055, doc: drip}
+        - {sdf: sphere, center: [-0.24, 0.045, -0.12], radius: 0.045, doc: drip}
+        - {sdf: ellipsoid, center: [0.085, h * 0.76, w * 0.66], radii: [0.036, 0.05, 0.03], mirror: x, blend: 0.006, material: eye, doc: 'eyes: domes on the surface'}
+        - {sdf: ellipsoid, center: [0, h * 0.5, w * 0.68], radii: [0.05, 0.016, 0.024], blend: 0.006, material: mouth, doc: mouth}

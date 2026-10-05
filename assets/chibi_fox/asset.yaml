@@ -1,0 +1,51 @@
+# Chibi fox in a green hoodie: one organic part from 12 SDF items (Phase 22, `blend`).
+# The hood is an ellipsoid with its front carved out (op: subtract); arms, ears, legs and cheeks are
+# mirrored pairs; faces take the material of the nearest item (hoodie, fur, white, nose).
+shapewright: 0.1
+asset:
+  name: chibi_fox
+  kind: character/creature/fox
+  description: Chibi fox in a hoodie, a single blended organic mesh (static figurine; rigging is Phase 24).
+  tags: [character, creature, organic, chibi]
+  placement: floor
+profile: desktop_indie
+budget: {triangles: 6000, materials: 4}
+
+params:
+  head_y:   {value: 0.72, doc: height of the head centre}
+  head_r:   {value: 0.195, doc: head half-width (chibi = big head)}
+  ear_len:  {value: 0.14, doc: ear length above the hood}
+  tail_r:   {value: 0.1, doc: radius of the tail's bushy end}
+
+materials:
+  hoodie: {base_color: '#4d7a5c', roughness: 0.85}
+  fur:    {base_color: '#d9772e', roughness: 0.8}
+  white:  {base_color: '#f2ece1', roughness: 0.8}
+  nose:   {base_color: '#2a2420', roughness: 0.45}
+
+parts:
+  body:
+    material: fur
+    origin: keep
+    shape:
+      type: blend
+      radius: 0.035
+      triangles: 5000
+      ground: true
+      items:
+        - {sdf: ellipsoid, center: [0, 0.36, 0], radii: [0.165, 0.2, 0.145], material: hoodie, doc: torso}
+        - {sdf: ellipsoid, center: [0, head_y + 0.025, -0.035], radii: [head_r + 0.02, 0.2, 0.19], material: hoodie, doc: hood}
+        - {sdf: ellipsoid, center: [0, head_y - 0.02, 0.16], radii: [0.16, 0.15, 0.16], op: subtract, blend: 0.03, doc: hood opening}
+        - {sdf: cone, a: [0.14, 0.47, 0], b: [0.22, 0.3, 0], radius_a: 0.052, radius_b: 0.045, mirror: x, material: hoodie, doc: sleeves}
+        - {sdf: ellipsoid, center: [0, head_y, 0.02], radii: [head_r, 0.17, 0.17], doc: head}
+        - {sdf: cone, a: [0.1, head_y + 0.14, -0.01], b: [0.15, head_y + 0.14 + ear_len, -0.03], radius_a: 0.06, radius_b: 0.012, mirror: x, doc: ears}
+        - {sdf: cone, a: [0.075, 0.2, 0], b: [0.085, 0.045, 0.03], radius_a: 0.062, radius_b: 0.055, mirror: x, doc: legs}
+        - {sdf: cone, a: [0, 0.24, -0.12], b: [0, 0.42, -0.33], radius_a: 0.055, radius_b: tail_r, doc: tail}
+        - {sdf: ellipsoid, center: [0, head_y - 0.055, 0.15], radii: [0.085, 0.06, 0.075], material: white, doc: muzzle}
+        - {sdf: ellipsoid, center: [0.115, head_y - 0.065, 0.1], radii: [0.07, 0.06, 0.06], mirror: x, material: white, doc: cheeks}
+        - {sdf: ellipsoid, center: [0, 0.46, -0.37], radii: [0.075, 0.08, 0.075], material: white, doc: tail tip}
+        - {sdf: ellipsoid, center: [0, head_y - 0.035, 0.225], radii: [0.026, 0.02, 0.02], material: nose, doc: nose}
+
+checks:
+  - {expr: asset.height, min: 0.95, max: 1.1, doc: chibi figurine at about 1 m}
+  - {expr: (head_y + head_r) / asset.height, min: 0.85, doc: the head is the top of the body (big-head chibi)}

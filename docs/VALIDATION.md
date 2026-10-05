@@ -61,6 +61,7 @@ warnings. It never produces errors, because style is a judgement call.
 | `GEO_INVERTED` | error | closed surface with inward normals |
 | `GEO_DEGENERATE_FACES` | error | zero-area triangles |
 | `GEO_DUPLICATE_FACES` | error | the same triangle twice |
+| `GEO_BLEND_PINCHED` | warning | a `blend` shape's triangle budget cannot hold a gap narrower than its edges; the surface was pinched there (the message gives where) |
 | `GEO_DUPLICATE_SURFACE` | warning | faces repeating another face's position with their own vertices (an unwelded copy, typical of imports): z-fighting, doubled triangles. Fix: `{type: clean, weld_distance: 0.0005}` |
 | `GEO_PART_FRAGMENTED` | info | a part consists of several disconnected shells (expected for `combine`, `repeat`, multi-shell files) |
 | `GEO_CUT_SPLIT` | warning | a subtract/intersect/boolean/flat_bottom cut split a piece into several (reported at the op) |

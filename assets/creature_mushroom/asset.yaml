@@ -1,0 +1,41 @@
+# Mushroom creature: a stubby stem body with a domed cap (the underside carved hollow), white spots set into the
+# cap, little feet and a face (Phase 22, `blend`).
+shapewright: 0.1
+asset:
+  name: creature_mushroom
+  kind: character/creature/mushroom
+  description: Mushroom creature with a spotted cap, one blended organic mesh.
+  tags: [creature, organic, mushroom]
+  placement: floor
+profile: desktop_indie
+budget: {triangles: 4000, materials: 4}
+
+params:
+  cap_r: {value: 0.26, doc: cap radius}
+  cap_y: {value: 0.42, doc: height of the cap's rim}
+
+materials:
+  cap:   {base_color: '#c8423a', roughness: 0.6}
+  spot:  {base_color: '#f4efe4', roughness: 0.7}
+  stem:  {base_color: '#efe2c4', roughness: 0.8}
+  eye:   {base_color: '#1d1f24', roughness: 0.2}
+
+parts:
+  body:
+    material: stem
+    origin: keep
+    shape:
+      type: blend
+      radius: 0.03
+      triangles: 3600
+      ground: true
+      items:
+        - {sdf: ellipsoid, center: [0, cap_y, 0], radii: [cap_r, cap_r * 0.75, cap_r], blend: 0.02, material: cap, doc: cap dome}
+        - {sdf: ellipsoid, center: [0, cap_y - 0.12, 0], radii: [cap_r * 0.86, cap_r * 0.62, cap_r * 0.86], op: subtract, blend: 0.03, doc: hollow underside (deep enough to leave no thin bowl under it)}
+        - {sdf: cone, a: [0, 0.12, 0], b: [0, cap_y, 0], radius_a: 0.13, radius_b: 0.1, doc: stem}
+        - {sdf: ellipsoid, center: [0.06, 0.04, 0.03], radii: [0.06, 0.04, 0.075], mirror: x, doc: feet}
+        - {sdf: sphere, center: [0, cap_y, 0], radius: 0.1, blend: 0.03, doc: stem top under the cap}
+        - {sdf: ellipsoid, center: [0, cap_y + cap_r * 0.72, 0.02], radii: [0.06, 0.03, 0.06], blend: 0.014, material: spot, doc: top spot}
+        - {sdf: ellipsoid, center: [0.15, cap_y + cap_r * 0.48, 0.12], radii: [0.045, 0.03, 0.045], rotate: [-30, 0, -40], mirror: x, blend: 0.014, material: spot, doc: side spots}
+        - {sdf: ellipsoid, center: [0, cap_y + cap_r * 0.42, -0.19], radii: [0.05, 0.03, 0.04], rotate: [50, 0, 0], blend: 0.014, material: spot, doc: back spot}
+        - {sdf: ellipsoid, center: [0.045, 0.26, 0.112], radii: [0.018, 0.026, 0.012], mirror: x, blend: 0.004, material: eye, doc: eyes}

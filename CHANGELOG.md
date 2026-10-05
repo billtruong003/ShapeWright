@@ -2,6 +2,13 @@
 
 Newest first. Generated from the phase records by `tools/site/changelog.py`; each entry links to its record (what shipped, evidence, the gate table and what is not done).
 
+## Phase 22: native organic kernel (track G, G1)
+
+- **Verdict:** PASS (a shape, not part groups; regions jagged until 23)
+- **Branch:** `phase/22-organic`
+- **Record:** [docs/phases/PHASE_22.md](docs/phases/PHASE_22.md)
+- A new shape, `blend`, meshes SDF primitives into one closed part. The chibi fox, a slime and a mushroom creature are each one watertight, consistently wound mesh that passes all 8 validation layers within budget, builds in 0.9–3.3 s and is deterministic on Linux. Windows is checked by CI against the tolerant signature. Colour-region edges are jagged and small features are coarse at these budgets (see "What is not good yet").
+
 ## G0 spike: a native organic mesh (track G)
 
 - **Verdict:** GO (3 plan changes; concept image not in the repo)

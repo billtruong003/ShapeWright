@@ -32,6 +32,7 @@ KINDS = {
     "bool": "true | false",
     "geometry": "nested geometry expression {type, ..., ops, material, rotate, translate}",
     "geometry_list": "list of geometry expressions",
+    "sdf_list": "list of SDF items {sdf: sphere | ellipsoid | capsule | cone | box | torus, ...}",
 }
 
 TOPOLOGY = ("preserve", "refine", "rebuild", "resample", "generate")
@@ -122,4 +123,4 @@ def suggest(name: str, options) -> str:
 
 def load_builtin():
     # importing registers everything
-    from .ops import compose, modifiers, shapes, sources  # noqa: F401
+    from .ops import compose, modifiers, organic, shapes, sources  # noqa: F401

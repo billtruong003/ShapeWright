@@ -31,6 +31,7 @@ class Limits:
     max_points: int = 2048  # per point list after generators expand
     max_expr_depth: int = 24  # nesting of geometry expressions (boolean tools inside tools ...)
     max_texel_density: int = 8192  # px per metre
+    max_blend_samples: int = 6_000_000  # grid points of one `blend` shape (about 50 MB per field array)
 
 
 LIMITS = Limits()

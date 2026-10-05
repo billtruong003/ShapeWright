@@ -373,6 +373,18 @@ def simplify(mesh: Mesh, ratio: float) -> Mesh:
     return _transfer_with_corners(mesh, np.asarray(V, dtype=np.float64), np.asarray(F, dtype=np.int64))
 
 
+def simplify_closed(mesh: Mesh, tolerance: float) -> Mesh:
+    """Topology-safe simplification (Manifold): merges edges whose removal moves the surface less than
+    `tolerance` metres, never pinching or opening a closed mesh. Attributes are not carried."""
+    import manifold3d as m3
+
+    mm = m3.Manifold(m3.Mesh(vert_properties=np.asarray(mesh.V, np.float32), tri_verts=np.asarray(mesh.F, np.uint32)))
+    if mm.status() != m3.Error.NoError:
+        raise ValueError(f"not a closed manifold mesh ({mm.status()})")
+    out = mm.simplify(tolerance).to_mesh()
+    return Mesh(np.asarray(out.vert_properties, dtype=np.float64)[:, :3], np.asarray(out.tri_verts, dtype=np.int64))
+
+
 def _point_triangle_dist2(P: np.ndarray, T: np.ndarray) -> np.ndarray:
     """Squared distance from points P (n,3) to triangles T (n,3,3), pairwise (Ericson's closest-point test)."""
     a, b, c = T[:, 0], T[:, 1], T[:, 2]

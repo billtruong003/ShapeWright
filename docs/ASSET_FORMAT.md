@@ -387,6 +387,39 @@ Families (v0.1):
 - **Ops:** `scale rotate translate` · `taper bend twist shear` · `jitter noise inflate` ·
   `subdivide smooth decimate` · `subtract union intersect flat_bottom` · `mirror repeat`
 
+### Organic forms: `blend` (Phase 22)
+
+`{type: blend, items: [...]}` makes ONE closed mesh from signed-distance primitives: a creature, a slime, a
+mushroom, a soft rock. Items are combined **in order**: union items melt together with a rounded seam of
+`radius`; `op: subtract` carves everything before it (a hood opening, the hollow under a cap), `op: intersect`
+trims. Put a subtraction before the items it must not cut (a stem added after the cap's carve is not carved).
+
+```yaml
+body:
+  material: fur              # faces nearest an item with no material
+  origin: keep               # place by the item coordinates
+  shape:
+    type: blend
+    radius: 0.035            # smooth-union radius (0 = hard)
+    triangles: 5000          # decimated to this
+    ground: true             # cut flat at y = 0 (standing creatures)
+    items:
+      - {sdf: ellipsoid, center: [0, 0.36, 0], radii: [0.165, 0.2, 0.145], material: hoodie}
+      - {sdf: ellipsoid, center: [0, 0.7, 0.16], radii: [0.16, 0.15, 0.16], op: subtract, blend: 0.03}
+      - {sdf: cone, a: [0.1, 0.86, 0], b: [0.15, 1.0, -0.03], radius_a: 0.06, radius_b: 0.012, mirror: x}
+```
+
+- Kinds: `sphere {center, radius}`, `ellipsoid {center, radii}`, `capsule {a, b, radius}`,
+  `cone {a, b, radius_a, radius_b}` (rounded ends: they reach `radius` past `a` and `b`), `box {center, size, round}`,
+  `torus {center, radius, thickness}` (around Y). Every number may be an expression of params.
+- Per item: `mirror: x` (the item and its mirror image: ears, arms), `shell: t` (hollow), `rotate: [x, y, z]`,
+  `blend` (this item's own radius), `material` (faces whose nearest item this is), `doc`.
+- The grid step `voxel` defaults to the size / 120 (at least 4 mm). Features thinner than about two voxels may vanish.
+- Organic parts shade smoothly with creases above 75° (`smooth_angle`), unless the part says otherwise.
+- `GEO_BLEND_PINCHED`: the triangle budget has no room for a gap narrower than its edges (an eye in a tight socket,
+  a thin bowl under a cap); the warning says where. Widen or fill the gap, or raise `triangles`.
+- Colour regions follow faces, so their edges are jagged at low budgets; texture-painted regions are Phase 23.
+
 ### Point lists: arcs, helices, lines
 
 Every list of points (`extrude.polygon`/`holes`, `lathe.profile`, `revolve.polygon`,

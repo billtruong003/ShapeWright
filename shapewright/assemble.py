@@ -1187,7 +1187,8 @@ def build_part(u: Unit, world: World, materials: dict, style: dict, asset_dir: P
     shading = raw.get("shading", (style.get("shading") or {}).get("default", "auto"))
     if shading not in ("flat", "smooth", "auto"):
         ctx.error("SRC_SCHEMA", f"{where}.shading", "shading must be flat, smooth or auto")
-    smooth_angle = S.num(raw.get("smooth_angle", (style.get("shading") or {}).get("smooth_angle", 40)), env, f"{where}.smooth_angle", ctx, 40.0)
+    default_angle = 75 if shape_type == "blend" else (style.get("shading") or {}).get("smooth_angle", 40)  # organic: smooth but for real creases
+    smooth_angle = S.num(raw.get("smooth_angle", default_angle), env, f"{where}.smooth_angle", ctx, 40.0)
     material = raw.get("material")
     if material is not None and material not in materials:
         ctx.error("SRC_REF", f"{where}.material", f"unknown material '{material}'", _material_hint(material, materials))

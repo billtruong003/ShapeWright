@@ -130,6 +130,7 @@ COMMANDS
   sw doctor                                     check the environment and optional tools
 
 SHAPES
+  blend         (items*, radius, voxel, triangles, smooth, ground)  Organic form: SDF primitives (sphere, ellipsoid, capsule, cone, box, torus) blended into O
   boolean       (operation, base*, tools*)  Boolean of geometry expressions: base (op) each tool, in order. Inputs may carry their own
   box           (size*)  Axis-aligned box.
   capsule       (radius*, height*, segments, cap_rings)  Capsule along Y (cylinder with hemispherical ends).
