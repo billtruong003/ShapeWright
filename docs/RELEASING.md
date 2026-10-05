@@ -5,7 +5,8 @@
 2. Add the release record (`docs/phases/RELEASE_X.Y.md`) and its row in the status table of
    `docs/PHASE_PLAN_16.md`, then `python tools/site/changelog.py` (CHANGELOG.md; a test checks it).
 3. `python -m pytest -q`, `ruff check .`, and CI green on the branch (Linux, Windows, Godot import job).
-4. Fast-forward `main`, then tag: `git tag vX.Y.Z && git push origin vX.Y.Z`.
+4. Fast-forward `main`, then tag: `git tag vX.Y.Z && git push origin vX.Y.Z`, or run the `release` workflow from the
+   Actions tab (workflow_dispatch): it tags the commit with `v<package version>` itself.
    `.github/workflows/release.yml` runs the tests again, checks the tag matches the package version, builds the
    wheel, the sdist and `modular_house_pack-vX.Y.Z.zip`, and publishes a GitHub release with the top changelog
    entry as notes.

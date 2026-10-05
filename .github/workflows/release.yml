@@ -3,6 +3,7 @@ name: release
 # release with them and the changelog. PyPI upload is separate (needs the owner's token: docs/RELEASING.md).
 on:
   push: {tags: ["v*"]}
+  workflow_dispatch:  # from the Actions tab (or the API): tags the current commit with v<package version>
 permissions: {contents: write}
 jobs:
   release:
@@ -14,12 +15,19 @@ jobs:
       - run: pip install -r requirements.txt build
       - run: python -m pytest -q -x
       - run: python -m build --wheel --sdist --outdir dist
+      - id: tag
+        run: |
+          V="v$(python -c 'import shapewright; print(shapewright.__version__)')"
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then test "$GITHUB_REF_NAME" = "$V"; else
+            git tag "$V" && git push origin "$V"; fi
+          echo "name=$V" >> "$GITHUB_OUTPUT"
       - run: |
-          test "$(python -c 'import shapewright; print(shapewright.__version__)')" = "${GITHUB_REF_NAME#v}"
-          (cd modular_house_pack/.. && zip -qr "dist/modular_house_pack-${GITHUB_REF_NAME}.zip" modular_house_pack)
+          zip -qr "dist/modular_house_pack-${{ steps.tag.outputs.name }}.zip" modular_house_pack
           awk '/^## /{n++} n<=1' CHANGELOG.md > dist/NOTES.md
       - uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.tag.outputs.name }}
+          name: Shapewright ${{ steps.tag.outputs.name }}
           body_path: dist/NOTES.md
           files: |
             dist/*.whl
