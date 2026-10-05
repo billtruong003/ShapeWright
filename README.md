@@ -137,6 +137,7 @@ Development runs in phases. Each phase has a plan written first, a gate, and an 
 | [docs/AGENT_WORKFLOW.md](docs/AGENT_WORKFLOW.md) | the loop, critique format, stopping rules |
 | [docs/VALIDATION.md](docs/VALIDATION.md) | every layer and issue code |
 | [docs/MCP.md](docs/MCP.md) | the MCP server: tools, safety model, client setup |
+| [docs/REMAINING_WORK.md](docs/REMAINING_WORK.md) | every remaining task with its plan, gate and the progress table (v1.0 ≈ 87 %) |
 | [docs/HANDOFF.md](docs/HANDOFF.md) | how to continue development with an agent on your machine |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | adding shapes, ops, validators, views, profiles, exporters |
 

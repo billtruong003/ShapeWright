@@ -11,7 +11,7 @@ step, record every result honestly, push each finished phase, and only stop at t
 ==================================================================================================
 0. REPOSITORY AND SETUP  (do this first, in order)
 ==================================================================================================
-Repository: https://github.com/billtruong003/ShapeWright        (default branch: main; everything up to Phase 20 is on main)
+Repository: https://github.com/billtruong003/ShapeWright        (default branch: main; everything up to Phase 20a is on main)
 Docs site:  https://billtruong003.github.io/ShapeWright/        (built from website/ + tools/site/build_site.py)
 
   git clone https://github.com/billtruong003/ShapeWright && cd ShapeWright
@@ -20,7 +20,7 @@ Docs site:  https://billtruong003.github.io/ShapeWright/        (built from webs
   pip install -r requirements.txt "mcp>=1.10" ruff "mkdocs>=1.6,<2" "mkdocs-material>=9.5"
   (optional, Node installed) cd tools/gltf-validator && npm install && cd ../..   # Khronos validator in `sw export`
   ./sw doctor                       # Windows: python -m shapewright doctor
-  python3 -m pytest -q              # baseline: all pass (~430 tests, ~5 min). If not, STOP and report.
+  python3 -m pytest -q              # baseline: all pass (433 tests, ~5 min; Linux and Windows). If not, STOP and report.
   ruff check .                      # baseline: clean
   (optional) blender --version      # Phases 22/24/25 use headless Blender if present
 
@@ -36,7 +36,7 @@ Commit rules for this repository:
   3. llms.txt                          the one-page brief (generated: ./sw caps --llms). Proves you know the vocabulary.
   4. docs/PHASE_PLAN_16.md             THE PLAN: revision note (Blender backends), status table, RUN PROTOCOL (section 1),
                                        record format (section 2), phase table, dependency graph, phase briefs (section 5)
-  5. docs/phases/PHASE_16.md, PHASE_17.md, PHASE_19.md, PHASE_20.md, PHASE_18.md
+  5. docs/phases/PHASE_16.md, PHASE_17.md, PHASE_19.md, PHASE_20.md, PHASE_18.md, PHASE_20a.md
                                        what shipped, each gate table, every PARTIAL and why, "not done" lists
   6. docs/experiments/MODULAR_HOUSE_PACK_01.md
                                        the acceptance test that drove Phases 19-20 (kit rules, seam findings, limitations)
@@ -69,63 +69,15 @@ Commit rules for this repository:
     (tests/test_site_docs.py).
 
 ==================================================================================================
-3. WORK QUEUE  (in this order; each has a gate. Do not skip ahead; do not widen scope.)
+3. WORK QUEUE  ->  docs/REMAINING_WORK.md is the single source of truth
 ==================================================================================================
-A. phase/20b-cleanup  (small fixes found by the last run; one branch, one record)
-   1. Fix the 16 benchmark assets flagged by SEAM_COPLANAR_OVERLAP (table in docs/phases/PHASE_20.md):
-      offset flush faces 2-5 mm, embed past the jitter, or cut. Keep each asset's look; say why per golden change.
-      Gate: validating every asset shows 0 SEAM_COPLANAR_OVERLAP warnings; renders unchanged at a glance.
-   2. wheelbarrow tray: OP_FACES_INVERTED (jitter thicker than the tray) -> lower jitter or thicken.
-   3. tavern_chair: seat_height min 0.40 contradicts its check (>= 0.42); align param range and check.
-   4. Export option for preview/web GLBs without collision proxies (`sw export NAME --preview` or
-      `export: {preview: true}`), then make tools/site/build_site.py use it instead of stripping COL_ nodes.
-   5. The townhouse door brace <-> ledge pairs (1-2 mm apart; the probe flags them at 2 mm): rank them 12 mm apart.
-
-B. phase/19b-houses  (finish Phase 19)
-   Convert house_townhouse and house_workshop to module-asset instances like house_cottage (see its source).
-   Add the module params they need (upper-storey wall height/braces/opening, wing roof trim, band beams, etc.)
-   with defaults equal to today's values so module goldens do not change.
-   Gate: each house source >= 50% fewer non-comment lines; same triangle count +-2%; 0 SEAM_COPLANAR_OVERLAP;
-   stress test passes: in a COPY of the repo set bay 2.4, storey 3.3, timber 0.22, post 0.32, pitch 55 in
-   packs/cozy_house.yaml, rebuild the three houses, validate + seam probe (never commit the stress values).
-   Then rebuild the bundle: `for a in assets/house_*/; do ./sw export "$(basename "$a")"; done`,
-   `./sw export house_cottage --target godot` (same for townhouse, workshop), `python3 tools/experiments/build_mhp_bundle.py`.
-
-C. phase/17b-mcp-verify  (verification, little code)
-   Register `sw mcp --project <a scratch folder>` in Claude Desktop or Cursor on this machine (docs/MCP.md).
-   Run one unseen prop request through MCP only. Record tool calls, tokens, friction; fix friction that is generic.
-   Gate: the prop exports PASS through MCP only; record written (update the gate table in docs/phases/PHASE_17.md).
-
-D. phase/18b-site  (the docs site is published by .github/workflows/docs.yml to the gh-pages branch)
-   Confirm the workflow run on main is green and https://billtruong003.github.io/ShapeWright/ shows the gallery
-   with live models. Add: a "Composition" tutorial (nested components + asset instances + measure/pivot on
-   instances, all `# run` blocks), a "Seams" page (what SEAM_COPLANAR_OVERLAP means, with before/after renders),
-   and a changelog page generated from the docs/phases/PHASE_*.md verdicts.
-   Gate: site builds --strict, doc tests pass, pages linked from README.
-
-E. phase/21-shared-surfaces  (docs/PHASE_PLAN_16.md, Track B, phase 21)
-   Pack-level shared atlas / trim sheet (modules reference regions of one texture), vertex colours,
-   merge-by-distance with tolerance + partial-duplicate detection for imports, auto-LOD with silhouette-IoU
-   check, multi-hull collision.
-   Gate (from the plan): cozy_house kit on one shared atlas with >= 60% less texture memory at equal or better
-   texel density; LOD1/LOD2 IoU >= 0.95/0.90; the workshop gets a walkable doorway collider; Godot import OK.
-
-F. phase/22-blender-backend  (REVISED: optional headless Blender; see the revision note in the plan)
-   `backend: blender` for parts marked `blend:` (metaball / voxel remesh / smooth union) via `blender -b -P`,
-   result re-imported as `mesh_file` with provenance and validated like any part; native CPU marching-cubes
-   fallback when Blender is absent. Gate: a chibi body (head, torso, limbs) is one watertight mesh with blended
-   joints, within budget, reviewable, reproducible (same inputs -> same hash with the same Blender version).
-
-G. phase/23-character-surface  decals / projected texture regions (eyes, mouth, patterns), region palettes,
-   toon presets. Gate: the fox-hoodie chibi concept as a static figurine, side-by-side sheet vs the concept,
-   fidelity rubric (silhouette, proportions, palette, face, details) scored with evidence.
-
-H. phase/24-rigging (Blender backend)  humanoid skeleton fitted from part anchors (native, in the source),
-   weights + skinned GLB via headless Blender, pose test renders (T, A, sit, wave), native rigid-part clips.
-   Gate: the fox imports rigged in Godot headless; no candy-wrapper at elbows/knees; Khronos 0 errors.
-
-I. phase/25-presentation  portfolio sheet layout in the native renderer (views + details + wireframe + palette);
-   Cycles/Eevee path when Blender is present (shadows, AO, turntables). Deterministic test renders unchanged.
+  Read docs/REMAINING_WORK.md fully (after the reading list above). It has every remaining task with the exact
+  how-to, files, commands, gates, effort points and the progress table. Do the tracks in its order:
+    A phase/20b-cleanup -> B phase/19b-houses -> D phase/18b-site -> E release/1.0 -> F phase/21-shared-surfaces
+    (C phase/17b-mcp-verify needs the owner's desktop client: do it when the owner says the client is ready)
+  When a task is done: tick it in docs/REMAINING_WORK.md and update its progress table in the same commit.
+  Track G (characters, Phases 22-25) only after the owner confirms, following the same file.
+  Status at hand-off: main @ d9877eb, CI green on Linux + Windows, 433 tests pass. macOS is out of scope.
 
 ==================================================================================================
 4. STOP CONDITIONS  (stop, push what you have, write the record, report)
@@ -135,7 +87,7 @@ I. phase/25-presentation  portfolio sheet layout in the native renderer (views +
   - An asset-format change that would break existing sources without a migration.
   - A needed tool is missing (Blender, Godot, an MCP client) -> record "not verified" and continue with the
     next item that does not need it.
-  - After item D, and after item E: stop and report (these change what the later phases should be).
+  - After track E (v1.0 released) and after track F: stop and report (they change what the next phases should be).
 
 ==================================================================================================
 5. REPORT FORMAT  (after every item, in chat)
@@ -159,5 +111,6 @@ I. phase/25-presentation  portfolio sheet layout in the native renderer (views +
 ## Notes for you (the person)
 
 - **GitHub Pages:** `.github/workflows/docs.yml` publishes to the `gh-pages` branch on every push to `main`. If the site does not appear, open *Settings → Pages* and set *Source: Deploy from a branch → `gh-pages` / root*.
-- **Order:** items A–D are cheap and make the base solid. E is the next real feature phase. F–I are the character track.
-- **Stopping:** the agent stops by itself after D and after E, so you can look at the results before the expensive phases.
+- **Order:** tracks A–E (docs/REMAINING_WORK.md) finish v1.0. F is Phase 21. G is the optional character track.
+- **Stopping:** the agent stops by itself after E (v1.0 released) and after F, so you can look at the results before the expensive phases.
+- **Your part:** track C needs Claude Desktop or Cursor on your machine; the release (E) may need your PyPI token; Docker verification needs Docker.
