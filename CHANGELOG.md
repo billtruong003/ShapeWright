@@ -2,6 +2,20 @@
 
 Newest first. Generated from the phase records by `tools/site/changelog.py`; each entry links to its record (what shipped, evidence, the gate table and what is not done).
 
+## Phase 24b: character review modes (track G, G3)
+
+- **Verdict:** PASS (CPU sheet, workbench skeleton/weights/clips, MCP review)
+- **Branch:** `phase/22-organic`
+- **Record:** [docs/phases/PHASE_24b.md](docs/phases/PHASE_24b.md)
+- A person can review a character without leaving Shapewright: one CPU sheet, three new render views, and a workbench 3D view with the skeleton, joint weights and clips. Agents get the same sheet from `review`.
+
+## Phase 24: native rigging and clips (track G, G4 and G5)
+
+- **Verdict:** PASS (Godot: skeleton, skin, clips; Khronos 0/0)
+- **Branch:** `phase/22-organic`
+- **Record:** [docs/phases/PHASE_24.md](docs/phases/PHASE_24.md)
+- The chibi fox is a rigged game character: 19 joints fitted from its own coordinates, bone-heat weights, three procedural clips, and a skinned GLB that the Khronos validator passes with 0 errors and 0 warnings. Godot 4.3 imports it headless with the skeleton intact and the clips playable. No standard pose or clip frame loses more than 10 % of the volume (no candy-wrapper collapse). Rigid clips (a lid, a wheel) work without a skeleton.
+
 ## Phase 23: character surface (track G, G2)
 
 - **Verdict:** PARTIAL (painted regions, decals, reference sheet; rubric needs the concept image)

@@ -32,7 +32,7 @@ TARGETS = ("generic", "godot", "unity", "unreal")
 # choices as types, so the tool schemas carry enums (MCP Inspector, Phase 17b): clients can offer them
 View = Literal["front", "back", "left", "right", "top", "bottom", "front_right", "front_left", "back_right", "back_left", "low_front"]
 Mode = Literal["clay", "parts", "material", "wire", "normals", "silhouette", "provenance", "regions", "textured", "albedo",
-               "roughness", "metallic", "texel", "seams", "beauty"]
+               "roughness", "metallic", "texel", "seams", "density", "beauty"]
 Target = Literal["", "generic", "godot", "unity", "unreal"]
 TIMEOUT_S = 600
 MAX_SOURCE_BYTES = 512 * 1024
@@ -183,10 +183,13 @@ def stats(name: str) -> str:
 
 
 def review(name: str) -> tuple[str, Path | None]:
-    """Validate + contact sheet (orthographic views with scale bars, 3/4 views, parts, wireframe, UVs) + style checklist."""
+    """Validate + contact sheet (orthographic views with scale bars, 3/4 views, parts, wireframe, UVs) + style checklist.
+    Rigged characters return the character sheet (look, reference, UV checker, density, joint weights, poses)."""
     d = _find(name)
     text = _sw("review", name)
-    sheet = paths.out_dir(d) / ".build" / "sheet.png"
+    build = paths.out_dir(d) / ".build"
+    char = build / "character.png"  # rigged characters: the character sheet (weights, poses) says more
+    sheet = char if "character: " in text and char.is_file() else build / "sheet.png"
     return text, sheet if sheet.is_file() else None
 
 

@@ -72,6 +72,8 @@ export function createViewer(container, opts = {}) {
   ground.receiveShadow = true;
   scene.add(ground);
   let grid = null, figure = null, marker = null, model = null, wires = [], box = null;
+  let mixer = null, clips = [], action = null, skelHelper = null, weightBone = null;  // Phase 24: rigged characters
+  const clock = new THREE.Clock();
   const originals = new Map();
   const state = { mode: "textured", wire: false, grid: true, figure: false };
   const checker = checkerTexture();
@@ -136,6 +138,7 @@ export function createViewer(container, opts = {}) {
       case "normals": return new THREE.MeshNormalMaterial();
       case "uv_checker": return new THREE.MeshBasicMaterial({ map: checker });
       case "texel": return new THREE.MeshBasicMaterial({ vertexColors: true });
+      case "weights": return new THREE.MeshLambertMaterial({ vertexColors: true });
       default: return orig;
     }
   }
@@ -192,6 +195,7 @@ export function createViewer(container, opts = {}) {
     if (!model) return;
     let info = "";
     if (mode === "texel") info = `median ${applyTexelColors().toFixed(0)} px/m: blue = half, red = double`;
+    if (mode === "weights") info = applyWeightColors();
     model.traverse(o => {
       if (!o.isMesh) return;
       if (mode === "texel") { o.userData.geom0 ??= o.geometry; o.geometry = texelColors(o); }
@@ -199,6 +203,58 @@ export function createViewer(container, opts = {}) {
       o.material = materialFor(o, mode);
     });
     return info;
+  }
+
+  function boneNames() {
+    const names = [];
+    model && model.traverse(o => { if (o.isSkinnedMesh) o.skeleton.bones.forEach(b => names.includes(b.name) || names.push(b.name)); });
+    return names;
+  }
+
+  function applyWeightColors() {
+    // skinning weight of one joint per vertex (skinIndex / skinWeight), blue 0 -> red 1; unskinned meshes grey
+    const bone = weightBone || boneNames()[0];
+    if (!bone) return "no skeleton in this file";
+    const tmp = new THREE.Color();
+    model.traverse(o => {
+      if (!o.isMesh) return;
+      const g = o.geometry, n = g.getAttribute("position").count, col = new Float32Array(n * 3);
+      const si = g.getAttribute("skinIndex"), sw = g.getAttribute("skinWeight");
+      const j = o.isSkinnedMesh ? o.skeleton.bones.findIndex(b => b.name === bone) : -1;
+      for (let i = 0; i < n; i++) {
+        let w = -1;
+        if (si && sw && j >= 0) { w = 0; for (let k = 0; k < 4; k++) if (si.getComponent(i, k) === j) w += sw.getComponent(i, k); }
+        if (w < 0) tmp.setRGB(0.66, 0.63, 0.59); else tmp.setHSL((1 - w) * 0.66, 0.8, 0.5);
+        col.set([tmp.r, tmp.g, tmp.b], 3 * i);
+      }
+      g.setAttribute("color", new THREE.BufferAttribute(col, 3));
+    });
+    return `weights of ${bone}: blue 0, red 1`;
+  }
+
+  function setSkeleton(on) {
+    if (skelHelper) { scene.remove(skelHelper); skelHelper = null; }
+    if (!on || !model || !boneNames().length) return;
+    skelHelper = new THREE.SkeletonHelper(model);
+    skelHelper.material.depthTest = false;  // drawn over the body
+    skelHelper.material.linewidth = 2;
+    scene.add(skelHelper);
+  }
+
+  function play(name) {
+    if (action) { action.stop(); action = null; }
+    if (!mixer || !name) return;
+    const clip = clips.find(c => c.name === name);
+    if (!clip) return;
+    action = mixer.clipAction(clip);
+    action.play();
+  }
+
+  function scrub(fraction) {  // pause on one moment of the playing clip (a pose slider)
+    if (!action) return;
+    action.paused = true;
+    action.time = fraction * action.getClip().duration;
+    mixer.update(0);
   }
 
   function setWire(on) {
@@ -221,6 +277,10 @@ export function createViewer(container, opts = {}) {
         originals.clear();
         model = gltf.scene;
         model.traverse(o => { if (o.isMesh) { originals.set(o, o.material); o.castShadow = o.receiveShadow = true; } });
+        clips = gltf.animations || [];
+        mixer = clips.length ? new THREE.AnimationMixer(model) : null;
+        action = null;
+        if (skelHelper) setSkeleton(true);
         scene.add(model);
         const first = !box;
         box = new THREE.Box3().setFromObject(model);
@@ -297,13 +357,17 @@ export function createViewer(container, opts = {}) {
 
   function loop() {
     controls.update();
+    if (mixer) mixer.update(clock.getDelta()); else clock.getDelta();
     renderer.render(scene, camera);
     requestAnimationFrame(loop);
   }
   loop();
 
   return {
-    load, setMode, setWire, uvLayout, screenshot,
+    load, setMode, setWire, uvLayout, screenshot, play, scrub, setSkeleton,
+    clips() { return clips.map(c => c.name); },
+    bones: boneNames,
+    setWeightBone(name) { weightBone = name; return state.mode === "weights" ? applyWeightColors() : ""; },
     setGrid(on) { state.grid = on; if (grid) grid.visible = on; },
     setFigure(on) { state.figure = on; if (figure) figure.visible = on; },
     reframe() { if (box) frame(); },

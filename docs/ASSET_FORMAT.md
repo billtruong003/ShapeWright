@@ -489,6 +489,47 @@ also expose `count`, `first` and `last` (instances in build order), for example
 (each with `.x .y .z`), `width`, `height`, `depth` and `triangles`. Bounds may be
 expressions. A failing check is a `CHECK_FAILED` error unless `severity: warning`.
 
+## Rigging (Phase 24)
+
+```yaml
+rig:
+  template: biped                 # biped | quadruped
+  parts: [body]                   # skinned parts (default: all)
+  joints:                         # rest positions (metres, expressions allowed); _l joints are mirrored to _r
+    hips: [0, 0.28, 0]
+    upper_arm_l: [0.13, 0.48, 0]
+    tail_1: {at: [0, 0.25, -0.13], parent: hips}     # joints the template does not have name their parent
+```
+
+- **Templates:**
+  - `biped`: hips, spine, neck, head, upper_arm, lower_arm, hand, upper_leg, lower_leg, foot (each limb `_l` and `_r`);
+  - `quadruped`: hips, spine, chest, neck, head, front and back legs, shins and feet.
+  - Joints you do not give are fitted from the skinned parts' bounds. Joints given from the model's own item coordinates work best.
+- **Weights:** by bone heat (the method behind Blender's automatic weights), at most 4 joints per vertex, normalised.
+  Bones run from each joint to its children; a joint without children gets a short tip.
+- **Export:** joint nodes (rest translations), a glTF `skin` with inverse bind matrices, and `JOINTS_0` / `WEIGHTS_0` on the skinned parts. Rigged assets export unmerged.
+- **Validation:**
+  - `RIG_INVALID` (error);
+  - `RIG_BONE_UNUSED`, `RIG_UNWEIGHTED`, `RIG_ASYMMETRIC`;
+  - `RIG_POSE_COLLAPSE`: a standard pose loses more than 15 % volume, the candy-wrapper effect.
+- **Pose sheet:** `sw render NAME --poses` writes `renders/poses.png` (rest, A, walk, sit, wave, look).
+- **Clips:** rigged assets export three procedural clips as glTF animations:
+  - `idle`: a bob, breathing and tail sway;
+  - `walk`: the leg and knee cycle, opposite arm swing, hip bounce and tail sway;
+  - `wave`: the right arm raised, the forearm waving.
+
+  Tune or choose them with `rig: {clips: {walk: {stride: 30, knee: 35, arm_swing: 25, bounce: 0.015, seconds: 1.0}, idle: {}}}`; listing clips keeps only those. `sw render NAME --clip walk` writes `renders/walk.gif`.
+
+**Rigid clips** (no skeleton): a top-level list turns a part, or its hinge group in merged exports, about its pivot:
+
+```yaml
+animations:
+  - {name: open_lid, part: lid, rotate: [-100, 0, 0], seconds: 1.6, loop: pingpong}   # once | pingpong | cycle
+  - {name: roll, part: wheel, rotate: [360, 0, 0], seconds: 1, loop: cycle}
+```
+
+`ANIM_INVALID` reports an unknown part or a malformed entry.
+
 ## Inheritance (`extends`) and family interfaces
 
 If the base declares `interface: {params: [...]}`, a variant may set only those

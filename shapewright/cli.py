@@ -257,6 +257,25 @@ def cmd_render(a):
             p = out_dir / "present.png"
             beauty.present_sheet(asset, surface, max(size // 2, 256), focus).save(p)
             paths.append(p)
+    elif getattr(a, "character", False):
+        from .render.views import character_sheet
+
+        p = out_dir / "character.png"
+        character_sheet(asset, surface, max(size // 2, 240)).save(p)
+        paths.append(p)
+    elif getattr(a, "clip", None):
+        from .render.views import clip_frames
+
+        ims = clip_frames(asset, surface, a.clip, min(size, 512))
+        p = out_dir / f"{a.clip}.gif"
+        ims[0].save(p, save_all=True, append_images=ims[1:], duration=int(1000 * 1.0 / len(ims)) or 80, loop=0)
+        paths.append(p)
+    elif getattr(a, "poses", False):
+        from .render.views import pose_sheet
+
+        p = out_dir / "poses.png"
+        pose_sheet(asset, surface, max(size // 2, 256)).save(p)
+        paths.append(p)
     elif a.sheet:
         p = out_dir / f"sheet{suffix}.png"
         contact_sheet(asset, surface, tile=max(size // 2, 192), focus=focus).save(p)
@@ -274,7 +293,8 @@ def cmd_render(a):
                 if v == "uv" or m == "uv":
                     img, p = render_uv(asset, surface, size, focus), out_dir / f"uv{suffix}.png"
                 else:
-                    img = render(asset, surface, v, m, size, focus=focus, isolate=a.isolate, scale_ref=a.scale_ref)
+                    img = render(asset, surface, v, m, size, focus=focus, isolate=a.isolate, scale_ref=a.scale_ref,
+                                 bone=getattr(a, "bone", None))
                     p = out_dir / f"{v}_{m}{suffix}{'_iso' if a.isolate else ''}.png"
                 img.save(p)
                 paths.append(p)
@@ -294,6 +314,18 @@ def cmd_review(a):
     contact_sheet(asset, surface, tile=a.size).save(sheet)
     print(format_text(report, a.verbose))
     print(f"\nsheet: {_rel(sheet)}   (front/right/top ortho clay, 3/4 clay, parts, back 3/4, wire, UV)")
+    from .rig import build_rig
+
+    try:
+        rigged = build_rig(asset) is not None
+    except ValueError:
+        rigged = False
+    if rigged:  # Phase 24 (G3): characters get their review sheet too
+        from .render.views import character_sheet
+
+        char = asset.build_dir / "character.png"
+        character_sheet(asset, surface, tile=max(a.size * 3 // 4, 240)).save(char)
+        print(f"character: {_rel(char)}   (look, reference, UV checker and layout, density, joint weights, poses)")
     style = asset.style or {}
     if style:
         print(f"\nSTYLE '{style.get('name')}': {' '.join(str(style.get('description', '')).split())}")
@@ -718,6 +750,11 @@ def build_parser() -> argparse.ArgumentParser:
                    "beauty = presentation render (shadows, AO; for README/portfolio images)")
     p.add_argument("--turntable", type=int, metavar="N", help="N beauty frames around the asset -> renders/turntable.gif (+ .mp4 with imageio-ffmpeg)")
     p.add_argument("--present", action="store_true", help="presentation sheet -> renders/present.png (beauty views, details: --part, wireframe, palette)")
+    p.add_argument("--character", action="store_true", help="character review sheet -> renders/character.png (look, reference, UV checker "
+                   "and layout, density, joint weights, poses)")
+    p.add_argument("--bone", metavar="JOINT", help="with --mode weights: the joint whose skinning weights to show")
+    p.add_argument("--clip", metavar="NAME", help="rigged assets: a procedural clip (idle, walk, wave) over one loop -> renders/NAME.gif")
+    p.add_argument("--poses", action="store_true", help="rigged assets: the standard poses (rest, A, walk, sit, wave, look) -> renders/poses.png")
     p.add_argument("--scale-ref", action="store_true", help="orthographic side views: a 1.75 m human figure and overall dimension lines")
     p.add_argument("--part", action="append", help="highlight part(s): source or instance names; repeat or comma-separate")
     p.add_argument("--isolate", action="store_true", help="render only the --part parts")

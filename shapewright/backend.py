@@ -385,6 +385,56 @@ def simplify_closed(mesh: Mesh, tolerance: float) -> Mesh:
     return Mesh(np.asarray(out.vert_properties, dtype=np.float64)[:, :3], np.asarray(out.tri_verts, dtype=np.int64))
 
 
+def segment_distances(P: np.ndarray, A: np.ndarray, B: np.ndarray) -> np.ndarray:
+    """(n, k) distances from points P to segments A[k]-B[k]."""
+    AB = B - A
+    L2 = np.maximum(np.einsum("kd,kd->k", AB, AB), 1e-18)
+    t = np.clip(np.einsum("nkd,kd->nk", P[:, None, :] - A[None], AB) / L2, 0.0, 1.0)
+    C = A[None] + t[..., None] * AB[None]
+    return np.linalg.norm(P[:, None, :] - C, axis=-1)
+
+
+def bone_heat(V: np.ndarray, F: np.ndarray, seg_a: np.ndarray, seg_b: np.ndarray, seg_owner: np.ndarray, n_joints: int) -> np.ndarray:
+    """Skinning weights by bone heat (Baran & Popović 2007, the method behind Blender's automatic weights):
+    solve (L + M H) w_j = M H p_j for every joint j, where L is the cotangent Laplacian (cotangents clamped
+    at 0 to keep the system well behaved on decimated meshes), M the vertex areas, H_i = 1 / d_i^2 with d_i the
+    distance to the nearest bone segment, and p_j(i) = 1 where joint j owns that nearest segment. Returns (n, joints)."""
+    import scipy.sparse as sp
+    from scipy.sparse.linalg import factorized
+
+    V = np.asarray(V, dtype=np.float64)
+    F = np.asarray(F, dtype=np.int64)
+    n = len(V)
+    P = V[F]
+    rows, cols, vals = [], [], []
+    area = np.zeros(n)
+    fa = 0.5 * np.linalg.norm(np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0]), axis=1)
+    for k in range(3):
+        i, j, o = F[:, (k + 1) % 3], F[:, (k + 2) % 3], F[:, k]  # edge i-j opposite corner o
+        u, v = V[i] - V[o], V[j] - V[o]
+        cot = np.einsum("ij,ij->i", u, v) / np.maximum(np.linalg.norm(np.cross(u, v), axis=1), 1e-18)
+        w = 0.5 * np.maximum(cot, 0.0)
+        rows += [i, j, i, j]
+        cols += [j, i, i, j]
+        vals += [-w, -w, w, w]
+        np.add.at(area, o, fa / 3)
+    L = sp.csc_matrix((np.concatenate(vals), (np.concatenate(rows), np.concatenate(cols))), shape=(n, n))
+    D = segment_distances(V, seg_a, seg_b)
+    dmin = np.maximum(D.min(1), 1e-4)
+    nearest = D <= dmin[:, None] * 1.0001 + 1e-9
+    H = 1.0 / dmin ** 2
+    MH = area * H
+    solve = factorized((L + sp.diags(MH)).tocsc())
+    W = np.zeros((n, n_joints))
+    for j in range(n_joints):
+        mine = nearest[:, seg_owner == j]
+        if not mine.any():
+            continue
+        p = mine.any(1) / np.maximum(nearest.sum(1), 1)
+        W[:, j] = solve(MH * p)
+    return np.clip(W, 0.0, None)
+
+
 def _point_triangle_dist2(P: np.ndarray, T: np.ndarray) -> np.ndarray:
     """Squared distance from points P (n,3) to triangles T (n,3,3), pairwise (Ericson's closest-point test)."""
     a, b, c = T[:, 0], T[:, 1], T[:, 2]

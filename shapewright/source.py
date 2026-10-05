@@ -39,6 +39,8 @@ TOP_KEYS = {
                  "convex hulls following the shape {max: 24, exclude: [door_*]} (openings stay open)",
     "export": "engine packaging: {target: generic | godot | unity | unreal, merge: none | by_material, lods: [0.5, 0.25]}",
     "notes": "free text for humans and agents",
+    "animations": "rigid clips (Phase 24): [{name, part, rotate: [x, y, z] degrees, seconds, loop: once | pingpong | cycle}] about the part's pivot",
+    "rig": "skeleton for skinning (Phase 24): {template: biped | quadruped, parts: [...], joints: {name: [x, y, z] | {at, parent}}}",
     "reference": "concept image inside the asset directory (e.g. concept/fox.png): review sheets show it next to the model",
     "interface": "family contract for variants: {params: [public names], doc} (see docs/FAMILIES.md)",
     "pack": "shared pack vocabulary: name (packs/NAME.yaml) or relative .yaml path; its params/materials are read-only here",
@@ -237,7 +239,7 @@ def _rejoin_mapping_splits(node):
 
 
 FAMILY_OPEN_KEYS = {"shapewright", "extends", "asset", "params", "budget", "profile", "style", "materials", "checks", "notes", "uv", "collision", "pack",
-                    "reference"}
+                    "reference", "rig", "animations"}
 
 
 def load_source(path: Path, _depth: int = 0, ctx: Ctx | None = None) -> dict:

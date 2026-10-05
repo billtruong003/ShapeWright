@@ -40,6 +40,7 @@ nav:
       - Tight budgets (VR, mobile, web): use-cases/budgets.md
       - Assets in CI: use-cases/ci.md
       - Presentation renders: use-cases/presentation.md
+      - Characters and creatures: use-cases/characters.md
   - Gallery: gallery.md
   - Changelog: changelog.md
   - Concepts:

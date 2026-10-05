@@ -204,3 +204,30 @@ def test_godot_imports_the_example_assets(name, tmp_path):
         assert any(m.get("albedo_texture") for m in r["materials"].values())
     assert r["bodies"] >= 1 and set(r["shapes"]) <= {"ConvexPolygonShape3D", "BoxShape3D", "ConcavePolygonShape3D"}
     assert abs(r["min_y"]) < 1e-3
+
+
+@pytest.mark.skipif(not os.environ.get("SW_GODOT"), reason="set SW_GODOT to a Godot 4 binary to run the engine import check")
+def test_godot_imports_the_rigged_fox_and_its_clips(tmp_path):
+    # Phase 24 gate: the skeleton arrives intact, the mesh is skinned, the clips play (AnimationPlayer)
+    import sys
+    from pathlib import Path
+
+    from shapewright import rig as R
+    from shapewright.assemble import ROOT
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools" / "engine"))
+    from godot_check import check
+
+    a = build(ROOT / "assets" / "chibi_fox")
+    out = tmp_path / "fox.glb"
+    write_glb(a, build_surface(a), out)
+    r = check([out], os.environ["SW_GODOT"])[str(out)]
+    assert "error" not in r and not r.get("import_errors"), r
+    assert sorted(r["bones"]) == sorted(R.build_rig(a).names)
+    assert r["skinned"] == 1
+    assert {x["name"] for x in r["animations"]} == {"idle", "walk", "wave"}
+    chest = build(ROOT / "assets" / "storage_chest")
+    out2 = tmp_path / "chest.glb"
+    write_glb(chest, build_surface(chest), out2)
+    r2 = check([out2], os.environ["SW_GODOT"])[str(out2)]
+    assert [x["name"] for x in r2["animations"]] == ["open_lid"]

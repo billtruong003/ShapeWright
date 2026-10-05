@@ -22,7 +22,7 @@ from pathlib import Path
 
 SCRIPT = r'''
 extends SceneTree
-var report = {"nodes": 0, "meshes": 0, "surfaces": 0, "uv2_surfaces": 0, "materials": {}, "bodies": 0, "body_parents": [], "shapes": [], "markers": [], "names": []}
+var report = {"nodes": 0, "meshes": 0, "surfaces": 0, "uv2_surfaces": 0, "bones": [], "skinned": 0, "animations": [], "materials": {}, "bodies": 0, "body_parents": [], "shapes": [], "markers": [], "names": []}
 var aabb = null
 func walk(n, xf):
 	report["nodes"] += 1
@@ -45,6 +45,14 @@ func walk(n, xf):
 					"normal_texture": m.normal_enabled and m.normal_texture != null,
 					"emission": m.emission_enabled, "transparency": m.transparency,
 					"vertex_color": m.vertex_color_use_as_albedo}
+	if n is AnimationPlayer:
+		for a in n.get_animation_list():
+			report["animations"].append({"name": str(a), "length": n.get_animation(a).length, "tracks": n.get_animation(a).get_track_count()})
+	if n is Skeleton3D:
+		for i in n.get_bone_count():
+			report["bones"].append(n.get_bone_name(i))
+	if n is MeshInstance3D and n.skin != null:
+		report["skinned"] += 1
 	if n is StaticBody3D or n is RigidBody3D or n is Area3D:
 		report["bodies"] += 1
 		report["body_parents"].append(str(n.get_parent().name) if n.get_parent() else "")

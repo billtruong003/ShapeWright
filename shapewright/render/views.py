@@ -73,6 +73,8 @@ MODES = {
     "metallic": "baked metallic as grey (white = metal)",
     "texel": "checker at 8x8 texels: stretching and texel-density differences show as uneven squares",
     "seams": "base colour with UV chart borders in red (seam placement)",
+    "density": "triangle size against the median: blue = small (dense), green = median, red = large (sparse)",
+    "weights": "rigged assets: skinning weight of one joint (--bone), blue 0 -> red 1; other parts grey",
     "beauty": "presentation render: key/fill/rim light, shadows, ambient occlusion, contact shadow, tone mapping (README/portfolio images, not inspection)",
 }
 TEXTURE_MODES = {"textured", "albedo", "roughness", "metallic", "texel", "seams"}
@@ -140,9 +142,19 @@ def _srgb(c):
     return np.asarray(c[:3], dtype=np.float64)
 
 
+def _ramp(t: np.ndarray) -> np.ndarray:
+    """0..1 -> blue, cyan, green, yellow, red."""
+    stops = np.array([[0.15, 0.25, 0.85], [0.1, 0.7, 0.85], [0.2, 0.75, 0.3], [0.95, 0.85, 0.2], [0.9, 0.2, 0.15]])
+    x = np.clip(t, 0, 1) * (len(stops) - 1)
+    i = np.minimum(x.astype(int), len(stops) - 2)
+    f = (x - i)[:, None]
+    return stops[i] * (1 - f) + stops[i + 1] * f
+
+
 def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode: str = "clay", size: int = 512,
            focus: list[str] | None = None, isolate: bool = False, frame: np.ndarray | None = None,
-           supersample: int = 2, annotate: bool = True, label: str = "", scale_ref: bool = False) -> Image.Image:
+           supersample: int = 2, annotate: bool = True, label: str = "", scale_ref: bool = False,
+           bone: str | None = None) -> Image.Image:
     if mode == "beauty":
         from .beauty import render_beauty
 
@@ -171,7 +183,14 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
             mode = "material" if mode in ("textured", "albedo") else "clay"
         elif tex is None and mode in ("texel", "seams"):
             mode = "textured"  # atlas-only views; authored sets have no atlas
-    tris, nrms, fnorm, owner, labels, cuvs = [], [], [], [], [], []
+    tris, nrms, fnorm, owner, labels, cuvs, scalar = [], [], [], [], [], [], []
+    rg = None
+    if mode == "weights":
+        from .. import rig as R
+
+        rg = R.build_rig(asset)
+        if rg is None or bone not in (rg.names if rg else []):
+            raise ValueError(f"weights mode needs a rigged asset and --bone (joints: {', '.join(rg.names) if rg else 'no rig'})")
     for pi, p in enumerate(parts):
         if mode in ("provenance", "regions"):
             labels.append(p.mesh.label_values("origin" if mode == "provenance" else "region"))
@@ -184,6 +203,17 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
         fn, _ = p.mesh.face_normals()
         fnorm.append(fn)
         owner.append(np.full(len(sp.indices), pi))
+        if mode == "density":
+            Q = tris[-1]
+            scalar.append(np.sqrt(np.linalg.norm(np.cross(Q[:, 1] - Q[:, 0], Q[:, 2] - Q[:, 0]), axis=1) * 2 / np.sqrt(3)))  # edge length
+        elif mode == "weights":
+            if p.name in rg.weights:
+                from .. import rig as R
+
+                w = R.surface_weights(rg, p, sp.positions)[:, rg.index(bone)]
+                scalar.append(w[sp.indices].mean(1))
+            else:
+                scalar.append(np.full(len(sp.indices), np.nan))
         if mode in TEXTURE_MODES:
             cuvs.append(sp.corner_uv if sp.corner_uv is not None else np.zeros((len(sp.indices), 3, 2)))
     T = np.concatenate(tris)
@@ -255,6 +285,16 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
                 for k, v in enumerate(dict.fromkeys(lab)):
                     legend[str(v)] = np.array(PALETTE[k % len(PALETTE)])
                     tri_base[lab == v] = legend[str(v)]
+        if mode in ("density", "weights"):
+            v = np.concatenate(scalar)
+            if mode == "density":
+                med = float(np.median(v)) if len(v) else 1.0
+                t = np.clip((np.log2(np.maximum(v, 1e-9) / max(med, 1e-9)) + 2) / 4, 0, 1)  # 1/4x .. 4x the median
+                legend = {"1/4x median edge": _ramp(np.array([0.0]))[0], "median": _ramp(np.array([0.5]))[0], "4x": _ramp(np.array([1.0]))[0]}
+            else:
+                t = v
+                legend = {f"{bone}: 0": _ramp(np.array([0.0]))[0], "1": _ramp(np.array([1.0]))[0]}
+            tri_base = np.where(np.isnan(t)[:, None], CLAY, _ramp(np.nan_to_num(t)))
         if focus_set and not isolate:
             tri_base = np.where(np.isin(OWN, [i for i, p in enumerate(parts) if p.name in focus_set])[:, None], FOCUS, GHOST)
         n = buf.normal
@@ -312,13 +352,13 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
         _annotate(out, asset, cam, parts, view, mode, focus_set, supersample, label)
     if figure is not None:
         _draw_scale_ref(out, cam, figure, supersample)
-        if mode in ("provenance", "regions") and legend:
-            d = ImageDraw.Draw(out)
-            y = 36 if focus_set else 22
-            for name, c in list(legend.items())[:14]:
-                d.rectangle([6, y + 2, 16, y + 12], fill=tuple(int(v * 255) for v in c))
-                d.text((20, y), name[-48:], fill=(30, 30, 30), font=_font(max(10, size // 42)))
-                y += max(13, size // 34)
+    if mode in ("provenance", "regions", "density", "weights") and legend:  # (was nested under the scale figure: no legend since 25a)
+        d = ImageDraw.Draw(out)
+        y = 36 if focus_set else 22
+        for name, c in list(legend.items())[:14]:
+            d.rectangle([6, y + 2, 16, y + 12], fill=tuple(int(v * 255) for v in c))
+            d.text((20, y), name[-48:], fill=(30, 30, 30), font=_font(max(10, size // 42)))
+            y += max(13, size // 34)
     return out
 
 
@@ -557,4 +597,90 @@ def contact_sheet(asset: Asset, surface: Surface, tile: int = 384, tiles=None, f
         d.line([(c * tile, 0), (c * tile, rows * tile)], fill=(255, 255, 255), width=2)
     for r in range(1, rows):
         d.line([(0, r * tile), (cols * tile, r * tile)], fill=(255, 255, 255), width=2)
+    return sheet
+
+
+def pose_sheet(asset: Asset, surface: Surface, tile: int = 320, view: str = "front_right") -> Image.Image:
+    """The skinned asset in the standard poses (Phase 24): rest, A, walk, sit, wave, look."""
+    from .. import rig as R
+
+    rg = R.build_rig(asset)
+    if rg is None:
+        raise ValueError("this asset has no rig: block")
+    names = ["rest", "a_pose", "walk", "sit", "wave", "look"]
+    sheet = Image.new("RGB", (3 * tile, 2 * tile), (255, 255, 255))
+    from ..bake import needs_textures
+
+    mode = "textured" if needs_textures(asset) and surface.uv_method != "none" else "material"
+    views = [R.posed_view(asset, surface, rg, R.POSES[n]) for n in names]
+    b = np.stack([a.bounds() for a, _ in views])
+    frame = np.stack([b[:, 0].min(0), b[:, 1].max(0)])  # one frame for all poses: a raised arm stays in view
+    for i, (n, (a, s)) in enumerate(zip(names, views)):
+        im = render(a, s, view, mode, tile, frame=frame, label=f"pose: {n}")
+        sheet.paste(im, ((i % 3) * tile, (i // 3) * tile))
+    return sheet
+
+
+def clip_frames(asset: Asset, surface: Surface, clip: str, size: int = 320, frames: int = 12, view: str = "front_right") -> list:
+    """A procedural clip (Phase 24, G5) as rendered frames over one loop."""
+    from .. import rig as R
+
+    rg = R.build_rig(asset)
+    if rg is None:
+        raise ValueError("this asset has no rig: block")
+    p = R.clip_settings(asset).get(clip)
+    if p is None:
+        raise ValueError(f"no clip '{clip}' (clips: {', '.join(R.clip_settings(asset))})")
+    from ..bake import needs_textures
+
+    mode = "textured" if needs_textures(asset) and surface.uv_method != "none" else "material"
+    views = [R.posed_view(asset, surface, rg, *R.clip_pose(rg, clip, p, p["seconds"] * k / frames)) for k in range(frames)]
+    b = np.stack([a.bounds() for a, _ in views])
+    frame = np.stack([b[:, 0].min(0), b[:, 1].max(0)])
+    return [render(a, s, view, mode, size, frame=frame, label=f"clip: {clip}") for a, s in views]
+
+
+def character_sheet(asset: Asset, surface: Surface, tile: int = 300) -> Image.Image:
+    """Character review (Phase 24, G3): look, reference, UV checker, UV layout, mesh density, weights of key joints,
+    two poses. Tiles that need what the asset lacks (a rig, a reference) are left out."""
+    from .. import rig as R
+    from ..bake import needs_textures
+
+    rg = R.build_rig(asset)
+    textured = needs_textures(asset) and surface.uv_method != "none"
+    look = "textured" if textured else "material"
+    tiles: list = [("front", look), ("right", look), ("back_left", look)]
+    ref = reference_image(asset)
+    if ref is not None:
+        tiles.insert(1, ("reference", None))
+    if textured:
+        tiles.append(("front_right", "texel"))
+    tiles += [("uv", None), ("front", "density")]
+    if rg is not None:
+        for j in ("head", "upper_arm_l", "upper_leg_l", "spine", "tail_1"):
+            if j in rg.names and len([t for t in tiles if t[1] == "weights"]) < 3:
+                tiles.append(("front", "weights", j))
+        tiles += [("pose", "wave"), ("pose", "walk")]
+    cols = 4
+    rows = math.ceil(len(tiles) / cols)
+    sheet = Image.new("RGB", (cols * tile, rows * tile), (255, 255, 255))
+    frame = None
+    if rg is not None:
+        views = {n: R.posed_view(asset, surface, rg, R.POSES[n]) for n in ("wave", "walk")}
+        b = np.stack([a.bounds() for a, _ in views.values()] + [asset.bounds()])
+        frame = np.stack([b[:, 0].min(0), b[:, 1].max(0)])
+    for i, t in enumerate(tiles):
+        v, m = t[0], t[1]
+        if v == "reference":
+            im = _reference_tile(ref, tile)
+        elif v == "uv":
+            im = render_uv(asset, surface, tile)
+        elif v == "pose":
+            a, s = views[m]
+            im = render(a, s, "front_right", look, tile, frame=frame, label=f"pose: {m}")
+        elif m == "weights":
+            im = render(asset, surface, v, "weights", tile, bone=t[2], frame=frame)
+        else:
+            im = render(asset, surface, v, m, tile, frame=frame)
+        sheet.paste(im, ((i % cols) * tile, (i // cols) * tile))
     return sheet

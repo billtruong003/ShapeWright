@@ -38,6 +38,8 @@ Every phase follows the same run protocol (§1) and the same record format (§2)
 | G0 spike, native organic mesh (track G) | `phase/22-organic` | GO (3 plan changes; concept image not in the repo) | docs/phases/G0_SPIKE.md |
 | 22 native organic kernel (G1) | `phase/22-organic` | PASS (a shape, not part groups; regions jagged until 23) | docs/phases/PHASE_22.md |
 | 23 character surface (G2) | `phase/22-organic` | PARTIAL (painted regions, decals, reference sheet; rubric needs the concept image) | docs/phases/PHASE_23.md |
+| 24 native rigging + clips (G4, G5) | `phase/22-organic` | PASS (Godot: skeleton, skin, clips; Khronos 0/0) | docs/phases/PHASE_24.md |
+| 24b character review modes (G3) | `phase/22-organic` | PASS (CPU sheet, workbench skeleton/weights/clips, MCP review) | docs/phases/PHASE_24b.md |
 
 The branches are **stacked**: each one contains the ones above it, so `phase/18-docs-site` has everything.
 All of them were fast-forwarded into `main` on 2026-09-30; the branches stay for review.

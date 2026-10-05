@@ -61,6 +61,12 @@ warnings. It never produces errors, because style is a judgement call.
 | `GEO_INVERTED` | error | closed surface with inward normals |
 | `GEO_DEGENERATE_FACES` | error | zero-area triangles |
 | `GEO_DUPLICATE_FACES` | error | the same triangle twice |
+| `ANIM_INVALID` | error | an `animations:` entry names an unknown part, or is malformed |
+| `RIG_INVALID` | error | the `rig:` block cannot be built (unknown template, a joint without a parent, two roots) |
+| `RIG_BONE_UNUSED` | warning | a joint drives no vertex (its strongest weight is under 0.2): it sits outside the body |
+| `RIG_UNWEIGHTED` | warning | vertices the bone heat did not reach (bound to their nearest bone) |
+| `RIG_ASYMMETRIC` | warning | left and right joints' area-weighted influence differs by more than 25 % |
+| `RIG_POSE_COLLAPSE` | warning | a standard pose (A, walk, sit, wave) keeps less than 85 % of the volume (candy-wrapper) |
 | `GEO_BLEND_PINCHED` | warning | a `blend` shape's triangle budget cannot hold a gap narrower than its edges; the surface was pinched there (the message gives where) |
 | `GEO_DUPLICATE_SURFACE` | warning | faces repeating another face's position with their own vertices (an unwelded copy, typical of imports): z-fighting, doubled triangles. Fix: `{type: clean, weld_distance: 0.0005}` |
 | `GEO_PART_FRAGMENTED` | info | a part consists of several disconnected shells (expected for `combine`, `repeat`, multi-shell files) |

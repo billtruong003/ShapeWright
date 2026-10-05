@@ -76,7 +76,7 @@ class _Builder:
         return len(self.views) - 1
 
     def mesh_primitive(self, positions, indices, normals=None, uvs=None, material=None, colors=None, tangents: bool = False,
-                       uvs1=None) -> dict:
+                       uvs1=None, skin=None) -> dict:
         attrs = {"POSITION": self.add(positions.astype(np.float32), FLOAT, "VEC3", ARRAY_BUFFER, minmax=True)}
         if normals is not None:
             attrs["NORMAL"] = self.add(normals.astype(np.float32), FLOAT, "VEC3", ARRAY_BUFFER)
@@ -90,6 +90,9 @@ class _Builder:
                 attrs["TANGENT"] = self.add(_tangents(positions, normals, uv_file, indices).astype(np.float32), FLOAT, "VEC4", ARRAY_BUFFER)
         if uvs1 is not None:  # lightmap UVs (Phase 21): same v flip as TEXCOORD_0
             attrs["TEXCOORD_1"] = self.add(np.stack([uvs1[:, 0], 1.0 - uvs1[:, 1]], 1).astype(np.float32), FLOAT, "VEC2", ARRAY_BUFFER)
+        if skin is not None:  # Phase 24: (joint indices, weights) per vertex
+            attrs["JOINTS_0"] = self.add(np.ascontiguousarray(skin[0], dtype=np.uint16), UINT16, "VEC4", ARRAY_BUFFER)
+            attrs["WEIGHTS_0"] = self.add(np.ascontiguousarray(skin[1], dtype=np.float32), FLOAT, "VEC4", ARRAY_BUFFER)
         if colors is not None:
             attrs["COLOR_0"] = self.add(colors.astype(np.float32), FLOAT, "VEC4", ARRAY_BUFFER)
         flat = indices.reshape(-1)
@@ -257,15 +260,16 @@ def _merged_primitives(b: _Builder, surface, parts, mat_index: dict, normal_mapp
     return prims, ranges
 
 
-def _primitives(b: _Builder, sp, part, pivot, mat_index: dict, normal_mapped=frozenset()) -> list[dict]:
-    """One primitive per effective material (face `material` attribute, else the part's)."""
+def _primitives(b: _Builder, sp, part, pivot, mat_index: dict, normal_mapped=frozenset(), skin=None) -> list[dict]:
+    """One primitive per effective material (face `material` attribute, else the part's). skin: (joints, weights)
+    per surface vertex for a skinned part."""
     eff = np.array([m if m else part.material for m in sp.face_material], dtype=object)
     groups = list(dict.fromkeys(eff))
     pos = sp.positions - pivot.astype(np.float32)
     if len(groups) == 1:
         mi = mat_index.get(groups[0])
         return [b.mesh_primitive(pos, sp.indices, sp.normals, sp.uvs, mi, sp.colors, tangents=mi in normal_mapped,
-                                 uvs1=sp.uvs1)]
+                                 uvs1=sp.uvs1, skin=skin)]
     prims = []
     for g in groups:
         faces = sp.indices[eff == g]
@@ -275,7 +279,8 @@ def _primitives(b: _Builder, sp, part, pivot, mat_index: dict, normal_mapped=fro
         prims.append(b.mesh_primitive(pos[used], remap[faces].astype(np.uint32), sp.normals[used],
                                       None if sp.uvs is None else sp.uvs[used], mat_index.get(g),
                                       None if sp.colors is None else sp.colors[used], tangents=mat_index.get(g) in normal_mapped,
-                                      uvs1=None if sp.uvs1 is None else sp.uvs1[used]))
+                                      uvs1=None if sp.uvs1 is None else sp.uvs1[used],
+                                      skin=None if skin is None else (skin[0][used], skin[1][used])))
     return prims
 
 
@@ -368,6 +373,16 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
     node_of: dict[str, int] = {}
     pivots = {p.name: (p.pivot if p.pivot is not None else np.zeros(3)) for p in asset.parts}
     settings = export_settings(asset)
+    from .. import rig as R
+
+    try:
+        rg = R.build_rig(asset)
+    except ValueError:
+        rg = None  # reported by validation (RIG_INVALID); export the static mesh
+    if rg is not None:  # skinned parts sit at the origin (their vertices are in asset space, like the joints)
+        for pn in rg.weights:
+            pivots[pn] = np.zeros(3)
+        settings = dict(settings, merge="none")
     normal_mapped = {mat_index[n] for n, m in asset.materials.items() if n in mat_index and "normal" in (m.get("textures") or {})}
     group_nodes: dict = {}
     if settings["merge"] == "by_material":  # rigid groups: one node per group, one primitive per material
@@ -376,7 +391,8 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
         for p in asset.parts:
             sp = surface.parts[p.name]
             piv = pivots[p.name]
-            meshes.append({"name": p.name, "primitives": _primitives(b, sp, p, piv, mat_index, normal_mapped)})
+            skin = R.top4(R.surface_weights(rg, p, sp.positions)) if rg is not None and p.name in rg.weights else None
+            meshes.append({"name": p.name, "primitives": _primitives(b, sp, p, piv, mat_index, normal_mapped, skin)})
             extras = {"part": p.base, "tags": p.tags} if p.tags else {"part": p.base}
             if p.component:
                 extras["component"] = p.component
@@ -387,6 +403,8 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
             if p.instance:
                 extras["instance"] = p.instance
             node = {"name": p.name, "mesh": len(meshes) - 1, "extras": extras}
+            if skin is not None:
+                node["skin"] = 0
             node_of[p.name] = len(nodes)
             nodes.append(node)
         for p in asset.parts:  # hierarchy + relative translations
@@ -396,6 +414,69 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
             if np.any(np.abs(rel) > 0):
                 nodes[idx]["translation"] = [float(v) for v in rel]
             nodes[parent].setdefault("children", []).append(idx)
+    skins, animations = [], []
+    if rg is not None:  # Phase 24: joint nodes (rest translations, no rotations) and the skin
+        taken = {n["name"] for n in nodes}
+        first = len(nodes)
+        for j, jn in enumerate(rg.names):
+            par = rg.parents[j]
+            t = rg.rest[j] - (rg.rest[par] if par >= 0 else 0)
+            nodes.append({"name": jn if jn not in taken else f"{jn}_joint", "translation": [float(v) for v in t],
+                          "extras": {"joint": jn}})
+        for j in range(len(rg.names)):
+            par = rg.parents[j]
+            (nodes[first + par] if par >= 0 else nodes[0]).setdefault("children", []).append(first + j)
+        ibm = np.tile(np.eye(4, dtype=np.float32), (len(rg.names), 1, 1))
+        ibm[:, :3, 3] = -rg.rest
+        acc = b.add(ibm.transpose(0, 2, 1).reshape(-1, 16), FLOAT, "MAT4", None)  # glTF matrices are column-major
+        skins.append({"name": f"{asset.name}_skin", "joints": list(range(first, first + len(rg.names))),
+                      "inverseBindMatrices": acc, "skeleton": first + rg.parents.index(-1)})
+        try:
+            clips = R.clip_settings(asset)
+        except ValueError:
+            clips = {}  # reported by validation
+        for cname, cp in clips.items():  # Phase 24 (G5): procedural clips as joint rotation (+ root translation) channels
+            times, rots, offs = R.clip_keys(rg, cname, cp)
+            tacc = b.add(times.astype(np.float32).reshape(-1, 1), FLOAT, "SCALAR", None, minmax=True)
+            a_samplers, a_channels = [], []
+            for j, eul in rots.items():
+                q = np.array([matrix_to_quat(rotation_matrix(e)) for e in eul])
+                for k in range(1, len(q)):  # keep neighbouring keys in one hemisphere (slerp takes the short way)
+                    if q[k] @ q[k - 1] < 0:
+                        q[k] = -q[k]
+                a_samplers.append({"input": tacc, "output": b.add(q.astype(np.float32), FLOAT, "VEC4", None), "interpolation": "LINEAR"})
+                a_channels.append({"sampler": len(a_samplers) - 1, "target": {"node": first + j, "path": "rotation"}})
+            if np.abs(offs).max() > 1e-9:
+                root_j = rg.parents.index(-1)
+                tr = (rg.rest[root_j] + offs).astype(np.float32)
+                a_samplers.append({"input": tacc, "output": b.add(tr, FLOAT, "VEC3", None), "interpolation": "LINEAR"})
+                a_channels.append({"sampler": len(a_samplers) - 1, "target": {"node": first + root_j, "path": "translation"}})
+            if a_channels:
+                animations.append({"name": cname, "samplers": a_samplers, "channels": a_channels})
+    try:
+        rclips = R.rigid_clips(asset)
+    except ValueError:
+        rclips = []  # reported by validation
+    for clip in rclips:  # rigid clips: rotation channels on the part's node (merged: its hinge group's node)
+        targets = []
+        for pn in clip["parts"]:
+            if pn in node_of:
+                targets.append(node_of[pn])
+            else:
+                for key, (owner, _, _) in (group_nodes or {}).items():
+                    if key == pn and owner not in targets:
+                        targets.append(owner)
+        if not targets:
+            continue
+        times, eul = R.rigid_keys(clip)
+        tacc = b.add(times.astype(np.float32).reshape(-1, 1), FLOAT, "SCALAR", None, minmax=True)
+        q = np.array([matrix_to_quat(rotation_matrix(e)) for e in eul])
+        for k in range(1, len(q)):
+            if q[k] @ q[k - 1] < 0:
+                q[k] = -q[k]
+        qacc = b.add(q.astype(np.float32), FLOAT, "VEC4", None)
+        animations.append({"name": clip["name"], "samplers": [{"input": tacc, "output": qacc, "interpolation": "LINEAR"}],
+                           "channels": [{"sampler": 0, "target": {"node": t, "path": "rotation"}} for t in targets]})
     for s in asset.sockets:
         node = {"name": f"SOCKET_{s.name}", "translation": [float(v) for v in s.position], "extras": {"socket": s.name}}
         if s.doc:
@@ -419,6 +500,9 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
         nodes.append({"name": name, "mesh": len(meshes) - 1, "extras": {"collision": True, "for": owner_name}})
         nodes[owner if local else 0].setdefault("children", []).append(len(nodes) - 1)
 
+    skinned_roots = [i for i, n in enumerate(nodes) if "skin" in n]  # glTF: a skinned mesh's parents do not move it
+    if skinned_roots:
+        nodes[0]["children"] = [c for c in nodes[0].get("children", []) if c not in skinned_roots]
     nodes[0]["extras"] = {"shapewright": {
         "version": __version__, "source_hash": asset.source_hash, "units": "m", "up": "+Y", "front": "+Z",
         "kind": asset.meta.get("kind", ""), "params": {k: round(v, 6) for k, v in asset.env.items()},
@@ -431,7 +515,7 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
     gltf = {
         "asset": {"version": "2.0", "generator": f"shapewright {__version__}"},
         "scene": 0,
-        "scenes": [{"name": asset.name, "nodes": [0]}],
+        "scenes": [{"name": asset.name, "nodes": [0] + skinned_roots}],
         "nodes": nodes,
         "meshes": meshes,
         "accessors": b.accessors,
@@ -440,6 +524,10 @@ def write_glb(asset: Asset, surface: Surface, path: Path, validation_status: str
     }
     if materials:
         gltf["materials"] = materials
+    if skins:
+        gltf["skins"] = skins
+    if animations:
+        gltf["animations"] = animations
     if images:
         gltf["images"], gltf["textures"], gltf["samplers"] = images, textures, samplers
     js = json.dumps(gltf, separators=(",", ":"), sort_keys=True).encode()

@@ -237,6 +237,9 @@ parts:
 sockets:
   loot: {attach: {to: floor, at: top}, doc: where loot spawns when the lid opens}
 
+animations:
+  - {name: open_lid, part: lid, rotate: [-100, 0, 0], seconds: 1.6, loop: pingpong, doc: the lid swings open and closes on its hinge}
+
 collision: {mode: single_box, parts: [wall_front, wall_side]}   # body only: the lid swings open
 
 checks:

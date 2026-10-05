@@ -90,11 +90,17 @@ select, input[type=text], input[type=number], textarea { background: var(--bg); 
     <div id="pane-3d">
       <div class="row">
         <select id="mode3d"><option value="textured">textured</option><option value="clay">clay</option><option value="material">material colours</option>
-          <option value="parts">colour by part</option><option value="normals">normals</option><option value="uv_checker">UV checker</option><option value="texel">texel density</option></select>
+          <option value="parts">colour by part</option><option value="normals">normals</option><option value="uv_checker">UV checker</option><option value="texel">texel density</option><option value="weights">joint weights</option></select>
         <label><input id="wire3d" type="checkbox"> wireframe</label>
         <label><input id="grid3d" type="checkbox" checked> grid (1 m)</label>
         <label><input id="fig3d" type="checkbox"> 1.75 m figure</label>
         <label><input id="uv3d" type="checkbox"> UV layout</label>
+        <span id="rigctl" style="display:none">
+          <label><input id="skel3d" type="checkbox"> skeleton</label>
+          <select id="bone3d" title="joint for the weights view"></select>
+          <select id="clip3d" title="play a clip"><option value="">rest pose</option></select>
+          <input id="scrub3d" type="range" min="0" max="1" step="0.01" value="0" title="pose: a moment of the clip">
+        </span>
         <span style="flex:1"></span>
         <button id="btn-frame" class="ghost">Frame</button>
         <button id="btn-shot" class="ghost" disabled title="saves .build/shots/shot_N.png">Screenshot</button>
@@ -290,6 +296,10 @@ async function load3d(set) {
     if (res.rc > 1 || !rel) { $("glbinfo").textContent = "no 3D preview (see the command output)"; return; }
     await viewer.load("/files?path=" + encodeURIComponent(rel) + "&t=" + Date.now());
     $("glbinfo").textContent = rel;
+    const bones = viewer.bones(), clips = viewer.clips();
+    $("rigctl").style.display = bones.length || clips.length ? "" : "none";
+    $("bone3d").innerHTML = bones.map(b => `<option>${b}</option>`).join("");
+    $("clip3d").innerHTML = '<option value="">rest pose</option>' + clips.map(c => `<option>${c}</option>`).join("");
     if ($("uv3d").checked) drawUV();
   } finally { busy(false); }
 }
@@ -301,6 +311,10 @@ $("tab-3d").onclick = () => { $("pane-3d").style.display = ""; $("pane-img").sty
 $("tab-img").onclick = () => { $("pane-3d").style.display = "none"; $("pane-img").style.display = ""; $("tab-img").classList.add("on"); $("tab-3d").classList.remove("on"); };
 $("mode3d").onchange = () => { const info3 = viewer.setMode($("mode3d").value); $("glbinfo").textContent = info3 || $("glbinfo").textContent; };
 $("wire3d").onchange = () => viewer.setWire($("wire3d").checked);
+$("skel3d").onchange = () => viewer.setSkeleton($("skel3d").checked);
+$("bone3d").onchange = () => { const i = viewer.setWeightBone($("bone3d").value); if (i) $("glbinfo").textContent = i; };
+$("clip3d").onchange = () => viewer.play($("clip3d").value);
+$("scrub3d").oninput = () => viewer.scrub(+$("scrub3d").value);
 $("grid3d").onchange = () => viewer.setGrid($("grid3d").checked);
 $("fig3d").onchange = () => viewer.setFigure($("fig3d").checked);
 $("uv3d").onchange = () => { $("uvpanel").style.display = $("uv3d").checked ? "flex" : "none"; if ($("uv3d").checked) drawUV(); };

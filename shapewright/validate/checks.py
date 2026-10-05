@@ -515,6 +515,65 @@ def lightmap_uv(asset: Asset, surface: Surface, metrics: dict):
     return out
 
 
+@validator("rig_weights", "assembly", "Skeleton and skinning weights (Phase 24): joints fitted, every joint drives some vertices, "
+           "left/right weights match, and the standard poses keep the volume (no candy-wrapper collapse).",
+           ("RIG_INVALID", "RIG_BONE_UNUSED", "RIG_UNWEIGHTED", "RIG_ASYMMETRIC", "RIG_POSE_COLLAPSE", "ANIM_INVALID"))
+def rig_weights(asset: Asset, surface: Surface, metrics: dict):
+    from .. import rig as R
+
+    out0 = []
+    try:
+        clips = R.rigid_clips(asset)
+        if clips:
+            metrics["rigid_clips"] = [c["name"] for c in clips]
+    except ValueError as e:
+        out0.append(_issue("ANIM_INVALID", "error", "assembly", str(e), "animations", "see docs/ASSET_FORMAT.md (Rigging)"))
+    try:
+        rg = R.build_rig(asset)
+        if rg is not None:
+            metrics["clips"] = list(R.clip_settings(asset))
+    except ValueError as e:
+        return out0 + [_issue("RIG_INVALID", "error", "assembly", str(e), "rig", "see docs/ASSET_FORMAT.md (Rigging)")]
+    if rg is None:
+        return out0
+    out = []
+    metrics["rig_joints"] = len(rg.names)
+    W = np.concatenate([rg.weights[p] for p in rg.parts])
+    strongest = W.max(0)
+    unused = [n for j, n in enumerate(rg.names) if strongest[j] < 0.2]
+    if unused:
+        out.append(_issue("RIG_BONE_UNUSED", "warning", "assembly", f"joints that drive no vertex (strongest weight < 0.2): {', '.join(unused[:8])}",
+                          "rig.joints", "move the joint inside the body part it should move, or remove it"))
+    cold = int(sum((rg.raw_max[p] < 1e-4).sum() for p in rg.parts))
+    if cold:
+        out.append(_issue("RIG_UNWEIGHTED", "warning", "assembly", f"{cold} vertices the bone heat did not reach (bound to their nearest bone)",
+                          "rig", "a part far from every bone: add a joint inside it"))
+    areas = []
+    for pn in rg.parts:  # weight x vertex area: decimation leaves different vertex counts on the two sides
+        m = asset.part(pn).mesh
+        _, fa = m.face_normals()
+        va = np.zeros(len(m.V))
+        for k in range(3):
+            np.add.at(va, m.F[:, k], fa / 3)
+        areas.append(va)
+    totals = dict(zip(rg.names, (W * np.concatenate(areas)[:, None]).sum(0)))
+    lopsided = [n for n in rg.names if n.endswith("_l") and n[:-2] + "_r" in totals
+                and max(totals[n], totals[n[:-2] + "_r"]) > 1.25 * max(min(totals[n], totals[n[:-2] + "_r"]), 1e-9)]
+    if lopsided:
+        out.append(_issue("RIG_ASYMMETRIC", "warning", "assembly", f"left and right weights differ by more than 25 %: {', '.join(lopsided[:6])}",
+                          "rig.joints", "mirror the joint positions (give only the _l joint)"))
+    kept = {}
+    for pose in ("a_pose", "walk", "sit", "wave"):  # the standard poses whose joints this skeleton has
+        if any(k in rg.names for k in R._side(R.POSES[pose])):
+            kept[pose] = round(R.volume_kept(asset, rg, R.POSES[pose]), 3)
+    metrics["rig_pose_volume"] = kept
+    low = {k: v for k, v in kept.items() if v < 0.85}
+    if low:
+        out.append(_issue("RIG_POSE_COLLAPSE", "warning", "assembly", f"poses lose volume (candy-wrapper): {low}", "rig",
+                          "move the joint to the bend (elbow, knee) or add a joint there"))
+    return out0 + out
+
+
 @validator("vertex_colour_materials", "surface", "`archetype: vertex` materials (Phase 21): mixed with textured materials they lose their point.",
            ("VERTEX_COLOR_MIXED",))
 def vertex_colour_materials(asset: Asset, surface: Surface, metrics: dict):
