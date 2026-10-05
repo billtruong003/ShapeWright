@@ -18,10 +18,10 @@ Nothing is left out. The earlier figures (87 % and 83 %) counted fewer items, wh
 
 | scope | done | remaining | **progress** |
 |---|---|---|---|
-| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 70 | 1.25 | **≈ 98 %** |
-| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 70 | 1.5 | **≈ 98 %** |
-| **planned roadmap** (+ track G: native character track) | 70 | 1.75 | **≈ 98 %** |
-| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 70 | ≈ 12.75 | **≈ 85 %** |
+| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 70.25 | 1.25 | **≈ 98 %** |
+| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 70.25 | 1.25 | **≈ 98 %** |
+| **planned roadmap** (+ track G: native character track) | 70.25 | 1.5 | **≈ 98 %** |
+| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 70.25 | ≈ 12.5 | **≈ 85 %** |
 
 The figures dropped from 80 / 74 / 62 / 54 % because two decisions on 2026-10-05 added work:
 - **Track W** (3 points): the workbench gets a three.js 3D viewer (list, view modes, save, export, click-to-comment).
@@ -83,7 +83,7 @@ Tick `[x]` here in the commit that finishes a task.
 | [x] | F4 | LODs on the kit and the houses (LOD + IoU already exist in export/lod.py: apply, set thresholds, report) | 0.3 | F1 | agent |
 | [x] | F5 | Multi-hull collision; a walkable doorway in the workshop | 0.7 | — | agent |
 | [x] | F6 | Lightmap UVs (UV1, non-overlapping) for Unity/Unreal static lighting (ROADMAP Stage 4) | 1.0 | — | agent |
-| [ ] | F7 | M2 milestone: re-run the 10 MODULAR_HOUSE_PACK gates on the trim-sheet kit (Phase 21 measured only the gates it changed) | 0.25 | F1–F6 | agent |
+| [x] | F7 | M2 milestone: re-run the 10 MODULAR_HOUSE_PACK gates on the trim-sheet kit (Phase 21 measured only the gates it changed) | 0.25 | F1–F6 | agent |
 | [x] | G0 | Spike: the fox (body, head, cheeks, ears, tail) as SDF primitives, smooth union, marching cubes, sheet next to the concept | 1 | v1.0 | agent |
 | [x] | G1 | Phase 22: native organic kernel: `blend:` groups, SDF primitives, smooth union, marching cubes, decimate, xatlas UV, validated like any part | 3 | G0 | agent |
 | [x] | G2 | Phase 23: character surface: projected decals into the atlas (eyes, mouth, patterns), region palettes, toon presets, reference image in the source | 1.5 | G1 | agent |
@@ -93,7 +93,7 @@ Tick `[x]` here in the commit that finishes a task.
 | [x] | G5 | Procedural clips: idle bob, walk cycle, wave, from the skeleton template | 1.5 | G4 | agent |
 | [ ] | H* | Long-term backlog (§11): plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village, optional Blender/three.js beauty renders | ≈ 11 | — | later |
 
-Done so far (70 points):
+Done so far (70.25 points):
 
 | work | points |
 |---|---|
@@ -120,6 +120,7 @@ Done so far (70 points):
 | Phase 23 character surface (G2; the concept rubric is left, 0.25) | 1.25 |
 | Phase 24 native rigging + procedural clips (G4, G5) | 5 |
 | Phase 24b character review modes (G3) | 1.5 |
+| M2 re-run of the kit gates (F7) | 0.25 |
 
 ## 2b. Rules for every task
 

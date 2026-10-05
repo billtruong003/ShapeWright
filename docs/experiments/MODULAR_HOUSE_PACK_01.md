@@ -373,3 +373,7 @@ houses grow); render in `docs/phases/phase19b/evidence/stress_bay2.4_storey3.3_p
 Gate 6 ("no normal task requires framework modification") would now be met for this kit: building the three houses
 needed no framework change after Phase 19. Gate 9 (a fresh agent) is still not verified; it is part of release
 acceptance (FRESH_AGENT_12, track E).
+
+## 19. M2 re-run after Phase 21
+
+The ten gates were re-run on 2026-10-05 after Phase 21: PASS, 9 of 10 (gate 9 met in part). See [MODULAR_HOUSE_PACK_02.md](MODULAR_HOUSE_PACK_02.md).

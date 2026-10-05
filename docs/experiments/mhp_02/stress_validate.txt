@@ -1,0 +1,30 @@
+house_beam | PASS house_beam  tris 44/3000  parts 1  size 2.090x0.221x0.2 | 
+house_beam_vertical | PASS house_beam_vertical  tris 44/3000  parts 1  size 0.221x | 
+house_brace | PASS house_brace  tris 44/3000  parts 1  size 2.235x2.755x0. | 
+house_chimney | PASS house_chimney  tris 736/3000  parts 16  size 0.937x6.95 | 
+house_corner | PASS house_corner  tris 170/3000  parts 4  size 0.398x3.787x | 
+house_cottage | PASS house_cottage  tris 29068/30000  parts 413  size 8.565x | 
+house_door | PASS house_door  tris 432/3000  parts 10  size 0.792x1.707x0 | 
+house_door_frame | PASS house_door_frame  tris 132/3000  parts 3  size 1.115x1. | 
+house_floor | PASS house_floor  tris 396/3000  parts 9  size 2.404x0.240x2 | 
+house_floor_half | PASS house_floor_half  tris 264/3000  parts 6  size 2.400x0. | 
+house_footing | PASS house_footing  tris 292/3000  parts 5  size 2.002x0.487 | 
+house_gable | PASS house_gable  tris 272/3000  parts 7  size 0.271x3.606x5 | 
+house_post | PASS house_post  tris 44/3000  parts 1  size 0.324x3.307x0.3 | 
+house_ridge | PASS house_ridge  tris 116/3000  parts 3  size 2.408x0.236x0 | 
+house_roof_eave | PASS house_roof_eave  tris 264/3000  parts 6  size 2.420x1.1 | 
+house_roof_end | PASS house_roof_end  tris 716/3000  parts 5  size 0.490x4.63 | 
+house_roof_section | PASS house_roof_section  tris 1860/3000  parts 9  size 2.420 | 
+house_shutter | PASS house_shutter  tris 220/3000  parts 5  size 0.412x1.005 | 
+house_steps | PASS house_steps  tris 88/3000  parts 2  size 1.516x0.520x0. | 
+house_townhouse | PASS house_townhouse  tris 37502/45000  parts 612  size 6.30 | 
+house_wall_door | PASS house_wall_door  tris 900/3000  parts 21  size 2.090x3. | 
+house_wall_half | PASS house_wall_half  tris 188/3000  parts 5  size 0.905x3.0 | 
+house_wall_plain | PASS house_wall_plain  tris 188/3000  parts 5  size 2.090x3. | 
+house_wall_shopfront | PASS house_wall_shopfront  tris 798/3000  parts 17  size 2.0 | 
+house_wall_upper | PASS house_wall_upper  tris 660/3000  parts 16  size 2.090x3 | 
+house_wall_window | PASS house_wall_window  tris 1100/3000  parts 26  size 2.090 | 
+house_wall_window_offset | PASS house_wall_window_offset  tris 836/3000  parts 20  size | 
+house_window | PASS house_window  tris 276/3000  parts 7  size 0.985x1.003x | 
+house_workshop | PASS house_workshop  tris 52336/60000  parts 790  size 13.36 | 
+DONE

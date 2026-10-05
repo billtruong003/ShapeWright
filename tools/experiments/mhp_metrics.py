@@ -1,6 +1,7 @@
 """Metrics for MODULAR_HOUSE_PACK_01: pack-level reuse, parameterization and runtime numbers.
 
-Usage: python tools/experiments/mhp_metrics.py OUT.json
+Usage: python tools/experiments/mhp_metrics.py OUT.json [EXPORT_DIR]
+  EXPORT_DIR: where the `sw export` reports are (NAME.report.json); default: each asset's export/ folder
 
 Built on analyze_source.py / analyze_pack.py (the existing experiment methodology) plus the export
 reports. Descriptive, not a score.
@@ -23,6 +24,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tools" / "experiments"))
 
 HOUSES = ["house_cottage", "house_townhouse", "house_workshop"]
+EXPORTS: Path | None = None
 FRAMEWORK_CHANGES = [
     {"change": "component instances accept `origin: keep` (the component's own origin is its pivot)", "class": "ABSTRACTION GAP",
      "why generic": "bounding-box anchoring moved roof pieces 2-10 cm with optional trim; affects every kit piece with optional or asymmetric sub-parts"},
@@ -83,7 +85,7 @@ def main(out: Path):
     pack = analyze(ROOT, assets)
     reports = {}
     for a in assets:
-        f = ROOT / "assets" / a / "export" / f"{a}.report.json"
+        f = (EXPORTS / f"{a}.report.json") if EXPORTS else ROOT / "assets" / a / "export" / f"{a}.report.json"
         if f.exists():
             r = json.loads(f.read_text())
             reports[a] = {"status": r["status"], "triangles": r["metrics"]["triangles"], "materials": r["metrics"]["materials"],
@@ -131,4 +133,5 @@ def main(out: Path):
 
 
 if __name__ == "__main__":
+    EXPORTS = Path(sys.argv[2]) if len(sys.argv) > 2 else None
     main(Path(sys.argv[1]))

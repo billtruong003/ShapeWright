@@ -601,7 +601,7 @@ def style_heuristics(asset: Asset, surface: Surface, metrics: dict):
         thin = {}
         for p in asset.parts:
             t = float(np.sort(p.mesh.size())[0])
-            if t < min_feature and "thin_ok" not in p.tags:
+            if t < min_feature - 1e-4 and "thin_ok" not in p.tags:  # 0.1 mm: a part made exactly at the minimum is not thin
                 thin[p.base] = min(t, thin.get(p.base, 1e9))
         for base, t in thin.items():
             out.append(_issue("STYLE_THIN_FEATURE", "warning", "style", f"thinnest dimension {t * 100:.2f} cm < style minimum {min_feature * 100:.1f} cm", base,

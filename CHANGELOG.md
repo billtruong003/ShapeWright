@@ -2,6 +2,13 @@
 
 Newest first. Generated from the phase records by `tools/site/changelog.py`; each entry links to its record (what shipped, evidence, the gate table and what is not done).
 
+## MODULAR_HOUSE_PACK_02: the kit gates re-run (milestone M2)
+
+- **Verdict:** PASS (9 of 10; gate 9 met in part)
+- **Branch:** `phase/22-organic`
+- **Record:** [docs/experiments/MODULAR_HOUSE_PACK_02.md](docs/experiments/MODULAR_HOUSE_PACK_02.md)
+- It is not the "strong PASS" M2 hoped for: - a fresh agent editing this kit would close gate 9 (one fresh-agent task); - a shared `foundation` asset would remove the one remaining duplication.
+
 ## Phase 24b: character review modes (track G, G3)
 
 - **Verdict:** PASS (CPU sheet, workbench skeleton/weights/clips, MCP review)
