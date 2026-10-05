@@ -20,6 +20,7 @@ from pathlib import Path
 import numpy as np
 
 from . import materials as M
+from . import organic
 from .assemble import Asset
 from .limits import LIMITS
 from .surface import Surface
@@ -43,7 +44,11 @@ class Textures:
 
 
 def needs_textures(asset: Asset) -> bool:
-    return any(m.get("textured") for m in asset.materials.values())
+    if any(m.get("textured") for m in asset.materials.values()):
+        return True
+    from .organic import paint_spec
+
+    return any(paint_spec(asset, p) for p in asset.parts)  # painted organic regions and decals (Phase 23)
 
 
 # ------------------------------------------------------------------ geometry helpers
@@ -309,6 +314,11 @@ def bake(asset: Asset, surface: Surface) -> Textures | None:
         height = P[:, 1] - ground
         axis = _principal_axis(mesh.V)
         mats = np.array([m if m else p.material for m in mesh.label_values("material")], dtype=object)[fid]
+        paint = organic.paint_spec(asset, p)
+        if paint is not None:  # Phase 23: regions per texel at the rest position (crisp edges, whatever the triangles)
+            R = np.einsum("kc,kcd->kd", bary, mesh.vattr["rest"][mesh.F][fid])
+            if any(it.material for it in paint["items"]):
+                mats = organic.region_materials(paint, R, p.material)
         part_seed = zlib.crc32(p.base.encode()) % 997
         for mname in dict.fromkeys(mats):
             sel = mats == mname
@@ -327,6 +337,15 @@ def bake(asset: Asset, surface: Surface) -> Textures | None:
             st["base_sum"] += col.sum(0)
             st["metal_sum"] += float(ch.metallic.sum())
             st["metal_mid"] += int(((ch.metallic > 0.2) & (ch.metallic < 0.8)).sum())
+        if paint is not None and paint["decals"]:
+            for d in paint["decals"]:
+                m1, m2 = organic.decal_masks(d, R, N, achieved)
+                for m_, col_ in ((m1, d["color"]), (m2, d["color2"])):
+                    w = m_[:, None]
+                    if not w.any():
+                        continue
+                    base[texel] = base[texel] * (1 - w) + np.asarray(col_[:3]) * w  # the atlas holds sRGB, like base_color
+                    orm[texel, 1] = orm[texel, 1] * (1 - m_) + 0.3 * m_  # glossy: eyes catch the light
         covered[texel] = True
         tex.lifecycle.setdefault(p.name, "DERIVED")
     cov2 = covered.reshape(res, res)

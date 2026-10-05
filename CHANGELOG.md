@@ -2,6 +2,13 @@
 
 Newest first. Generated from the phase records by `tools/site/changelog.py`; each entry links to its record (what shipped, evidence, the gate table and what is not done).
 
+## Phase 23: character surface (track G, G2)
+
+- **Verdict:** PARTIAL (painted regions, decals, reference sheet; rubric needs the concept image)
+- **Branch:** `phase/22-organic`
+- **Record:** [docs/phases/PHASE_23.md](docs/phases/PHASE_23.md)
+- Painted regions, procedural decals and the reference image on the review sheet shipped and work on all three creatures. The fox now reads as a fox in a hoodie with a face, and the face reads from the front at 256 px. The gate's rubric against the owner's concept could not be scored, because the concept image is not in the repository. Toon presets were not built.
+
 ## Phase 22: native organic kernel (track G, G1)
 
 - **Verdict:** PASS (a shape, not part groups; regions jagged until 23)

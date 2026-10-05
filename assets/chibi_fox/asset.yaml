@@ -45,6 +45,9 @@ parts:
         - {sdf: ellipsoid, center: [0.115, head_y - 0.065, 0.1], radii: [0.07, 0.06, 0.06], mirror: x, material: white, doc: cheeks}
         - {sdf: ellipsoid, center: [0, 0.46, -0.37], radii: [0.075, 0.08, 0.075], material: white, doc: tail tip}
         - {sdf: ellipsoid, center: [0, head_y - 0.035, 0.225], radii: [0.026, 0.02, 0.02], material: nose, doc: nose}
+      decals:
+        - {kind: eye, at: [0.075, head_y + 0.035, 0.18], toward: [0.3, 0.05, 1], size: 0.026, mirror: x, doc: eyes}
+        - {kind: smile, at: [0, head_y - 0.075, 0.215], toward: [0, -0.2, 1], size: 0.022, color: '#3a2a24', doc: mouth}
 
 checks:
   - {expr: asset.height, min: 0.95, max: 1.1, doc: chibi figurine at about 1 m}

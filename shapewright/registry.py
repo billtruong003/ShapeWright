@@ -33,6 +33,7 @@ KINDS = {
     "geometry": "nested geometry expression {type, ..., ops, material, rotate, translate}",
     "geometry_list": "list of geometry expressions",
     "sdf_list": "list of SDF items {sdf: sphere | ellipsoid | capsule | cone | box | torus, ...}",
+    "decal_list": "list of decals {kind: eye | disc | smile, at: [x, y, z], ...}",
 }
 
 TOPOLOGY = ("preserve", "refine", "rebuild", "resample", "generate")

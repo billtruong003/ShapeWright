@@ -73,6 +73,42 @@ def parse_items(raw_items, env, ctx, where: str, materials: dict) -> list[organi
     return items
 
 
+DECAL_KINDS = ("eye", "disc", "smile")
+
+
+def parse_decals(raw, env, ctx, where: str) -> list[dict]:
+    if raw in (None, []):
+        return []
+    if not isinstance(raw, list):
+        raise ValueError("decals: expected a list of {kind, at, ...}")
+    out = []
+    for i, r in enumerate(raw):
+        w = f"{where}.decals[{i}]"
+        if not isinstance(r, dict) or r.get("kind") not in DECAL_KINDS:
+            raise ValueError(f"decals[{i}].kind: one of {', '.join(DECAL_KINDS)}{suggest(r.get('kind', ''), DECAL_KINDS) if isinstance(r, dict) else ''}")
+        unknown = set(r) - {"kind", "at", "toward", "size", "color", "color2", "mirror", "doc", "angle"}
+        if unknown:
+            raise ValueError(f"decals[{i}]: no '{sorted(unknown)[0]}' (keys: kind, at, toward, size, color, color2, angle, mirror)")
+        at = vec(r.get("at"), 3, env, f"{w}.at", ctx)
+        toward = vec(r.get("toward", [0, 0, 1]), 3, env, f"{w}.toward", ctx)
+        size = num(r.get("size", 0.03), env, f"{w}.size", ctx)
+        angle = num(r.get("angle", 0), env, f"{w}.angle", ctx)
+        if at is None or toward is None or size is None or angle is None or size <= 0:
+            raise ValueError(f"decals[{i}]: needs at [x, y, z] and a positive size")
+        from ..source import parse_color_value
+
+        col = parse_color_value(r.get("color", "#1d1f24"))
+        col2 = parse_color_value(r.get("color2", "#ffffff"))
+        if col is None or col2 is None:
+            raise ValueError(f"decals[{i}]: colours are '#rrggbb'")
+        mirror = r.get("mirror")
+        if mirror not in (None, False, "x", True):
+            raise ValueError(f"decals[{i}].mirror: x")
+        out.append({"kind": r["kind"], "at": np.asarray(at, float), "toward": np.asarray(toward, float) / max(np.linalg.norm(toward), 1e-9),
+                    "size": float(size), "angle": float(angle), "color": col[:3], "color2": col2[:3], "mirror": bool(mirror)})
+    return out
+
+
 @shape("blend", "Organic form: SDF primitives (sphere, ellipsoid, capsule, cone, box, torus) blended into ONE closed "
        "mesh, in order: union items melt together with a rounded seam of `radius`; `op: subtract` carves (a hood "
        "opening, a mouth), `op: intersect` trims. Per item: `mirror: x` (a pair), `shell: t` (hollow), `rotate`, "
@@ -88,7 +124,11 @@ def parse_items(raw_items, env, ctx, where: str, materials: dict) -> list[organi
         Param("triangles", "int", 4000, "triangle budget after decimation", min=100, max=100_000),
         Param("smooth", "int", 0, "Taubin smoothing passes before decimation (0..10)", min=0, max=10),
         Param("ground", "bool", False, "cut the form flat at y = 0 (a creature standing on the floor; smooth unions "
-              "otherwise bulge a little below their items)")],
+              "otherwise bulge a little below their items)"),
+        Param("paint", "bool", True, "item materials are painted into the texture per texel (crisp region edges, one draw "
+              "call); false = each face takes its nearest item's material (separate materials in the file)"),
+        Param("decals", "decal_list", [], "procedural decals painted where they face: {kind: eye | disc | smile, at: [x, y, z], "
+              "toward: [x, y, z] (default [0, 0, 1]), size, color, color2 (eye highlight / smile thickness), mirror: x}")],
        category="organic", topology="generate",
        example="{type: blend, radius: 0.03, triangles: 3000, items: [{sdf: ellipsoid, center: [0, 0.3, 0], radii: [0.2, 0.25, 0.18]}, "
                "{sdf: sphere, center: [0, 0.62, 0.02], radius: 0.17}, {sdf: cone, a: [0.1, 0.75, 0], b: [0.14, 0.9, 0], radius_a: 0.05, "
@@ -99,7 +139,9 @@ def blend(a, b):
     if not voxel:
         bb = np.stack([it.bounds() for it in items if it.op == "union"])
         voxel = max(0.004, float(np.linalg.norm(bb[:, 1].max(0) - bb[:, 0].min(0))) / 120)
-    m, stats = organic.mesh_blend(items, a["radius"], voxel, a["triangles"], a["smooth"], a["ground"])
+    parse_decals(a["decals"], b.env, b.ctx, b.where)  # validated here; painted by the bake (bake.py)
+    m, stats = organic.mesh_blend(items, a["radius"], voxel, a["triangles"], a["smooth"], a["ground"], label=not a["paint"])
+    m.set_vertex("rest", m.V)  # regions and decals are painted at the rest position
     if stats["defects"]:
         at = "; ".join(f"({x:g}, {y:g}, {z:g})" for x, y, z in stats["pinch_at"][:4])
         b.warn("GEO_BLEND_PINCHED", f"{stats['triangles']} triangles (edges about {stats['edge_m'] * 1000:.0f} mm) cannot hold a gap "

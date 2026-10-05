@@ -1,5 +1,5 @@
-# Mushroom creature: a stubby stem body with a domed cap (the underside carved hollow), white spots set into the
-# cap, little feet and a face (Phase 22, `blend`).
+# Mushroom creature: a stubby stem body with a domed cap (the underside carved hollow), little feet; the white
+# spots and the face are painted decals (Phase 23); spots as geometry were sharp pyramids at this budget.
 shapewright: 0.1
 asset:
   name: creature_mushroom
@@ -35,7 +35,10 @@ parts:
         - {sdf: cone, a: [0, 0.12, 0], b: [0, cap_y, 0], radius_a: 0.13, radius_b: 0.1, doc: stem}
         - {sdf: ellipsoid, center: [0.06, 0.04, 0.03], radii: [0.06, 0.04, 0.075], mirror: x, doc: feet}
         - {sdf: sphere, center: [0, cap_y, 0], radius: 0.1, blend: 0.03, doc: stem top under the cap}
-        - {sdf: ellipsoid, center: [0, cap_y + cap_r * 0.72, 0.02], radii: [0.06, 0.03, 0.06], blend: 0.014, material: spot, doc: top spot}
-        - {sdf: ellipsoid, center: [0.15, cap_y + cap_r * 0.48, 0.12], radii: [0.045, 0.03, 0.045], rotate: [-30, 0, -40], mirror: x, blend: 0.014, material: spot, doc: side spots}
-        - {sdf: ellipsoid, center: [0, cap_y + cap_r * 0.42, -0.19], radii: [0.05, 0.03, 0.04], rotate: [50, 0, 0], blend: 0.014, material: spot, doc: back spot}
-        - {sdf: ellipsoid, center: [0.045, 0.26, 0.112], radii: [0.018, 0.026, 0.012], mirror: x, blend: 0.004, material: eye, doc: eyes}
+      decals:
+        - {kind: disc, at: [0, cap_y + cap_r * 0.75, 0], toward: [0, 1, 0], size: 0.05, color: '#f4efe4', doc: top spot}
+        - {kind: disc, at: [0.16, cap_y + cap_r * 0.42, 0.13], toward: [0.6, 0.55, 0.5], size: 0.04, color: '#f4efe4', mirror: x, doc: front spots}
+        - {kind: disc, at: [0.2, cap_y + cap_r * 0.3, -0.12], toward: [0.7, 0.4, -0.5], size: 0.035, color: '#f4efe4', mirror: x, doc: back spots}
+        - {kind: disc, at: [0, cap_y + cap_r * 0.5, -0.18], toward: [0, 0.5, -0.8], size: 0.04, color: '#f4efe4', doc: back spot}
+        - {kind: eye, at: [0.045, 0.27, 0.11], toward: [0.25, 0, 1], size: 0.02, mirror: x, doc: eyes}
+        - {kind: smile, at: [0, 0.225, 0.115], toward: [0, 0, 1], size: 0.018, color: '#5a3a2a', doc: mouth}

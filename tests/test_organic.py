@@ -69,7 +69,7 @@ def test_smooth_union_rounds_the_seam_and_subtract_carves(tmp_path):
 
 def test_mirror_material_and_ground(tmp_path):
     d = _blend_asset(tmp_path, "[{sdf: ellipsoid, center: [0, 0.2, 0], radii: [0.2, 0.25, 0.15]}, "
-                               "{sdf: sphere, center: [0.18, 0.3, 0], radius: 0.07, mirror: x, material: w}]", "ground: true, ")
+                               "{sdf: sphere, center: [0.18, 0.3, 0], radius: 0.07, mirror: x, material: w}]", "ground: true, paint: false, ")
     m = build(d).parts[0].mesh
     lo, hi = m.bounds()
     assert lo[1] == pytest.approx(0.0, abs=1e-6)  # cut flat on the floor
@@ -95,3 +95,40 @@ def test_a_crevice_too_narrow_for_the_budget_is_reported(tmp_path):
     a = build(d)
     codes = {i.code for i in a.issues}
     assert _edges_ok(a.parts[0].mesh) or "GEO_BLEND_PINCHED" in codes  # clean, or the pinch is reported with its place
+
+
+def test_regions_and_decals_are_painted_per_texel(tmp_path):
+    from shapewright.bake import textures_for
+
+    d = _blend_asset(tmp_path, "[{sdf: sphere, center: [0, 0.2, 0], radius: 0.2}, {sdf: sphere, center: [0, 0.2, -0.2], radius: 0.08, material: w}]",
+                     "decals: [{kind: eye, at: [0, 0.25, 0.19], size: 0.04, color: '#ff0000'}], ")
+    a = build(d)
+    assert a.parts[0].mesh.label_values("material").tolist().count(None) == a.parts[0].mesh.n_tris  # one material in the file
+    s = build_surface(a)
+    tex = textures_for(a, s)
+    assert tex is not None  # flat materials, but painted regions need the atlas
+    px = tex.base[tex.covered]
+    red = (px[:, 0] > 0.8) & (px[:, 1] < 0.2)
+    white = px.min(1) > 0.85
+    assert red.sum() > 50 and white.sum() > 50  # the eye decal and the white region
+    from shapewright.render.views import render
+
+    im = np.asarray(render(a, s, "front", "textured", 200))
+    assert ((im[..., 0] > 200) & (im[..., 1] < 60)).sum() > 20  # the decal faces the front view
+
+
+def test_reference_image_goes_on_the_sheet(tmp_path):
+    from PIL import Image
+
+    from shapewright.render.views import contact_sheet, reference_image
+
+    d = _blend_asset(tmp_path, "[{sdf: sphere, radius: 0.2}, {sdf: sphere, center: [0, 0.2, 0], radius: 0.1, material: w}]")
+    (d / "concept").mkdir()
+    Image.new("RGB", (64, 64), (0, 200, 0)).save(d / "concept" / "c.png")
+    src = (d / "asset.yaml").read_text().replace("materials:", "reference: concept/c.png\nmaterials:", 1)
+    (d / "asset.yaml").write_text(src)
+    a = build(d)
+    assert reference_image(a) is not None
+    sheet = np.asarray(contact_sheet(a, build_surface(a), tile=160))
+    tile = sheet[:160, 160:320]
+    assert ((tile[..., 1] > 180) & (tile[..., 0] < 40)).sum() > 500  # the concept fills the second tile

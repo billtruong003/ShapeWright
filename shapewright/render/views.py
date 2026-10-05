@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
@@ -505,17 +506,49 @@ def _surface_samples(asset: Asset, surface: Surface, parts, pid: np.ndarray, uv:
     return base, rgh, mtl
 
 
+REFERENCE_TILES = [  # Phase 23: the concept next to the matching view
+    ("front", "textured"), ("reference", "reference"), ("right", "textured"), ("front_right", "textured"),
+    ("front", "clay"), ("back_left", "textured"), ("front_right", "wire"), ("uv", "uv"),
+]
+
+
+def reference_image(asset: Asset) -> Path | None:
+    rel = (asset.source or {}).get("reference")
+    if not rel:
+        return None
+    from ..bake import authored_image_path
+
+    try:
+        p = authored_image_path(asset.dir, str(rel), asset.file_roots)
+    except (ValueError, OSError):
+        return None
+    return p if p.exists() else None
+
+
+def _reference_tile(path: Path, tile: int) -> Image.Image:
+    im = Image.new("RGB", (tile, tile), tuple(int(c * 255) for c in BG))
+    ref = Image.open(path).convert("RGB")
+    ref.thumbnail((tile - 16, tile - 40))
+    im.paste(ref, ((tile - ref.width) // 2, 28 + (tile - 28 - ref.height) // 2))
+    ImageDraw.Draw(im).text((8, 6), f"reference | {path.name}", fill=(40, 40, 40), font=_font(14))
+    return im
+
+
 def contact_sheet(asset: Asset, surface: Surface, tile: int = 384, tiles=None, focus=None, frame=None) -> Image.Image:
+    ref = reference_image(asset)
     if tiles is None:
         from ..bake import needs_textures
 
-        tiles = TEXTURED_TILES if needs_textures(asset) and surface.uv_method != "none" else SHEET_TILES
+        textured = needs_textures(asset) and surface.uv_method != "none"
+        tiles = REFERENCE_TILES if ref is not None and textured else TEXTURED_TILES if textured else SHEET_TILES
     cols = 4
     rows = math.ceil(len(tiles) / cols)
     sheet = Image.new("RGB", (cols * tile, rows * tile), (255, 255, 255))
     for i, (v, m) in enumerate(tiles):
         if m == "uv":
             im = render_uv(asset, surface, tile, focus=focus)
+        elif m == "reference":
+            im = _reference_tile(ref, tile)
         else:
             im = render(asset, surface, v, m, tile, focus=focus, frame=frame)
         sheet.paste(im, ((i % cols) * tile, (i // cols) * tile))

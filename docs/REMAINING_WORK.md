@@ -18,10 +18,10 @@ Nothing is left out. The earlier figures (87 % and 83 %) counted fewer items, wh
 
 | scope | done | remaining | **progress** |
 |---|---|---|---|
-| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 62.25 | 1.25 | **≈ 98 %** |
-| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 62.25 | 1.5 | **≈ 98 %** |
-| **planned roadmap** (+ track G: native character track) | 62.25 | 9.5 | **≈ 87 %** |
-| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 62.25 | ≈ 20.5 | **≈ 75 %** |
+| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 63.5 | 1.25 | **≈ 98 %** |
+| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 63.5 | 1.5 | **≈ 98 %** |
+| **planned roadmap** (+ track G: native character track) | 63.5 | 8.25 | **≈ 88 %** |
+| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 63.5 | ≈ 19.25 | **≈ 77 %** |
 
 The figures dropped from 80 / 74 / 62 / 54 % because two decisions on 2026-10-05 added work:
 - **Track W** (3 points): the workbench gets a three.js 3D viewer (list, view modes, save, export, click-to-comment).
@@ -86,13 +86,14 @@ Tick `[x]` here in the commit that finishes a task.
 | [ ] | F7 | M2 milestone: re-run the 10 MODULAR_HOUSE_PACK gates on the trim-sheet kit (Phase 21 measured only the gates it changed) | 0.25 | F1–F6 | agent |
 | [x] | G0 | Spike: the fox (body, head, cheeks, ears, tail) as SDF primitives, smooth union, marching cubes, sheet next to the concept | 1 | v1.0 | agent |
 | [x] | G1 | Phase 22: native organic kernel: `blend:` groups, SDF primitives, smooth union, marching cubes, decimate, xatlas UV, validated like any part | 3 | G0 | agent |
-| [ ] | G2 | Phase 23: character surface: projected decals into the atlas (eyes, mouth, patterns), region palettes, toon presets, reference image in the source | 1.5 | G1 | agent |
+| [x] | G2 | Phase 23: character surface: projected decals into the atlas (eyes, mouth, patterns), region palettes, toon presets, reference image in the source | 1.5 | G1 | agent |
+| [ ] | G2b | Score the fox against the owner's concept (rubric: silhouette, proportions, palette, face, details) once `concept/fox.png` is in `assets/chibi_fox`; toon presets | 0.25 | G2, **owner** (image) | agent |
 | [ ] | G3 | Character review modes: UV checker + layout, mesh density, bone-weight heatmap, pose sheet, side by side with the concept (CPU sheet and the W viewer) | 1.5 | G1, W2 | agent |
 | [ ] | G4 | Phase 24: native rigging: skeleton templates fitted from anchors, bone-heat weights (scipy sparse solve), skinned GLB export, weight validators, rigid clips (doors, lids, wheels) | 3.5 | G1 | agent (Godot for the import check) |
 | [ ] | G5 | Procedural clips: idle bob, walk cycle, wave, from the skeleton template | 1.5 | G4 | agent |
 | [ ] | H* | Long-term backlog (§11): plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village, optional Blender/three.js beauty renders | ≈ 11 | — | later |
 
-Done so far (62.25 points):
+Done so far (63.5 points):
 
 | work | points |
 |---|---|
@@ -116,6 +117,7 @@ Done so far (62.25 points):
 | Phase 21 shared surfaces (track F; the M2 kit re-run is left, 0.25) | 3.75 |
 | G0 spike: native organic mesh (track G) | 1 |
 | Phase 22 native organic kernel (G1) | 3 |
+| Phase 23 character surface (G2; the concept rubric is left, 0.25) | 1.25 |
 
 ## 2b. Rules for every task
 

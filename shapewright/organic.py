@@ -288,7 +288,7 @@ def folded(m: Mesh) -> np.ndarray:
 
 
 def mesh_blend(items: list[Item], radius: float, voxel: float, triangles: int, smooth: int = 0,
-               ground: bool = False) -> tuple[Mesh, dict]:
+               ground: bool = False, label: bool = True) -> tuple[Mesh, dict]:
     """Mesh a blend; returns (mesh with per-face material labels, stats)."""
     F, lo = grid_field(items, radius, voxel, ground)
     raw = marching_tets(F, lo, voxel)
@@ -318,7 +318,8 @@ def mesh_blend(items: list[Item], radius: float, voxel: float, triangles: int, s
     if ground:  # decimation moves the flat bottom by micrometres; put it back on the floor
         m.V = m.V.copy()
         m.V[:, 1] = np.maximum(m.V[:, 1], 0.0)
-    _label_materials(m, items)
+    if label:
+        _label_materials(m, items)
     stats["triangles"] = m.n_tris
     return m, stats
 
@@ -353,3 +354,99 @@ def _label_materials(m: Mesh, items: list[Item]):
             sel = near == i
             if sel.any():
                 m.set_label("material", it.material, sel)
+
+
+# ---------------------------------------------------------------- painting (Phase 23): regions and decals per texel
+
+
+def paint_spec(asset, part) -> dict | None:
+    """The blend items and decals to paint on this part's texels, or None (not a painted blend part)."""
+    if "rest" not in part.mesh.vattr:
+        return None
+    cache = asset.__dict__.setdefault("_paint_specs", {})
+    if part.base in cache:
+        return cache[part.base]
+    from . import source as S
+    from .ops.organic import parse_decals, parse_items
+
+    spec = None
+    raw = (asset.source.get("parts") or {}).get(part.base)
+    shape = raw.get("shape") if isinstance(raw, dict) else None
+    if isinstance(shape, dict) and shape.get("type") == "blend" and shape.get("paint", True):
+        ctx = S.Ctx()
+        try:
+            items = parse_items(shape["items"], asset.env, ctx, f"parts.{part.base}.shape", asset.materials)
+            decals = parse_decals(shape.get("decals"), asset.env, ctx, f"parts.{part.base}.shape")
+        except ValueError:
+            items, decals = [], []
+        if decals or any(it.material for it in items):
+            spec = {"items": items, "decals": decals}
+    cache[part.base] = spec
+    return spec
+
+
+def region_materials(spec: dict, R: np.ndarray, default: str | None, tol: float = 0.002) -> np.ndarray:
+    """Per sample (rest positions R): the material of the item whose own surface is there: the nearest by
+    |distance| among union items not carved away at that point by a later subtraction, and the subtractions
+    themselves (a carved surface takes the subtraction's material, else the part's)."""
+    items = spec["items"]
+    D = np.stack([it(R) for it in items], 1)
+    dist = np.abs(D)
+    for i, it in enumerate(items):
+        if it.op == "intersect":
+            dist[:, i] = np.inf
+        elif it.op == "union":
+            later = [j for j in range(i + 1, len(items)) if items[j].op == "subtract"]
+            if later:
+                carved = (D[:, later] < -tol).any(1)
+                dist[carved, i] = np.inf
+    names = np.array([it.material or default for it in items], dtype=object)
+    return names[dist.argmin(1)]
+
+
+def _frame(toward: np.ndarray, angle: float):
+    z = toward
+    up = np.array([0.0, 1.0, 0.0]) if abs(z[1]) < 0.9 else np.array([1.0, 0.0, 0.0])
+    x = np.cross(up, z)
+    x /= np.linalg.norm(x)
+    y = np.cross(z, x)
+    c, s = np.cos(np.radians(angle)), np.sin(np.radians(angle))
+    return c * x + s * y, -s * x + c * y, z
+
+
+def decal_masks(decal: dict, R: np.ndarray, N: np.ndarray, px_m: float):
+    """(primary mask, secondary mask) in 0..1 for one decal (and its mirror image) at rest positions R, normals N.
+    Edges are anti-aliased over one texel."""
+    out1 = np.zeros(len(R))
+    out2 = np.zeros(len(R))
+    copies = [(decal["at"], decal["toward"])]
+    if decal["mirror"]:
+        flip = np.array([-1.0, 1.0, 1.0])
+        copies.append((decal["at"] * flip, decal["toward"] * flip))
+    size = decal["size"]
+    aa = max(1.0 / (px_m * size), 1e-3)  # one texel in decal units
+    for at, toward in copies:
+        x, y, z = _frame(toward, decal["angle"] if toward is decal["toward"] else -decal["angle"])
+        q = R - at
+        u, v, depth = q @ x / size, q @ y / size, q @ z / size
+        near = (np.abs(depth) < 1.5) & (N @ toward > 0.2)
+        if not near.any():
+            continue
+
+        def inside(d):  # signed distance in decal units (negative inside) -> coverage
+            return np.clip(0.5 - d / aa, 0, 1) * near
+
+        k = decal["kind"]
+        if k == "disc":
+            m1 = inside(np.sqrt(u * u + v * v) - 1)
+            m2 = np.zeros_like(m1)
+        elif k == "eye":
+            m1 = inside(np.sqrt(u * u + (v / 1.3) ** 2) - 1)
+            m2 = inside(np.sqrt((u - 0.32) ** 2 + (v - 0.48) ** 2) - 0.3) * m1
+        else:  # smile: an arc below its centre
+            r = np.sqrt(u * u + (v - 0.6) ** 2)
+            m1 = inside(np.abs(r - 0.9) - 0.13) * inside(v - 0.35) * inside(np.abs(u) - 0.8)
+            m2 = np.zeros_like(m1)
+        out1 = np.maximum(out1, m1)
+        out2 = np.maximum(out2, m2)
+    return out1, out2

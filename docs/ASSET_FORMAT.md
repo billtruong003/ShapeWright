@@ -418,7 +418,17 @@ body:
 - Organic parts shade smoothly with creases above 75° (`smooth_angle`), unless the part says otherwise.
 - `GEO_BLEND_PINCHED`: the triangle budget has no room for a gap narrower than its edges (an eye in a tight socket,
   a thin bowl under a cap); the warning says where. Widen or fill the gap, or raise `triangles`.
-- Colour regions follow faces, so their edges are jagged at low budgets; texture-painted regions are Phase 23.
+- **Painted regions (Phase 23, `paint: true`, the default).** Item materials are painted into the texture per
+  texel, at each vertex's rest position, so region edges are crisp whatever the triangle count and the part
+  exports as ONE material (one draw call). A texel takes the material of the item whose own surface is there;
+  surfaces carved by a subtraction take the subtraction's `material` (else the part's). `paint: false` gives each
+  face its nearest item's material instead (separate materials in the file).
+- **Decals (Phase 23).** `decals: [{kind: eye | disc | smile, at: [x, y, z], toward: [x, y, z], size, color,
+  color2, angle, mirror: x}]` are painted where the surface faces `toward` near `at`: `eye` is a dark oval with a
+  highlight (`color2`), `disc` a filled circle (spots), `smile` an arc. They follow the part when it moves.
+
+**Reference image.** A top-level `reference: concept/fox.png` (inside the asset directory) puts the concept next to
+the front view on `sw render NAME --sheet`, for side-by-side review.
 
 ### Point lists: arcs, helices, lines
 

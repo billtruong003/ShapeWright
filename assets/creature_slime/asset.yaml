@@ -35,3 +35,5 @@ parts:
         - {sdf: sphere, center: [-0.24, 0.045, -0.12], radius: 0.045, doc: drip}
         - {sdf: ellipsoid, center: [0.085, h * 0.76, w * 0.66], radii: [0.036, 0.05, 0.03], mirror: x, blend: 0.006, material: eye, doc: 'eyes: domes on the surface'}
         - {sdf: ellipsoid, center: [0, h * 0.5, w * 0.68], radii: [0.05, 0.016, 0.024], blend: 0.006, material: mouth, doc: mouth}
+      decals:
+        - {kind: eye, at: [0.085, h * 0.76, w * 0.7], toward: [0.3, 0.1, 1], size: 0.034, color: '#1d1f24', mirror: x, doc: eye highlights}

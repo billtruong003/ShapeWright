@@ -267,7 +267,10 @@ def budget(asset: Asset, surface: Surface, metrics: dict):
             out.append(_issue("COLLISION_PROXIES", "warning", "budget", f"{n} collision proxies (one per part): engines create a "
                               "body or shape for each", "collision", "use collision: {mode: single_hull} or list the parts that "
                               "need their own shape in collision.parts"))
-    unused = sorted(set(asset.materials) - set(used))
+    from ..organic import paint_spec
+
+    painted = {it.material for p in asset.parts for it in ((paint_spec(asset, p) or {}).get("items") or []) if it.material}
+    unused = sorted(set(asset.materials) - set(used) - painted)  # painted organic regions use theirs in the texture
     if unused:
         out.append(_issue("MAT_UNUSED", "info", "budget", f"materials declared but unused: {', '.join(unused)}", "materials"))
     return out
