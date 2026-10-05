@@ -1,0 +1,27 @@
+name: release
+# On a version tag (v1.0.0): build the wheel and the modular_house_pack zip, run the tests, and publish a GitHub
+# release with them and the changelog. PyPI upload is separate (needs the owner's token: docs/RELEASING.md).
+on:
+  push: {tags: ["v*"]}
+permissions: {contents: write}
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -r requirements.txt build
+      - run: python -m pytest -q -x
+      - run: python -m build --wheel --sdist --outdir dist
+      - run: |
+          test "$(python -c 'import shapewright; print(shapewright.__version__)')" = "${GITHUB_REF_NAME#v}"
+          (cd modular_house_pack/.. && zip -qr "dist/modular_house_pack-${GITHUB_REF_NAME}.zip" modular_house_pack)
+          awk '/^## /{n++} n<=1' CHANGELOG.md > dist/NOTES.md
+      - uses: softprops/action-gh-release@v2
+        with:
+          body_path: dist/NOTES.md
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
+            dist/*.zip
