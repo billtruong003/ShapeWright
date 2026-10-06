@@ -32,7 +32,7 @@ TARGETS = ("generic", "godot", "unity", "unreal")
 # choices as types, so the tool schemas carry enums (MCP Inspector, Phase 17b): clients can offer them
 View = Literal["front", "back", "left", "right", "top", "bottom", "front_right", "front_left", "back_right", "back_left", "low_front"]
 Mode = Literal["clay", "parts", "material", "wire", "normals", "silhouette", "provenance", "regions", "textured", "albedo",
-               "roughness", "metallic", "texel", "seams", "density", "beauty"]
+               "roughness", "metallic", "texel", "seams", "density", "toon", "beauty"]
 Target = Literal["", "generic", "godot", "unity", "unreal"]
 TIMEOUT_S = 600
 MAX_SOURCE_BYTES = 512 * 1024

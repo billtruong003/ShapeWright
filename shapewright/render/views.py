@@ -73,11 +73,53 @@ MODES = {
     "metallic": "baked metallic as grey (white = metal)",
     "texel": "checker at 8x8 texels: stretching and texel-density differences show as uneven squares",
     "seams": "base colour with UV chart borders in red (seam placement)",
+    "toon": "cel shading (3 light bands, a highlight band) on the baked or material colours, with post-process outlines: silhouette, depth steps and creases (continuous at hard edges); for showcase images",
     "density": "triangle size against the median: blue = small (dense), green = median, red = large (sparse)",
     "weights": "rigged assets: skinning weight of one joint (--bone), blue 0 -> red 1; other parts grey",
     "beauty": "presentation render: key/fill/rim light, shadows, ambient occlusion, contact shadow, tone mapping (README/portfolio images, not inspection)",
 }
-TEXTURE_MODES = {"textured", "albedo", "roughness", "metallic", "texel", "seams"}
+TEXTURE_MODES = {"textured", "albedo", "roughness", "metallic", "texel", "seams", "toon"}
+TOON_INK = np.array([0.11, 0.09, 0.10])
+
+
+def _toon_light(col: np.ndarray, n: np.ndarray, key_l: np.ndarray, rough: np.ndarray | None = None) -> np.ndarray:
+    """Cel shading: light quantised to 3 bands (lit, half, shade), a hard highlight band on glossy surfaces."""
+    d = n @ key_l
+
+    def step(x, e):  # a narrow smoothstep: crisp bands without stair-stepping on faceted normals
+        t = np.clip((x - e + 0.06) / 0.12, 0, 1)
+        return t * t * (3 - 2 * t)
+    band = 0.62 + 0.18 * step(d, 0.0) + 0.2 * step(d, 0.45)
+    out = col * band[..., None]
+    if rough is not None:
+        out = out + np.where((d > 0.88) & (rough < 0.5), 0.18, 0.0)[..., None]
+    return out
+
+
+def _toon_outline(img: np.ndarray, buf, pid: np.ndarray, width: int, depth_step: float):
+    """Post-process outline: silhouette (coverage edge), depth steps (one surface in front of another) and creases
+    (normals more than 60 degrees apart). Found per pixel on the rendered buffers, so it is continuous wherever the
+    mesh has hard edges or split normals, unlike an extruded hull that tears there."""
+    H, W = buf.tri.shape
+    hit = buf.tri >= 0
+    n, z = buf.normal, buf.depth
+    mask = np.zeros((H, W), dtype=bool)
+    for dy, dx in ((0, 1), (1, 0)):
+        a, b = (slice(0, H - dy), slice(0, W - dx)), (slice(dy, H), slice(dx, W))
+        ha, hb = hit[a], hit[b]
+        sil = ha != hb
+        both = ha & hb
+        step = both & (np.abs(np.where(both, z[a], 0) - np.where(both, z[b], 0)) > depth_step)  # (empty pixels: -inf)
+        crease = both & (np.einsum("ijk,ijk->ij", n[a], n[b]) < 0.5)
+        m = sil | step | crease
+        mask[a] |= m
+    em = mask.copy()
+    for s in range(1, width):  # thicken evenly
+        em[s:] |= mask[:-s]
+        em[:-s] |= mask[s:]
+        em[:, s:] |= mask[:, :-s]
+        em[:, :-s] |= mask[:, s:]
+    img[em] = TOON_INK
 FOV = 30.0
 
 
@@ -173,6 +215,7 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
         figure, bounds = _scale_figure(view, bounds)
     cam = Camera(view, bounds, W, H)
 
+    toon = mode == "toon"
     tex = None
     if mode in TEXTURE_MODES:
         from ..bake import textures_for
@@ -180,7 +223,7 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
         tex = textures_for(asset, surface)
         has_authored = any(surface.parts[p.name].authored and surface.parts[p.name].corner_uv is not None for p in parts)
         if tex is None and not has_authored:  # no textured materials: show the flat-material equivalent
-            mode = "material" if mode in ("textured", "albedo") else "clay"
+            mode = "material" if mode in ("textured", "albedo", "toon") else "clay"
         elif tex is None and mode in ("texel", "seams"):
             mode = "textured"  # atlas-only views; authored sets have no atlas
     tris, nrms, fnorm, owner, labels, cuvs, scalar = [], [], [], [], [], [], []
@@ -246,6 +289,11 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
             col = np.where(tex.seams[ty, tx][:, None], np.array([1.0, 0.0, 0.0]), base)
         else:
             col = base
+        if mode == "toon":
+            n = buf.normal[hit]
+            key_l = -cam.fwd * 0.55 + cam.up * 0.55 - cam.right * 0.45
+            key_l /= np.linalg.norm(key_l)
+            col = _toon_light(col, n, key_l, rgh)
         if mode in ("textured", "texel"):
             n = buf.normal[hit]
             key_l = -cam.fwd * 0.55 + cam.up * 0.55 - cam.right * 0.45
@@ -303,12 +351,15 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
         fill_l = -cam.fwd * 0.6 + cam.right * 0.6
         fill_l /= np.linalg.norm(fill_l)
         lam = 0.42 + 0.55 * np.clip(n @ key_l, 0, 1) + 0.18 * np.clip(n @ fill_l, 0, 1) + 0.06 * n[..., 1]
-        col = tri_base[np.clip(buf.tri, 0, None)] * np.clip(lam, 0, 1.25)[..., None]
+        if toon:  # flat-material assets: cel shading on the material colours
+            col = _toon_light(tri_base[np.clip(buf.tri, 0, None)], n, key_l)
+        else:
+            col = tri_base[np.clip(buf.tri, 0, None)] * np.clip(lam, 0, 1.25)[..., None]
         img[hit] = np.clip(col[hit], 0, 1)
         img[hit & ~buf.front] = BACKFACE
 
         # outlines: silhouette, part boundaries and creases make forms legible to vision models
-        if mode in ("clay", "parts", "material", "wire", "provenance", "regions"):
+        if mode in ("clay", "parts", "material", "wire", "provenance", "regions") and not toon:
             edge_mask = np.zeros((H, W), dtype=bool)
             for dy, dx in ((0, 1), (1, 0)):
                 a = pid[: H - dy, : W - dx]
@@ -327,6 +378,10 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
                     em[:, s:] |= edge_mask[:, :-s]
                 edge_mask = em
             img[edge_mask] = img[edge_mask] * 0.25 + 0.05
+
+    if toon:
+        diag = float(np.linalg.norm(np.asarray(bounds[1]) - np.asarray(bounds[0])))
+        _toon_outline(img, buf, pid, max(2, round(supersample * 1.5)), 0.012 * diag)
 
     if mode == "wire":
         segs, keys = [], []
@@ -349,7 +404,7 @@ def render(asset: Asset, surface: Surface, view_name: str = "front_right", mode:
 
     out = Image.fromarray((np.clip(img, 0, 1) * 255 + 0.5).astype(np.uint8)).resize((size, size), Image.LANCZOS)
     if annotate:
-        _annotate(out, asset, cam, parts, view, mode, focus_set, supersample, label)
+        _annotate(out, asset, cam, parts, view, "toon" if toon else mode, focus_set, supersample, label)
     if figure is not None:
         _draw_scale_ref(out, cam, figure, supersample)
     if mode in ("provenance", "regions", "density", "weights") and legend:  # (was nested under the scale figure: no legend since 25a)

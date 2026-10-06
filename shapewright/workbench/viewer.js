@@ -40,6 +40,62 @@ function partName(obj) {
   return obj.name || "";
 }
 
+
+// ---- toon showcase (Phase 25b): cel material + inverted-hull outline ----------------------------------------
+// The hull is pushed out along SMOOTHED normals: every vertex at the same position gets the average normal of all
+// faces around that position, so hard edges and UV/normal splits (separate vertices, separate normals) move
+// together and the outline stays closed instead of tearing at sharp corners. Back faces only, so it reads as one
+// continuous silhouette around the form; the push scales with view depth for an even width on screen.
+let toonRamp = null;
+function toonGradient() {
+  if (toonRamp) return toonRamp;
+  toonRamp = new THREE.DataTexture(new Uint8Array([175, 215, 255]), 3, 1, THREE.RedFormat);
+  toonRamp.minFilter = toonRamp.magFilter = THREE.NearestFilter;
+  toonRamp.needsUpdate = true;
+  return toonRamp;
+}
+
+export function toonMaterial(orig) {
+  const one = m => new THREE.MeshToonMaterial({ color: m.color ? m.color.clone() : 0xffffff, map: m.map || null, gradientMap: toonGradient() });
+  return Array.isArray(orig) ? orig.map(one) : one(orig);  // an array only where the mesh has material groups
+}
+
+function smoothedNormals(geom) {
+  const pos = geom.getAttribute("position"), idx = geom.index;
+  const key = i => `${Math.round(pos.getX(i) * 1e4)},${Math.round(pos.getY(i) * 1e4)},${Math.round(pos.getZ(i) * 1e4)}`;
+  const acc = new Map(), keys = new Array(pos.count);
+  for (let i = 0; i < pos.count; i++) { keys[i] = key(i); if (!acc.has(keys[i])) acc.set(keys[i], new THREE.Vector3()); }
+  const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), n = new THREE.Vector3();
+  const tri = idx ? idx.count / 3 : pos.count / 3;
+  for (let t = 0; t < tri; t++) {
+    const i0 = idx ? idx.getX(3 * t) : 3 * t, i1 = idx ? idx.getX(3 * t + 1) : 3 * t + 1, i2 = idx ? idx.getX(3 * t + 2) : 3 * t + 2;
+    a.fromBufferAttribute(pos, i0); b.fromBufferAttribute(pos, i1); c.fromBufferAttribute(pos, i2);
+    n.subVectors(c, b).cross(a.clone().sub(b));  // area-weighted face normal
+    for (const i of [i0, i1, i2]) acc.get(keys[i]).add(n);
+  }
+  const out = new Float32Array(pos.count * 3);
+  for (let i = 0; i < pos.count; i++) { const v = acc.get(keys[i]).clone().normalize(); out.set([v.x, v.y, v.z], 3 * i); }
+  return new THREE.BufferAttribute(out, 3);
+}
+
+export function outlineHull(mesh, { width = 0.0035, color = 0x1c171a } = {}) {
+  const geom = mesh.geometry.clone();
+  geom.setAttribute("outlineNormal", smoothedNormals(geom));
+  const mat = new THREE.MeshBasicMaterial({ color, side: THREE.BackSide });
+  mat.onBeforeCompile = shader => {
+    shader.uniforms.uOutline = { value: width };
+    shader.vertexShader = "attribute vec3 outlineNormal;\nuniform float uOutline;\n" + shader.vertexShader.replace(
+      "#include <begin_vertex>",
+      "vec3 transformed = vec3(position);\nfloat swDepth = -(modelViewMatrix * vec4(position, 1.0)).z;\ntransformed += outlineNormal * uOutline * swDepth;");
+  };
+  const hull = mesh.isSkinnedMesh ? new THREE.SkinnedMesh(geom, mat) : new THREE.Mesh(geom, mat);
+  if (mesh.isSkinnedMesh) hull.bind(mesh.skeleton, mesh.bindMatrix);
+  hull.castShadow = hull.receiveShadow = false;
+  hull.userData.isOutline = true;
+  hull.frustumCulled = false;
+  return hull;
+}
+
 export function createViewer(container, opts = {}) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -133,12 +189,14 @@ export function createViewer(container, opts = {}) {
     const name = partName(mesh);
     switch (mode) {
       case "clay": return new THREE.MeshStandardMaterial({ color: 0xa8a097, roughness: 0.9 });
-      case "material": return (Array.isArray(orig) ? orig : [orig]).map(m => new THREE.MeshStandardMaterial({ color: m.color ? m.color.clone() : 0xcccccc, roughness: 0.8 }));
+      case "material": { const one = m => new THREE.MeshStandardMaterial({ color: m.color ? m.color.clone() : 0xcccccc, roughness: 0.8 });
+        return Array.isArray(orig) ? orig.map(one) : one(orig); }
       case "parts": return new THREE.MeshStandardMaterial({ color: PALETTE[hash(name) % PALETTE.length], roughness: 0.75 });
       case "normals": return new THREE.MeshNormalMaterial();
       case "uv_checker": return new THREE.MeshBasicMaterial({ map: checker });
       case "texel": return new THREE.MeshBasicMaterial({ vertexColors: true });
       case "weights": return new THREE.MeshLambertMaterial({ vertexColors: true });
+      case "toon": return toonMaterial(orig);
       default: return orig;
     }
   }
@@ -173,11 +231,11 @@ export function createViewer(container, opts = {}) {
 
   function applyTexelColors() {
     const all = [];
-    model.traverse(o => { if (o.isMesh) all.push(...texelColors(o).userData.density); });
+    model.traverse(o => { if (o.isMesh && !o.userData.isOutline) all.push(...texelColors(o).userData.density); });
     const sorted = all.filter(x => x > 0).sort((p, q) => p - q);
     const med = sorted[Math.floor(sorted.length / 2)] || 1;
     model.traverse(o => {
-      if (!o.isMesh) return;
+      if (!o.isMesh || o.userData.isOutline) return;
       const g = texelColors(o), d = g.userData.density, col = new Float32Array(d.length * 9);
       const tmp = new THREE.Color();
       for (let i = 0; i < d.length; i++) {
@@ -196,13 +254,25 @@ export function createViewer(container, opts = {}) {
     let info = "";
     if (mode === "texel") info = `median ${applyTexelColors().toFixed(0)} px/m: blue = half, red = double`;
     if (mode === "weights") info = applyWeightColors();
+    setOutline(mode === "toon");
     model.traverse(o => {
-      if (!o.isMesh) return;
+      if (!o.isMesh || o.userData.isOutline) return;
       if (mode === "texel") { o.userData.geom0 ??= o.geometry; o.geometry = texelColors(o); }
       else if (o.userData.geom0) o.geometry = o.userData.geom0;
       o.material = materialFor(o, mode);
+      o.receiveShadow = mode !== "toon";  // cel bands carry the shading; cast shadows on the form would add noise
     });
     return info;
+  }
+
+  const hulls = [];
+  function setOutline(on) {
+    if (on && !hulls.length && model) {
+      const meshes = [];
+      model.traverse(o => { if (o.isMesh && !o.userData.isOutline) meshes.push(o); });
+      meshes.forEach(o => { const h = outlineHull(o); o.add(h); hulls.push(h); });
+    }
+    hulls.forEach(h => { h.visible = on; });
   }
 
   function boneNames() {
@@ -217,7 +287,7 @@ export function createViewer(container, opts = {}) {
     if (!bone) return "no skeleton in this file";
     const tmp = new THREE.Color();
     model.traverse(o => {
-      if (!o.isMesh) return;
+      if (!o.isMesh || o.userData.isOutline) return;
       const g = o.geometry, n = g.getAttribute("position").count, col = new Float32Array(n * 3);
       const si = g.getAttribute("skinIndex"), sw = g.getAttribute("skinWeight");
       const j = o.isSkinnedMesh ? o.skeleton.bones.findIndex(b => b.name === bone) : -1;
@@ -263,7 +333,7 @@ export function createViewer(container, opts = {}) {
     wires = [];
     if (!on || !model) return;
     model.traverse(o => {
-      if (!o.isMesh) return;
+      if (!o.isMesh || o.userData.isOutline) return;
       const w = new THREE.LineSegments(new THREE.WireframeGeometry(o.userData.geom0 || o.geometry),
         new THREE.LineBasicMaterial({ color: 0x1d2a44, transparent: true, opacity: 0.45 }));
       o.add(w); wires.push(w);
@@ -276,6 +346,7 @@ export function createViewer(container, opts = {}) {
         if (model) scene.remove(model);
         originals.clear();
         model = gltf.scene;
+        hulls.length = 0;
         model.traverse(o => { if (o.isMesh) { originals.set(o, o.material); o.castShadow = o.receiveShadow = true; } });
         clips = gltf.animations || [];
         mixer = clips.length ? new THREE.AnimationMixer(model) : null;
@@ -301,7 +372,7 @@ export function createViewer(container, opts = {}) {
     const r = renderer.domElement.getBoundingClientRect();
     ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ndc, camera);
-    const hit = ray.intersectObject(model, true).find(h => h.object.isMesh);
+    const hit = ray.intersectObject(model, true).find(h => h.object.isMesh && !h.object.userData.isOutline);
     if (!hit) return;
     const n = hit.face.normal.clone().transformDirection(hit.object.matrixWorld);
     if (marker) scene.remove(marker);

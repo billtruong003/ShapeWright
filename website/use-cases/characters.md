@@ -81,5 +81,8 @@ In the workbench, the 3D view has a skeleton overlay, a joint-weights view and a
 
 ![The fox's procedural walk](../assets/fox_walk.gif)
 
-What to expect: stylised and low-poly characters (chibi, creatures, mascots). Marching-cubes topology is even
-triangles, not hand-made edge loops, so realistic characters that need clean deformation loops are out of scope.
+What to expect: stylised and low-poly characters (chibi, creatures, mascots) work well. **Human characters are a
+weak point:** realistic or semi-realistic people need clean edge loops for deformation, readable hands and faces, and
+hair, which blended SDF forms and marching-cubes topology do not give; linear blend skinning also stretches the
+shoulders on raised arms. Make people in a DCC tool or start from a base mesh; Shapewright can still import, validate,
+re-texture and export them.

@@ -18,10 +18,10 @@ Nothing is left out. The earlier figures (87 % and 83 %) counted fewer items, wh
 
 | scope | done | remaining | **progress** |
 |---|---|---|---|
-| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 70.25 | 1.25 | **≈ 98 %** |
-| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 70.25 | 1.25 | **≈ 98 %** |
-| **planned roadmap** (+ track G: native character track) | 70.25 | 1.5 | **≈ 98 %** |
-| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 70.25 | ≈ 12.5 | **≈ 85 %** |
+| **v1.0** (tracks A, B, R, W, C, D, E): prop and kit framework, web viewer, polished, verified, released | 70.75 | 1.25 | **≈ 98 %** |
+| **v1.0 + Phase 21** (track F: shared atlas, LOD on kits, collision, lightmap UVs) | 70.75 | 1.25 | **≈ 98 %** |
+| **planned roadmap** (+ track G: native character track) | 70.75 | 1.5 | **≈ 98 %** |
+| **everything ever listed** (+ track H: the long-term backlog, not scheduled) | 70.75 | ≈ 12.5 | **≈ 85 %** |
 
 The figures dropped from 80 / 74 / 62 / 54 % because two decisions on 2026-10-05 added work:
 - **Track W** (3 points): the workbench gets a three.js 3D viewer (list, view modes, save, export, click-to-comment).
@@ -91,9 +91,9 @@ Tick `[x]` here in the commit that finishes a task.
 | [x] | G3 | Character review modes: UV checker + layout, mesh density, bone-weight heatmap, pose sheet, side by side with the concept (CPU sheet and the W viewer) | 1.5 | G1, W2 | agent |
 | [x] | G4 | Phase 24: native rigging: skeleton templates fitted from anchors, bone-heat weights (scipy sparse solve), skinned GLB export, weight validators, rigid clips (doors, lids, wheels) | 3.5 | G1 | agent (Godot for the import check) |
 | [x] | G5 | Procedural clips: idle bob, walk cycle, wave, from the skeleton template | 1.5 | G4 | agent |
-| [ ] | H* | Long-term backlog (§11): plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village, optional Blender/three.js beauty renders | ≈ 11 | — | later |
+| [ ] | H* | Long-term backlog (§11): human characters (edge-loop topology, hands, faces; a weak point today), plugins, loft, selectors/bevel, cross-part booleans, YAML loops, cost gate, workbench user test, near-float, macOS, interiors, north-star village, optional Blender/three.js beauty renders | ≈ 11 | — | later |
 
-Done so far (70.25 points):
+Done so far (70.75 points; 0.5 of it, the toon showcase, was added after the plan):
 
 | work | points |
 |---|---|
@@ -121,6 +121,7 @@ Done so far (70.25 points):
 | Phase 24 native rigging + procedural clips (G4, G5) | 5 |
 | Phase 24b character review modes (G3) | 1.5 |
 | M2 re-run of the kit gates (F7) | 0.25 |
+| Phase 25b toon showcase (owner request) | 0.5 |
 
 ## 2b. Rules for every task
 

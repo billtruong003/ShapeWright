@@ -47,3 +47,20 @@ Agents get the same through MCP: `render(name, view="front_right", mode="beauty"
 
 Beauty renders are for people. Keep reviewing with `sw review` (inspection modes): shadows and tone mapping
 hide exactly the things a review looks for.
+
+**Toon shading.** `toon` renders cel shading (three light bands and a highlight band) over the baked or material
+colours, with outlines found on the rendered image: the silhouette, depth steps (one surface in front of another)
+and creases. Because they are found per pixel, the outlines stay continuous at hard edges and split normals, where
+an extruded-hull outline would tear.
+
+```bash
+# run
+sw render crate --mode toon --size 320
+```
+
+![Finished assets in toon shading](../assets/toon_showcase.png)
+
+The workbench's 3D view has the same look live ("toon + outline"): three.js toon materials and an inverted-hull
+outline pushed along **smoothed** normals. Every vertex at one position moves along the same averaged normal, so the
+hull stays closed at hard edges, and its back faces form one continuous silhouette around the form. It follows the
+skeleton on rigged characters while a clip plays.

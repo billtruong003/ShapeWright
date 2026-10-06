@@ -172,7 +172,7 @@ OPS
   union         (shape*, position, rotate)  Boolean union with extra geometry (fuses into one closed surface).
 
 VIEWS  front back left right top bottom front_right front_left back_right back_left low_front
-MODES  clay parts material wire normals silhouette provenance regions textured albedo roughness metallic texel seams density weights beauty
+MODES  clay parts material wire normals silhouette provenance regions textured albedo roughness metallic texel seams toon density weights beauty
 
 VALIDATION LAYERS  geometry assembly budget intent surface style export
 PROFILES  desktop_indie godot mobile_low mobile_mid unity unreal vr_standalone web

@@ -23,6 +23,25 @@ An asset is a short YAML file of **named parts, parameters and design checks**. 
 
 ![Assets made with Shapewright (beauty renders)](docs/images/readme_gallery.png)
 
+![Finished assets in toon shading with continuous outlines](docs/images/toon_showcase.png)
+
+*The same pipeline in toon shading (`sw render NAME --mode toon`): houses from the kit, props, and stylised creatures.*
+
+## Where it is strong, and where it is not
+
+**Strong:**
+- **Low-poly props and modular kits:** furniture, crates, carts, lamps, fountains, timber-frame houses. They are built from named parts and parameters, validated, and rebuilt when a parameter changes.
+- **Re-texturing:**
+  - procedural materials are baked to an atlas from the source;
+  - a whole kit can share one trim sheet (−84 % texture memory);
+  - an imported model can be re-surfaced with new materials;
+  - changing a material re-bakes every asset that uses it.
+- **Stylised creatures and mascots:** blended organic forms, painted regions and decals, a skeleton, procedural clips.
+
+**Weak:**
+- **Human characters.** Realistic or even semi-realistic people need clean edge loops for deformation, hands, faces and hair, which blended SDF forms and marching-cubes topology do not give. Linear blend skinning also stretches shoulders. Use a DCC tool or a base mesh for people; Shapewright can still validate, re-texture and export them.
+- **Sculpted detail:** wrinkles, cloth folds and hero assets.
+
 ---
 
 ## Install

@@ -41,6 +41,7 @@ Every phase follows the same run protocol (§1) and the same record format (§2)
 | 24 native rigging + clips (G4, G5) | `phase/22-organic` | PASS (Godot: skeleton, skin, clips; Khronos 0/0) | docs/phases/PHASE_24.md |
 | 24b character review modes (G3) | `phase/22-organic` | PASS (CPU sheet, workbench skeleton/weights/clips, MCP review) | docs/phases/PHASE_24b.md |
 | M2 kit gates re-run (F7) | `phase/22-organic` | PASS (all 10; gate 9 by FRESH_AGENT_13) | docs/experiments/MODULAR_HOUSE_PACK_02.md |
+| 25b toon showcase | `phase/25b-toon` | PASS (CPU post-process outline, three.js smoothed-normal hull) | docs/phases/PHASE_25b.md |
 
 The branches are **stacked**: each one contains the ones above it, so `phase/18-docs-site` has everything.
 All of them were fast-forwarded into `main` on 2026-09-30; the branches stay for review.

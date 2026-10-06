@@ -1,0 +1,94 @@
+{
+ "asset": "chibi_fox",
+ "status": "PASS",
+ "source_hash": "3953dc29d667",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 1
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 3978,
+  "parts": 1,
+  "sliver_triangles": 111,
+  "size_m": [
+   0.5319,
+   1.0133,
+   0.6932
+  ],
+  "contacts": 0,
+  "triangles_by_part": {
+   "body": 3978
+  },
+  "budget_triangles": 6000,
+  "materials": 1,
+  "draw_calls": 1,
+  "checks": {
+   "asset.height": 1.0133,
+   "(head_y + head_r) / asset.height": 0.903
+  },
+  "uv_utilization": 0.499,
+  "uv_overlap": 0.0,
+  "uv_owners": 1,
+  "texel_density_px_m": 627.5,
+  "texel_density_target": 512,
+  "clips": [
+   "idle",
+   "walk",
+   "wave"
+  ],
+  "rig_joints": 19,
+  "rig_pose_volume": {
+   "a_pose": 0.974,
+   "walk": 0.987,
+   "sit": 0.96,
+   "wave": 0.988
+  },
+  "texture": {
+   "resolution": 1024,
+   "target_px_m": 512.0,
+   "achieved_px_m": 627.5,
+   "memory_kb": 8192,
+   "lifecycle": {
+    "DERIVED": 1
+   }
+  },
+  "seam_zfight_pairs": 0,
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv ASSET lock` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/chibi_fox/export/chibi_fox_generic_preview.glb",
+  "bytes": 340300,
+  "nodes": 21,
+  "meshes": 1,
+  "materials": 1,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
+ }
+}

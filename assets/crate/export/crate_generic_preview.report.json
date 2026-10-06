@@ -1,0 +1,88 @@
+{
+ "asset": "crate",
+ "status": "PASS",
+ "source_hash": "86c0562818b3",
+ "counts": {
+  "error": 0,
+  "warning": 0,
+  "info": 2
+ },
+ "layers": {
+  "source": "PASS",
+  "geometry": "PASS",
+  "assembly": "PASS",
+  "budget": "PASS",
+  "intent": "PASS",
+  "surface": "PASS",
+  "style": "PASS",
+  "export": "PASS"
+ },
+ "metrics": {
+  "triangles": 660,
+  "parts": 15,
+  "sliver_triangles": 72,
+  "size_m": [
+   0.6035,
+   0.6079,
+   0.6052
+  ],
+  "contacts": 34,
+  "triangles_by_part": {
+   "panel": 44,
+   "post": 176,
+   "rail_x": 176,
+   "rail_z": 176,
+   "brace": 88
+  },
+  "budget_triangles": 900,
+  "materials": 2,
+  "draw_calls": 15,
+  "checks": {
+   "asset.width": 0.6035,
+   "brace.size.x": 0.4912
+  },
+  "uv_utilization": 0.407,
+  "uv_overlap": 0.0,
+  "uv_owners": 15,
+  "texel_density_px_m": 168.7,
+  "texel_density_target": 256,
+  "seam_zfight_pairs": 0,
+  "gltf_validator": {
+   "numErrors": 0,
+   "numWarnings": 0,
+   "numInfos": 0,
+   "numHints": 0
+  }
+ },
+ "issues": [
+  {
+   "code": "GEO_SLIVER_TRIS",
+   "severity": "info",
+   "layer": "geometry",
+   "where": "panel",
+   "msg": "24/44 very thin triangles",
+   "hint": "fewer segments or chamfer-sized details avoid shading artefacts",
+   "data": {
+    "count": 24
+   }
+  },
+  {
+   "code": "UV_UNLOCKED",
+   "severity": "info",
+   "layer": "surface",
+   "where": "uv",
+   "msg": "no uv.lock.yaml: UV regions follow part areas and move when parts change",
+   "hint": "run `sw uv ASSET lock` before texturing or baking"
+  }
+ ],
+ "export": {
+  "path": "assets/crate/export/crate_generic_preview.glb",
+  "bytes": 62164,
+  "nodes": 17,
+  "meshes": 15,
+  "materials": 2,
+  "target": "generic",
+  "merge": "none",
+  "lods": []
+ }
+}

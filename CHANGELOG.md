@@ -2,6 +2,13 @@
 
 Newest first. Generated from the phase records by `tools/site/changelog.py`; each entry links to its record (what shipped, evidence, the gate table and what is not done).
 
+## Phase 25b: toon showcase (presentation)
+
+- **Verdict:** PASS (CPU post-process outline, three.js smoothed-normal hull)
+- **Branch:** `phase/25b-toon`
+- **Record:** [docs/phases/PHASE_25b.md](docs/phases/PHASE_25b.md)
+- Toon shading exists in both renderers: - **CPU renderer:** cel shading with post-process outlines, for images. - **Workbench 3D view:** three.js toon materials with an inverted-hull outline pushed along smoothed normals, for live viewing (rigged characters included).
+
 ## MODULAR_HOUSE_PACK_02: the kit gates re-run (milestone M2)
 
 - **Verdict:** PASS (all 10; gate 9 by FRESH_AGENT_13)
