@@ -1,0 +1,2015 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Agent-native 3D modelling for game assets. Declarative sources, deterministic validation, inspection renders, game-ready GLB.">
+      
+      
+      
+        <link rel="canonical" href="https://billtruong003.github.io/ShapeWright/changelog/">
+      
+      
+        <link rel="prev" href="../gallery/">
+      
+      
+        <link rel="next" href="../concepts/loop/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Changelog - Shapewright</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="brown" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#changelog" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Shapewright" class="md-header__button md-logo" aria-label="Shapewright" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Shapewright
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="brown" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="brown" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/billtruong003/ShapeWright" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Shapewright" class="md-nav__button md-logo" aria-label="Shapewright" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Shapewright
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/billtruong003/ShapeWright" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Quickstart
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pick your setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/claude-code-cloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Claude Code (cloud)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/claude-code-local/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Claude Code (local)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/mcp-clients/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Claude Desktop, Cursor, Codex (MCP)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/chat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ChatGPT and other chats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    By hand (CLI and workbench)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use cases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Use cases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/prop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A game prop in one session
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/modular-kit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A modular kit and buildings from it
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/composition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Composition (components, asset instances)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/variants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    One design, many variants
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/import-repair/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Import and repair an existing model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/budgets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tight budgets (VR, mobile, web)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/ci/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Assets in CI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/presentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Presentation renders
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/characters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Characters and creatures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#phase-25b-toon-showcase-presentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 25b: toon showcase (presentation)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modular_house_pack_02-the-kit-gates-re-run-milestone-m2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MODULAR_HOUSE_PACK_02: the kit gates re-run (milestone M2)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-24b-character-review-modes-track-g-g3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 24b: character review modes (track G, G3)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-24-native-rigging-and-clips-track-g-g4-and-g5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 24: native rigging and clips (track G, G4 and G5)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-23-character-surface-track-g-g2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 23: character surface (track G, G2)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-22-native-organic-kernel-track-g-g1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 22: native organic kernel (track G, G1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#g0-spike-a-native-organic-mesh-track-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        G0 spike: a native organic mesh (track G)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-21-shared-surfaces-and-runtime-track-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 21: shared surfaces and runtime (track F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#release-100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Release 1.0.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-18b-docs-site-completion-track-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 18b: docs site completion (track D)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-17b-verify-mcp-with-real-clients-track-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 17b: verify MCP with real clients (track C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-15b-web-workbench-with-a-threejs-3d-view-track-w" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 15b: web workbench with a three.js 3D view (track W)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-25a-presentation-renders-track-r" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 25a: presentation renders (track R)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-19b-finish-the-kit-track-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 19b: finish the kit (track B)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-20b-cleanup-of-known-defects-track-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 20b: cleanup of known defects (track A)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-20a-golden-geometry-across-linux-and-windows-ci-green" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 20a: golden geometry across Linux and Windows, CI green
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-18-docs-site-and-gallery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 18: docs site and gallery
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-20-seam-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 20: seam validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-19-composition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 19: composition
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-17-mcp-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 17: MCP server
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-16-packaging-ai-docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 16: packaging + AI docs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modular_house_pack_01-a-modular-house-kit-as-a-real-user-acceptance-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MODULAR_HOUSE_PACK_01: a modular house kit as a real-user acceptance test
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#before-phase-16-stages-0-to-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before Phase 16 (stages 0 to 15)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/loop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The loop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation layers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/composition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reuse and composition
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/seams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Seams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/vocabulary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shapes and ops
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/codes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Issue codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/profiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#phase-25b-toon-showcase-presentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 25b: toon showcase (presentation)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modular_house_pack_02-the-kit-gates-re-run-milestone-m2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MODULAR_HOUSE_PACK_02: the kit gates re-run (milestone M2)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-24b-character-review-modes-track-g-g3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 24b: character review modes (track G, G3)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-24-native-rigging-and-clips-track-g-g4-and-g5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 24: native rigging and clips (track G, G4 and G5)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-23-character-surface-track-g-g2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 23: character surface (track G, G2)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-22-native-organic-kernel-track-g-g1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 22: native organic kernel (track G, G1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#g0-spike-a-native-organic-mesh-track-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        G0 spike: a native organic mesh (track G)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-21-shared-surfaces-and-runtime-track-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 21: shared surfaces and runtime (track F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#release-100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Release 1.0.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-18b-docs-site-completion-track-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 18b: docs site completion (track D)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-17b-verify-mcp-with-real-clients-track-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 17b: verify MCP with real clients (track C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-15b-web-workbench-with-a-threejs-3d-view-track-w" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 15b: web workbench with a three.js 3D view (track W)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-25a-presentation-renders-track-r" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 25a: presentation renders (track R)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-19b-finish-the-kit-track-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 19b: finish the kit (track B)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-20b-cleanup-of-known-defects-track-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 20b: cleanup of known defects (track A)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-20a-golden-geometry-across-linux-and-windows-ci-green" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 20a: golden geometry across Linux and Windows, CI green
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-18-docs-site-and-gallery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 18: docs site and gallery
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-20-seam-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 20: seam validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-19-composition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 19: composition
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-17-mcp-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 17: MCP server
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-16-packaging-ai-docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 16: packaging + AI docs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modular_house_pack_01-a-modular-house-kit-as-a-real-user-acceptance-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MODULAR_HOUSE_PACK_01: a modular house kit as a real-user acceptance test
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#before-phase-16-stages-0-to-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before Phase 16 (stages 0 to 15)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="changelog">Changelog</h1>
+<p>Newest first. Generated from the phase records by <code>tools/site/changelog.py</code>; each entry links to its record (what shipped, evidence, the gate table and what is not done).</p>
+<h2 id="phase-25b-toon-showcase-presentation">Phase 25b: toon showcase (presentation)</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS (CPU post-process outline, three.js smoothed-normal hull)</li>
+<li><strong>Branch:</strong> <code>phase/25b-toon</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_25b.md">docs/phases/PHASE_25b.md</a></li>
+<li>Toon shading exists in both renderers: - <strong>CPU renderer:</strong> cel shading with post-process outlines, for images. - <strong>Workbench 3D view:</strong> three.js toon materials with an inverted-hull outline pushed along smoothed normals, for live viewing (rigged characters included).</li>
+</ul>
+<h2 id="modular_house_pack_02-the-kit-gates-re-run-milestone-m2">MODULAR_HOUSE_PACK_02: the kit gates re-run (milestone M2)</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS (all 10; gate 9 by FRESH_AGENT_13)</li>
+<li><strong>Branch:</strong> <code>phase/22-organic</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/experiments/MODULAR_HOUSE_PACK_02.md">docs/experiments/MODULAR_HOUSE_PACK_02.md</a></li>
+<li>The first pass left gate 9 met in part. A fresh agent then edited this kit (FRESH_AGENT_13, below), which closes gate 9. Its shared <code>house_foundation</code> module also removes the one duplication noted under gate 3.</li>
+</ul>
+<h2 id="phase-24b-character-review-modes-track-g-g3">Phase 24b: character review modes (track G, G3)</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS (CPU sheet, workbench skeleton/weights/clips, MCP review)</li>
+<li><strong>Branch:</strong> <code>phase/22-organic</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_24b.md">docs/phases/PHASE_24b.md</a></li>
+<li>A person can review a character without leaving Shapewright: one CPU sheet, three new render views, and a workbench 3D view with the skeleton, joint weights and clips. Agents get the same sheet from <code>review</code>.</li>
+</ul>
+<h2 id="phase-24-native-rigging-and-clips-track-g-g4-and-g5">Phase 24: native rigging and clips (track G, G4 and G5)</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS (Godot: skeleton, skin, clips; Khronos 0/0)</li>
+<li><strong>Branch:</strong> <code>phase/22-organic</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_24.md">docs/phases/PHASE_24.md</a></li>
+<li>The chibi fox is a rigged game character: 19 joints fitted from its own coordinates, bone-heat weights, three procedural clips, and a skinned GLB that the Khronos validator passes with 0 errors and 0 warnings. Godot 4.3 imports it headless with the skeleton intact and the clips playable. No standard pose or clip frame loses more than 10 % of the volume (no candy-wrapper collapse). Rigid clips (a lid, a wheel) work without a skeleton.</li>
+</ul>
+<h2 id="phase-23-character-surface-track-g-g2">Phase 23: character surface (track G, G2)</h2>
+<ul>
+<li><strong>Verdict:</strong> PARTIAL (painted regions, decals, reference sheet; rubric needs the concept image)</li>
+<li><strong>Branch:</strong> <code>phase/22-organic</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_23.md">docs/phases/PHASE_23.md</a></li>
+<li>Painted regions, procedural decals and the reference image on the review sheet shipped and work on all three creatures. The fox now reads as a fox in a hoodie with a face, and the face reads from the front at 256 px. The gate's rubric against the owner's concept could not be scored, because the concept image is not in the repository. Toon presets were not built.</li>
+</ul>
+<h2 id="phase-22-native-organic-kernel-track-g-g1">Phase 22: native organic kernel (track G, G1)</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS (a shape, not part groups; regions jagged until 23)</li>
+<li><strong>Branch:</strong> <code>phase/22-organic</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_22.md">docs/phases/PHASE_22.md</a></li>
+<li>A new shape, <code>blend</code>, meshes SDF primitives into one closed part. The chibi fox, a slime and a mushroom creature are each one watertight, consistently wound mesh that passes all 8 validation layers within budget, builds in 0.9–3.3 s and is deterministic on Linux. Windows is checked by CI against the tolerant signature. Colour-region edges are jagged and small features are coarse at these budgets (see "What is not good yet").</li>
+</ul>
+<h2 id="g0-spike-a-native-organic-mesh-track-g">G0 spike: a native organic mesh (track G)</h2>
+<ul>
+<li><strong>Verdict:</strong> GO (3 plan changes; concept image not in the repo)</li>
+<li><strong>Branch:</strong> <code>phase/22-organic</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/G0_SPIKE.md">docs/phases/G0_SPIKE.md</a></li>
+<li>A chibi fox in a hoodie built from 11 SDF primitives is one watertight, consistently wound mesh of 6 k triangles in under 5 s. It uses no new dependency and no Blender. It reads as a fox in a hoodie. The face and the colour boundaries are not game quality yet; G2's work is what fixes them.</li>
+</ul>
+<h2 id="phase-21-shared-surfaces-and-runtime-track-f">Phase 21: shared surfaces and runtime (track F)</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS with exceptions (module texel density lower, 218 hulls; M2 re-run left)</li>
+<li><strong>Branch:</strong> <code>phase/21-shared-surfaces</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_21.md">docs/phases/PHASE_21.md</a></li>
+<li>All six tasks shipped with tests (<code>tests/test_shared_surfaces.py</code>). The memory (−83.8 %), LOD, doorway and lightmap gates are met. Texel density went up on the houses but down on 20 of the 26 small modules, and the workshop collider has 218 hulls, not 8 or 24.</li>
+</ul>
+<h2 id="release-100">Release 1.0.0</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS (PyPI waits for the owner)</li>
+<li><strong>Branch:</strong> <code>release/1.0</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/RELEASE_1.0.md">docs/phases/RELEASE_1.0.md</a></li>
+<li>v1.0 bundles tracks A, B, R, W, C2 and D (see the changelog) and was accepted by a fresh agent from the wheel alone.</li>
+</ul>
+<h2 id="phase-18b-docs-site-completion-track-d">Phase 18b: docs site completion (track D)</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS (closes 18's open gate)</li>
+<li><strong>Branch:</strong> <code>phase/18b-site</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_18b.md">docs/phases/PHASE_18b.md</a></li>
+<li>It also closes Phase 18's untested gate ("a reader reproduces the published GLB").</li>
+</ul>
+<h2 id="phase-17b-verify-mcp-with-real-clients-track-c">Phase 17b: verify MCP with real clients (track C)</h2>
+<ul>
+<li><strong>Verdict:</strong> PARTIAL (C2 done; C1, C3 need the owner)</li>
+<li><strong>Branch:</strong> <code>phase/17b-mcp-verify</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_17b.md">docs/phases/PHASE_17b.md</a></li>
+<li>C2 (MCP Inspector) is done. C1 (a desktop client) and C3 (another vendor's agent) need the owner's machine and accounts; they are prepared, not run.</li>
+</ul>
+<h2 id="phase-15b-web-workbench-with-a-threejs-3d-view-track-w">Phase 15b: web workbench with a three.js 3D view (track W)</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS with exceptions (Windows/Edge/Firefox not verified)</li>
+<li><strong>Branch:</strong> <code>phase/15b-web-viewer</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_15b.md">docs/phases/PHASE_15b.md</a></li>
+<li>Everything shipped and was driven in a real browser (headless Chromium, WebGL through SwiftShader). Not verified: Windows, Edge and Firefox (no such browsers here).</li>
+</ul>
+<h2 id="phase-25a-presentation-renders-track-r">Phase 25a: presentation renders (track R)</h2>
+<ul>
+<li><strong>Verdict:</strong> PARTIAL (25 s, not 10 s; owner review pending)</li>
+<li><strong>Branch:</strong> <code>phase/25a-render</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_25a.md">docs/phases/PHASE_25a.md</a></li>
+<li>Everything shipped and is deterministic, and the images look much better (evidence below). Two gates are not met: the speed budget (25 s instead of 10 s for a 33k-triangle house at 1024 px) and the owner's judgement, which has not been given yet.</li>
+</ul>
+<h2 id="phase-19b-finish-the-kit-track-b">Phase 19b: finish the kit (track B)</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS (closes 19's PARTIAL)</li>
+<li><strong>Branch:</strong> <code>phase/19b-houses</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_19b.md">docs/phases/PHASE_19b.md</a></li>
+<li>This also closes Phase 19's PARTIAL: all three demo houses are now built only from module-asset instances.</li>
+</ul>
+<h2 id="phase-20b-cleanup-of-known-defects-track-a">Phase 20b: cleanup of known defects (track A)</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS</li>
+<li><strong>Branch:</strong> <code>phase/20b-cleanup</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_20b.md">docs/phases/PHASE_20b.md</a></li>
+<li>Every task shipped with a regression test (<code>tests/test_cleanup_20b.py</code>). One gate was met in a different way than planned (A1, see below), and one item is not verified here (A7 runs only on Windows CI).</li>
+</ul>
+<h2 id="phase-20a-golden-geometry-across-linux-and-windows-ci-green">Phase 20a: golden geometry across Linux and Windows, CI green</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS (macOS out of scope)</li>
+<li><strong>Branch:</strong> <code>phase/20a-cross-os-golden</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_20a.md">docs/phases/PHASE_20a.md</a></li>
+</ul>
+<h2 id="phase-18-docs-site-and-gallery">Phase 18: docs site and gallery</h2>
+<ul>
+<li><strong>Verdict:</strong> PARTIAL (deploy not run)</li>
+<li><strong>Branch:</strong> <code>phase/18-docs-site</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_18.md">docs/phases/PHASE_18.md</a></li>
+<li>
+<ul>
+<li><strong>Built and checked:</strong> the site builds in strict mode. Every runnable tutorial block passes as a test, and the gallery renders the real models (checked in headless Chromium). - <strong>Not verified:</strong> deployment. <code>.github/workflows/docs.yml</code> is written but has not run; it needs GitHub Pages enabled on the repository. - <strong>Not tested end to end:</strong> the gate's "a reader reproduces the published GLB byte-identically". Determinism of the export is covered by the existing golden tests, not by a site test.</li>
+</ul>
+</li>
+</ul>
+<h2 id="phase-20-seam-validation">Phase 20: seam validation</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS (gate restated)</li>
+<li><strong>Branch:</strong> <code>phase/20-seams</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_20.md">docs/phases/PHASE_20.md</a></li>
+</ul>
+<h2 id="phase-19-composition">Phase 19: composition</h2>
+<ul>
+<li><strong>Verdict:</strong> PARTIAL (1 of 3 houses converted; closed by 19b)</li>
+<li><strong>Branch:</strong> <code>phase/19-composition</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_19.md">docs/phases/PHASE_19.md</a></li>
+<li>Every composition capability shipped and was proven on the kit: - the cottage is now built from module assets; - its source is 76 % shorter; - hand-derived offsets are 0 across all three houses; - the stress test passes.</li>
+</ul>
+<h2 id="phase-17-mcp-server">Phase 17: MCP server</h2>
+<ul>
+<li><strong>Verdict:</strong> PARTIAL (no agent MCP client run)</li>
+<li><strong>Branch:</strong> <code>phase/17-mcp</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_17.md">docs/phases/PHASE_17.md</a></li>
+<li>The server and the protocol are verified end to end with a scripted client over stdio and HTTP, on two SDK major versions. Two gate items were not verified here: - "the same task through MCP only in two agent clients": no desktop MCP client can run in this container, and a subagent cannot attach a new MCP server; - the MCP Inspector: it was not run.</li>
+</ul>
+<h2 id="phase-16-packaging-ai-docs">Phase 16: packaging + AI docs</h2>
+<ul>
+<li><strong>Verdict:</strong> PASS (Docker not built)</li>
+<li><strong>Branch:</strong> <code>phase/16-packaging</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/phases/PHASE_16.md">docs/phases/PHASE_16.md</a></li>
+<li>(The Docker item, not verified at first, was verified at release 1.0: see the gate table.)</li>
+</ul>
+<h2 id="modular_house_pack_01-a-modular-house-kit-as-a-real-user-acceptance-test">MODULAR_HOUSE_PACK_01: a modular house kit as a real-user acceptance test</h2>
+<ul>
+<li><strong>Verdict:</strong> PARTIAL</li>
+<li><strong>Branch:</strong> <code>test/modular-house-pack</code></li>
+<li><strong>Record:</strong> <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/experiments/MODULAR_HOUSE_PACK_01.md">docs/experiments/MODULAR_HOUSE_PACK_01.md</a></li>
+<li>The kit works: - 26 modules and 3 visibly different houses, all built from one pack. - 0 visible z-fighting pairs. - A 5-parameter stress test rebuilt everything with no coordinate edits. - Valid, game-ready GLBs.</li>
+</ul>
+<h2 id="before-phase-16-stages-0-to-15">Before Phase 16 (stages 0 to 15)</h2>
+<p>The framework itself: research and architecture, the vertical slice, hardening, the spatial modelling language,
+components and families, the surface system (UVs, baked textures), modelling breadth, 50k-triangle performance,
+import and repair, game-ready production for Godot / Unity / Unreal, cross-agent validation, agent cost and the
+human workbench. Each stage is recorded in <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/ROADMAP.md">ROADMAP.md</a> and the experiments in <a href="https://github.com/billtruong003/ShapeWright/blob/main/docs/experiments">docs/experiments</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "search.suggest"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
